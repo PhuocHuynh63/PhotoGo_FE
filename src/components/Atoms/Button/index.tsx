@@ -1,7 +1,9 @@
-export default function Button() {
+import styles from './index.module.scss';
+
+export default function Button(props: ICOMPONENTS.ButtonProps) {
     return (
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Button
+        <button className=className={`cursor-pointer ${styles.button}` {...props} type={props.type || 'button'}>
+            {props.children}
         </button>
     );
 }

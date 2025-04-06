@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
+/* TEXT */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --orange: #F6AC69;
+    --light: #FFFFFF;
+    --dark: #020817;
+    --description-title: #374151;
+    --description: #71717A;
+    --successful: #16A34A;
+    --pending: #854D0E;
+    --cancelled: #991B1B;
+    --changed-calendar: #6B21A8;
+    --confirm: #1E40AF;
+    --info: #1D4ED8;
+    --error: #DC2626;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* BACKGROUND */
+:root {
+    --bg-orange: #F6AC69;
+    --bg-orange-opacity: rgba(246, 172, 105, 0.1);
+    --bg-orange-opacity-2: rgba(246, 172, 105, 0.05);
+    --bg-orange-disabled: #FFC48F;
+    --bg-closed: #EF4444;
+    --bg-dark: rgba(0, 0, 0, 0.6);
+    --bg-dark-linear: rgba(0, 0, 0, 0.7);
+    --bg-light: #FFFFFF;
+    --bg-section: #F9FAFB;
+    --bg-input: #F8FAFC;
+    --bg-successful: #F0FDF4;
+    --bg-pending: #FEF9C3;
+    --bg-cancelled: #FEE2E2;
+    --bg-changed-calendar: #F3E8FF;
+    --bg-confirm: #DBEAFE;
+    --bg-info: #EFF6FF;
+    --bg-error: #FEE2E2;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* BORDER */
+:root {
+    --border-orange: #F6AC69;
+    --border-orange-opacity: rgba(246, 172, 105, 0.2);
+    --border-grey: #E4E4E7;
+    --border-successful: #BBF7D0;
+    --border-pending: #FEF08A;
+    --border-cancelled: #FECACA;
+    --border-changed-calendar: #E9D5FF;
+    --border-confirm: #BFDBFE;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* BOX SHADOW */
+:root {
+    --box-shadow-orange: 0px 4px 20px rgba(246, 172, 105, 0.2);
+    --box-shadow-light: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    --box-shadow-dark: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    --box-shadow-successful: 0px 4px 20px rgba(22, 163, 74, 0.2);
+    --box-shadow-pending: 0px 4px 20px rgba(254, 240, 131, 0.2);
+    --box-shadow-cancelled: 0px 4px 20px rgba(254, 226, 226, 0.2);
+    --box-shadow-changed-calendar: 0px 4px 20px rgba(139, 92, 246, 0.2);
+    --box-shadow-confirm: 0px 4px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* GRADIENT */
+:root {
+    --gradient-orange: linear-gradient(90deg, rgba(246, 172, 105, 0.2) 0%, rgba(246, 172, 105, 0.1) 100%);
+    --gradient-light: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    --gradient-dark: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
 }
