@@ -1,18 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styles from './index.module.scss';
 import LucideIcon from '@/components/Atoms/LucideIcon';
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    width?: string | number;
-    height?: string | number;
-    icon?: keyof typeof import('lucide-react');
-    iconPosition?: 'left' | 'right';
-    iconSize?: number;
-    iconColor?: string;
-    isLoading?: boolean;
-    loadingText?: string;
-    spinIcon?: boolean;
-}
 
 export default function Button({
     children,
@@ -26,33 +14,46 @@ export default function Button({
     loadingText = 'Loading...',
     spinIcon = false,
     ...rest
-}: ButtonProps) {
-    const style: React.CSSProperties = {
+}: ICOMPONENTS.ButtonProps) {
+    const style = useMemo<React.CSSProperties>(() => ({
         width: typeof width === 'number' ? `${width}px` : width,
         height: typeof height === 'number' ? `${height}px` : height,
-    };
+    }), [width, height]);
 
-    const renderIcon = icon ? (
-        <LucideIcon
-            name={icon}
-            size={iconSize}
-            color={iconColor}
-            spin={isLoading || spinIcon}
-        />
-    ) : null;
+    const showIcon = useMemo(() => {
+        if (!icon || isLoading) return null;
+
+        return (
+            <LucideIcon
+                name={icon}
+                size={iconSize}
+                color={iconColor}
+                spin={spinIcon}
+            />
+        );
+    }, [icon, iconSize, iconColor, spinIcon, isLoading]);
+
+    const loadingIndicator = useMemo(() => (
+        <>
+            <LucideIcon name="Loader" spin size={iconSize} />
+            <span className={styles.loadingText}>{loadingText}</span>
+        </>
+    ), [iconSize, loadingText]);
 
     return (
-        <button className={styles.button} style={style} disabled={isLoading || rest.disabled} {...rest}>
+        <button
+            className={styles.button}
+            style={style}
+            disabled={isLoading || rest.disabled}
+            {...rest}
+        >
             {isLoading ? (
-                <>
-                    <LucideIcon name="Loader" spin size={iconSize} />
-                    <span className={styles.loadingText}>{loadingText}</span>
-                </>
+                loadingIndicator
             ) : (
                 <>
-                    {iconPosition === 'left' && renderIcon}
+                    {iconPosition === 'left' && showIcon}
                     {children}
-                    {iconPosition === 'right' && renderIcon}
+                    {iconPosition === 'right' && showIcon}
                 </>
             )}
         </button>

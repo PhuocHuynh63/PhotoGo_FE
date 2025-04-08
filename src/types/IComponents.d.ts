@@ -1,12 +1,14 @@
 declare namespace ICOMPONENTS {
     export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-        color?: string;
         width?: string | number;
         height?: string | number;
-        icon?: React.ReactNode;
+        icon?: keyof typeof import('lucide-react');
         iconPosition?: 'left' | 'right';
+        iconSize?: number;
+        iconColor?: string;
         isLoading?: boolean;
         loadingText?: string;
+        spinIcon?: boolean;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -29,6 +31,14 @@ declare namespace ICOMPONENTS {
         fontSize?: string | number;
         label?: string;
         labelClassName?: string;
+    }
+
+    export interface LucideIconProps {
+        name: keyof typeof import('lucide-react');
+        size?: number;
+        color?: string;
+        className?: string;
+        spin?: boolean;
     }
 
 }

@@ -1,15 +1,6 @@
 import * as Icons from 'lucide-react';
 import { LucideProps } from 'lucide-react';
-import React from 'react';
 import styles from './index.module.scss';
-
-interface LucideIconProps {
-    name: keyof typeof Icons;
-    size?: number;
-    color?: string;
-    className?: string;
-    spin?: boolean;
-}
 
 export default function LucideIcon({
     name,
@@ -17,8 +8,8 @@ export default function LucideIcon({
     color = 'currentColor',
     className = '',
     spin = false,
-}: LucideIconProps) {
-    const IconComponent = Icons[name] as React.FC<LucideProps>;
+}: ICOMPONENTS.LucideIconProps) {
+    const IconComponent = Icons[name as keyof typeof Icons] as React.FC<LucideProps>;
 
     if (!IconComponent) {
         console.warn(`Lucide icon "${name}" not found.`);

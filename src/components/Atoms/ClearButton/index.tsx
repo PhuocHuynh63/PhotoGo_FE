@@ -1,18 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styles from './index.module.scss';
 import LucideIcon from '@/components/Atoms/LucideIcon';
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    width?: string | number;
-    height?: string | number;
-    icon?: keyof typeof import('lucide-react');
-    iconPosition?: 'left' | 'right';
-    iconSize?: number;
-    iconColor?: string;
-    isLoading?: boolean;
-    loadingText?: string;
-    spinIcon?: boolean;
-}
 
 export default function Button({
     children,
@@ -26,17 +14,19 @@ export default function Button({
     loadingText = 'Loading...',
     spinIcon = false,
     ...rest
-}: ButtonProps) {
-    const style: React.CSSProperties = {
+}: ICOMPONENTS.ButtonProps) {
+    const style = useMemo(() => ({
         width: typeof width === 'number' ? `${width}px` : width,
         height: typeof height === 'number' ? `${height}px` : height,
-    };
+    }), [width, height]);
 
-    const shouldSpin = isLoading || spinIcon;
+    const shouldSpin = useMemo(() => isLoading || spinIcon, [isLoading, spinIcon]);
 
-    const renderIcon = icon && !isLoading && (
-        <LucideIcon name={icon} size={iconSize} color={iconColor} spin={shouldSpin} />
-    );
+    const renderIcon = useMemo(() => (
+        icon && !isLoading && (
+            <LucideIcon name={icon} size={iconSize} color={iconColor} spin={shouldSpin} />
+        )
+    ), [icon, isLoading, iconSize, iconColor, shouldSpin]);
 
     return (
         <button
