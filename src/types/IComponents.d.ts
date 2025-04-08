@@ -31,6 +31,7 @@ declare namespace ICOMPONENTS {
         fontSize?: string | number;
         label?: string;
         labelClassName?: string;
+        options?: string[]
     }
 
     export interface LucideIconProps {
@@ -39,6 +40,16 @@ declare namespace ICOMPONENTS {
         color?: string;
         className?: string;
         spin?: boolean;
+    }
+
+    export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+        width?: string | number;
+        height?: string | number;
+        fontSize?: string | number;
+        placeholder?: string;
+        resize?: "none" | "horizontal" | "vertical" | "both";
+        maxLength?: number;
+        minLength?: number;
     }
 
 }

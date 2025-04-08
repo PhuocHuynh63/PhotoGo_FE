@@ -9,7 +9,7 @@ export default function Select(props: ICOMPONENTS.SelectProps) {
         className,
         label,
         labelClassName,
-        children,
+        options,
         ...rest
     } = props;
 
@@ -32,7 +32,11 @@ export default function Select(props: ICOMPONENTS.SelectProps) {
                 style={selectStyle}
                 {...rest}
             >
-                {children}
+                {options?.map((value, index) => (
+                    <option key={index} value={value}>
+                        {value}
+                    </option>
+                ))}
             </select>
         </div>
     );
