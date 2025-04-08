@@ -1,0 +1,45 @@
+.clear_button {
+    background-color: var(--bg-light);
+    color: var(--orange);
+    border: 1px solid var(--border-orange);
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &:hover {
+        background-color: var(--bg-orange-opacity);
+        transform: scale(1.05);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+
+        &:hover {
+            background-color: var(--bg-light);
+            transform: none;
+        }
+    }
+
+    :global(.lucide-spin) {
+        animation: lucide-spin 1s linear infinite;
+    }
+}
+
+.loadingText {
+    font-size: 0.9rem;
+    color: var(--orange);
+}
+
+@keyframes lucide-spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

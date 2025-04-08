@@ -32,26 +32,28 @@ export default function Button({
         height: typeof height === 'number' ? `${height}px` : height,
     };
 
-    const renderIcon = icon ? (
-        <LucideIcon
-            name={icon}
-            size={iconSize}
-            color={iconColor}
-            spin={isLoading || spinIcon}
-        />
-    ) : null;
+    const shouldSpin = isLoading || spinIcon;
+
+    const renderIcon = icon && !isLoading && (
+        <LucideIcon name={icon} size={iconSize} color={iconColor} spin={shouldSpin} />
+    );
 
     return (
-        <button className={styles.button} style={style} disabled={isLoading || rest.disabled} {...rest}>
+        <button
+            className={styles.clear_button}
+            style={style}
+            disabled={isLoading || rest.disabled}
+            {...rest}
+        >
             {isLoading ? (
                 <>
-                    <LucideIcon name="Loader" spin size={iconSize} />
+                    <LucideIcon name="Loader" size={iconSize} spin />
                     <span className={styles.loadingText}>{loadingText}</span>
                 </>
             ) : (
                 <>
                     {iconPosition === 'left' && renderIcon}
-                    {children}
+                    <span>{children}</span>
                     {iconPosition === 'right' && renderIcon}
                 </>
             )}
