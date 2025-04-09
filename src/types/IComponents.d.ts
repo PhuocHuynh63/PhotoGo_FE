@@ -1,83 +1,71 @@
 declare namespace ICOMPONENTS {
-    export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    // Common base props for reusable styles
+    interface BaseProps {
         width?: string | number;
         height?: string | number;
+        fontSize?: string | number;
+    }
+
+    // Icon-related props
+    interface IconProps {
         icon?: keyof typeof import('lucide-react');
-        iconPosition?: 'left' | 'right';
         iconSize?: number;
         iconColor?: string;
+    }
+
+    export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, BaseProps, IconProps {
+        iconPosition?: 'left' | 'right';
         isLoading?: boolean;
         loadingText?: string;
         spinIcon?: boolean;
     }
 
-    export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
         placeholder?: string;
-        width?: string | number;
-        height?: string | number;
-        fontSize?: string | number;
-        icon?: keyof typeof import('lucide-react');
-        iconSize?: number;
-        iconColor?: string;
         togglePassword?: boolean;
         leftIconColor?: string;
         rightIconColor?: string;
     }
 
-    export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+    export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement>, BaseProps {
         htmlFor?: string;
-        width?: string | number;
-        height?: string | number;
-        fontSize?: string | number;
     }
 
-    export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-        width?: string | number;
-        height?: string | number;
-        fontSize?: string | number;
+    export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>, BaseProps {
         label?: string;
         labelClassName?: string;
-        options?: string[]
+        options?: string[];
     }
 
-    export interface LucideIconProps {
+    export interface LucideIconProps extends IconProps {
         name: keyof typeof import('lucide-react');
-        size?: number;
-        color?: string;
         className?: string;
         spin?: boolean;
     }
 
-    export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-        width?: string | number;
-        height?: string | number;
-        fontSize?: string | number;
+    export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, BaseProps {
         placeholder?: string;
         resize?: "none" | "horizontal" | "vertical" | "both";
         maxLength?: number;
         minLength?: number;
     }
 
-    interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
         label: string;
         checked: boolean;
         onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
 
-    interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    export interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
         name: string;
         options: { label: string; value: string }[];
         value: string;
         onChange: (value: string) => void;
     }
 
-    interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement> {
-        width?: string | number;
-        height?: string | number;
-        fontSize?: string | number;
-    }
+    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps {}
 
-    interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
+    export interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
         size?: number;
         strokeWidth?: number;
         value: number;
@@ -86,21 +74,16 @@ declare namespace ICOMPONENTS {
         direction?: 'clockwise' | 'counter-clockwise';
         showPercentage?: boolean;
         textColor?: string;
-        fontSize?: number;
     }
 
-    interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
+    export interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>, BaseProps {
         value: number;
-        width?: string | number;
-        height?: string | number;
         backgroundColor?: string;
         color?: string;
         className?: string;
     }
 
-    interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
-        width?: string | number;
-        height?: string | number;
+    export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps {
         borderRadius?: string | number;
         backgroundColor?: string;
         className?: string;

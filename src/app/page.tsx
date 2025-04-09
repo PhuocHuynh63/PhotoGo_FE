@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/Atoms/Button";
 import ClearButton from "@/components/Atoms/ClearButton";
 import CustomDatePicker from "@/components/Atoms/DatePicker";
@@ -19,9 +19,19 @@ import { ToggleGroup, ToggleGroupItem } from "@components/Atoms/Toggle-group";
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [selected, setSelected] = useState("a");
+  const [selected, setSelected] = useState("photo");
   const [selectedArray, setSelectedArray] = useState(["a", "b"]);
   const [gender, setGender] = useState('male');
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setValue(Math.floor(Math.random() * 100));
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
 
@@ -97,8 +107,8 @@ export default function Home() {
 
         <Progress value={60} width={300} height={10} color="blue" backgroundColor="var(--bg-progress)" />
 
-        <CircularProgress value={70} direction="clockwise" />
-        <CircularProgress value={40} direction="counter-clockwise" />
+        <CircularProgress value={value} direction="clockwise" />
+        <CircularProgress value={value + 10} direction="counter-clockwise" />
 
         <div className="flex flex-col gap-4">
           <ToggleGroup type="single" variant="outline" size="sm" value={selected} onValueChange={setSelected}>

@@ -37,8 +37,8 @@ export default function Input(props: ICOMPONENTS.InputProps) {
             {icon && (
                 <LucideIcon
                     name={icon}
-                    size={iconSize}
-                    color={leftIconColor || iconColor}
+                    iconSize={iconSize}
+                    iconColor={leftIconColor || iconColor}
                     className={`${styles.icon} ${styles.leftIcon}`}
                 />
             )}
@@ -60,8 +60,8 @@ export default function Input(props: ICOMPONENTS.InputProps) {
                 >
                     <LucideIcon
                         name={showPassword ? 'EyeOff' : 'Eye'}
-                        size={iconSize}
-                        color={rightIconColor || iconColor}
+                        iconSize={iconSize}
+                        iconColor={rightIconColor || iconColor}
                     />
                 </div>
             )}
