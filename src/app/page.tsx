@@ -63,10 +63,9 @@ export default function Home() {
         />
         <RadioButtonGroup name="gender" options={[{ label: "Male", value: "male" }, { label: "Female", value: "female" }]} value={gender} onChange={(value) => { if (value) setGender(value) }} />
         <div className="p-4 border rounded-md space-y-3">
-          <Skeleton width={200} height={20} />
-          <Skeleton width="100%" height={40} borderRadius={6} backgroundColor="--bg-skeleton-opacity" />
-          <Skeleton width="100%" height={40} borderRadius={6} backgroundColor="--bg-skeleton-opacity" />
-          <Skeleton width="100%" height={40} borderRadius={6} backgroundColor="--bg-skeleton-opacity" />
+
+          <Skeleton count={4} height={24} width={200} backgroundColor="var(--bg-skeleton)" />
+
         </div>
 
         <TextArea placeholder="Enter your message" fontSize={16} maxLength={1000} resize={"both"} width={340} height={50} />

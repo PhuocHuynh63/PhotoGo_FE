@@ -35,10 +35,8 @@
     --bg-confirm: #DBEAFE;
     --bg-info: #EFF6FF;
     --bg-error: #FEE2E2;
-    --bg-progress: #e5e7eb
-    --bg-skeleton: #E5E7EB;
-    --bg-skeleton-opacity: rgba(229, 231, 235, 0.5);
-    ;
+    --bg-progress: #E5E7EB;
+    --bg-skeleton: #70747e;
 }
 
 /* BORDER */
@@ -70,4 +68,189 @@
     --gradient-orange: linear-gradient(90deg, rgba(246, 172, 105, 0.2) 0%, rgba(246, 172, 105, 0.1) 100%);
     --gradient-light: linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
     --gradient-dark: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/* TEXT */
+.text-primary {
+    color: var(--orange);
+}
+
+.text-light {
+    color: var(--light);
+}
+
+.text-dark {
+    color: var(--dark);
+}
+
+.text-description-title {
+    color: var(--description-title);
+}
+
+.text-description {
+    color: var(--description);
+}
+
+.text-successful {
+    color: var(--successful);
+}
+
+.text-pending {
+    color: var(--pending);
+}
+
+.text-cancelled {
+    color: var(--cancelled);
+}
+
+.text-changed-calendar {
+    color: var(--changed-calendar);
+}
+
+.text-confirm {
+    color: var(--confirm);
+}
+
+.text-info {
+    color: var(--info);
+}
+
+.text-error {
+    color: var(--error);
+}
+
+/* BACKGROUND */
+.bg-orange {
+    background-color: var(--bg-orange);
+}
+
+.bg-orange-opacity {
+    background-color: var(--bg-orange-opacity);
+}
+
+.bg-orange-opacity-2 {
+    background-color: var(--bg-orange-opacity-2);
+}
+
+.bg-orange-disabled {
+    background-color: var(--bg-orange-disabled);
+}
+
+.bg-closed {
+    background-color: var(--bg-closed);
+}
+
+.bg-dark {
+    background-color: var(--bg-dark);
+}
+
+.bg-dark-linear {
+    background-color: var(--bg-dark-linear);
+}
+
+.bg-light {
+    background-color: var(--bg-light);
+}
+
+.bg-section {
+    background-color: var(--bg-section);
+}
+
+.bg-input {
+    background-color: var(--bg-input);
+}
+
+.bg-successful {
+    background-color: var(--bg-successful);
+}
+
+.bg-pending {
+    background-color: var(--bg-pending);
+}
+
+.bg-cancelled {
+    background-color: var(--bg-cancelled);
+}
+
+.bg-changed-calendar {
+    background-color: var(--bg-changed-calendar);
+}
+
+.bg-confirm {
+    background-color: var(--bg-confirm);
+}
+
+.bg-info {
+    background-color: var(--bg-info);
+}
+
+.bg-error {
+    background-color: var(--bg-error);
+}
+
+/* BORDER */
+.border-orange {
+    border-color: var(--border-orange);
+}
+
+.border-orange-opacity {
+    border-color: var(--border-orange-opacity);
+}
+
+.border-grey {
+    border-color: var(--border-grey);
+}
+
+.border-successful {
+    border-color: var(--border-successful);
+}
+
+.border-pending {
+    border-color: var(--border-pending);
+}
+
+.border-cancelled {
+    border-color: var(--border-cancelled);
+}
+
+.border-changed-calendar {
+    border-color: var(--border-changed-calendar);
+}
+
+.border-confirm {
+    border-color: var(--border-confirm);
+}
+
+/* BOX SHADOW */
+
+.shadow-orange {
+    box-shadow: var(--box-shadow-orange);
+}
+
+.shadow-light {
+    box-shadow: var(--box-shadow-light);
+}
+
+.shadow-dark {
+    box-shadow: var(--box-shadow-dark);
+}
+
+.shadow-successful {
+    box-shadow: var(--box-shadow-successful);
+}
+
+.shadow-pending {
+    box-shadow: var(--box-shadow-pending);
+}
+
+.shadow-cancelled {
+    box-shadow: var(--box-shadow-cancelled);
+}
+
+.shadow-changed-calendar {
+    box-shadow: var(--box-shadow-changed-calendar);
+}
+
+.shadow-confirm {
+    box-shadow: var(--box-shadow-confirm);
 }

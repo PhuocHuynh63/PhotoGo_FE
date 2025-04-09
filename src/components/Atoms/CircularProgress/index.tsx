@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/helpers/CN';
+import { cn } from '@helpers/CN';
 
 interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
     size?: number;

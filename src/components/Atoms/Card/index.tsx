@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@/helpers/CN';
+import { cn } from '@helpers/CN';
 
 
 const styleHelper = ({ width, height, fontSize }: ICOMPONENTS.CardBaseProps): React.CSSProperties => ({

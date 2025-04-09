@@ -1,7 +1,7 @@
 'use client';
 
 import React, { CSSProperties } from 'react';
-import { cn } from '@/helpers/CN';
+import { cn } from '@helpers/CN';
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
     width?: string | number;
@@ -9,6 +9,7 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
     borderRadius?: string | number;
     backgroundColor?: string;
     className?: string;
+    count?: number;
 }
 
 export default function Skeleton({
@@ -18,21 +19,37 @@ export default function Skeleton({
     backgroundColor = 'var(--bg-muted)',
     className,
     style,
+    count = 1,
     ...props
 }: SkeletonProps) {
-    const skeletonStyle: CSSProperties = {
-        width: typeof width === 'number' ? `${width}px` : width,
-        height: typeof height === 'number' ? `${height}px` : height,
-        borderRadius: typeof borderRadius === 'number' ? `${borderRadius}px` : borderRadius,
-        backgroundColor,
-        ...style,
+    const baseWidth =
+        typeof width === 'number' ? width : parseInt(width.toString()) || 100;
+
+    const skeletonStyle = (i: number): CSSProperties => {
+        const currentWidth =
+            typeof width === 'number'
+                ? `${baseWidth + i * 40}px`
+                : `calc(${width} + ${i * 40}%)`;
+
+        return {
+            width: currentWidth,
+            height: typeof height === 'number' ? `${height}px` : height,
+            borderRadius: typeof borderRadius === 'number' ? `${borderRadius}px` : borderRadius,
+            backgroundColor,
+            ...style,
+        };
     };
 
     return (
-        <div
-            className={cn('animate-pulse', className)}
-            style={skeletonStyle}
-            {...props}
-        />
+        <>
+            {Array.from({ length: count }).map((_, i) => (
+                <div
+                    key={i}
+                    className={cn('animate-pulse mb-2 last:mb-0', className)}
+                    style={skeletonStyle(i)}
+                    {...props}
+                />
+            ))}
+        </>
     );
 }
