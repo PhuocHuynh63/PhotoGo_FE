@@ -9,3 +9,44 @@
     font-size: 16px;
 }
 
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .input {
+        flex: 1;
+        width: 100%;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--border-grey);
+        background-color: var(--bg-input);
+        color: var(--description-title);
+        transition: border 0.2s;
+    }
+
+    .icon {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    .leftIcon {
+        left: 10px;
+    }
+
+    .rightIcon {
+        right: 10px;
+    }
+
+    .iconButton {
+        position: absolute;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto; // để click được
+    }
+}
