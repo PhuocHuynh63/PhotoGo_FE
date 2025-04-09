@@ -1,0 +1,38 @@
+.datePickerInput {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #d1d5db;
+    outline: none;
+
+    &:focus {
+        box-shadow: 0 0 0 2px var(--tw-ring-color, #3b82f6);
+    }
+}
+
+.react-datepicker-popper {
+    z-index: 50 !important; // để hiển thị trên modal/dialog nếu có
+}
+
+.react-datepicker {
+    font-family: inherit;
+    border-radius: 1rem;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__header {
+    background-color: #f3f4f6;
+    border-bottom: none;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.react-datepicker__day:hover {
+    background-color: #dbeafe;
+}

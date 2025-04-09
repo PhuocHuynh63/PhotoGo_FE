@@ -1,0 +1,22 @@
+.selectWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.label {
+    font-weight: 500;
+}
+
+.select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+        border-color: #007bff;
+    }
+}
