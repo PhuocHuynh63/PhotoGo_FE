@@ -27,18 +27,16 @@ export default function Home() {
 
       <div className="flex flex-col gap-4">
         <Label fontSize={14} htmlFor="username">Username</Label>
-        <Input id="username" placeholder="Enter your username" />
+        <Input id="username" placeholder="Enter your username" icon="User" />
         <div className="flex gap-4 flex-col">
           <Label htmlFor="password">Password</Label>
           <Input
             type="password"
             placeholder="Enter password"
             icon="Lock"
-            iconPosition="left"
             togglePassword
             leftIconColor="green"
             rightIconColor="red"
-            iconSize={20}
           />
 
         </div>

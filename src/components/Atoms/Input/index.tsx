@@ -13,6 +13,8 @@ export default function Input(props: ICOMPONENTS.InputProps) {
         iconSize = 18,
         iconColor = 'currentColor',
         togglePassword = false,
+        leftIconColor,
+        rightIconColor,
         ...rest
     } = props;
 
@@ -36,7 +38,7 @@ export default function Input(props: ICOMPONENTS.InputProps) {
                 <LucideIcon
                     name={icon}
                     size={iconSize}
-                    color={props.leftIconColor || iconColor}
+                    color={leftIconColor || iconColor}
                     className={`${styles.icon} ${styles.leftIcon}`}
                 />
             )}
@@ -44,9 +46,9 @@ export default function Input(props: ICOMPONENTS.InputProps) {
             <input
                 {...rest}
                 type={inputType}
-                className={styles.input}
+                className={[styles.input, className].filter(Boolean).join(' ')}
                 style={{
-                    paddingLeft: icon ? '40px' : undefined,
+                    paddingLeft: icon ? '45px' : undefined,
                     paddingRight: togglePassword ? '40px' : undefined,
                 }}
             />
@@ -59,7 +61,7 @@ export default function Input(props: ICOMPONENTS.InputProps) {
                     <LucideIcon
                         name={showPassword ? 'EyeOff' : 'Eye'}
                         size={iconSize}
-                        color={props.rightIconColor || iconColor}
+                        color={rightIconColor || iconColor}
                     />
                 </div>
             )}

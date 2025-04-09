@@ -17,7 +17,6 @@ declare namespace ICOMPONENTS {
         height?: string | number;
         fontSize?: string | number;
         icon?: keyof typeof import('lucide-react');
-        iconPosition?: 'left' | 'right';
         iconSize?: number;
         iconColor?: string;
         togglePassword?: boolean;
