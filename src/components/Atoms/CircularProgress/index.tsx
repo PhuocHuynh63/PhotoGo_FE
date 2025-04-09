@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { cn } from '@helpers/CN';
 
 
@@ -18,12 +18,14 @@ export default function CircularProgress({
     fontSize = 14,
     ...props
 }: ICOMPONENTS.CircularProgressProps) {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset =
-        direction === 'clockwise'
-            ? circumference - (value / 100) * circumference
-            : (value / 100) * circumference;
+    const radius = useMemo(() => (size - strokeWidth) / 2, [size, strokeWidth]);
+    const circumference = useMemo(() => 2 * Math.PI * radius, [radius]);
+    const offset = useMemo(
+        () =>
+            direction === 'clockwise'
+                ? circumference - (value / 100) * circumference
+                : circumference - circumference * (value / 100),
+        [direction, circumference, value])
 
     return (
         <div

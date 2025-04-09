@@ -1,14 +1,3 @@
-.input {
-    background-color: var(--bg-light);
-    color: var(--description-title);
-    border: solid;
-    border-color: var(--border-grey);
-    border-width: 1px;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
 .inputWrapper {
     position: relative;
     display: flex;
@@ -34,11 +23,11 @@
     }
 
     .leftIcon {
-        left: 10px;
+        left: 1rem;
     }
 
     .rightIcon {
-        right: 10px;
+        right: 1rem;
     }
 
     .iconButton {
@@ -47,6 +36,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        pointer-events: auto; // để click được
+        pointer-events: auto;
     }
 }
