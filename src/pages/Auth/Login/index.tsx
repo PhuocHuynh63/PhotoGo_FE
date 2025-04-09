@@ -65,9 +65,11 @@ const LoginPage = () => {
                                     className={errors.password ? 'input-error' : ''}
                                 />
                                 {errors.email && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
-                                <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="text-sm text-end hover:underline my-0.5">
-                                    Quên mật khẩu?
-                                </Link>
+                                <div className="flex justify-end">
+                                    <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="w-fit text-sm hover:underline my-0.5">
+                                        Quên mật khẩu?
+                                    </Link>
+                                </div>
                             </div>
                         </div>
 
