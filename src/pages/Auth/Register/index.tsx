@@ -102,7 +102,7 @@ const RegisterPage = () => {
                     </div>
 
                     <Button type="submit" style={{ width: "100%" }}>
-                        Đăng nhập
+                        Đăng ký
                     </Button>
                 </form>
 
