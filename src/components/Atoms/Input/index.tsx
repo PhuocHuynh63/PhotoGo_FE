@@ -44,7 +44,7 @@ export default function Input(props: ICOMPONENTS.InputProps) {
             <input
                 {...rest}
                 type={inputType}
-                className={styles.input}
+                className={[styles.input, className].filter(Boolean).join(' ')}
                 style={{
                     paddingLeft: icon ? '40px' : undefined,
                     paddingRight: togglePassword ? '40px' : undefined,

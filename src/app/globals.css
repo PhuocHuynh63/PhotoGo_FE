@@ -49,6 +49,7 @@
     --border-cancelled: #FECACA;
     --border-changed-calendar: #E9D5FF;
     --border-confirm: #BFDBFE;
+    --border-errror: #;
 }
 
 /* BOX SHADOW */
@@ -253,4 +254,9 @@
 
 .shadow-confirm {
     box-shadow: var(--box-shadow-confirm);
+}
+
+.input-error {
+    border: 1px solid rgb(228, 3, 3) !important;
+    margin-bottom: 0;
 }
