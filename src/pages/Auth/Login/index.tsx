@@ -44,7 +44,6 @@ const LoginPage = () => {
                             </label>
                             <Input
                                 id="email"
-                                type="email"
                                 placeholder="photogo@gmail.com"
                                 {...register("email")}
                             />
