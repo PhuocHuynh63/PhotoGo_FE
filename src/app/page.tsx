@@ -14,10 +14,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "@/components/Atoms/ProgressBar";
 import Skeleton from "@/components/Atoms/Skeleton";
 import CircularProgress from "@/components/Atoms/CircularProgress";
+import { ToggleGroup, ToggleGroupItem } from "@components/Atoms/Toggle-group";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [selected, setSelected] = useState("a");
+  const [selectedArray, setSelectedArray] = useState(["a", "b"]);
   const [gender, setGender] = useState('male');
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -88,6 +91,26 @@ export default function Home() {
 
         <CircularProgress value={70} direction="clockwise" />
         <CircularProgress value={40} direction="counter-clockwise" />
+
+        <div className="flex flex-col gap-4">
+          <ToggleGroup type="single" variant="outline" size="sm" value={selected} onValueChange={setSelected}>
+            <ToggleGroupItem value="photo">Photo</ToggleGroupItem>
+            <ToggleGroupItem value="makeup">Makeup</ToggleGroupItem>
+            <ToggleGroupItem value="studio">Studio</ToggleGroupItem>
+          </ToggleGroup>
+
+          <ToggleGroup
+            value={selectedArray}
+            onValueChange={setSelectedArray}
+          >
+            <ToggleGroupItem value="a">A</ToggleGroupItem>
+            <ToggleGroupItem value="b">B</ToggleGroupItem>
+          </ToggleGroup>
+
+
+        </div>
+
+
 
       </div>
     </div>
