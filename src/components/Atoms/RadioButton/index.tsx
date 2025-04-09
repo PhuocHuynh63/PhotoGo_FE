@@ -1,14 +1,9 @@
 'use client';
 import React from 'react';
 
-interface RadioButtonGroupProps {
-    name: string;
-    options: { label: string; value: string }[];
-    value: string;
-    onChange: (value: string) => void;
-}
 
-export default function RadioButtonGroup({ name, options, value, onChange }: RadioButtonGroupProps) {
+
+export default function RadioButtonGroup({ name, options, value, onChange }: ICOMPONENTS.RadioButtonGroupProps) {
     return (
         <div className="flex flex-col gap-2">
             {options.map(opt => (

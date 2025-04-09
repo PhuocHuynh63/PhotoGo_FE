@@ -35,6 +35,8 @@
     --bg-confirm: #DBEAFE;
     --bg-info: #EFF6FF;
     --bg-error: #FEE2E2;
+    --bg-progress: #E5E7EB;
+    --bg-skeleton: #70747e;
 }
 
 /* BORDER */

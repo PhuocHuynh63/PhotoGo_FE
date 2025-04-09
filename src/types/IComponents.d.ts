@@ -52,4 +52,53 @@ declare namespace ICOMPONENTS {
         minLength?: number;
     }
 
+    interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        label: string;
+        checked: boolean;
+        onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    }
+
+    interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        name: string;
+        options: { label: string; value: string }[];
+        value: string;
+        onChange: (value: string) => void;
+    }
+
+    interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement> {
+        width?: string | number;
+        height?: string | number;
+        fontSize?: string | number;
+    }
+
+    interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
+        size?: number;
+        strokeWidth?: number;
+        value: number;
+        color?: string;
+        bgColor?: string;
+        direction?: 'clockwise' | 'counter-clockwise';
+        showPercentage?: boolean;
+        textColor?: string;
+        fontSize?: number;
+    }
+
+    interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
+        value: number;
+        width?: string | number;
+        height?: string | number;
+        backgroundColor?: string;
+        color?: string;
+        className?: string;
+    }
+
+    interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+        width?: string | number;
+        height?: string | number;
+        borderRadius?: string | number;
+        backgroundColor?: string;
+        className?: string;
+        count?: number;
+        animated?: boolean;
+    }
 }
