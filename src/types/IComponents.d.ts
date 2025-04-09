@@ -16,6 +16,13 @@ declare namespace ICOMPONENTS {
         width?: string | number;
         height?: string | number;
         fontSize?: string | number;
+        icon?: keyof typeof import('lucide-react');
+        iconPosition?: 'left' | 'right';
+        iconSize?: number;
+        iconColor?: string;
+        togglePassword?: boolean;
+        leftIconColor?: string;
+        rightIconColor?: string;
     }
 
     export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
