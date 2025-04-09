@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ROUTES } from "@routes"
 import styles from "./index.module.scss"
-import { SubmitHandler, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
@@ -38,7 +38,7 @@ const LoginPage = () => {
                     <p className="text-description-title mb-8">Chào mừng bạn đến với PhotoGo</p>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <div className="flex flex-col space-y-2">
+                        <div className={"flex flex-col space-y-2"}>
                             <label htmlFor="email" className="text-sm font-medium">
                                 Email
                             </label>
@@ -46,9 +46,9 @@ const LoginPage = () => {
                                 id="email"
                                 placeholder="photogo@gmail.com"
                                 {...register("email")}
+                                className={errors.email ? 'input-error' : ''}
                             />
                             {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-
                         </div>
 
                         <div className="flex flex-col space-y-2  mb-2">
@@ -62,6 +62,7 @@ const LoginPage = () => {
                                     type="password"
                                     placeholder="********"
                                     {...register("password")}
+                                    className={errors.password ? 'input-error' : ''}
                                 />
                                 {errors.email && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
                                 <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="text-sm text-end hover:underline my-0.5">
