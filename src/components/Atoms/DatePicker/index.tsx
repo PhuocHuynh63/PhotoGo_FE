@@ -44,11 +44,13 @@ export default function CustomDatePicker({
                         defaultMonth={value || new Date()}
                         classNames={{
                             selected: 'text-white rounded-full',
-                            today: 'bg-gray-100 text-blue-600',
+                            today: 'bg-gray-100 text-blue-600 rounded-full',
                         }}
-                        modifiersClassNames={{
-                            selected: 'var(--bg-orange) text-white',
-                            today: 'bg-gray-100 text-blue-600',
+
+                        modifiersStyles={{
+                            selected: {
+                                backgroundColor: 'var(--bg-orange)',
+                            },
                         }}
                     />
                 </div>

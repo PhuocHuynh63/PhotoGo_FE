@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import 'react-datepicker/dist/react-datepicker.css';
 
 /* TEXT */
 :root {
@@ -36,6 +35,10 @@
     --bg-confirm: #DBEAFE;
     --bg-info: #EFF6FF;
     --bg-error: #FEE2E2;
+    --bg-progress: #e5e7eb
+    --bg-skeleton: #E5E7EB;
+    --bg-skeleton-opacity: rgba(229, 231, 235, 0.5);
+    ;
 }
 
 /* BORDER */

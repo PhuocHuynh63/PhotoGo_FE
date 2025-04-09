@@ -52,4 +52,23 @@ declare namespace ICOMPONENTS {
         minLength?: number;
     }
 
+    interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        label: string;
+        checked: boolean;
+        onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    }
+
+    interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        name: string;
+        options: { label: string; value: string }[];
+        value: string;
+        onChange: (value: string) => void;
+    }
+
+    interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement> {
+        width?: string | number;
+        height?: string | number;
+        fontSize?: string | number;
+    }
+
 }
