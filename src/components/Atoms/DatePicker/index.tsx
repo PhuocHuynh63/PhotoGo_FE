@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState } from 'react';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 export default function CustomDatePicker({
     value,
@@ -13,28 +13,46 @@ export default function CustomDatePicker({
     onChange: (date: Date | null) => void;
     placeholder?: string;
 }) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const [open, setOpen] = useState(false);
+
+    const handleDateSelect = (date: Date | undefined) => {
+        onChange(date || null);
+        setOpen(false);
+    };
+
+    const formatDate = (date: Date | null) => {
+        return date ? date.toLocaleDateString('vi-VN') : '';
+    };
 
     return (
         <div className="relative w-full">
-            <DatePicker
-                selected={value}
-                onChange={onChange}
-                placeholderText={placeholder}
-                dateFormat="dd/MM/yyyy"
-                minDate={today}
-                className="w-full rounded-xl border border-gray-300 px-4 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary"
-                onKeyDown={(e) => {
-                    const allowedKeys = [
-                        'Tab', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete',
-                        ...'0123456789/'.split('')
-                    ];
-                    if (!allowedKeys.includes(e.key)) {
-                        e.preventDefault();
-                    }
-                }}
+            <input
+                type="text"
+                readOnly
+                className="w-full px-4 py-2 border rounded-md cursor-pointer bg-white"
+                placeholder={placeholder}
+                value={formatDate(value)}
+                onClick={() => setOpen(!open)}
             />
+            {open && (
+                <div className="absolute p-2 z-10 mt-2 bg-white border rounded-md shadow-md">
+                    <DayPicker
+                        mode="single"
+                        selected={value || undefined}
+                        onSelect={handleDateSelect}
+                        disabled={{ before: new Date() }}
+                        defaultMonth={value || new Date()}
+                        classNames={{
+                            selected: 'text-white rounded-full',
+                            today: 'bg-gray-100 text-blue-600',
+                        }}
+                        modifiersClassNames={{
+                            selected: 'var(--bg-orange) text-white',
+                            today: 'bg-gray-100 text-blue-600',
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }
