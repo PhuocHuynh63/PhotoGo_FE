@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 export default function TimePicker({
     value,
@@ -15,7 +13,7 @@ export default function TimePicker({
 }) {
     return (
         <div className="relative w-full">
-            <DatePicker
+            {/* <DatePicker
                 selected={value}
                 onChange={onChange}
                 showTimeSelect
@@ -25,7 +23,7 @@ export default function TimePicker({
                 dateFormat="HH:mm"
                 placeholderText={placeholder}
                 className="w-full rounded-xl border border-gray-300 px-4 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary"
-            />
+            /> */}
         </div>
     );
 }
