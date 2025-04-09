@@ -10,18 +10,20 @@ import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 
 const LoginPage = () => {
+    //#region Handle form submit
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<IUserLoginRequest>({
         resolver: zodResolver(UserLoginRequest),
     }
     )
     const onSubmit = (data: IUserLoginRequest) => console.log(data)
+    //#endregion
 
     return (
         <>
@@ -60,11 +62,12 @@ const LoginPage = () => {
                                 <Input
                                     id="password"
                                     type="password"
+                                    togglePassword={true}
                                     placeholder="********"
                                     {...register("password")}
                                     className={errors.password ? 'input-error' : ''}
                                 />
-                                {errors.email && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
+                                {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
                                 <div className="flex justify-end">
                                     <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="w-fit text-sm hover:underline my-0.5">
                                         Quên mật khẩu?
@@ -84,7 +87,7 @@ const LoginPage = () => {
                             </div>
                             <div className="relative flex justify-center items-center text-sm">
                                 <div className={styles.line}></div>
-                                <span className={`px-2 ${styles.continue_with}`}>OR CONTINUE WITH</span>
+                                <span className={`px-2 ${styles.continue_with}`}>HOẶC TIẾP TỤC VỚI</span>
                                 <div className={styles.line}></div>
                             </div>
                         </div>
