@@ -48,16 +48,22 @@ export default function CustomDatePicker({
                         disabled={{ before: today }}
                         defaultMonth={value || today}
                         classNames={{
-                            selected: 'text-white rounded-full',
-                            today: 'bg-gray-100 text-blue-600 rounded-full',
+                            selected: "selected",
                         }}
                         modifiersStyles={{
                             selected: {
                                 backgroundColor: 'var(--bg-orange)',
+                                color: 'white',
+                                borderRadius: '100%',
                             },
+                            today: {
+                                color: 'blue',
+                                borderRadius: '100%',
+                            }
                         }}
                     />
                 </div>
+
             )}
         </div>
     );

@@ -30,7 +30,17 @@ export default function Home() {
         <Input id="username" placeholder="Enter your username" />
         <div className="flex gap-4 flex-col">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" placeholder="Enter your password" />
+          <Input
+            type="password"
+            placeholder="Enter password"
+            icon="Lock"
+            iconPosition="left"
+            togglePassword
+            leftIconColor="green"
+            rightIconColor="red"
+            iconSize={20}
+          />
+
         </div>
         <div className="flex gap-32 flex-row">
           <Button width={120} height={50} icon="AArrowDownIcon" iconPosition="right">
