@@ -11,7 +11,7 @@ import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-const LoginPage = () => {
+const ForgotPassword = () => {
     //#region Handle form submit
     const {
         register,
@@ -182,4 +182,4 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+export default ForgotPassword
