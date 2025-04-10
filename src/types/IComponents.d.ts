@@ -31,8 +31,13 @@ declare namespace ICOMPONENTS {
         onRowClick?: (row: T) => void;
         selectableRows?: boolean;
         onSelectionChange?: (selectedIds: (string | number)[]) => void;
-        height?: number;
-        width?: number;
+        height?: number | string;
+        width?: number | string;
+        searchable?: boolean;
+        searchPlaceholder?: string;
+        searchBy?: string[];
+        searchPosition?: 'left' | 'right';
+        searchWidth?: number | string;
     }
 
     export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, BaseProps, IconProps {
@@ -152,5 +157,36 @@ declare namespace ICOMPONENTS {
     export interface OTPInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
         length?: number
         onChange: (otp: string) => void
+    }
+
+    export interface ISearchResult {
+        id: string | number;
+        title: string;
+        subtitle?: string;
+        image?: string;
+    }
+
+    export interface ISearch {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        results?: ISearchResult[];
+        isLoading?: boolean;
+        onResultClick?: (result: ISearchResult) => void;
+        noResultsMessage?: string;
+    }
+
+    export interface SearchProps {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        totalResults?: number;
+        searchWidth?: string;
     }
 }
