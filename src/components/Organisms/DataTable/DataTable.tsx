@@ -11,6 +11,7 @@ import LucideIcon from '@components/Atoms/LucideIcon';
 import { cn } from '@helpers/CN';
 import Checkbox from '@components/Atoms/Checkbox';
 import Select from '@components/Atoms/Select';
+import Search from '@components/Molecules/Search/Search';
 
 export function DataTable<T extends { id: string | number } & ICOMPONENTS.SortableRecord>({
     data,
@@ -23,22 +24,48 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
     onSelectionChange,
     height = 400,
     width = 1000,
+    searchable = false,
+    searchPlaceholder,
+    searchBy,
+    searchPosition = 'left',
+    searchWidth = '300px',
 }: ICOMPONENTS.DataTableProps<T>) {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(itemsPerPage);
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
     const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredData = React.useMemo(() => {
+        if (!searchTerm) return data;
+        return data.filter(item => {
+            if (!searchBy || searchBy.length === 0) {
+                return columns.some(column => {
+                    const value = item[column.key];
+                    if (value == null) return false;
+                    return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+                });
+            }
+
+            // Nếu có searchBy, chỉ tìm kiếm trong các cột được chỉ định
+            return searchBy.some(columnKey => {
+                const value = item[columnKey];
+                if (value == null) return false;
+                return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+            });
+        });
+    }, [data, searchTerm, columns, searchBy]);
 
     const sortedData = React.useMemo(() => {
-        if (!sortConfig) return data;
-        return [...data].sort((a, b) => {
+        if (!sortConfig) return filteredData;
+        return [...filteredData].sort((a, b) => {
             const aVal = a[sortConfig.key];
             const bVal = b[sortConfig.key];
             if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
             if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
             return 0;
         });
-    }, [data, sortConfig]);
+    }, [filteredData, sortConfig]);
 
     const totalPages = Math.ceil(sortedData.length / pageSize);
     const startIndex = (currentPage - 1) * pageSize;
@@ -86,15 +113,31 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
 
     return (
         <div className="space-y-4" style={{ width: `${width}px` }}>
+            {searchable && (
+                <div className={cn(
+                    "mb-4 flex",
+                    searchPosition === 'right' ? 'justify-end' : 'justify-start'
+                )}>
+                    <div style={{ width: searchWidth }}>
+                        <Search
+                            placeholder={searchPlaceholder || "Tìm kiếm..."}
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            totalResults={sortedData.length}
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* Selected rows indicator */}
             {selectableRows && selectedRows.size > 0 && (
-                <div className="bg-gray-100 px-4 py-2 rounded-md flex items-center justify-between">
-                    <span className="text-sm text-gray-700 font-bold">
+                <div className="bg-section px-4 py-2 rounded-md flex items-center justify-between">
+                    <span className="text-sm text-description-title font-bold">
                         Đã chọn {selectedRows.size} dòng
                     </span>
                     <button
                         onClick={() => handleSelectAll(false)}
-                        className="text-sm text-black hover:text-gray-900 bg-gray-200 px-2 py-1 rounded-md"
+                        className="text-sm text-description hover:bg-gray-200 px-2 py-1 rounded-md cursor-pointer"
                     >
                         Bỏ chọn tất cả
                     </button>
@@ -111,7 +154,7 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
                         <TableHeader>
                             <TableRow>
                                 {selectableRows && (
-                                    <TableHead className="w-[50px] bg-white sticky top-0 z-10 border-b rounded-tl-md">
+                                    <TableHead className="w-[50px] bg-light sticky top-0 z-10 border-b rounded-tl-md">
                                         <Checkbox
                                             label=""
                                             checked={currentData.length > 0 && currentData.every(item => selectedRows.has(item.id))}
@@ -124,10 +167,10 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
                                         key={column.key}
                                         onClick={() => column.sortable && handleSort(column.key)}
                                         className={cn(
-                                            "bg-white sticky top-0 z-10 border-b rounded-tr-md",
+                                            "bg-light sticky top-0 z-10 border-b rounded-tr-md",
                                             "px-4 py-2",
                                             column.sortable ? 'cursor-pointer select-none' : '',
-                                            sortConfig?.key === column.key ? 'bg-gray-200 font-medium' : ''
+                                            sortConfig?.key === column.key ? 'bg-section font-medium' : ''
                                         )}
                                         style={{ width: column.width }}
                                     >
@@ -183,8 +226,8 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
                                             onClick={onRowClick ? () => onRowClick(item) : undefined}
                                             className={cn(
                                                 onRowClick ? 'cursor-pointer' : '',
-                                                'hover:bg-gray-50',
-                                                selectedRows.has(item.id) && 'bg-gray-50'
+                                                'hover:bg-section',
+                                                selectedRows.has(item.id) && ''
                                             )}
                                         >
                                             {selectableRows && (
@@ -225,10 +268,10 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
             </div>
 
             {/* Pagination section */}
-            <div className="flex flex-col gap-4 px-4 py-2 border rounded-md bg-gray-50">
+            <div className="flex flex-col gap-4 px-4 py-2 border rounded-md bg-section">
                 <div className="flex flex-col md:flex-row items-center justify-between">
 
-                    <div className="flex items-center gap-2 text-sm text-gray-700">
+                    <div className="flex items-center gap-2 text-sm text-description-title">
                         <Select
                             options={["5", "10", "20", "50", "100"]}
                             value={pageSize.toString()}
@@ -249,7 +292,7 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
                         )}
                     </div>
 
-                    <div className="text-sm text-gray-700">
+                    <div className="text-sm text-description-title">
                         <span>
                             {startIndex + 1}-{Math.min(endIndex, sortedData.length)} / {sortedData.length} bản ghi
                         </span>
