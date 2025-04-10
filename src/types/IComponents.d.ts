@@ -85,7 +85,7 @@ declare namespace ICOMPONENTS {
         onChange?: (value: string) => void;
     }
 
-    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps {}
+    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps { }
 
     export interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
         size?: number;
@@ -139,5 +139,13 @@ declare namespace ICOMPONENTS {
 
     export interface NavigationButtonProps extends React.ComponentProps<"a"> {
         className?: string;
+    }
+    interface TransitionWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
+        children: React.ReactNode;
+        initial?: MotionProps["initial"]; // Tùy chỉnh trạng thái ban đầu
+        animate?: MotionProps["animate"]; // Tùy chỉnh trạng thái khi hiển thị
+        exit?: MotionProps["exit"]; // Tùy chỉnh trạng thái khi thoát
+        transition?: MotionProps["transition"]; // Tùy chỉnh thời gian và kiểu hiệu ứng
+        mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
     }
 }
