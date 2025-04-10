@@ -10,6 +10,7 @@ import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
 import { IUserRegisterRequest, UserRegisterRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
+import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 
 const RegisterPage = () => {
     //#region Handle form submit
@@ -23,14 +24,19 @@ const RegisterPage = () => {
     const onSubmit = (data: IUserRegisterRequest) => console.log(data)
     //#endregion
 
+    const initial = { opacity: 0, x: -20 }
     return (
-        <>
+        <TransitionWrapper className="w-full max-w-6xl min-h-screen bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
             {/* Main card container */}
             {/* --- MODIFIED left side - Photo collage --- */}
             <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#D4A076] to-[#E8B396] rounded-r-xl overflow-hidden">
                 {/* Container for padding and relative positioning */}
                 <div className="flex items-center justify-center h-full w-full  relative">
-                    <div className="h-9/12 w-full mb-16 p-4 relative">
+                    <div className="absolute top-7 left-0 right-0 p-6 text-white z-10">
+                        <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
+                        <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
+                    </div>
+                    <div className="h-9/12 w-full mt-10 p-4 relative">
                         {/* Photo collage grid (2 columns) */}
                         <div className="grid grid-cols-2 gap-4 h-full">
                             {/* Image 1: Tall, spans 2 rows in the first column */}
@@ -69,10 +75,6 @@ const RegisterPage = () => {
                                 <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                             </div>
                         </div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-                        <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
-                        <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
                     </div>
                 </div>
             </div>
@@ -199,7 +201,7 @@ const RegisterPage = () => {
             </div>
 
             {/* --- End of MODIFIED Right side --- */}
-        </>
+        </TransitionWrapper>
     )
 }
 

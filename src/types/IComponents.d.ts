@@ -99,7 +99,7 @@ declare namespace ICOMPONENTS {
         className?: string;
     }
 
-    interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+    interface SkeletonProps {
         width?: string | number;
         height?: string | number;
         borderRadius?: string | number;
@@ -107,5 +107,14 @@ declare namespace ICOMPONENTS {
         className?: string;
         count?: number;
         animated?: boolean;
+    }
+
+    interface TransitionWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
+        children: React.ReactNode;
+        initial?: MotionProps["initial"]; // Tùy chỉnh trạng thái ban đầu
+        animate?: MotionProps["animate"]; // Tùy chỉnh trạng thái khi hiển thị
+        exit?: MotionProps["exit"]; // Tùy chỉnh trạng thái khi thoát
+        transition?: MotionProps["transition"]; // Tùy chỉnh thời gian và kiểu hiệu ứng
+        mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
     }
 }

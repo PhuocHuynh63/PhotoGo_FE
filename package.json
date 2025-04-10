@@ -14,6 +14,7 @@
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
+    "framer-motion": "^12.6.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.487.0",
