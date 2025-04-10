@@ -18,11 +18,11 @@
 
 /* BACKGROUND */
 :root {
-    --bg-orange: #F6AC69;
-    --bg-orange-opacity: rgba(246, 172, 105, 0.1);
-    --bg-orange-opacity-2: rgba(246, 172, 105, 0.05);
-    --bg-orange-opacity-3: rgba(246, 172, 105, 0.2);
-    --bg-orange-disabled: #FFC48F;
+    --bg-primary: #F6AC69;
+    --bg-primary-opacity: rgba(246, 172, 105, 0.1);
+    --bg-primary-opacity-2: rgba(246, 172, 105, 0.05);
+    --bg-primary-opacity-3: rgba(246, 172, 105, 0.2);
+    --bg-primary-disabled: #FFC48F;
     --bg-closed: #EF4444;
     --bg-dark: rgba(0, 0, 0, 0.6);
     --bg-dark-linear: rgba(0, 0, 0, 0.7);
@@ -123,20 +123,20 @@
 }
 
 /* BACKGROUND */
-.bg-orange {
-    background-color: var(--bg-orange);
+.bg-primary {
+    background-color: var(--bg-primary);
 }
 
-.bg-orange-opacity {
-    background-color: var(--bg-orange-opacity);
+.bg-primary-opacity {
+    background-color: var(--bg-primary-opacity);
 }
 
-.bg-orange-opacity-2 {
-    background-color: var(--bg-orange-opacity-2);
+.bg-primary-opacity-2 {
+    background-color: var(--bg-primary-opacity-2);
 }
 
-.bg-orange-disabled {
-    background-color: var(--bg-orange-disabled);
+.bg-primary-disabled {
+    background-color: var(--bg-primary-disabled);
 }
 
 .bg-closed {

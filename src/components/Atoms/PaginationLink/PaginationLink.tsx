@@ -11,7 +11,7 @@ const PaginationLink = ({
         className={cn(
             "px-3 py-2 rounded-md transition-colors",
             isActive
-                ? "border bg-orange text-light pointer-events-none"
+                ? "border bg-primary text-light pointer-events-none"
                 : "hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
             className
         )}
