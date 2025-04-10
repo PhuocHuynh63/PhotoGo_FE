@@ -13,39 +13,42 @@ export default function Button({
     isLoading = false,
     loadingText = 'Loading...',
     spinIcon = false,
+    disabled = false,
     ...rest
 }: ICOMPONENTS.ButtonProps) {
-    const style = useMemo<React.CSSProperties>(() => ({
-        width: typeof width === 'number' ? `${width}px` : width,
-        height: typeof height === 'number' ? `${height}px` : height,
-    }), [width, height]);
+    const { className, ...buttonProps } = rest;
 
-    const showIcon = useMemo(() => {
-        if (!icon || isLoading) return null;
+    const { style, showIcon, loadingIndicator } = useMemo(() => {
+        const computedStyle: React.CSSProperties = {
+            width: typeof width === 'number' ? `${width}px` : width,
+            height: typeof height === 'number' ? `${height}px` : height,
+        };
 
-        return (
+        const computedShowIcon = !isLoading && icon ? (
             <LucideIcon
                 name={icon}
-                size={iconSize}
-                color={iconColor}
+                iconSize={iconSize}
+                iconColor={iconColor}
                 spin={spinIcon}
             />
-        );
-    }, [icon, iconSize, iconColor, spinIcon, isLoading]);
+        ) : null;
 
-    const loadingIndicator = useMemo(() => (
-        <>
-            <LucideIcon name="Loader" spin size={iconSize} />
-            <span className={styles.loadingText}>{loadingText}</span>
-        </>
-    ), [iconSize, loadingText]);
+        const computedLoadingIndicator = isLoading ? (
+            <>
+                <LucideIcon name="Loader" spin iconSize={iconSize} />
+                <span className={styles.loadingText}>{loadingText}</span>
+            </>
+        ) : null;
+
+        return { style: computedStyle, showIcon: computedShowIcon, loadingIndicator: computedLoadingIndicator };
+    }, [width, height, icon, iconSize, iconColor, spinIcon, isLoading, loadingText]);
 
     return (
         <button
-            className={styles.button}
+            className={`${styles.button} ${className || ''}`}
             style={style}
-            disabled={isLoading || rest.disabled}
-            {...rest}
+            disabled={isLoading || disabled}
+            {...buttonProps}
         >
             {isLoading ? (
                 loadingIndicator
