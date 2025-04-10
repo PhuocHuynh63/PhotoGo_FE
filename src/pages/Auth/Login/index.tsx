@@ -10,7 +10,7 @@ import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
+import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 
 const LoginPage = () => {
     //#region Handle form submit
@@ -26,7 +26,7 @@ const LoginPage = () => {
     //#endregion
 
     return (
-        <>
+        <TransitionWrapper className="w-full max-w-6xl min-h-screen bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
             {/* Main card container */}
             <div className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Left side - Login form */}
@@ -87,7 +87,7 @@ const LoginPage = () => {
                             </div>
                             <div className="relative flex justify-center items-center text-sm">
                                 <div className={styles.line}></div>
-                                <span className={`px-2 ${styles.continue_with}`}>HOẶC TIẾP TỤC VỚI</span>
+                                <span className={`px-2 font-bold ${styles.continue_with}`}>HOẶC TIẾP TỤC VỚI</span>
                                 <div className={styles.line}></div>
                             </div>
                         </div>
@@ -131,7 +131,11 @@ const LoginPage = () => {
                 <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#D4A076] to-[#E8B396] rounded-r-xl overflow-hidden">
                     {/* Container for padding and relative positioning */}
                     <div className="flex items-center justify-center h-full w-full  relative">
-                        <div className="h-9/12 w-full mb-16 p-4 relative">
+                        <div className="absolute top-4 left-0 right-0 p-6 text-white z-10">
+                            <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
+                            <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
+                        </div>
+                        <div className="h-9/12 w-full mt-10 p-4 relative">
                             {/* Photo collage grid (2 columns) */}
                             <div className="grid grid-cols-2 gap-4 h-full">
                                 {/* Image 1: Tall, spans 2 rows in the first column */}
@@ -171,15 +175,12 @@ const LoginPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-                            <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
-                            <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
-                        </div>
+
                     </div>
                 </div>
                 {/* --- End of MODIFIED Right side --- */}
             </div>
-        </>
+        </TransitionWrapper>
     )
 }
 
