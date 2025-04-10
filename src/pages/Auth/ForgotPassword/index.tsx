@@ -10,8 +10,11 @@ import { IUserForgotPasswordRequest, UserForgotPasswordRequest } from "@models/u
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { ArrowLeft, Mail } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 const ForgotPasswordPage = () => {
+    const router = useRouter();
+
     //#region Handle form submit
     const {
         register,
@@ -19,15 +22,19 @@ const ForgotPasswordPage = () => {
         formState: { errors },
     } = useForm<IUserForgotPasswordRequest>({
         resolver: zodResolver(UserForgotPasswordRequest),
+    })
+
+    const onSubmit = (data: IUserForgotPasswordRequest) => {
+        router.push(ROUTES.AUTH.VERIFY_OTP);
+        localStorage.setItem('email', data.email);
+        console.log(data);
     }
-    )
-    const onSubmit = (data: IUserForgotPasswordRequest) => console.log(data)
     //#endregion
 
     return (
         <TransitionWrapper>
             {/* Main card container */}
-            <div className="w-full max-w-2xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
+            <div className="w-full max-w-lg bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Forgot - form */}
                 <div className="w-full p-8 md:p-12">
                     {/* Center logo */}
@@ -39,7 +46,7 @@ const ForgotPasswordPage = () => {
 
                     <div className="flex flex-col items-center">
                         <h1 className="text-2xl font-bold mb-2">Quên mật khẩu</h1>
-                        <p className="text-description mb-8 whitespace-pre-line">Nhập thông tin liên hệ của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu</p>
+                        <p className="text-description text-center mb-8 whitespace-pre-line">Nhập thông tin liên hệ của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu</p>
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -58,7 +65,7 @@ const ForgotPasswordPage = () => {
                         </Button>
                     </form>
 
-                    <p className="flex mt-8 justify-center items-center text-description-title">
+                    <p className="flex mt-5 justify-center items-center text-description-title">
                         <ArrowLeft size={20} className="text-dark mr-2" />
                         <Link href={ROUTES.AUTH.LOGIN} className="font-sm text-dark hover:underline">
                             Quay lại trang đăng nhập

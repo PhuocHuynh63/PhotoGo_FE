@@ -148,4 +148,9 @@ declare namespace ICOMPONENTS {
         transition?: MotionProps["transition"]; // Tùy chỉnh thời gian và kiểu hiệu ứng
         mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
     }
+
+    export interface OTPInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        length?: number
+        onChange: (otp: string) => void
+    }
 }
