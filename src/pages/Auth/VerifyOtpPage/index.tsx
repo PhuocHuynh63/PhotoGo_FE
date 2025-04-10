@@ -56,7 +56,8 @@ const VerifyOtpPage = () => {
 
 
     //#region Countdown timer for OTP resend
-    const [countdown, setCountdown] = useState<number>(1)
+    //TODO: Để 5s cho dễ test, sau này để 60s
+    const [countdown, setCountdown] = useState<number>(5)
     useEffect(() => {
         if (countdown <= 0) return
         const interval = setInterval(() => {
