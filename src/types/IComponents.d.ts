@@ -154,6 +154,11 @@ declare namespace ICOMPONENTS {
         mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
     }
 
+    export interface OTPInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        length?: number
+        onChange: (otp: string) => void
+    }
+
     export interface ISearchResult {
         id: string | number;
         title: string;

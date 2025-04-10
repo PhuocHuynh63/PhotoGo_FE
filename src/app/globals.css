@@ -26,6 +26,7 @@
     --bg-closed: #EF4444;
     --bg-dark: rgba(0, 0, 0, 0.6);
     --bg-dark-linear: rgba(0, 0, 0, 0.7);
+    --bg-grey: #E5E7EB;
     --bg-light: #FFFFFF;
     --bg-section: #F9FAFB;
     --bg-input: #F8FAFC;
@@ -148,6 +149,10 @@
 
 .bg-dark-linear {
     background-color: var(--bg-dark-linear);
+}
+
+.bg-grey {
+    background-color: var(--bg-grey);
 }
 
 .bg-light {
