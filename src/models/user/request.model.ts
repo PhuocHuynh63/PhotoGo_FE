@@ -26,3 +26,13 @@ export const UserRegisterRequest = z.object({
 })
 export type IUserRegisterRequest = z.TypeOf<typeof UserRegisterRequest>;
 //----------------------End----------------------//
+
+/**
+ * UserModel is a Model for User Forgot request
+ * @param email - Email of user
+ */
+export const UserForgotPasswordRequest = z.object({
+    email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
+})
+export type IUserForgotPasswordRequest = z.TypeOf<typeof UserForgotPasswordRequest>;
+//----------------------End----------------------//

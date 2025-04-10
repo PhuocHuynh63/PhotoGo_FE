@@ -3,14 +3,13 @@
 import type React from "react"
 import Link from "next/link"
 import { ROUTES } from "@routes"
-import styles from "./index.module.scss"
 import { useForm } from "react-hook-form"
 import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
-import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
+import { IUserForgotPasswordRequest, UserForgotPasswordRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Mail } from "lucide-react"
 
 const ForgotPasswordPage = () => {
     //#region Handle form submit
@@ -18,38 +17,36 @@ const ForgotPasswordPage = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<IUserLoginRequest>({
-        resolver: zodResolver(UserLoginRequest),
+    } = useForm<IUserForgotPasswordRequest>({
+        resolver: zodResolver(UserForgotPasswordRequest),
     }
     )
-    const onSubmit = (data: IUserLoginRequest) => console.log(data)
+    const onSubmit = (data: IUserForgotPasswordRequest) => console.log(data)
     //#endregion
 
     return (
         <TransitionWrapper>
             {/* Main card container */}
             <div className="w-full max-w-2xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
-                {/* Left side - Login form */}
+                {/* Forgot - form */}
                 <div className="w-full p-8 md:p-12">
                     {/* Center logo */}
-                    .b
-                    <Link href={ROUTES.AUTH.LOGIN} className="flex justify-center mb-10">
-                        <img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="" />
-                    </Link>
+                    <div className="flex justify-center items-center mb-4">
+                        <div className="rounded-full flex justify-center items-center w-16 h-16 bg-grey">
+                            <Mail className="w-8 h-8 text-primary font-bold" />
+                        </div>
+                    </div>
 
                     <div className="flex flex-col items-center">
                         <h1 className="text-2xl font-bold mb-2">Quên mật khẩu</h1>
-                        <p className="text-description-title mb-8 whitespace-pre-line">Nhập thông tin liên hệ của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu</p>
+                        <p className="text-description mb-8 whitespace-pre-line">Nhập thông tin liên hệ của bạn và chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu</p>
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         <div className={"flex flex-col space-y-2"}>
-                            <label htmlFor="email" className="text-sm font-medium">
-                                Email
-                            </label>
                             <Input
                                 id="email"
-                                placeholder="photogo@gmail.com"
+                                placeholder="Email của bạn"
                                 {...register("email")}
                                 className={errors.email ? 'input-error' : ''}
                             />
@@ -62,13 +59,17 @@ const ForgotPasswordPage = () => {
                     </form>
 
                     <p className="flex mt-8 justify-center items-center text-description-title">
-                        <ArrowLeft size={20} />
-                        <Link href={ROUTES.AUTH.REGISTER} className="font-medium text-primary hover:underline">
+                        <ArrowLeft size={20} className="text-dark mr-2" />
+                        <Link href={ROUTES.AUTH.LOGIN} className="font-sm text-dark hover:underline">
                             Quay lại trang đăng nhập
                         </Link>
                     </p>
                 </div>
-                {/* --- End of MODIFIED Right side --- */}
+                {/* --- End --- */}
+            </div>
+            <div className="flex justify-center items-center mt-8">
+                <span className="text-description">Bạn cần trợ giúp? <Link href={ROUTES.PUBLIC.CONTACT} className="text-primary font-bold">Liên hệ với chúng tôi</Link>
+                </span>
             </div>
         </TransitionWrapper>
     )

@@ -10,6 +10,7 @@ const AUTH = {
 
 const PUBLIC = {
     HOME: '/',
+    CONTACT: '/contact',
 }
 
 const ADMIN = {
