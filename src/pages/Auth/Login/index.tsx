@@ -128,7 +128,7 @@ const LoginPage = () => {
                 </div>
 
                 {/* --- MODIFIED Right side - Photo collage --- */}
-                <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#D4A076] to-[#E8B396] rounded-r-xl overflow-hidden">
+                <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#DF9E61] to-[#E8B396] shadow-lg rounded-r-xl overflow-hidden">
                     {/* Container for padding and relative positioning */}
                     <div className="flex items-center justify-center h-full w-full  relative">
                         <div className="absolute top-4 left-0 right-0 p-6 text-white z-10">
@@ -139,37 +139,37 @@ const LoginPage = () => {
                             {/* Photo collage grid (2 columns) */}
                             <div className="grid grid-cols-2 gap-4 h-full">
                                 {/* Image 1: Tall, spans 2 rows in the first column */}
-                                <div className="col-span-1 row-span-2 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-100 hover:shadow-lg group relative">
+                                <div className="col-span-1 row-span-2 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
                                     <Image
                                         src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
                                         alt="Scenic view"
                                         layout="fill"
                                         objectFit="cover"
-                                        className="transition-transform duration-500 group-hover:scale-110"
+                                        className="transition-transform duration-500"
                                     />
                                     <div className="absolute inset-0 bg-black opacity-15 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                                 </div>
 
                                 {/* Image 2: Top-right cell */}
-                                <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg group relative">
+                                <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
                                     <Image
-                                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
+                                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744300737/mau_2_viaxwk.svg"
                                         alt="Creative shot"
                                         layout="fill"
                                         objectFit="cover"
-                                        className="transition-transform duration-500 group-hover:scale-110"
+                                        className="transition-transform duration-500"
                                     />
                                     <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                                 </div>
 
                                 {/* Image 3: Bottom-right cell */}
-                                <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg group relative">
+                                <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
                                     <Image
-                                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
+                                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744300689/mau_3_q6eubk.svg"
                                         alt="Community photo"
                                         layout="fill"
                                         objectFit="cover"
-                                        className="transition-transform duration-500 group-hover:scale-110"
+                                        className="transition-transform duration-500"
                                     />
                                     <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
                                 </div>
