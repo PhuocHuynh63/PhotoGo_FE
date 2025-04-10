@@ -31,8 +31,13 @@ declare namespace ICOMPONENTS {
         onRowClick?: (row: T) => void;
         selectableRows?: boolean;
         onSelectionChange?: (selectedIds: (string | number)[]) => void;
-        height?: number;
-        width?: number;
+        height?: number | string;
+        width?: number | string;
+        searchable?: boolean;
+        searchPlaceholder?: string;
+        searchBy?: string[];
+        searchPosition?: 'left' | 'right';
+        searchWidth?: number | string;
     }
 
     export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, BaseProps, IconProps {
@@ -147,5 +152,36 @@ declare namespace ICOMPONENTS {
         exit?: MotionProps["exit"]; // Tùy chỉnh trạng thái khi thoát
         transition?: MotionProps["transition"]; // Tùy chỉnh thời gian và kiểu hiệu ứng
         mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
+    }
+
+    export interface ISearchResult {
+        id: string | number;
+        title: string;
+        subtitle?: string;
+        image?: string;
+    }
+
+    export interface ISearch {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        results?: ISearchResult[];
+        isLoading?: boolean;
+        onResultClick?: (result: ISearchResult) => void;
+        noResultsMessage?: string;
+    }
+
+    export interface SearchProps {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        totalResults?: number;
+        searchWidth?: string;
     }
 }

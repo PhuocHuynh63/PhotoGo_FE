@@ -25,6 +25,7 @@ import TableBody from "@components/Molecules/TableBody/TableBody";
 import TableCaption from "@components/Atoms/TableCaption/TableCaption";
 import TableHead from "@components/Atoms/TableHeader/TableHeader";
 import { DataTable } from "@components/Organisms/DataTable/DataTable";
+import Search from "@components/Molecules/Search/Search";
 
 function generateMockUsers(count: number) {
   const firstNames = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ"];
@@ -115,7 +116,13 @@ export default function Home() {
   const [gender, setGender] = useState('male');
   const [value, setValue] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [searchValue, setSearchValue] = useState('');
+  const handleChange = (value: string) => {
+    setSearchValue(value)
+  }
+  const handleSearch = (value: string) => {
+    console.log(value)
+  }
   useEffect(() => {
     const interval = setInterval(() => {
       setValue(Math.floor(Math.random() * 100));
@@ -123,7 +130,7 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, []);
-
+  console.log(searchValue)
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
 
@@ -220,7 +227,6 @@ export default function Home() {
 
 
         </div>
-
         <Table>
           <TableCaption>Danh sách người dùng</TableCaption>
           <TableHeader>
@@ -247,7 +253,31 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <DataTable height={500} width={1400} data={data} columns={columns} selectableRows={true} loading={false} onRowClick={(row) => { console.log(row.id) }} />
+        <DataTable
+          height={500}
+          width={1400}
+          data={data}
+          columns={columns}
+          selectableRows={true}
+          loading={false}
+          searchable={true}
+          searchPlaceholder="Tìm kiếm..."
+          searchBy={["name"]}
+          searchPosition="right"
+          onRowClick={(row) => { console.log(row.id) }} />
+      </div>
+
+      <div className="mt-6">
+        <Search
+          value={searchValue}
+          onChange={handleChange}
+          onSearch={handleSearch}
+          placeholder="Tìm kiếm..."
+          debounceTime={700}
+          totalResults={10}
+          searchWidth="300px"
+          className="max-w-md"
+        />
       </div>
 
     </div>
