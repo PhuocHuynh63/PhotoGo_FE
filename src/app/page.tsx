@@ -15,6 +15,97 @@ import { Progress } from "@/components/Atoms/ProgressBar";
 import Skeleton from "@/components/Atoms/Skeleton";
 import CircularProgress from "@/components/Atoms/CircularProgress";
 import { ToggleGroup, ToggleGroupItem } from "@components/Atoms/Toggle-group";
+import Pagination from "@components/Organisms/Pagination/Pagination";
+import Table from "@components/Organisms/Table/Table";
+import TableRow from "@components/Molecules/TableRow/TableRow";
+
+import TableHeader from "@components/Molecules/TableHeader/TableHeader";
+import TableCell from "@components/Atoms/TableCell/TableCell";
+import TableBody from "@components/Molecules/TableBody/TableBody";
+import TableCaption from "@components/Atoms/TableCaption/TableCaption";
+import TableHead from "@components/Atoms/TableHeader/TableHeader";
+import { DataTable } from "@components/Organisms/DataTable/DataTable";
+
+function generateMockUsers(count: number) {
+  const firstNames = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ"];
+  const middleNames = ["Văn", "Thị", "Hữu", "Đức", "Minh", "Ngọc", "Thanh", "Quốc"];
+  const lastNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K"];
+
+  const roles = ["Admin", "User", "Manager"];
+  const departments = ["IT", "HR", "Sales", "Marketing", "Finance"];
+  const statuses = ["active", "inactive"];
+
+  const getRandomItem = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+  const getRandomPhone = () => "0" + Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("");
+  const getRandomDate = () => {
+    const start = new Date(2024, 2, 1); // 2024-03-01
+    const end = new Date(2024, 2, 31); // 2024-03-31
+    const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    return date.toISOString().split('T')[0]; // yyyy-mm-dd
+  };
+
+  return Array.from({ length: count }, (_, i) => {
+    const first = getRandomItem(firstNames);
+    const middle = getRandomItem(middleNames);
+    const last = getRandomItem(lastNames);
+    const fullName = `${first} ${middle} ${last}`;
+    const email = `${first.toLowerCase()}${last.toLowerCase()}${i}@gmail.com`;
+
+    return {
+      id: i + 1,
+      name: fullName,
+      email,
+      role: getRandomItem(roles),
+      status: getRandomItem(statuses),
+      createdAt: getRandomDate(),
+      phone: getRandomPhone(),
+      department: getRandomItem(departments)
+    };
+  });
+}
+
+const data = generateMockUsers(7320);
+const columns = [
+  {
+    key: 'name',
+    header: 'Tên',
+  },
+  {
+    key: 'email',
+    header: 'Email',
+  },
+  {
+    key: 'phone',
+    header: 'Số điện thoại',
+  },
+  {
+    key: 'department',
+    header: 'Phòng ban',
+  },
+  {
+    key: 'role',
+    header: 'Vai trò',
+  },
+  {
+    key: 'status',
+    header: 'Trạng thái',
+    render: (row: any) => (
+      <span className={`px-2 py-1 rounded-full text-xs ${row.status === 'active'
+        ? 'bg-green-100 text-green-800'
+        : 'bg-red-100 text-red-800'
+        }`}>
+        {row.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+      </span>
+    ),
+    sortable: true
+  },
+  {
+    key: 'createdAt',
+    header: 'Ngày tạo',
+    render: (row: any) => new Date(row.createdAt).toLocaleDateString('vi-VN'),
+    sortable: true
+  }
+];
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -23,6 +114,9 @@ export default function Home() {
   const [selectedArray, setSelectedArray] = useState(["a", "b"]);
   const [gender, setGender] = useState('male');
   const [value, setValue] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(10);
+  const [itemPerPage, setItemPerPage] = useState(5);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -110,6 +204,7 @@ export default function Home() {
         <CircularProgress value={value} direction="clockwise" />
         <CircularProgress value={value + 10} direction="counter-clockwise" />
 
+
         <div className="flex flex-col gap-4">
           <ToggleGroup type="single" variant="outline" size="sm" value={selected} onValueChange={setSelected}>
             <ToggleGroupItem value="photo">Photo</ToggleGroupItem>
@@ -128,9 +223,35 @@ export default function Home() {
 
         </div>
 
-
-
+        <Table>
+          <TableCaption>Danh sách người dùng</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Tên</TableHead>
+              <TableHead>Email</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Nguyễn Văn A</TableCell>
+              <TableCell>nguyenvana@example.com</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <Pagination
+          total={totalPage}
+          current={currentPage}
+          onChange={(page) => {
+            console.log(page)
+            setCurrentPage(page);
+          }}
+        />
       </div>
+
+      <div className="flex flex-col gap-4">
+        <DataTable height={500} width={1400} data={data} columns={columns} itemsPerPage={itemPerPage} selectableRows={true} loading={false} onRowClick={(row) => { console.log(row.id) }} />
+      </div>
+
     </div>
   );
 }
