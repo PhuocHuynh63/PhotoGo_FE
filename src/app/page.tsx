@@ -115,8 +115,6 @@ export default function Home() {
   const [gender, setGender] = useState('male');
   const [value, setValue] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(10);
-  const [itemPerPage, setItemPerPage] = useState(5);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -239,7 +237,7 @@ export default function Home() {
           </TableBody>
         </Table>
         <Pagination
-          total={totalPage}
+          total={10}
           current={currentPage}
           onChange={(page) => {
             console.log(page)
@@ -249,7 +247,7 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <DataTable height={500} width={1400} data={data} columns={columns} itemsPerPage={itemPerPage} selectableRows={true} loading={false} onRowClick={(row) => { console.log(row.id) }} />
+        <DataTable height={500} width={1400} data={data} columns={columns} selectableRows={true} loading={false} onRowClick={(row) => { console.log(row.id) }} />
       </div>
 
     </div>
