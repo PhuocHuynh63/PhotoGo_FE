@@ -13,6 +13,28 @@ declare namespace ICOMPONENTS {
         iconColor?: string;
     }
 
+    // DataTable types
+    export type SortableRecord = Record<string, string | number | Date>;
+
+    export interface DataTableProps<T extends { id: string | number } & SortableRecord> {
+        data: T[];
+        columns: {
+            key: string;
+            header: string;
+            render?: (item: T) => React.ReactNode;
+            sortable?: boolean;
+            width?: string | number;
+        }[];
+        itemsPerPage?: number;
+        caption?: string;
+        loading?: boolean;
+        onRowClick?: (row: T) => void;
+        selectableRows?: boolean;
+        onSelectionChange?: (selectedIds: (string | number)[]) => void;
+        height?: number;
+        width?: number;
+    }
+
     export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, BaseProps, IconProps {
         iconPosition?: 'left' | 'right';
         isLoading?: boolean;
@@ -51,19 +73,19 @@ declare namespace ICOMPONENTS {
     }
 
     export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        label: string;
-        checked: boolean;
-        onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+        label?: string;
+        checked?: boolean;
+        onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
 
     export interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        name: string;
-        options: { label: string; value: string }[];
-        value: string;
-        onChange: (value: string) => void;
+        name?: string;
+        options?: { label: string; value: string }[];
+        value?: string;
+        onChange?: (value: string) => void;
     }
 
-    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps {}
+    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps { }
 
     export interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
         size?: number;
@@ -91,6 +113,33 @@ declare namespace ICOMPONENTS {
         animated?: boolean;
     }
 
+    export interface PaginationProps {
+        className?: string;
+        total: number;
+        current: number;
+        onChange: (page: number) => void;
+    }
+
+    export interface PaginationLinkProps extends React.ComponentProps<"a"> {
+        isActive?: boolean;
+        fontSize?: ButtonProps["fontSize"];
+    }
+
+    export interface PaginationItemProps extends React.ComponentProps<"li"> {
+        className?: string;
+    }
+
+    export interface PaginationContentProps extends React.ComponentProps<"ul"> {
+        className?: string;
+    }
+
+    export interface PaginationEllipsisProps extends React.ComponentProps<"span"> {
+        className?: string;
+    }
+
+    export interface NavigationButtonProps extends React.ComponentProps<"a"> {
+        className?: string;
+    }
     interface TransitionWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
         children: React.ReactNode;
         initial?: MotionProps["initial"]; // Tùy chỉnh trạng thái ban đầu
