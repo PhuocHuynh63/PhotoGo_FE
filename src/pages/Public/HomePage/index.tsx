@@ -36,14 +36,14 @@ const HomePage = () => {
 
                 {/* Services section */}
             </div>
-                <div className="flex container mx-auto px-4 py-16 items-center justify-center">
-                    <div className="flex flex-col gap-8 max-w-2xl text-black items-center justify-center">
-                        <h1 className="text-5xl font-bold ">
-                            Dịch vụ của chúng tôi
-                        </h1>
-                        <span>PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
-                    </div>
+            <div className="flex container mx-auto px-4 py-16 items-center justify-center">
+                <div className="flex flex-col gap-8 max-w-2xl text-black items-center justify-center">
+                    <h1 className="text-5xl font-bold ">
+                        Dịch vụ của chúng tôi
+                    </h1>
+                    <span>PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
                 </div>
+            </div>
         </div>
     )
 }
