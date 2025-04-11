@@ -12,7 +12,7 @@ export default function NotFound() {
     }, [])
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center  px-4 py-12 text-center bg-[#F8F8F8]">
+        <div className="flex min-h-screen flex-col items-center justify-center  px-4 py-12 text-center bg-white">
             <div className="mx-auto max-w-md">
                 <motion.div
                     className="mb-8 flex justify-center"
@@ -36,12 +36,12 @@ export default function NotFound() {
                             repeatType: "reverse",
                         }}
                     >
-                        <Camera className="h-8 w-8 text-primary" />
+                        <Camera className="h-8 w-8 text-black" />
                     </motion.div>
                 </motion.div>
 
                 <motion.h1
-                    className="mb-4 text-5xl font-bold text-primary"
+                    className="mb-4 text-5xl font-bold text-black"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
@@ -82,7 +82,7 @@ export default function NotFound() {
                 </motion.h2>
 
                 <motion.p
-                    className="mb-8 text-primary"
+                    className="mb-8 text-black"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8, duration: 0.5 }}
@@ -103,7 +103,7 @@ export default function NotFound() {
                             className="w-full rounded-full border border-gray-300 px-4 py-2 pr-10 focus:border-gray-400 focus:outline-none transition-all duration-300 hover:shadow-md focus:shadow-md"
                         />
                         <motion.button
-                            className="cursor-pointer absolute right-1 top-1 rounded-full bg-[#8FAABF] p-2 text-white"
+                            className="cursor-pointer absolute right-1 top-1 rounded-full bg-black p-2 text-white"
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             animate={{
@@ -129,7 +129,7 @@ export default function NotFound() {
                     <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                         <Link
                             href="/"
-                            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg"
+                            className="inline-flex w-full items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg"
                         >
                             Đưa tôi về nhà
                             <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}>

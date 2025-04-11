@@ -156,6 +156,7 @@ declare namespace ICOMPONENTS {
 
     export interface OTPInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
         length?: number
+        error?: boolean
         onChange: (otp: string) => void
     }
 

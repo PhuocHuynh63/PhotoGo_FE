@@ -11,8 +11,14 @@ import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
+import { useEffect } from "react"
+import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
 
 const LoginPage = () => {
+    //#region define variables
+    useRemoveLocalStorage("email")
+    //#endregion
+
     //#region Handle form submit
     const {
         register,
