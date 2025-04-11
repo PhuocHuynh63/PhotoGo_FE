@@ -84,11 +84,16 @@ declare namespace ICOMPONENTS {
         onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
 
+    export interface Option {
+        label: string;
+        value: string;
+    }
+
     export interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        name?: string;
-        options?: { label: string; value: string }[];
-        value?: string;
-        onChange?: (value: string) => void;
+        name: string;
+        options: Option[];
+        value: string;
+        onChange: (value: string) => void;
     }
 
     export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps { }
