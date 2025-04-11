@@ -94,7 +94,7 @@ const VerifyOtpPage = () => {
                     </div>
 
                     <div className="flex flex-col items-center">
-                        <h1 className="text-2xl font-bold mb-2">Đặt lại mật khẩu</h1>
+                        <h1 className="text-2xl font-bold mb-2">Xác thực OTP</h1>
                         <p className="text-description text-center whitespace-pre-line">Nhập mã OTP đã được gửi đến email {value} và mật khẩu mới của bạn</p>
                     </div>
 
@@ -109,23 +109,39 @@ const VerifyOtpPage = () => {
                         </label>
                         <div className="flex flex-col mt-2">
                             <input type="hidden" {...register('otp')} />
-                            <OTPInput length={6} onChange={handleOTPChange} />
-                            {errors.otp && <span className="text-red-500 text-sm">{errors.otp.message}</span>}
+                            <OTPInput length={6} error={!!errors.otp} onChange={handleOTPChange} />
                         </div>
-                        <div className="flex justify-end mt-2">
+
+                        {/* Send OTP again */}
+                        <div className="flex justify-end">
                             {countdown > 0 ? (
-                                <span className="text-sm text-description">Gửi lại mã OTP sau {countdown}s</span>
+                                <div className="flex justify-between items-center w-full">
+                                    {
+                                        errors.otp ?
+                                            <span className="text-red-500 text-sm">{errors.otp.message}</span>
+                                            : <span className="text-sm text-description"></span>
+                                    }
+                                    <span className="text-sm text-description">Gửi lại mã OTP sau {countdown}s</span>
+                                </div>
                             ) : (
-                                <p
-                                    onClick={handleResendOTP}
-                                    className="cursor-pointer text-sm text-primary font-medium hover:underline"
-                                >
-                                    Gửi lại mã OTP
-                                </p>
+                                <div className="flex justify-between items-center w-full">
+                                    {
+                                        errors.otp ?
+                                            <span className="text-red-500 text-sm">{errors.otp.message}</span>
+                                            : <span className="text-sm text-description"></span>
+                                    }
+                                    <p
+                                        onClick={handleResendOTP}
+                                        className="cursor-pointer text-sm text-primary font-medium hover:underline"
+                                    >
+                                        Gửi lại mã OTP
+                                    </p>
+                                </div>
+
                             )}
                         </div>
                         <Button type="submit" style={{ width: "100%" }}>
-                            Đặt lại mật khẩu
+                            Tiếp tục
                         </Button>
                     </form>
 

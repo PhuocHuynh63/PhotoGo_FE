@@ -2,20 +2,24 @@
 
 import { useRef } from "react"
 
-
-
-const OTPInput = ({ length = 6, onChange }: ICOMPONENTS.OTPInputProps) => {
+const OTPInput = ({ length = 6, onChange, error = false }: ICOMPONENTS.OTPInputProps) => {
     const inputsRef = useRef<(HTMLInputElement | null)[]>([])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const value = e.target.value.replace(/\D/g, '')
-        if (!value) return
+        e.target.value = value[0] || ''
 
-        e.target.value = value[0]
-        if (index < length - 1) {
+        if (value && index < length - 1) {
             inputsRef.current[index + 1]?.focus()
         }
+
         triggerOnChange()
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+        if (e.key === 'Backspace' && !e.currentTarget.value && index > 0) {
+            inputsRef.current[index - 1]?.focus()
+        }
     }
 
     const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -47,10 +51,12 @@ const OTPInput = ({ length = 6, onChange }: ICOMPONENTS.OTPInputProps) => {
                     ref={el => { inputsRef.current[index] = el }}
                     maxLength={1}
                     onChange={(e) => handleChange(e, index)}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     onPaste={handlePaste}
-                    placeholder={``}
+                    placeholder=""
                     title={`OTP digit ${index + 1}`}
-                    className="border border-grey w-12 h-12 text-center text-lg rounded"
+                    className={`border w-12 h-12 text-center text-lg rounded 
+                        ${error ? 'border-red-500' : 'border-grey'}`}
                 />
             ))}
         </div>
