@@ -4,6 +4,7 @@ import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 import styles from './index.module.scss'
+import LucideIcon from "@components/Atoms/LucideIcon"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
@@ -49,7 +50,7 @@ const DropdownMenuContent = React.forwardRef<
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
-      className={`${styles.content} ${className || ''}`}
+      className={`${styles.dropdown_content} ${className || ''}`}
       {...props}
     />
   </DropdownMenuPrimitive.Portal>
@@ -60,13 +61,17 @@ const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
     inset?: boolean
+    icon?: Parameters<typeof LucideIcon>[0]['name']
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, inset, icon, children, ...props }, ref) => (
   <DropdownMenuPrimitive.Item
     ref={ref}
-    className={`${styles.item} ${inset ? styles.inset : ''} ${className || ''}`}
+    className={`${styles.dropdown_item} ${inset ? styles.inset : ''} ${className || ''}`}
     {...props}
-  />
+  >
+    {icon && <LucideIcon name={icon} iconColor={'var(--description)'} />}
+    {children}
+  </DropdownMenuPrimitive.Item>
 ))
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
@@ -117,7 +122,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={`${styles.label} ${inset ? styles.inset : ''} ${className || ''}`}
+    className={`${styles.dropdown_label} ${inset ? styles.inset : ''} ${className || ''}`}
     {...props}
   />
 ))
@@ -164,4 +169,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-} 
+}

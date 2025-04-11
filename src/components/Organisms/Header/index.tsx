@@ -16,10 +16,10 @@ export default function Header() {
         <header className="bg-grey p-3 px-8 w-full rounded-xl">
             <div className="flex justify-between items-center">
                 <Link href={ROUTES.PUBLIC.HOME}>
-                    <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo" width={70} height={70} style={{ width: '70px', height: 'auto' }} priority />
+                    <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo" width={70} height={70} style={{ width: 'auto', height: 'auto' }} priority />
                 </Link>
 
-                <div className="flex gap-12 ">
+                <div className="flex gap-12 font-medium text-md">
                     <Link href={ROUTES.PUBLIC.HOME}>Trang chủ</Link>
                     <Link href={ROUTES.PUBLIC.STUDIO}>Studio</Link>
                     <Link href={ROUTES.PUBLIC.FREELANCER}>Freelancer</Link>
@@ -37,11 +37,39 @@ export default function Header() {
                             />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Profile</DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
+                            <Link href={"/hello"}>
+                                <DropdownMenuItem icon="UserCircle">
+                                    <span>Thông tin cá nhân</span>
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link href={"/ROUTES.PRIVATE.SETTINGS"}>
+                                <DropdownMenuItem icon="Settings">
+                                    <span>Cài đặt</span>
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link href={"/ROUTES.PRIVATE.NOTIFICATIONS"}>
+                                <DropdownMenuItem icon="Bell">
+                                    <span>Thông báo</span>
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link href={"/ROUTES.PRIVATE.MESSAGES"}>
+                                <DropdownMenuItem icon="MessageSquare">
+                                    <span>Tin nhắn</span>
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link href={"/ROUTES.PRIVATE.HELP"}>
+                                <DropdownMenuItem icon="HelpCircle">
+                                    <span>Trợ giúp</span>
+                                </DropdownMenuItem>
+                            </Link>
+                            <DropdownMenuSeparator />
+                            <Link href={"/ROUTES.PUBLIC.LOGIN"}>
+                                <DropdownMenuItem icon="LogOut">
+                                    <span>Đăng xuất</span>
+                                </DropdownMenuItem>
+                            </Link>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
