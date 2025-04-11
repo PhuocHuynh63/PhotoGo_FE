@@ -11,7 +11,6 @@ import Button from "@components/Atoms/Button"
 import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
-import { useEffect } from "react"
 import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
 
 const LoginPage = () => {
@@ -32,7 +31,7 @@ const LoginPage = () => {
     //#endregion
 
     return (
-        <TransitionWrapper className="w-full max-w-6xl min-h-screen bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
+        <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
             {/* Main card container */}
             <div className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Left side - Login form */}

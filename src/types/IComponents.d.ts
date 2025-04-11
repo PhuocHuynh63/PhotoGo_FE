@@ -69,6 +69,7 @@ declare namespace ICOMPONENTS {
         name: keyof typeof import('lucide-react');
         className?: string;
         spin?: boolean;
+        fill?: string;
     }
 
     export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, BaseProps {
