@@ -13,6 +13,7 @@ export default function Button({
     isLoading = false,
     loadingText = 'Loading...',
     spinIcon = false,
+    className = '',
     ...rest
 }: ICOMPONENTS.ButtonProps) {
     const style = useMemo(() => ({
@@ -24,20 +25,20 @@ export default function Button({
 
     const renderIcon = useMemo(() => (
         icon && !isLoading && (
-            <LucideIcon name={icon} size={iconSize} color={iconColor} spin={shouldSpin} />
+            <LucideIcon name={icon} iconSize={iconSize} iconColor={iconColor} spin={shouldSpin} />
         )
     ), [icon, isLoading, iconSize, iconColor, shouldSpin]);
 
     return (
         <button
-            className={styles.clear_button}
+            className={`${styles.clear_button} ${className}`}
             style={style}
             disabled={isLoading || rest.disabled}
             {...rest}
         >
             {isLoading ? (
                 <>
-                    <LucideIcon name="Loader" size={iconSize} spin />
+                    <LucideIcon name="Loader" iconSize={iconSize} spin />
                     <span className={styles.loadingText}>{loadingText}</span>
                 </>
             ) : (

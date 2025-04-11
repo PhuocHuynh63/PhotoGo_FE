@@ -4,8 +4,8 @@ import styles from './index.module.scss';
 
 export default function LucideIcon({
     name,
-    size = 18,
-    color = 'currentColor',
+    iconSize = 18,
+    iconColor = 'currentColor',
     className = '',
     spin = false,
 }: ICOMPONENTS.LucideIconProps) {
@@ -20,8 +20,8 @@ export default function LucideIcon({
 
     return (
         <IconComponent
-            size={size}
-            color={color}
+            size={iconSize}
+            color={iconColor}
             className={combinedClass}
         />
     );

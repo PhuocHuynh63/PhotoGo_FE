@@ -9,7 +9,7 @@ export default function CircularProgress({
     size = 48,
     strokeWidth = 4,
     value,
-    color = 'var(--bg-orange)',
+    color = 'var(--bg-primary)',
     bgColor = 'var(--bg-progress)',
     direction = 'clockwise',
     className,

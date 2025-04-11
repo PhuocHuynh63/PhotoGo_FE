@@ -13,11 +13,39 @@ declare namespace ICOMPONENTS {
         iconColor?: string;
     }
 
+    // DataTable types
+    export type SortableRecord = Record<string, string | number | Date>;
+
+    export interface DataTableProps<T extends { id: string | number } & SortableRecord> {
+        data: T[];
+        columns: {
+            key: string;
+            header: string;
+            render?: (item: T) => React.ReactNode;
+            sortable?: boolean;
+            width?: string | number;
+        }[];
+        itemsPerPage?: number;
+        caption?: string;
+        loading?: boolean;
+        onRowClick?: (row: T) => void;
+        selectableRows?: boolean;
+        onSelectionChange?: (selectedIds: (string | number)[]) => void;
+        height?: number | string;
+        width?: number | string;
+        searchable?: boolean;
+        searchPlaceholder?: string;
+        searchBy?: string[];
+        searchPosition?: 'left' | 'right';
+        searchWidth?: number | string;
+    }
+
     export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, BaseProps, IconProps {
         iconPosition?: 'left' | 'right';
         isLoading?: boolean;
         loadingText?: string;
         spinIcon?: boolean;
+        className?: string;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -51,19 +79,19 @@ declare namespace ICOMPONENTS {
     }
 
     export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        label: string;
-        checked: boolean;
-        onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+        label?: string;
+        checked?: boolean;
+        onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
 
     export interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        name: string;
-        options: { label: string; value: string }[];
-        value: string;
-        onChange: (value: string) => void;
+        name?: string;
+        options?: { label: string; value: string }[];
+        value?: string;
+        onChange?: (value: string) => void;
     }
 
-    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps {}
+    export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps { }
 
     export interface CircularProgressProps extends React.SVGProps<SVGSVGElement> {
         size?: number;
@@ -89,5 +117,97 @@ declare namespace ICOMPONENTS {
         className?: string;
         count?: number;
         animated?: boolean;
+    }
+
+    export interface PaginationProps {
+        className?: string;
+        total: number;
+        current: number;
+        onChange: (page: number) => void;
+    }
+
+    export interface PaginationLinkProps extends React.ComponentProps<"a"> {
+        isActive?: boolean;
+        fontSize?: ButtonProps["fontSize"];
+    }
+
+    export interface PaginationItemProps extends React.ComponentProps<"li"> {
+        className?: string;
+    }
+
+    export interface PaginationContentProps extends React.ComponentProps<"ul"> {
+        className?: string;
+    }
+
+    export interface PaginationEllipsisProps extends React.ComponentProps<"span"> {
+        className?: string;
+    }
+
+    export interface NavigationButtonProps extends React.ComponentProps<"a"> {
+        className?: string;
+    }
+    interface TransitionWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
+        children: React.ReactNode;
+        initial?: MotionProps["initial"]; // Tùy chỉnh trạng thái ban đầu
+        animate?: MotionProps["animate"]; // Tùy chỉnh trạng thái khi hiển thị
+        exit?: MotionProps["exit"]; // Tùy chỉnh trạng thái khi thoát
+        transition?: MotionProps["transition"]; // Tùy chỉnh thời gian và kiểu hiệu ứng
+        mode?: "sync" | "wait" | "popLayout"; // Tùy chỉnh mode của AnimatePresence
+    }
+
+    export interface OTPInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+        length?: number
+        error?: boolean
+        onChange: (otp: string) => void
+    }
+
+    export interface ISearchResult {
+        id: string | number;
+        title: string;
+        subtitle?: string;
+        image?: string;
+    }
+
+    export interface ISearch {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        results?: ISearchResult[];
+        isLoading?: boolean;
+        onResultClick?: (result: ISearchResult) => void;
+        noResultsMessage?: string;
+    }
+
+    export interface SearchProps {
+        placeholder?: string;
+        value?: string;
+        onChange?: (value: string) => void;
+        onSearch?: (value: string) => void;
+        className?: string;
+        debounceTime?: number;
+        totalResults?: number;
+        searchWidth?: string;
+    }
+
+    interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> {
+        size?: number
+        src?: string
+        alt?: string
+        fallback?: string
+        className?: string
+    }
+
+    interface AvatarImageProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+        src: string;
+        alt: string;
+        className?: string;
+    }
+
+    interface AvatarFallbackProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> {
+        children: React.ReactNode;
+        className?: string;
     }
 }

@@ -8,8 +8,9 @@ import styles from "./index.module.scss"
 import { useForm } from "react-hook-form"
 import Input from "@components/Atoms/Input"
 import Button from "@components/Atoms/Button"
-import { IUserRegisterRequest, UserLoginRequest, UserRegisterRequest } from "@models/user/request.model"
+import { IUserRegisterRequest, UserRegisterRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
+import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 
 const RegisterPage = () => {
     //#region Handle form submit
@@ -23,10 +24,63 @@ const RegisterPage = () => {
     const onSubmit = (data: IUserRegisterRequest) => console.log(data)
     //#endregion
 
+    const initial = { opacity: 0, x: -20 }
     return (
-        <>
+        <TransitionWrapper className="w-full max-w-6xl min-h-screen bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
             {/* Main card container */}
-            {/* Left side - Login form */}
+            {/* --- MODIFIED left side - Photo collage --- */}
+            <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#DF9E61] to-[#E8B396] shadow-lg rounded-r-xl overflow-hidden">
+                {/* Container for padding and relative positioning */}
+                <div className="flex items-center justify-center h-full w-full  relative">
+                    <div className="absolute top-4 left-0 right-0 p-6 text-white z-10">
+                        <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
+                        <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
+                    </div>
+                    <div className="h-9/12 w-full mt-10 p-4 relative">
+                        {/* Photo collage grid (2 columns) */}
+                        <div className="grid grid-cols-2 gap-4 h-full">
+                            {/* Image 1: Tall, spans 2 rows in the first column */}
+                            <div className="col-span-1 row-span-2 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
+                                <Image
+                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
+                                    alt="Scenic view"
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-black opacity-15 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                            </div>
+
+                            {/* Image 2: Top-right cell */}
+                            <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
+                                <Image
+                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744300737/mau_2_viaxwk.svg"
+                                    alt="Creative shot"
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                            </div>
+
+                            {/* Image 3: Bottom-right cell */}
+                            <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 shadow-lg group relative">
+                                <Image
+                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744300689/mau_3_q6eubk.svg"
+                                    alt="Community photo"
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* Right side - Register form */}
             <div className="w-full md:w-1/2 p-8 md:p-12">
                 {/* Center logo */}
                 <div className="flex">
@@ -72,7 +126,7 @@ const RegisterPage = () => {
                         </label>
                         <Input
                             id="phone"
-                            placeholder="photogo@gmail.com"
+                            placeholder="0912345678"
                             {...register("phone")}
                             className={errors.phone ? 'input-error' : ''}
                         />
@@ -84,7 +138,7 @@ const RegisterPage = () => {
                             Mật khẩu
                         </label>
 
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-2 mb-3">
                             <Input
                                 id="password"
                                 type="password"
@@ -93,11 +147,6 @@ const RegisterPage = () => {
                                 className={errors.password ? 'input-error' : ''}
                             />
                             {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
-                            <div className="flex justify-end">
-                                <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="w-fit text-sm hover:underline my-0.5">
-                                    Quên mật khẩu?
-                                </Link>
-                            </div>
                         </div>
                     </div>
 
@@ -152,58 +201,8 @@ const RegisterPage = () => {
                 </p>
             </div>
 
-            {/* --- MODIFIED Right side - Photo collage --- */}
-            <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#D4A076] to-[#E8B396] rounded-r-xl overflow-hidden">
-                {/* Container for padding and relative positioning */}
-                <div className="flex items-center justify-center h-full w-full  relative">
-                    <div className="h-9/12 w-full mb-16 p-4 relative">
-                        {/* Photo collage grid (2 columns) */}
-                        <div className="grid grid-cols-2 gap-4 h-full">
-                            {/* Image 1: Tall, spans 2 rows in the first column */}
-                            <div className="col-span-1 row-span-2 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-100 hover:shadow-lg group relative">
-                                <Image
-                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
-                                    alt="Scenic view"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black opacity-15 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                            </div>
-
-                            {/* Image 2: Top-right cell */}
-                            <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg group relative">
-                                <Image
-                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
-                                    alt="Creative shot"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                            </div>
-
-                            {/* Image 3: Bottom-right cell */}
-                            <div className="col-span-1 row-span-1 rounded-xl overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg group relative">
-                                <Image
-                                    src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
-                                    alt="Community photo"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    className="transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black opacity-20 group-hover:bg-opacity-10 transition-opacity duration-300"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-10">
-                        <h2 className="text-xl font-bold mb-1 drop-shadow-lg">Thể hiện sự sáng tạo của bạn</h2>
-                        <p className="text-sm opacity-90 drop-shadow-md">Tham gia cộng đồng nhiếp ảnh gia và người sáng tạo của chúng tôi</p>
-                    </div>
-                </div>
-            </div>
             {/* --- End of MODIFIED Right side --- */}
-        </>
+        </TransitionWrapper>
     )
 }
 

@@ -15,7 +15,7 @@ const Progress = React.forwardRef<
             width = '100%',
             height = 16,
             backgroundColor = 'var(--bg-progress)',
-            color = 'var(--bg-orange)',
+            color = 'var(--bg-primary)',
             ...props
         },
         ref

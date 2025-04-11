@@ -1,20 +1,41 @@
 .clear_button {
-    background-color: var(--bg-light);
-    color: var(--orange);
-    border: 1px solid var(--border-orange);
-    border-radius: 8px;
-    padding: 0.5rem 1.25rem;
-    font-size: 1rem;
+    &:not([class*="bg-"]) {
+        background-color: var(--bg-light);
+    }
+
+    &:not([class*="text-"]) {
+        color: var(--orange);
+    }
+
+    &:not([class*="border"]) {
+        border: 1px solid var(--border-orange);
+    }
+
+    &:not([class*="rounded"]) {
+        border-radius: 8px;
+    }
+
+    &:not([class*="p-"]) {
+        padding: 0.5rem 1.25rem;
+    }
+
+    &:not([class*="text-"]) {
+        font-size: 1rem;
+    }
+
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s,
+    transform 0.2s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
 
-    &:hover {
-        background-color: var(--bg-orange-opacity);
-        transform: scale(1.05);
+    &:not(:disabled):hover {
+        &:not([class*="hover:"]) {
+            background-color: var(--bg-primary-opacity);
+            transform: scale(1.05);
+        }
     }
 
     &:disabled {
@@ -34,8 +55,10 @@
 }
 
 .loadingText {
-    font-size: 0.9rem;
-    color: var(--orange);
+    &:not([class*="text-"]) {
+        font-size: 0.9rem;
+        color: var(--orange);
+    }
 }
 
 @keyframes lucide-spin {

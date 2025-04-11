@@ -52,7 +52,7 @@ export default function CustomDatePicker({
                         }}
                         modifiersStyles={{
                             selected: {
-                                backgroundColor: 'var(--bg-orange)',
+                                backgroundColor: 'var(--bg-primary)',
                                 color: 'white',
                                 borderRadius: '100%',
                             },
