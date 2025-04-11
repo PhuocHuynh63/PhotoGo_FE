@@ -14,10 +14,11 @@ import Input from "@components/Atoms/Input"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { useGetLocalStorage } from "@utils/hooks/localStorage"
 
 const VerifyOtpPage = () => {
     //#region define variables
-    const emailResetPassword = localStorage.getItem('email')
+    const { value, isReady } = useGetLocalStorage('email')
     const router = useRouter()
     //#endregion
 
@@ -34,7 +35,7 @@ const VerifyOtpPage = () => {
     })
     const onSubmit = (data: IUserOTPRequest) => {
         console.log(data);
-        localStorage.removeItem('email');
+        router.push(ROUTES.AUTH.RESET_PASSWORD)
     }
     //#endregion
 
@@ -46,12 +47,14 @@ const VerifyOtpPage = () => {
     }
     //#endregion
 
+
     //#region Check email in localStorage and redirect if not found
     useEffect(() => {
-        if (!emailResetPassword) {
+        if (!isReady) return
+        if (!value) {
             router.replace(ROUTES.AUTH.FORGOT_PASSWORD)
         }
-    }, [emailResetPassword, router])
+    }, [value, router])
     //#endregion
 
 
@@ -68,7 +71,7 @@ const VerifyOtpPage = () => {
 
     const handleResendOTP = async () => {
         try {
-            // await api.sendOtpToEmail(emailResetPassword)
+            // await api.sendOtpToEmail(value)
             toast.success('Đã gửi lại mã OTP')
             setCountdown(60)
         } catch (error) {
@@ -92,13 +95,13 @@ const VerifyOtpPage = () => {
 
                     <div className="flex flex-col items-center">
                         <h1 className="text-2xl font-bold mb-2">Đặt lại mật khẩu</h1>
-                        <p className="text-description text-center whitespace-pre-line">Nhập mã OTP đã được gửi đến email {emailResetPassword} và mật khẩu mới của bạn</p>
+                        <p className="text-description text-center whitespace-pre-line">Nhập mã OTP đã được gửi đến email {value} và mật khẩu mới của bạn</p>
                     </div>
 
                     {/* Form */}
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                         {/* Email */}
-                        <Input type="hidden" defaultValue={emailResetPassword || ''} {...register('email')} />
+                        <Input type="hidden" defaultValue={value || ''} {...register('email')} />
 
                         {/* OTP */}
                         <label htmlFor="otp" className="text-sm font-medium">
@@ -107,7 +110,7 @@ const VerifyOtpPage = () => {
                         <div className="flex flex-col mt-2">
                             <input type="hidden" {...register('otp')} />
                             <OTPInput length={6} onChange={handleOTPChange} />
-                            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+                            {errors.otp && <span className="text-red-500 text-sm">{errors.otp.message}</span>}
                         </div>
                         <div className="flex justify-end mt-2">
                             {countdown > 0 ? (

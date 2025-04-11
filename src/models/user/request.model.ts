@@ -47,3 +47,12 @@ export const UserOTPRequest = z.object({
 })
 export type IUserOTPRequest = z.TypeOf<typeof UserOTPRequest>;
 //----------------------End----------------------//
+
+
+export const UserResetPasswordRequest = z.object({
+    email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
+    newPassword: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    confirmPassword: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
+})
+export type IUserResetPasswordRequest = z.TypeOf<typeof UserResetPasswordRequest>;
+//----------------------End----------------------//
