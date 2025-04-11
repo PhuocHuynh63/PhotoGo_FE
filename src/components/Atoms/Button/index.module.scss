@@ -1,25 +1,40 @@
 .button {
-    background-color: var(--bg-primary);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+    &:not([class*="bg-"]) {
+        background-color: var(--bg-primary);
+    }
+
+    &:not([class*="text-"]) {
+        color: white;
+    }
+
+    &:not([class*="border"]) {
+        border: none;
+    }
+
+    &:not([class*="p-"]) {
+        padding: 0.5rem 1rem;
+    }
+
+    &:not([class*="text-"]) {
+        font-size: 1rem;
+    }
+
+    &:not([class*="rounded"]) {
+        border-radius: 8px;
+    }
+
     cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.2s;
+    transition: background-color 0.3s,
+    transform 0.2s;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
 
-    &:hover {
-        background-color: #df9e61;
-    }
-
     &:disabled {
-        background-color: #aaa;
         cursor: not-allowed;
         transform: none;
+        opacity: 0.7;
     }
 }
 

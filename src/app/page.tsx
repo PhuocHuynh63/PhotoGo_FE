@@ -26,8 +26,29 @@ import TableCaption from "@components/Atoms/TableCaption/TableCaption";
 import TableHead from "@components/Atoms/TableHeader/TableHeader";
 import { DataTable } from "@components/Organisms/DataTable/DataTable";
 import Search from "@components/Molecules/Search/Search";
+import Header from "@components/Organisms/Header";
+import { Avatar } from "@components/Molecules/Avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/Molecules/DropdownMenu";
 
-function generateMockUsers(count: number) {
+interface User extends ICOMPONENTS.SortableRecord {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+  phone: string;
+  department: string;
+}
+
+const generateMockUsers = (count: number): User[] => {
   const firstNames = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ"];
   const middleNames = ["Văn", "Thị", "Hữu", "Đức", "Minh", "Ngọc", "Thanh", "Quốc"];
   const lastNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K"];
@@ -39,10 +60,10 @@ function generateMockUsers(count: number) {
   const getRandomItem = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
   const getRandomPhone = () => "0" + Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join("");
   const getRandomDate = () => {
-    const start = new Date(2024, 2, 1); // 2024-03-01
-    const end = new Date(2024, 2, 31); // 2024-03-31
+    const start = new Date(2024, 2, 1);
+    const end = new Date(2024, 2, 31);
     const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    return date.toISOString().split('T')[0]; // yyyy-mm-dd
+    return date.toISOString().split('T')[0];
   };
 
   return Array.from({ length: count }, (_, i) => {
@@ -63,10 +84,11 @@ function generateMockUsers(count: number) {
       department: getRandomItem(departments)
     };
   });
-}
+};
 
-const data = generateMockUsers(7320);
-const columns = [
+const mockData = generateMockUsers(7320);
+
+const columns: ICOMPONENTS.DataTableProps<User>["columns"] = [
   {
     key: 'name',
     header: 'Tên',
@@ -90,12 +112,12 @@ const columns = [
   {
     key: 'status',
     header: 'Trạng thái',
-    render: (row: any) => (
-      <span className={`px-2 py-1 rounded-full text-xs ${row.status === 'active'
+    render: (item: User) => (
+      <span className={`px-2 py-1 rounded-full text-xs ${item.status === 'active'
         ? 'bg-green-100 text-green-800'
         : 'bg-red-100 text-red-800'
         }`}>
-        {row.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
+        {item.status === 'active' ? 'Hoạt động' : 'Không hoạt động'}
       </span>
     ),
     sortable: true
@@ -103,7 +125,7 @@ const columns = [
   {
     key: 'createdAt',
     header: 'Ngày tạo',
-    render: (row: any) => new Date(row.createdAt).toLocaleDateString('vi-VN'),
+    render: (item: User) => new Date(item.createdAt).toLocaleDateString('vi-VN'),
     sortable: true
   }
 ];
@@ -117,12 +139,16 @@ export default function Home() {
   const [value, setValue] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
+  const [data] = useState<User[]>(mockData);
+
   const handleChange = (value: string) => {
     setSearchValue(value)
   }
+
   const handleSearch = (value: string) => {
     console.log(value)
   }
+
   useEffect(() => {
     const interval = setInterval(() => {
       setValue(Math.floor(Math.random() * 100));
@@ -130,9 +156,31 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, []);
-  console.log(searchValue)
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
+
+      <Header />
+
+      <div className="flex items-center gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar
+              src="https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg"
+              alt="User avatar"
+              size={50}
+              className="cursor-pointer"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <div className="flex flex-col gap-4">
         <Label fontSize={14} htmlFor="username">Username</Label>

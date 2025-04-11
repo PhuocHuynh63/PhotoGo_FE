@@ -14,9 +14,10 @@ export default function Button({
     loadingText = 'Loading...',
     spinIcon = false,
     disabled = false,
+    className = '',
     ...rest
 }: ICOMPONENTS.ButtonProps) {
-    const { className, ...buttonProps } = rest;
+    const { ...buttonProps } = rest;
 
     const { style, showIcon, loadingIndicator } = useMemo(() => {
         const computedStyle: React.CSSProperties = {
@@ -42,10 +43,10 @@ export default function Button({
 
         return { style: computedStyle, showIcon: computedShowIcon, loadingIndicator: computedLoadingIndicator };
     }, [width, height, icon, iconSize, iconColor, spinIcon, isLoading, loadingText]);
-
+    console.log(className)
     return (
         <button
-            className={`${styles.button} ${className || ''}`}
+            className={`${styles.button} ${className}`}
             style={style}
             disabled={isLoading || disabled}
             {...buttonProps}

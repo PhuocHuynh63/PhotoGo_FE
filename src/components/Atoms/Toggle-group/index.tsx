@@ -98,7 +98,7 @@ const ToggleGroupItem = React.forwardRef<
                 'rounded-md font-medium transition-colors',
                 sizeClasses[size],
                 variantClasses[variant],
-                'data-[state=on]:bg-primary-500 data-[state=on]:text-white data-[state=on]:border-orange-500',
+                'data-[state=on]:bg-primary-500 data-[state=on]:text-dark data-[state=on]:border-orange-500',
                 className
             )}
             {...props}

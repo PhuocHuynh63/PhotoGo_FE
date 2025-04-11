@@ -1,0 +1,15 @@
+.avatar_root {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+
+    &:not([class*="w-"]) {
+        width: 40px;
+    }
+
+    &:not([class*="h-"]) {
+        height: 40px;
+    }
+}
