@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { ArrowRight, Camera, RefreshCw, Search } from "lucide-react"
+import { ArrowRight, Camera, Search } from "lucide-react"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
