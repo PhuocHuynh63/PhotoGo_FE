@@ -43,7 +43,6 @@ export default function Button({
 
         return { style: computedStyle, showIcon: computedShowIcon, loadingIndicator: computedLoadingIndicator };
     }, [width, height, icon, iconSize, iconColor, spinIcon, isLoading, loadingText]);
-    console.log(className)
     return (
         <button
             className={`${styles.button} ${className}`}
