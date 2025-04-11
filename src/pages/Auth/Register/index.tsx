@@ -26,7 +26,7 @@ const RegisterPage = () => {
 
     const initial = { opacity: 0, x: -20 }
     return (
-        <TransitionWrapper className="w-full max-w-6xl min-h-screen bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
+        <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
             {/* Main card container */}
             {/* --- MODIFIED left side - Photo collage --- */}
             <div className="hidden items-center md:block md:w-1/2 bg-gradient-to-br from-[#DF9E61] to-[#E8B396] shadow-lg rounded-r-xl overflow-hidden">
