@@ -45,6 +45,7 @@ declare namespace ICOMPONENTS {
         isLoading?: boolean;
         loadingText?: string;
         spinIcon?: boolean;
+        className?: string;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -188,5 +189,24 @@ declare namespace ICOMPONENTS {
         debounceTime?: number;
         totalResults?: number;
         searchWidth?: string;
+    }
+
+    interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> {
+        size?: number
+        src?: string
+        alt?: string
+        fallback?: string
+        className?: string
+    }
+
+    interface AvatarImageProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+        src: string;
+        alt: string;
+        className?: string;
+    }
+
+    interface AvatarFallbackProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> {
+        children: React.ReactNode;
+        className?: string;
     }
 }

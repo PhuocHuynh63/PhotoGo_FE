@@ -26,6 +26,16 @@ import TableCaption from "@components/Atoms/TableCaption/TableCaption";
 import TableHead from "@components/Atoms/TableHeader/TableHeader";
 import { DataTable } from "@components/Organisms/DataTable/DataTable";
 import Search from "@components/Molecules/Search/Search";
+import Header from "@components/Organisms/Header";
+import { Avatar } from "@components/Molecules/Avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/Molecules/DropdownMenu";
 
 function generateMockUsers(count: number) {
   const firstNames = ["Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ"];
@@ -133,6 +143,28 @@ export default function Home() {
   console.log(searchValue)
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
+
+      <Header />
+
+      <div className="flex items-center gap-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar
+              src="https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg"
+              alt="User avatar"
+              size={50}
+              className="cursor-pointer"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <div className="flex flex-col gap-4">
         <Label fontSize={14} htmlFor="username">Username</Label>

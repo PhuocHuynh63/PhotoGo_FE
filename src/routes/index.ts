@@ -12,6 +12,9 @@ const AUTH = {
 const PUBLIC = {
     HOME: '/',
     CONTACT: '/contact',
+    STUDIO: '/studio',
+    FREELANCER: '/freelancer',
+    ABOUT: '/about',
 }
 
 const ADMIN = {
