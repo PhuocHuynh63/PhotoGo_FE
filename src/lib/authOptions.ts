@@ -1,18 +1,29 @@
 import { ROUTES } from "@/routes";
-import NextAuth, { SessionStrategy } from "next-auth";
+import authService from "@services/auth";
+import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text" },
+                email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
+                if (!credentials) return null;
+                const res = await authService.login({
+                    email: credentials.email,
+                    password: credentials.password,
+                });
 
-                return null; // Trả về null nếu không hợp lệ
+                if (res.status !== 200) {
+                    throw new Error("Invalid credentials");
+                }
+                const user = res.data;
+                if (!user) return null;
+                return user;
             },
         }),
     ],
