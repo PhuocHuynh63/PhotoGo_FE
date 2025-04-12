@@ -81,6 +81,7 @@ export const Carousel = ({ options, children, className, autoScroll = false, spe
                             "w-2 h-2 rounded-full transition-all duration-300",
                             index === selectedIndex ? "bg-primary w-4" : "bg-gray-300"
                         )}
+                        title={``}
                         onClick={() => emblaApi?.scrollTo(index)}
                     />
                 ))}

@@ -12,11 +12,17 @@ import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
+import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
+import { useEffect, useState } from "react"
+import { signIn } from "next-auth/react"
 
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
+    const router = useRouter()
     //#endregion
+
 
     //#region Handle form submit
     const {
@@ -25,15 +31,64 @@ const LoginPage = () => {
         formState: { errors },
     } = useForm<IUserLoginRequest>({
         resolver: zodResolver(UserLoginRequest),
+    })
+    const onSubmit = async (data: IUserLoginRequest) => {
+        const res = await signIn("credentials", {
+            redirect: false,
+            ...data,
+        })
+        console.log(res);
+
+        switch (res?.status) {
+            case 200:
+                router.push(ROUTES.PUBLIC.HOME)
+                break;
+            case 400:
+                toast.error("Tài khoản hoặc mật khẩu không chính xác")
+                break;
+            case 403:
+                const delay = 3
+                toast.error(`Tài khoản của bạn chưa được kích hoạt. Chuyển hướng sau ${delay} giây...`)
+                setEmailToRedirect(data.email)
+                setCountdown(delay)
+                break;
+            case 500:
+            default:
+                toast.error("Có lỗi xảy ra, vui lòng thử lại sau")
+        }
     }
-    )
-    const onSubmit = (data: IUserLoginRequest) => console.log(data)
     //#endregion
+
+
+    //#region Handle downtime redirect
+    const [countdown, setCountdown] = useState<number | null>(null)
+    const [emailToRedirect, setEmailToRedirect] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (countdown === null || !emailToRedirect) return
+
+        const interval = setInterval(() => {
+            setCountdown(prev => {
+                if (prev && prev <= 1) {
+                    clearInterval(interval)
+                    localStorage.setItem("email", emailToRedirect)
+                    setTimeout(() => {
+                        router.push(`${ROUTES.AUTH.VERIFY_OTP}?purpose=activate-account`)
+                    }, 0)
+                    return null
+                }
+                return (prev ?? 0) - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [countdown, emailToRedirect])
+    //#endregion
+
 
     return (
         <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
             {/* Main card container */}
-            <div className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Left side - Login form */}
                 <div className="w-full md:w-1/2 p-8 md:p-12">
                     {/* Center logo */}
@@ -184,7 +239,6 @@ const LoginPage = () => {
                     </div>
                 </div>
                 {/* --- End of MODIFIED Right side --- */}
-            </div>
         </TransitionWrapper>
     )
 }
