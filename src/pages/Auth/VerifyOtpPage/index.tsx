@@ -12,7 +12,7 @@ import { ArrowLeft, KeyRound } from "lucide-react"
 import OTPInput from "@components/Atoms/OTPInput"
 import Input from "@components/Atoms/Input"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useGetLocalStorage } from "@utils/hooks/localStorage"
 
@@ -20,6 +20,8 @@ const VerifyOtpPage = () => {
     //#region define variables
     const { value, isReady } = useGetLocalStorage('email')
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const purpose = searchParams?.get('purpose')
     //#endregion
 
 
@@ -35,7 +37,12 @@ const VerifyOtpPage = () => {
     })
     const onSubmit = (data: IUserOTPRequest) => {
         console.log(data);
-        router.push(ROUTES.AUTH.RESET_PASSWORD)
+
+        if (purpose === 'reset-password') {
+            router.push(ROUTES.AUTH.RESET_PASSWORD)
+        } else if (purpose === 'activate-account') {
+            router.push(ROUTES.PUBLIC.HOME)
+        }
     }
     //#endregion
 

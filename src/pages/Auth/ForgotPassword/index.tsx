@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { ArrowLeft, Mail } from "lucide-react"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 const ForgotPasswordPage = () => {
     const router = useRouter();
@@ -25,8 +26,12 @@ const ForgotPasswordPage = () => {
     })
 
     const onSubmit = (data: IUserForgotPasswordRequest) => {
-        router.push(ROUTES.AUTH.VERIFY_OTP);
+        router.push(ROUTES.AUTH.VERIFY_OTP + `?purpose=reset-password`);
         localStorage.setItem('email', data.email);
+        toast.success("Chúng tôi đã gửi mã OTP đến email của bạn. Vui lòng kiểm tra email để tiếp tục đặt lại mật khẩu.", {
+            duration: 5000,
+            position: "top-right",
+        });
         console.log(data);
     }
     //#endregion
