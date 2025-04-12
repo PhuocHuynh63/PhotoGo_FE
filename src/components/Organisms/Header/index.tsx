@@ -2,6 +2,7 @@ import { Avatar } from "@components/Molecules/Avatar"
 import { ROUTES } from "@routes"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,14 +13,17 @@ import {
 } from "@/components/Molecules/DropdownMenu";
 
 export default function Header() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
-        <header className="bg-grey p-2 px-8 w-full rounded-md">
+        <header className="bg-white shadow-md p-2 px-4 md:px-8 w-full rounded-md sticky top-0 z-50">
             <div className="flex justify-between items-center">
                 <Link href={ROUTES.PUBLIC.HOME}>
                     <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo" width={60} height={60} style={{ width: 'auto', height: 'auto' }} priority />
                 </Link>
 
-                <div className="flex gap-12 font-medium text-md">
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex gap-12 font-medium text-md">
                     <Link href={ROUTES.PUBLIC.HOME}>Trang chủ</Link>
                     <Link href={ROUTES.PUBLIC.STUDIO}>Studio</Link>
                     <Link href={ROUTES.PUBLIC.FREELANCER}>Freelancer</Link>
@@ -27,12 +31,41 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="md:hidden p-2 rounded-md hover:bg-gray-100"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            {isMobileMenuOpen ? (
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            ) : (
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
+                            )}
+                        </svg>
+                    </button>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Avatar
                                 src="https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg"
                                 alt="User avatar"
-                                size={40}
+                                size={50}
                                 className="cursor-pointer"
                             />
                         </DropdownMenuTrigger>
@@ -72,6 +105,44 @@ export default function Header() {
                             </Link>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                </div>
+            </div>
+
+            {/* Mobile Navigation Menu */}
+            <div
+                className={`md:hidden transition-all duration-300 ease-in-out ${
+                    isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+                }`}
+            >
+                <div className="flex flex-col gap-4 py-4">
+                    <Link 
+                        href={ROUTES.PUBLIC.HOME}
+                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Trang chủ
+                    </Link>
+                    <Link 
+                        href={ROUTES.PUBLIC.STUDIO}
+                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Studio
+                    </Link>
+                    <Link 
+                        href={ROUTES.PUBLIC.FREELANCER}
+                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Freelancer
+                    </Link>
+                    <Link 
+                        href={ROUTES.PUBLIC.ABOUT}
+                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Về chúng tôi
+                    </Link>
                 </div>
             </div>
         </header>

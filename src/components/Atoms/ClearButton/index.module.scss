@@ -34,7 +34,6 @@
     &:not(:disabled):hover {
         &:not([class*="hover:"]) {
             background-color: var(--bg-primary-opacity);
-            transform: scale(1.05);
         }
     }
 

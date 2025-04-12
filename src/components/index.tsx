@@ -36,7 +36,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/Molecules/DropdownMenu";
-import { Carousel } from "@components/Atoms/Carousel/index";
+import { Carousel } from "@atoms/Carousel/index";
 import Image from "next/image";
 
 interface User extends ICOMPONENTS.SortableRecord {

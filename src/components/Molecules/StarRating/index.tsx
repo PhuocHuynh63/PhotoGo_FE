@@ -21,7 +21,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     const emptyStars = maxStars - filledStars - (hasHalfStar ? 1 : 0);
 
     return (
-        <div className={`flex gap-2 items-center ${className}`}>
+        <div className={`flex items-center ${className}`}>
             {[...Array(filledStars)].map((_, index) => (
                 <LucideIcon
                     key={`filled-${index}`}
