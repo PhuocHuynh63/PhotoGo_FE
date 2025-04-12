@@ -45,12 +45,12 @@ export default function StaffLayout({
       icon: 'HeadphonesIcon',
       children: [
         {
-          title: 'Tickets',
+          title: 'YÊU CẦU HỖ TRỢ',
           path: ROUTES.STAFF.SUPPORT.TICKETS,
           icon: 'Ticket'
         },
         {
-          title: 'Chats',
+          title: 'TRÒ CHUYỆN',
           path: ROUTES.STAFF.SUPPORT.CHATS,
           icon: 'MessageSquare'
         }
@@ -61,7 +61,7 @@ export default function StaffLayout({
       icon: 'Calendar',
       children: [
         {
-          title: 'Booking List',
+          title: 'DANH SÁCH',
           path: ROUTES.STAFF.BOOKINGS.LIST,
           icon: 'List'
         }
@@ -72,7 +72,7 @@ export default function StaffLayout({
       icon: 'AlertTriangle',
       children: [
         {
-          title: 'Dispute List',
+          title: 'DANH SÁCH',
           path: ROUTES.STAFF.DISPUTES.LIST,
           icon: 'List'
         }
@@ -83,7 +83,7 @@ export default function StaffLayout({
       icon: 'Store',
       children: [
         {
-          title: 'Service Assistance',
+          title: 'HỖ TRỢ DỊCH VỤ',
           path: ROUTES.STAFF.VENDORS.SERVICE_ASSIST,
           icon: 'HelpCircle'
         }
@@ -94,17 +94,17 @@ export default function StaffLayout({
       icon: 'DollarSign',
       children: [
         {
-          title: 'Payment Issues',
+          title: 'VẤN ĐỀ THANH TOÁN',
           path: ROUTES.STAFF.FINANCE.PAYMENT_ISSUES,
           icon: 'AlertCircle'
         },
         {
-          title: 'Deposit Confirmation',
+          title: 'XÁC NHẬN ĐẶT CỌC',
           path: ROUTES.STAFF.FINANCE.DEPOSIT_CONFIRM,
           icon: 'CheckCircle'
         },
         {
-          title: 'Refund Process',
+          title: 'QUY TRÌNH HOÀN TIỀN',
           path: ROUTES.STAFF.FINANCE.REFUND_PROCESS,
           icon: 'RefreshCcw'
         }
@@ -115,12 +115,12 @@ export default function StaffLayout({
       icon: 'Tag',
       children: [
         {
-          title: 'Voucher Assignment',
+          title: 'PHÂN BỔ VOUCHER',
           path: ROUTES.STAFF.PROMOTION.VOUCHER_ASSIGN,
           icon: 'Gift'
         },
         {
-          title: 'Campaign Tracking',
+          title: 'THEO DÕI CHIẾN DỊCH',
           path: ROUTES.STAFF.PROMOTION.CAMPAIGN_TRACKING,
           icon: 'Target'
         }
@@ -131,7 +131,7 @@ export default function StaffLayout({
       icon: 'FileText',
       children: [
         {
-          title: 'Blog',
+          title: 'BLOG',
           path: ROUTES.STAFF.CONTENT.BLOG,
           icon: 'BookOpen'
         }
