@@ -216,4 +216,22 @@ declare namespace ICOMPONENTS {
         children: React.ReactNode;
         className?: string;
     }
+
+    export interface CarouselItem {
+        id: number | string;
+        image?: string;
+        title?: string;
+        description?: string;
+        [key: string]: string | number | undefined;
+    }
+
+    export interface CarouselProps {
+        items: CarouselItem[];
+        renderItem?: (item: CarouselItem) => React.ReactNode;
+        autoScroll?: boolean;
+        scrollInterval?: number;
+        scrollSpeed?: number;
+        width?: number;
+        height?: number;
+    }
 }

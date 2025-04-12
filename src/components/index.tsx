@@ -36,8 +36,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/Molecules/DropdownMenu";
-import { Carousel } from "@atoms/Carousel/index";
-import Image from "next/image";
+import { Carousel } from "@components/Organisms/Carousel/index";
+// import Image from "next/image";
 
 interface User extends ICOMPONENTS.SortableRecord {
     id: number;
@@ -131,6 +131,73 @@ const columns: ICOMPONENTS.DataTableProps<User>["columns"] = [
         sortable: true
     }
 ];
+
+
+const carouselItems: ICOMPONENTS.CarouselItem[] = [
+    {
+        id: 1,
+        image: 'https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ',
+        title: 'Beautiful Landscape',
+        description: 'A stunning view of the mountains',
+        backgroundColor: "bg-blue-500"
+    },
+    {
+        id: 2,
+        image: 'https://cdn.tcdulichtphcm.vn/upload/4-2024/images/2024-11-11/1731317465-hnlh3081-copy.jpg',
+        title: 'City Life',
+        description: 'Urban architecture at its finest',
+        backgroundColor: "bg-red-500"
+    },
+    {
+        id: 3,
+        image: 'https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg',
+        title: 'Beach Sunset',
+        description: 'Perfect evening by the ocean',
+        backgroundColor: "bg-green-500"
+    },
+    {
+        id: 4,
+        image: 'https://nld.mediacdn.vn/thumb_w/698/291774122806476800/2021/8/10/jack01gtpf-1-16286070458251002756678.jpg',
+        title: 'Mountain View',
+        description: 'A breathtaking view of the mountains',
+        backgroundColor: "bg-blue-500"
+    },
+];
+
+// const carouselItems: ICOMPONENTS.CarouselItem[] = [
+//     {
+//         id: 1,
+//         title: "Card 1",
+//         description: "This is card 1",
+//         backgroundColor: "bg-blue-500"
+//     },
+//     {
+//         id: 2,
+//         title: "Card 2",
+//         description: "This is card 2",
+//         backgroundColor: "bg-red-500"
+//     },
+//     {
+//         id: 3,
+//         title: "Card 3",
+//         description: "This is card 3",
+//         backgroundColor: "bg-green-500"
+//     }
+// ];
+
+const customRenderItem = (item: typeof carouselItems[0]) => (
+    <div className={`w-full h-full ${item.backgroundColor} rounded-lg p-6 flex flex-col items-center justify-center`}>
+        <div className="mt-6 flex gap-4">
+            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+        </div>
+        <div className="bg-white/10 p-8 rounded-lg backdrop-blur-sm">
+            <h2 className="text-3xl font-bold text-white mb-4">{item.title}</h2>
+            <p className="text-white/90">{item.description}</p>
+        </div>
+
+
+    </div>
+);
 
 export default function Home() {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -330,7 +397,7 @@ export default function Home() {
                     className="max-w-md"
                 />
             </div>
-            <Carousel
+            {/* <Carousel
                 className="w-full max-w-4xl mx-auto"
                 options={{ loop: true }}
                 autoScroll
@@ -356,7 +423,24 @@ export default function Home() {
                         />
                     </div>
                 ))}
-            </Carousel>
+            </Carousel> */}
+            {/* <Carousel
+                items={carouselItems}
+                autoScroll={true}
+                width={800}
+                height={400}
+            /> */}
+
+
+            <Carousel
+                items={carouselItems}
+                renderItem={customRenderItem}
+                autoScroll={true}
+                scrollSpeed={1000}
+                width={800}
+                height={400}
+            />
+
         </div>
     );
 }
