@@ -15,6 +15,7 @@ import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
+import { signIn } from "next-auth/react"
 
 const LoginPage = () => {
     //#region define variables
@@ -22,7 +23,7 @@ const LoginPage = () => {
     const router = useRouter()
     //#endregion
 
-    
+
     //#region Handle form submit
     const {
         register,
@@ -31,16 +32,14 @@ const LoginPage = () => {
     } = useForm<IUserLoginRequest>({
         resolver: zodResolver(UserLoginRequest),
     })
-    const onSubmit = (data: IUserLoginRequest) => {
-        console.log(data);
-        const res = {
-            statusCode: 403,
-            data: {
-                email: data.email,
-                password: data.password,
-            },
-        }
-        switch (res.statusCode) {
+    const onSubmit = async (data: IUserLoginRequest) => {
+        const res = await signIn("credentials", {
+            redirect: false,
+            ...data,
+        })
+        console.log(res);
+
+        switch (res?.status) {
             case 200:
                 router.push(ROUTES.PUBLIC.HOME)
                 break;
@@ -90,7 +89,6 @@ const LoginPage = () => {
     return (
         <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
             {/* Main card container */}
-            <div className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Left side - Login form */}
                 <div className="w-full md:w-1/2 p-8 md:p-12">
                     {/* Center logo */}
@@ -241,7 +239,6 @@ const LoginPage = () => {
                     </div>
                 </div>
                 {/* --- End of MODIFIED Right side --- */}
-            </div>
         </TransitionWrapper>
     )
 }
