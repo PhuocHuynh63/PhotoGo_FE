@@ -8,6 +8,9 @@ export default withAuth({
             if (req.nextUrl.pathname.startsWith(ROUTES.ADMIN.DASHBOARD)) {
                 return !!token && token.role === "admin";
             }
+            if (req.nextUrl.pathname.startsWith(ROUTES.STAFF.DASHBOARD)) {
+                return !!token && token.role === "staff";
+            }
             return !!token;
         },
     },
@@ -17,5 +20,5 @@ export default withAuth({
 });
 
 export const config = {
-    matcher: [`${ROUTES.ADMIN}/:path*`],
+    matcher: [`${ROUTES.ADMIN}/:path*`, `${ROUTES.STAFF}/:path*`],
 };
