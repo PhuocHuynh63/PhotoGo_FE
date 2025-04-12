@@ -46,6 +46,7 @@ declare namespace ICOMPONENTS {
         loadingText?: string;
         spinIcon?: boolean;
         className?: string;
+        variant?:string;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -234,4 +235,93 @@ declare namespace ICOMPONENTS {
         width?: number;
         height?: number;
     }
+
+    export interface AdminStaffHeaderProps {
+        userRole: 'admin' | 'staff'
+        userName?: string
+        userAvatar?: string
+    }
+    
+    export interface SidebarItem {
+        title: string
+        path?: string
+        icon?: keyof typeof import('lucide-react')
+        children?: SidebarItem[]
+        isExpanded?: boolean
+    }
+
+    export interface SidebarProps {
+        items: SidebarItem[]
+        isCollapsed: boolean
+        toggleCollapse: () => void
+    }
+    export interface ChartTooltipProps {
+        active?: boolean
+        payload?: Array<any>
+        label?: string
+        className?: string
+        formatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface ChartLegendItemProps {
+        color: string
+        label: string
+        value?: string | number
+    }
+
+    export interface ChartContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+        children: React.ReactNode
+    }
+
+    interface ChartDataPoint {
+        name: string
+        [key: string]: string | number
+    }
+
+    export interface LineChartProps {
+        data: LineChartDataPoint[]
+        lines: {
+            dataKey: string
+            stroke: string
+            name?: string
+        }[]
+        height?: number | string
+        xAxisDataKey?: string
+        showGrid?: boolean
+        showLegend?: boolean
+        tooltipFormatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface BarChartProps {
+        data: BarChartDataPoint[]
+        bars: {
+            dataKey: string
+            fill: string
+            name?: string
+        }[]
+        height?: number | string
+        xAxisDataKey?: string
+        showGrid?: boolean
+        showLegend?: boolean
+        layout?: "vertical" | "horizontal"
+        tooltipFormatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface DataChartProps {
+        data: BarChartDataPoint[]
+        title?: string
+        description?: string
+        className?: string
+    }
+
+    type StatsCardProps = {
+        title: string;
+        icon: React.ReactNode;
+        value: string | number;
+        change: string;
+        changeColor?: string; 
+        changeIcon?: React.ReactNode;
+        subtitle?: string;
+    };
+
 }

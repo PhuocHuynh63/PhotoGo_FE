@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LucideIcon from '@components/Atoms/LucideIcon'
 import { cn } from '@helpers/CN'
+import { Tooltip } from '@components/Molecules/Tooltip'
 
 export interface SidebarItem {
   title: string
@@ -14,7 +15,7 @@ export interface SidebarItem {
   isExpanded?: boolean
 }
 
-interface SidebarProps {
+export interface SidebarProps {
   items: SidebarItem[]
   isCollapsed: boolean
   toggleCollapse: () => void
@@ -41,52 +42,90 @@ const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
         <div key={`${item.title}-${index}`} className="w-full">
           {item.path && !hasChildren ? (
             <Link href={item.path}>
-              <div
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors',
-                  isActive
-                    ? 'bg-orange-100 text-orange-700'
-                    : 'hover:bg-gray-100',
-                  isCollapsed && 'justify-center',
-                  level > 0 && 'ml-6'
-                )}
-              >
-                {item.icon && (
-                  <LucideIcon
-                    name={item.icon}
-                    iconSize={20}
-                    iconColor={isActive ? 'var(--color-orange-700)' : 'currentColor'}
-                  />
-                )}
-                {!isCollapsed && <span className="text-sm">{item.title}</span>}
-              </div>
-            </Link>
-          ) : (
-            <>
-              <div
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
-                  isCollapsed ? 'justify-center' : 'justify-between',
-                  level > 0 && 'ml-6'
-                )}
-                onClick={() => !isCollapsed && hasChildren && toggleExpand(item.title)}
-              >
-                <div className="flex items-center gap-2">
+              <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
+                <div
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-md transition-colors',
+                    isActive
+                      ? 'bg-orange-100 text-orange-700'
+                      : 'hover:bg-gray-100',
+                    isCollapsed && 'justify-center',
+                    level > 0 && 'ml-6'
+                  )}
+                >
                   {item.icon && (
                     <LucideIcon
                       name={item.icon}
                       iconSize={20}
+                      iconColor={isActive ? 'var(--color-orange-700)' : 'currentColor'}
                     />
                   )}
-                  {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+                  {!isCollapsed && <span className="text-sm">{item.title}</span>}
                 </div>
-                {!isCollapsed && hasChildren && (
-                  <LucideIcon
-                    name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
-                    iconSize={16}
-                  />
-                )}
-              </div>
+              </Tooltip>
+            </Link>
+          ) : (
+            <>
+              {isCollapsed && item.children && item.children.length > 0 && item.children[0].path ? (
+                <Link href={item.children[0].path}>
+                  <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
+                        isCollapsed ? 'justify-center' : 'justify-between',
+                        level > 0 && 'ml-6'
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        {item.icon && (
+                          <LucideIcon
+                            name={item.icon}
+                            iconSize={20}
+                          />
+                        )}
+                        {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+                      </div>
+                      {!isCollapsed && hasChildren && (
+                        <LucideIcon
+                          name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
+                          iconSize={16}
+                        />
+                      )}
+                    </div>
+                  </Tooltip>
+                </Link>
+              ) : (
+                <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
+                  <div
+                    className={cn(
+                      'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
+                      isCollapsed ? 'justify-center' : 'justify-between',
+                      level > 0 && 'ml-6'
+                    )}
+                    onClick={() => {
+                      if (!isCollapsed && hasChildren) {
+                        toggleExpand(item.title);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.icon && (
+                        <LucideIcon
+                          name={item.icon}
+                          iconSize={20}
+                        />
+                      )}
+                      {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+                    </div>
+                    {!isCollapsed && hasChildren && (
+                      <LucideIcon
+                        name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
+                        iconSize={16}
+                      />
+                    )}
+                  </div>
+                </Tooltip>
+              )}
               {!isCollapsed && hasChildren && isExpanded && item.children && (
                 <div className="mt-1 mb-1">
                   {renderNavItems(item.children, level + 1)}
@@ -107,7 +146,7 @@ const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        {!isCollapsed && <span className="font-semibold"><img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo"  style={{ width: '60px', height: '30px' }} /></span>}
+        {!isCollapsed && <span className="font-semibold"><img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo" style={{ width: '60px', height: '30px' }} /></span>}
         <button
           onClick={toggleCollapse}
           className="p-1 rounded-md hover:bg-gray-100"

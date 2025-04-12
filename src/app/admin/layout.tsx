@@ -56,7 +56,7 @@ export default function AdminLayout({
       icon: 'Store',
       children: [
         {
-          title: 'Vendor List',
+          title: 'DANH SÁCH',
           path: ROUTES.ADMIN.VENDOR_MANAGEMENT.LIST,
           icon: 'List'
         }
@@ -67,7 +67,7 @@ export default function AdminLayout({
       icon: 'Package',
       children: [
         {
-          title: 'Package List',
+          title: 'DANH SÁCH',
           path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.LIST,
           icon: 'List'
         }
@@ -78,12 +78,12 @@ export default function AdminLayout({
       icon: 'Calendar',
       children: [
         {
-          title: 'Booking List',
+          title: 'DANH SÁCH',
           path: ROUTES.ADMIN.BOOKING_MANAGEMENT.LIST,
           icon: 'List'
         },
         {
-          title: 'Disputes',
+          title: 'TRANH CHẤP',
           path: ROUTES.ADMIN.BOOKING_MANAGEMENT.DISPUTES,
           icon: 'AlertTriangle'
         }
@@ -94,32 +94,32 @@ export default function AdminLayout({
       icon: 'DollarSign',
       children: [
         {
-          title: 'Overview',
+          title: 'TỔNG QUAN',
           path: ROUTES.ADMIN.FINANCE.OVERVIEW,
           icon: 'PieChart'
         },
         {
-          title: 'Transactions',
+          title: 'GIAO DỊCH',
           path: ROUTES.ADMIN.FINANCE.TRANSACTION,
           icon: 'ArrowLeftRight'
         },
         {
-          title: 'Invoices',
+          title: 'HÓA ĐƠN',
           path: ROUTES.ADMIN.FINANCE.INVOICE,
           icon: 'Receipt'
         },
         {
-          title: 'Revenue',
+          title: 'DOANH THU',
           path: ROUTES.ADMIN.FINANCE.REVENUE,
           icon: 'TrendingUp'
         },
         {
-          title: 'Payouts',
+          title: 'THANH TOÁN',
           path: ROUTES.ADMIN.FINANCE.PAYOUT,
           icon: 'CreditCard'
         },
         {
-          title: 'Refunds',
+          title: 'HOÀN TIỀN',
           path: ROUTES.ADMIN.FINANCE.REFUND,
           icon: 'RefreshCcw'
         }
@@ -130,48 +130,48 @@ export default function AdminLayout({
       icon: 'Repeat',
       children: [
         {
-          title: 'Plans',
+          title: 'GÓI DỊCH VỤ',
           path: ROUTES.ADMIN.SUBCRIPTIONS.PLANS,
           icon: 'Layers'
         },
         {
-          title: 'Customer Plans',
+          title: 'GÓI KHÁCH HÀNG',
           path: ROUTES.ADMIN.SUBCRIPTIONS.CUSTOMER_PLAN,
           icon: 'Users'
         },
         {
-          title: 'Vendor Plans',
+          title: 'GÓI NHÀ CUNG CẤP',
           path: ROUTES.ADMIN.SUBCRIPTIONS.VENDOR_PLAN,
           icon: 'Store'
         },
         {
-          title: 'Billing Logs',
+          title: 'LỊCH SỬ THANH TOÁN',
           path: ROUTES.ADMIN.SUBCRIPTIONS.BILLING_LOGS,
           icon: 'FileText'
         }
       ]
     },
     {
-      title: 'TRUYỀN THÔNG',
+      title: 'TIẾP THỊ',
       icon: 'Megaphone',
       children: [
         {
-          title: 'Campaigns',
+          title: 'CHIẾN DỊCH',
           path: ROUTES.ADMIN.MARKETING.CAMPAIGN,
           icon: 'Target'
         },
         {
-          title: 'Promotions',
+          title: 'KHUYẾN MÃI',
           path: ROUTES.ADMIN.MARKETING.PROMOTION,
           icon: 'Tag'
         },
         {
-          title: 'Featured Vendors',
+          title: 'NHÀ CUNG CẤP NỔI BẬT',
           path: ROUTES.ADMIN.MARKETING.FEATURED_VENDOR,
           icon: 'Award'
         },
         {
-          title: 'Seasonal Promos',
+          title: 'KHUYẾN MÃI THEO MÙA',
           path: ROUTES.ADMIN.MARKETING.SEASONAL_PROMOS,
           icon: 'Calendar'
         }
@@ -182,7 +182,7 @@ export default function AdminLayout({
       icon: 'BarChart',
       children: [
         {
-          title: 'Performance',
+          title: 'HIỆU SUẤT',
           path: ROUTES.ADMIN.REPORTS.PERFORMANCE,
           icon: 'Activity'
         }
@@ -193,7 +193,7 @@ export default function AdminLayout({
       icon: 'HeadphonesIcon',
       children: [
         {
-          title: 'Tickets',
+          title: 'YÊU CẦU HỖ TRỢ',
           path: ROUTES.ADMIN.CUSTOMER_SUPPORT.TICKETS,
           icon: 'Ticket'
         }
@@ -204,7 +204,7 @@ export default function AdminLayout({
       icon: 'FileText',
       children: [
         {
-          title: 'Blog',
+          title: 'BLOG',
           path: ROUTES.ADMIN.CONTENT_MANAGEMENT.BLOG,
           icon: 'BookOpen'
         }

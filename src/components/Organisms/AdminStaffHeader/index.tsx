@@ -2,9 +2,8 @@
 
 import { Avatar } from "@components/Molecules/Avatar"
 import { ROUTES } from "@routes"
-import Image from "next/image"
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link"
-import { useState } from "react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,31 +15,22 @@ import {
 import LucideIcon from "@components/Atoms/LucideIcon"
 import { usePathname } from "next/navigation"
 
-interface AdminStaffHeaderProps {
-    userRole: 'admin' | 'staff'
-    userName?: string
-    userAvatar?: string
-}
 
-export default function AdminStaffHeader({ 
-    userRole, 
-    userName = 'Admin User', 
-    userAvatar = "https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg" 
-}: AdminStaffHeaderProps) {
+export default function AdminStaffHeader({
+    userRole,
+    userName = 'Admin User',
+    userAvatar = "https://res.cloudinary.com/dodtzdovx/image/upload/v1744191261/mau_1_t47cab.svg"
+}: ICOMPONENTS.AdminStaffHeaderProps) {
     const pathname = usePathname()
-    
-    // Determine current section from pathname
-    const getCurrentSection = () => {
-        const path = pathname ? pathname.split('/')[2] || 'dashboard' : 'dashboard'
-        return path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')
-    }
 
     return (
         <header className="bg-white shadow-sm p-2 px-6 w-full sticky top-0 z-50 flex items-center justify-between">
             <div className="flex items-center">
-                <h1 className="text-lg font-medium text-gray-700">
-                    {userRole === 'admin' ? 'Admin' : 'Staff'} / <span className="text-orange-500">{getCurrentSection()}</span>
-                </h1>
+                <Link href={ROUTES.PUBLIC.HOME}>
+                    <span className="text-orange-500 hover:underline cursor-pointer">
+                        <ArrowLeft className="h-4 w-4 mr-1" />  PHOTOGO
+                    </span>
+                </Link>
             </div>
 
             <div className="flex items-center gap-4">
