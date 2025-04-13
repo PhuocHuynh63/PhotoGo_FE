@@ -1,8 +1,10 @@
-import { axiosClient, axiosPrivate } from "@configs/axios"
+import http from "@configs/fetch"
 
 const userService = {
     getUser: async () => {
-        return await axiosClient.get("/users")
+        return await http.get("/users", {
+            next: { revalidate: 10 }
+        })
     },
 }
 

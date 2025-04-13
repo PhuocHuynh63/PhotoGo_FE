@@ -17,7 +17,7 @@ import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
 
-const LoginPage = (data: PAGES.ILogin) => {
+const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
     const router = useRouter()
@@ -88,61 +88,6 @@ const LoginPage = (data: PAGES.ILogin) => {
 
     return (
         <>
-            <div className="max-w-4xl mx-auto mt-10 p-6 bg-gray-100 rounded-lg">
-                <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Danh sách người dùng</h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {data?.data?.data.map((user: any) => (
-                        <div
-                            key={user.id}
-                            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center mb-4">
-                                <img
-                                    src={user.avatarUrl}
-                                    alt={`${user.fullName}'s avatar`}
-                                    className="w-16 h-16 rounded-full mr-4 object-cover"
-                                />
-                                <div>
-                                    <h2 className="text-xl font-semibold text-gray-800">{user.fullName}</h2>
-                                    <span className="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded">
-                                        {user.rank}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Email:</span> {user.email}
-                                </p>
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Số điện thoại:</span> {user.phoneNumber}
-                                </p>
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Trạng thái:</span>{' '}
-                                    <span
-                                        className={`capitalize ${user.status === 'active' ? 'text-green-600' : 'text-red-600'
-                                            }`}
-                                    >
-                                        {user.status}
-                                    </span>
-                                </p>
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Phương thức đăng nhập:</span>{' '}
-                                    {user.auth.toUpperCase()}
-                                </p>
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Ngày tạo:</span>{' '}
-                                    {new Date(user.createdAt).toLocaleDateString('vi-VN')}
-                                </p>
-                                <p className="text-gray-600">
-                                    <span className="font-medium">Cập nhật lần cuối:</span>{' '}
-                                    {new Date(user.updatedAt).toLocaleDateString('vi-VN')}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
             <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
                 {/* Main card container */}
                 {/* Left side - Login form */}
