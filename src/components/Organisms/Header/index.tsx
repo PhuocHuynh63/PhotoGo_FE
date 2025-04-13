@@ -47,10 +47,10 @@ export default function Header() {
                 avatar: "https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ",
                 rank: "gold",
                 notifications: [
-                    { id: 1, title: "Thông báo 1", description: "Thông báo 1", read: false, createdAt: "2025-03-05T10:46:58.557+00:00" },
-                    { id: 2, title: "Thông báo 2", description: "Thông báo 2", read: false, createdAt: "2025-04-01T10:46:58.557+00:00" },
-                    { id: 3, title: "Thông báo 3", description: "Thông báo 3", read: false, createdAt: "2025-04-13T10:46:58.557+00:00" },
-                    { id: 4, title: "Thông báo 4", description: "Thông báo 4", read: true, createdAt: "2025-04-13T16:02:58.557+00:00" },
+                    { id: 1, title: "Thông báo 1", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-03-05T10:46:58.557+00:00" },
+                    { id: 2, title: "Thông báo 2", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-04-01T10:46:58.557+00:00" },
+                    { id: 3, title: "Thông báo 3", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-04-13T10:46:58.557+00:00" },
+                    { id: 4, title: "Thông báo 4", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: true, createdAt: "2025-04-13T16:02:58.557+00:00" },
                 ],
             });
         }
@@ -119,23 +119,52 @@ export default function Header() {
                             <div className="flex items-center gap-2 relative">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <div onClick={handleOpenNotification} className="cursor-pointer relative">
+                                        <div onClick={handleOpenNotification} className="cursor-pointer relative mt-2">
                                             <LucideIcon name="Bell" iconSize={26} />
                                             <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                 {unreadNotifications.length}
                                             </span>
                                         </div>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuLabel>Thông báo</DropdownMenuLabel>
+                                    <DropdownMenuContent className="w-80">
+                                        <DropdownMenuLabel className="text-xl font-bold flex justify-between items-center">
+                                            Thông báo
+                                            <Button
+                                                className="text-sm whitespace-pre text-blue-500 bg-none shadow-none hover:bg-gray-200"
+                                                onClick={() => {
+                                                    setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+                                                }}
+                                            >
+                                                Đánh dấu đã đọc
+                                            </Button>
+                                        </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         {notifications.length > 0 ? (
                                             notifications.map((notification) => (
-                                                <DropdownMenuItem key={notification.id}>
-                                                    <div>
-                                                        <p className="text-sm font-medium">{notification.title}</p>
-                                                        <p className="text-xs text-gray-500">{notification.description}</p>
-                                                        <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
+                                                <DropdownMenuItem
+                                                    key={notification.id}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setNotifications(prevNotifications =>
+                                                            prevNotifications.map(n =>
+                                                                n.id === notification.id ? { ...n, read: true } : n
+                                                            )
+                                                        );
+                                                    }}
+                                                >
+                                                    <div className="flex flex-col gap-2 w-full">
+                                                        <div className="flex w-full justify-between items-center">
+                                                            <p className="text-sm font-medium">{notification.title}</p>
+                                                            <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
+                                                        </div>
+                                                        <div className="flex w-full justify-between">
+                                                            <p className="text-xs text-gray-500 whitespace-normal break-words">{notification.description}</p>
+                                                            <div className="flex items-center gap-2">
+                                                                {!notification.read && (
+                                                                    <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
+                                                                )}
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </DropdownMenuItem>
                                             ))
@@ -168,11 +197,6 @@ export default function Header() {
                                         <Link href={"/ROUTES.PRIVATE.SETTINGS"}>
                                             <DropdownMenuItem icon="Settings">
                                                 <span>Cài đặt</span>
-                                            </DropdownMenuItem>
-                                        </Link>
-                                        <Link href={"/ROUTES.PRIVATE.NOTIFICATIONS"}>
-                                            <DropdownMenuItem icon="Bell">
-                                                <span>Thông báo</span>
                                             </DropdownMenuItem>
                                         </Link>
                                         <Link href={"/ROUTES.PRIVATE.MESSAGES"}>

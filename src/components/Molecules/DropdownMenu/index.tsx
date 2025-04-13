@@ -50,6 +50,7 @@ const DropdownMenuContent = React.forwardRef<
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      loop={true}
       className={`${styles.dropdown_content} ${className || ''}`}
       {...props}
     />
