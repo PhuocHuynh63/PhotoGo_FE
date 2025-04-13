@@ -311,9 +311,10 @@ export default function VendorDetailLayout({
             <Header />
             <VendorContextProvider value={studioData}>
                 <div className="flex min-h-screen flex-col">
+                    {/* VendorCover */}
                     <VendorCover />
 
-                    {/* VendorNavigation /> */}
+                    {/* VendorNavigation */}
                     <VendorNavigation />
                     {children}
                 </div>

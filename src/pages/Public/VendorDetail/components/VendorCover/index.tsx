@@ -12,7 +12,7 @@ const VendorCover = () => {
 
     return (
         <section className="relative">
-            <div className="h-[300px] md:h-[400px] w-full relative">
+            <div className="h-[300px] md:h-[320px] w-full relative">
                 <img
                     src={vendorData?.coverImage || "/placeholder.svg"}
                     alt={vendorData?.name}
