@@ -28,12 +28,12 @@ const HomePage = () => {
                         <h1 className="text-5xl font-bold ">
                             Ghi lại khoảnh khắc hoàn hảo của bạn
                         </h1>
-                        <p className="text-lg ">
+                        <p className="text-xl">
                             Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
                         </p>
                         <div className="flex gap-4">
-                            <Button width={160} height={50}>Đặt lịch ngay</Button>
-                            <ClearButton width={180} height={50}>Khám phá dịch vụ</ClearButton>
+                            <Button width={160} height={50} className="text-lg text-white">Đặt lịch ngay</Button>
+                            <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
                         </div>
                     </div>
                 </div>
@@ -43,21 +43,21 @@ const HomePage = () => {
             <div className="flex container mx-auto px-4 py-16 items-center justify-center">
                 <div className="flex flex-col gap-8 w-full">
                     <div className="flex flex-col gap-4 text-black items-center justify-center">
-                        <h1 className="text-3xl font-bold">
+                        <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
                             Dịch vụ của chúng tôi
                         </h1>
-                        <span className="text-center">PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
+                        <span className="text-center text-lg">PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Photographers Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4">
+                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Camera" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
                             <div className="text-2xl font-bold">Photographers</div>
-                            <span className="text-sm text-gray-600">Tìm nhiếp ảnh gia phù hợp với nhu cầu của bạn</span>
-                            <div className="h-40 w-full relative rounded-lg overflow-hidden">
+                            <span className="text-lg text-gray-600 min-h-[3rem]">Tìm nhiếp ảnh gia phù hợp với nhu cầu của bạn</span>
+                            <div className="h-40 w-full relative rounded-lg overflow-hidden flex-shrink-0">
                                 <Image
                                     src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
                                     alt="Photographers"
@@ -65,7 +65,7 @@ const HomePage = () => {
                                     className="object-cover"
                                 />
                             </div>
-                            <ul className="list-none pl-5 text-sm space-y-2 my-2">
+                            <ul className="list-none pl-5 text-lg space-y-2 my-2 flex-grow">
                                 <li className="flex items-center gap-2">
                                     <LucideIcon name="Star" iconSize={16} iconColor="var(--orange)" />
                                     <span>Nhiều góp ghi khoảnh ngắm</span>
@@ -79,17 +79,19 @@ const HomePage = () => {
                                     <span>Lựa chọn linh hoạt</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right">Xem tất cả Photographers</ClearButton>
+                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">
+                                Xem tất cả Photographers
+                            </ClearButton>
                         </div>
 
                         {/* Studios Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4">
+                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Home" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
                             <div className="text-2xl font-bold">Studios</div>
-                            <span className="text-sm text-gray-600">Đặt phòng chụp ảnh cao cấp</span>
-                            <div className="h-40 w-full relative rounded-lg overflow-hidden">
+                            <span className="text-lg text-gray-600 min-h-[3rem]">Đặt phòng chụp ảnh cao cấp</span>
+                            <div className="h-40 w-full relative rounded-lg overflow-hidden flex-shrink-0">
                                 <Image
                                     src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
                                     alt="Photographers"
@@ -97,7 +99,7 @@ const HomePage = () => {
                                     className="object-cover"
                                 />
                             </div>
-                            <ul className="list-none pl-5 text-sm space-y-2 my-2">
+                            <ul className="list-none pl-5 text-lg space-y-2 my-2 flex-grow">
                                 <li className="flex items-center gap-2">
                                     <LucideIcon name="Star" iconSize={16} iconColor="var(--orange)" />
                                     <span>Phòng studio được trang bị đầy đủ</span>
@@ -111,17 +113,17 @@ const HomePage = () => {
                                     <span>Cho thuê theo giờ hoặc theo ngày</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right">Đặt lịch Studio</ClearButton>
+                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch Studio</ClearButton>
                         </div>
 
                         {/* Makeup Artists Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4">
+                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Palette" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
                             <div className="text-2xl font-bold">Makeup Artists</div>
-                            <span className="text-sm text-gray-600">Trang điểm chuyên nghiệp cho buổi chụp ảnh của bạn</span>
-                            <div className="h-40 w-full relative rounded-lg overflow-hidden">
+                            <span className="text-lg text-gray-600 min-h-[3rem] break-words whitespace-pre-wrap">Trang điểm chuyên nghiệp cho buổi chụp ảnh của bạn</span>
+                            <div className="h-40 w-full relative rounded-lg overflow-hidden flex-shrink-0">
                                 <Image
                                     src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
                                     alt="Photographers"
@@ -129,7 +131,7 @@ const HomePage = () => {
                                     className="object-cover"
                                 />
                             </div>
-                            <ul className="list-none pl-5 text-sm space-y-2 my-2">
+                            <ul className="list-none pl-5 text-lg space-y-2 my-2 flex-grow">
                                 <li className="flex items-center gap-2">
                                     <LucideIcon name="Star" iconSize={16} iconColor="var(--orange)" />
                                     <span>Makeup artists chuyên nghiệp</span>
@@ -143,7 +145,7 @@ const HomePage = () => {
                                     <span>Sản phẩm chất lượng cao cấp</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right">Đặt lịch với Makeup Artist</ClearButton>
+                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch với Makeup Artist</ClearButton>
                         </div>
                     </div>
                 </div>
@@ -153,32 +155,33 @@ const HomePage = () => {
             <div className="bg-gray-50 py-16">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col gap-8">
-                        <div className="text-center">
-                            <h2 className="text-3xl font-bold">Nền tảng chúng tôi hoạt động như thế nào</h2>
-                            <p className="text-gray-600">Đặt lịch chụp ảnh hoàn hảo của bạn chưa bao giờ dễ dàng hơn thế</p>
+                        <div className="flex flex-col gap-4 text-black items-center justify-center">
+                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                Nền tảng chúng tôi hoạt động như thế nà
+                            </h1>
+                            <span className="text-center text-lg">Đặt lịch chụp ảnh hoàn hảo của bạn chưa bao giờ dễ dàng hơn thế</span>
                         </div>
-
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                             {/* Step items */}
                             <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium">1</div>
-                                <h3 className="font-semibold">Chọn dịch vụ</h3>
-                                <p className="text-sm text-gray-600">Chọn từ nhiều dịch vụ chụp ảnh khác nhau của chúng tôi</p>
+                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">1</div>
+                                <h3 className="font-semibold text-lg">Chọn dịch vụ</h3>
+                                <p className="text-md text-gray-600">Chọn từ nhiều dịch vụ chụp ảnh khác nhau của chúng tôi</p>
                             </div>
                             <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium">2</div>
-                                <h3 className="font-semibold">Chọn một chuyên gia</h3>
-                                <p className="text-sm text-gray-600">Duyệt hồ sơ và chọn đối tượng phù hợp hoàn hảo của bạn</p>
+                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">2</div>
+                                <h3 className="font-semibold text-lg">Chọn một chuyên gia</h3>
+                                <p className="text-md text-gray-600">Duyệt hồ sơ và chọn đối tượng phù hợp hoàn hảo của bạn</p>
                             </div>
                             <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium">3</div>
-                                <h3 className="font-semibold">Chọn ngày</h3>
-                                <p className="text-sm text-gray-600">Chọn ngày và giờ bạn muốn</p>
+                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">3</div>
+                                <h3 className="font-semibold text-lg">Chọn ngày</h3>
+                                <p className="text-md text-gray-600">Chọn ngày và giờ bạn muốn</p>
                             </div>
                             <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium">4</div>
-                                <h3 className="font-semibold">Tận hưởng dịch vụ của bạn</h3>
-                                <p className="text-sm text-gray-600">Thư giãn và tận hưởng buổi chụp ảnh chuyên nghiệp của bạn</p>
+                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">4</div>
+                                <h3 className="font-semibold text-lg">Tận hưởng dịch vụ của bạn</h3>
+                                <p className="text-md text-gray-600">Thư giãn và tận hưởng buổi chụp ảnh chuyên nghiệp của bạn</p>
                             </div>
 
                         </div>
@@ -190,11 +193,12 @@ const HomePage = () => {
             <div className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col gap-8">
-                        <div className="text-center">
-                            <h2 className="text-3xl font-bold">Khách hàng của chúng tôi nói gì</h2>
-                            <p className="text-gray-600">Hãy lắng nghe những người đã sử dụng dịch vụ của chúng tôi</p>
+                        <div className="flex flex-col gap-4 text-black items-center justify-center">
+                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                Khách hàng của chúng tôi nói gì
+                            </h1>
+                            <span className="text-center text-lg">Hãy lắng nghe những người đã sử dụng dịch vụ của chúng tôi</span>
                         </div>
-
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {/* Testimonial cards */}
                             <div className="p-6 shadow-xl rounded-xl">
@@ -209,7 +213,7 @@ const HomePage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="text-sm text-gray-600">&quot;Nhiếp ảnh gia mà tôi đặt qua PHOTOGO thật tuyệt vời! Họ đã chụp ảnh cưới của tôi một cách tuyệt đẹp và rất chuyên nghiệp trong suốt ngày.&quot;</p>
+                                <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Nhiếp ảnh gia mà tôi đặt qua PHOTOGO thật tuyệt vời! Họ đã chụp ảnh cưới của tôi một cách tuyệt đẹp và rất chuyên nghiệp trong suốt ngày.&quot;</p>
                             </div>
                             <div className="p-6 shadow-xl rounded-xl">
                                 <div className="flex items-center gap-4 mb-4">
@@ -223,7 +227,7 @@ const HomePage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="text-sm text-gray-600">&quot;Studio tôi thuê rất lý tưởng cho buổi chụp ảnh sản phẩm của tôi. Được trang bị đầy đủ và quá trình đặt chỗ diễn ra suôn sẻ.&quot;</p>
+                                <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Studio tôi thuê rất lý tưởng cho buổi chụp ảnh sản phẩm của tôi. Được trang bị đầy đủ và quá trình đặt chỗ diễn ra suôn sẻ.&quot;</p>
                             </div>
                             <div className="p-6 shadow-xl rounded-xl">
                                 <div className="flex items-center gap-4 mb-4">
@@ -237,12 +241,12 @@ const HomePage = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="text-sm text-gray-600">&quot;Chuyên gia trang điểm mà tôi đã đặt thật tuyệt vời! Cô ấy hiểu chính xác những gì tôi muốn và giúp tôi trông thật tuyệt vời trong buổi chụp ảnh.&quot;</p>
+                                <p className="text-md break-words whitespace-pre-wrap">&quot;Chuyên gia trang điểm mà tôi đã đặt thật tuyệt vời! Cô ấy hiểu chính xác những gì tôi muốn và giúp tôi trông thật tuyệt vời trong buổi chụp ảnh.&quot;</p>
                             </div>
                         </div>
                     </div>
                     <div className="flex justify-center mt-8">
-                        <Button width={160} height={40}>Xem thêm</Button>
+                        <Button width={160} height={40} className="text-lg text-white">Xem thêm</Button>
                     </div>
                 </div>
             </div>
@@ -250,9 +254,17 @@ const HomePage = () => {
             {/* CTA section */}
             <div className="bg-gray-50 py-16">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold mb-4 break-words whitespace-pre-wrap ">Bạn đã sẵn sàng đặt buổi chụp hình hoàn hảo của mình chưa?</h2>
-                    <p className="text-gray-600 mb-8 break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</p>
-                    <Button width={160} height={40}>Đặt lịch ngay</Button>
+
+                    <div className="flex flex-col gap-4 text-black items-center justify-center">
+                        <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                            Bạn đã sẵn sàng đặt buổi chụp hình hoàn hảo của mình chưa?
+                        </h1>
+                        <span className="text-center text-lg break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</span>
+                    </div>
+
+                </div>
+                <div className="flex justify-center mt-8">
+                    <Button width={160} height={40} className="text-lg text-white">Đặt lịch ngay</Button>
                 </div>
             </div>
         </div >
