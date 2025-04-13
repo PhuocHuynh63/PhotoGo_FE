@@ -1,8 +1,9 @@
+'use client'
 import { Avatar } from "@components/Molecules/Avatar"
 import { ROUTES } from "@routes"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,10 +15,61 @@ import {
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Button from "@components/Atoms/Button"
 
+const timeAgo = (date: string) => {
+    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+    if (interval > 1) return `${interval} năm trước`;
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) return `${interval} tháng trước`;
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) return `${interval} ngày trước`;
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) return `${interval} giờ trước`;
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) return `${interval} phút trước`;
+    return `${seconds} giây trước`;
+};
 
 export default function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState<ICOMPONENTS.User | null>(null);
+    const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    useEffect(() => {
+        const userFromLocalStorage = localStorage.getItem("user");
+        if (userFromLocalStorage) {
+            setUser(JSON.parse(userFromLocalStorage));
+        } else {
+            setUser({
+                id: 1,
+                name: "Nguyễn Văn A",
+                email: "nguyenvana@gmail.com",
+                avatar: "https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ",
+                rank: "gold",
+                notifications: [
+                    { id: 1, title: "Thông báo 1", description: "Thông báo 1", read: false, createdAt: "2025-03-05T10:46:58.557+00:00" },
+                    { id: 2, title: "Thông báo 2", description: "Thông báo 2", read: false, createdAt: "2025-04-01T10:46:58.557+00:00" },
+                    { id: 3, title: "Thông báo 3", description: "Thông báo 3", read: false, createdAt: "2025-04-13T10:46:58.557+00:00" },
+                    { id: 4, title: "Thông báo 4", description: "Thông báo 4", read: true, createdAt: "2025-04-13T16:02:58.557+00:00" },
+                ],
+            });
+        }
+    }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        setUser(null);
+    }
+
+    const unreadNotifications = useMemo(() => {
+        return notifications.filter(notification => !notification.read)
+    }, [notifications]);
+    const handleOpenNotification = () => {
+        setIsNotificationOpen(!isNotificationOpen);
+    }
+    useEffect(() => {
+        setNotifications(user?.notifications || []);
+    }, [user]);
     return (
         <header className="bg-white shadow-md p-2 px-4 md:px-8 w-full rounded-md sticky top-0 z-50">
             <div className="flex justify-between items-center">
@@ -63,51 +115,91 @@ export default function Header() {
                     </button>
 
                     <div className="hidden md:block">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Avatar
-                                    src="https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg"
-                                    alt="User avatar"
-                                    size={50}
-                                    className="cursor-pointer"
-                                />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <Link href={"/hello"}>
-                                    <DropdownMenuItem icon="UserCircle">
-                                        <span>Thông tin cá nhân</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                                <Link href={"/ROUTES.PRIVATE.SETTINGS"}>
-                                    <DropdownMenuItem icon="Settings">
-                                        <span>Cài đặt</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                                <Link href={"/ROUTES.PRIVATE.NOTIFICATIONS"}>
-                                    <DropdownMenuItem icon="Bell">
-                                        <span>Thông báo</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                                <Link href={"/ROUTES.PRIVATE.MESSAGES"}>
-                                    <DropdownMenuItem icon="MessageSquare">
-                                        <span>Tin nhắn</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                                <Link href={"/ROUTES.PRIVATE.HELP"}>
-                                    <DropdownMenuItem icon="HelpCircle">
-                                        <span>Trợ giúp</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                                <DropdownMenuSeparator />
-                                <Link href={"/ROUTES.PUBLIC.LOGIN"}>
-                                    <DropdownMenuItem icon="LogOut">
-                                        <span>Đăng xuất</span>
-                                    </DropdownMenuItem>
-                                </Link>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {user ? (
+                            <div className="flex items-center gap-2 relative">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <div onClick={handleOpenNotification} className="cursor-pointer relative">
+                                            <LucideIcon name="Bell" iconSize={26} />
+                                            <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                                {unreadNotifications.length}
+                                            </span>
+                                        </div>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuLabel>Thông báo</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        {notifications.length > 0 ? (
+                                            notifications.map((notification) => (
+                                                <DropdownMenuItem key={notification.id}>
+                                                    <div>
+                                                        <p className="text-sm font-medium">{notification.title}</p>
+                                                        <p className="text-xs text-gray-500">{notification.description}</p>
+                                                        <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
+                                                    </div>
+                                                </DropdownMenuItem>
+                                            ))
+                                        ) : (
+                                            <DropdownMenuItem disabled>
+                                                <p className="text-sm text-gray-500">Không có thông báo mới.</p>
+                                            </DropdownMenuItem>
+                                        )}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger asChild>
+                                        <Avatar
+                                            src={user.avatar}
+                                            alt={user.name}
+                                            size={user.rank === "unranked" ? 50 : 30}
+                                            rank={user.rank as ICOMPONENTS.UserRank ? user.rank as ICOMPONENTS.UserRank : "unranked"}
+                                            showRankLabel={false}
+                                            rankSize="sm"
+                                        />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <Link href={"/hello"}>
+                                            <DropdownMenuItem icon="UserCircle">
+                                                <span>Thông tin cá nhân</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <Link href={"/ROUTES.PRIVATE.SETTINGS"}>
+                                            <DropdownMenuItem icon="Settings">
+                                                <span>Cài đặt</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <Link href={"/ROUTES.PRIVATE.NOTIFICATIONS"}>
+                                            <DropdownMenuItem icon="Bell">
+                                                <span>Thông báo</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <Link href={"/ROUTES.PRIVATE.MESSAGES"}>
+                                            <DropdownMenuItem icon="MessageSquare">
+                                                <span>Tin nhắn</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <Link href={"/ROUTES.PRIVATE.HELP"}>
+                                            <DropdownMenuItem icon="HelpCircle">
+                                                <span>Trợ giúp</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                        <DropdownMenuSeparator />
+                                        <Link href={"/ROUTES.PUBLIC.LOGIN"}>
+                                            <DropdownMenuItem icon="LogOut">
+                                                <span>Đăng xuất</span>
+                                            </DropdownMenuItem>
+                                        </Link>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        ) : (
+                            <div className="flex gap-2">
+                                <Button onClick={() => {/* handle register */ }}>Đăng ký</Button>
+                                <Button onClick={() => {/* handle login */ }}>Đăng nhập</Button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -117,72 +209,82 @@ export default function Header() {
                 className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
             >
                 <div className="px-4 py-2 mt-2 border-b">
-                    <div className="flex items-center gap-3 mb-4">
-                        <Avatar
-                            size={40}
-                            src="https://thanhnien.mediacdn.vn/Uploaded/haoph/2021_10_21/jack-va-thien-an-5805.jpeg"
-                            fallback="User" />
-                        <div className="flex flex-col">
-                            <span className="font-medium">Tên người dùng</span>
-                            <span className="text-sm text-gray-500">email@example.com</span>
+                    {user ? (
+                        <div className="flex items-center gap-3 mb-4">
+                            <Avatar
+                                size={40}
+                                src={user.avatar}
+                                fallback={user.name.charAt(0)} />
+                            <div className="flex flex-col">
+                                <span className="font-medium">{user.name}</span>
+                                <span className="text-sm text-gray-500">{user.email}</span>
+                            </div>
+                            <div className="flex flex-col gap-4 py-4">
+                                <Link
+                                    href={ROUTES.PUBLIC.HOME}
+                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Trang chủ
+                                </Link>
+                                <Link
+                                    href={ROUTES.PUBLIC.STUDIO}
+                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Studio
+                                </Link>
+                                <Link
+                                    href={ROUTES.PUBLIC.FREELANCER}
+                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Freelancer
+                                </Link>
+                                <Link
+                                    href={ROUTES.PUBLIC.ABOUT}
+                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Về chúng tôi
+                                </Link>
+
+                                <div className="border-t pt-4">
+                                    <Link
+                                        href="/profile"
+                                        className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <LucideIcon name="User" iconSize={18} />
+                                        Hồ sơ của tôi
+                                    </Link>
+                                    <Link
+                                        href="/settings"
+                                        className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <LucideIcon name="Settings" iconSize={18} />
+                                        Cài đặt
+                                    </Link>
+                                    <Button icon="LogOut" iconSize={18} className="w-full" onClick={() => {
+                                        handleLogout()
+                                        setIsMobileMenuOpen(false);
+                                    }}>
+                                        Đăng xuất
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col gap-4 py-4">
-                    <Link
-                        href={ROUTES.PUBLIC.HOME}
-                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Trang chủ
-                    </Link>
-                    <Link
-                        href={ROUTES.PUBLIC.STUDIO}
-                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Studio
-                    </Link>
-                    <Link
-                        href={ROUTES.PUBLIC.FREELANCER}
-                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Freelancer
-                    </Link>
-                    <Link
-                        href={ROUTES.PUBLIC.ABOUT}
-                        className="px-4 py-2 hover:bg-gray-100 rounded-md"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Về chúng tôi
-                    </Link>
-
-                    <div className="border-t pt-4">
-                        <Link
-                            href="/profile"
-                            className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <LucideIcon name="User" iconSize={18} />
-                            Hồ sơ của tôi
-                        </Link>
-                        <Link
-                            href="/settings"
-                            className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            <LucideIcon name="Settings" iconSize={18} />
-                            Cài đặt
-                        </Link>
-                        <Button icon="LogOut" iconSize={18} className="w-full" onClick={() => {
-
-                            setIsMobileMenuOpen(false);
-                        }}>
-                            Đăng xuất
-                        </Button>
-                    </div>
+                    ) : (
+                        <div className="flex flex-col items-center mb-4">
+                            <h2 className="text-lg font-semibold mb-2">Chào mừng bạn đến với chúng tôi!</h2>
+                            <p className="text-sm text-gray-600 mb-4">Vui lòng đăng nhập hoặc đăng ký để tiếp tục.</p>
+                            <div className="flex justify-center gap-3 items-center">
+                                <Button onClick={() => {/* handle register */ }} className="bg-blue-500 text-white hover:bg-blue-600">Đăng ký</Button>
+                                <Button onClick={() => {/* handle login */ }} className="bg-green-500 text-white hover:bg-green-600">Đăng nhập</Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>

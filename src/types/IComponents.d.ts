@@ -46,7 +46,7 @@ declare namespace ICOMPONENTS {
         loadingText?: string;
         spinIcon?: boolean;
         className?: string;
-        variant?:string;
+        variant?: string;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -211,6 +211,7 @@ declare namespace ICOMPONENTS {
         src: string;
         alt: string;
         className?: string;
+        alt?: string;
     }
 
     interface AvatarFallbackProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> {
@@ -241,7 +242,7 @@ declare namespace ICOMPONENTS {
         userName?: string
         userAvatar?: string
     }
-    
+
     export interface SidebarItem {
         title: string
         path?: string
@@ -319,9 +320,35 @@ declare namespace ICOMPONENTS {
         icon: React.ReactNode;
         value: string | number;
         change: string;
-        changeColor?: string; 
+        changeColor?: string;
         changeIcon?: React.ReactNode;
         subtitle?: string;
     };
+
+    type UserRank = "unranked" | "bronze" | "silver" | "gold"
+
+    interface RankFrameProps extends React.HTMLAttributes<HTMLDivElement> {
+        rank: UserRank
+        className?: string
+        showLabel?: boolean
+        size?: "sm" | "md" | "lg"
+        children?: React.ReactNode
+    }
+
+    type Notification = {
+        id: string | number;
+        title: string;
+        description: string;
+        read: boolean;
+        createdAt: string;
+    }
+    interface User {
+        id: string | number;
+        name: string;
+        email: string;
+        avatar: string;
+        rank: UserRank;
+        notifications: Notification[];
+    }
 
 }
