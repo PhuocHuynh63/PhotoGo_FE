@@ -4,6 +4,7 @@ import Button from '@components/Atoms/Button'
 import { useVendor } from '@lib/vendorContext'
 import { Badge, Heart, MapPin, Share2, Star } from 'lucide-react'
 import React from 'react'
+import ButtonVendorDetail from '../ButtonVendorDetail'
 
 const VendorCover = () => {
 
@@ -64,14 +65,14 @@ const VendorCover = () => {
                                 </div>
                             </div>
                             <div className="flex gap-2">
-                                <Button className="gap-1">
+                                <ButtonVendorDetail className="gap-1">
                                     <Heart className="h-4 w-4" />
                                     <span className="hidden sm:inline">Lưu</span>
-                                </Button>
-                                <Button className="gap-1">
+                                </ButtonVendorDetail>
+                                <ButtonVendorDetail className="gap-1">
                                     <Share2 className="h-4 w-4" />
                                     <span className="hidden sm:inline">Chia sẻ</span>
-                                </Button>
+                                </ButtonVendorDetail>
                                 <Button>Đặt lịch ngay</Button>
                             </div>
                         </div>
