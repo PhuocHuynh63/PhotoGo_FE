@@ -33,11 +33,11 @@ const VendorOverviewPage = () => {
                     alt={item?.title}
                     width={400}
                     height={300}
-                    className="w-full h-64 object-cover transition-transform group-hover:scale-105"
+                    className="w-full h-64 object-contain transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <h3 className="text-white font-semibold">{item.title}</h3>
-                    <p className="text-white/80 text-sm">{item.category}</p>
+                  <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <h3 className="text-white font-semibold">{item?.title}</h3>
+                    <p className="text-white/80 text-sm">{item?.category}</p>
                   </div>
                 </div>
               ))}
