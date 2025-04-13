@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { ROUTES } from '@routes'
 import { replaceParam } from '@utils/helpers/ReplaceParam'
 
-const VendorContactInfomation = () => {
+const VendorContactInformation = () => {
 
     const vendorData = useVendor() as any
 
@@ -70,4 +70,4 @@ const VendorContactInfomation = () => {
     )
 }
 
-export default VendorContactInfomation
+export default VendorContactInformation
