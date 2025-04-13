@@ -14,17 +14,20 @@ const HomePage = () => {
         <div>
             <Header />
             {/* Hero section */}
-            <div className="container mx-auto relative h-full">
+            <div className="relative w-full h-full">
                 <div className="absolute inset-0">
                     <Image
-                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
+                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg"
                         alt="Background"
                         fill
+                        quality={100}
+                        loading="lazy"
+                        blurDataURL="https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ"
                         className="object-cover brightness-50"
                     />
                 </div>
                 <div className="relative container mx-auto px-4 py-16">
-                    <div className="flex flex-col gap-8 max-w-2xl text-black">
+                    <div className="flex flex-col gap-8 max-w-2xl text-primary">
                         <h1 className="text-5xl font-bold ">
                             Ghi lại khoảnh khắc hoàn hảo của bạn
                         </h1>
