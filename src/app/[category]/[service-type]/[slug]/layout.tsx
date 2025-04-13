@@ -175,23 +175,20 @@ export default function VendorDetailLayout({
             items: [
                 {
                     id: 1,
-                    title: "Chụp cưới Đà Lạt",
                     category: "Cưới",
-                    image: "/placeholder.svg?height=400&width=600&text=Wedding 1",
+                    image: "https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/490746666_1228865825911867_4900297125018117728_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeGrBfAn7h3aUhg720mKRbIXIpPjmbAk7Z8ik-OZsCTtn_SyVuKrrq1b0WAqh35wMSGB_lhGpRjjLpqBojoYRq-l&_nc_ohc=vE6HzF81qjkQ7kNvwGVzdPP&_nc_oc=AdmOXFt8hA8SCDG7ynoYpaDC4b4UonMfeRA4HkHzcLkmP9QcExqsVaTJocfS5uBkmSI&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=iF5uHV8OFA_TIrRpTOUQhQ&oh=00_AfH39kXexKGo35ya7nKmwpZ6ta0iCjeVPrphcUqeS2zxYg&oe=6801D569",
                     featured: true,
                 },
                 {
                     id: 2,
-                    title: "Gia đình hạnh phúc",
-                    category: "Gia đình",
-                    image: "/placeholder.svg?height=400&width=600&text=Family 1",
-                    featured: false,
+                    category: "Cưới",
+                    image: "https://scontent.fsgn5-10.fna.fbcdn.net/v/t39.30808-6/490329182_1228865772578539_830686916143369937_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeF-U2pzqk3O5C_Pl9agManQOuqHc8aUt8w66odzxpS3zOEXufnXMbvFUJrSKYjL_yNEpQjKLsgi3Y4ncLExSwnP&_nc_ohc=-kvShSZzbOgQ7kNvwHsdieU&_nc_oc=AdmtC2m-15rA6YFo1C0nIQrIRcio2ZsCAaULBgXT-hUNH428_MiJPTQO5_kpZrof0uI&_nc_zt=23&_nc_ht=scontent.fsgn5-10.fna&_nc_gid=qXa5YJ0d3VXyKt9JnL91MA&oh=00_AfHh9_kS84PWmucW-ekMxUA9r5482JNNmr5T4Kw4uFpRkA&oe=6801D51A",
+                    featured: true,
                 },
                 {
                     id: 3,
-                    title: "Thời trang mùa hè",
-                    category: "Thời trang",
-                    image: "/placeholder.svg?height=400&width=600&text=Fashion 1",
+                    category: "Cưới",
+                    image: "https://scontent.fsgn5-5.fna.fbcdn.net/v/t39.30808-6/490458722_1228865805911869_6591599871251392621_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeFGWmbHl1QNQ5huOOcouL2CUt5svPy5f_5S3my8_Ll__olggsRxkscTcdXAvI1m60zz2vaMxxe-8PLxJsyZzTci&_nc_ohc=KvF3c8rw6lkQ7kNvwE8NfBu&_nc_oc=AdkJSf4tx2SVTEpedA6KpydeTkNXcSA4XfCQBiKVtV3bR4uzzARSPTUDcGkAW1bUaN0&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=YCq9BW4Ne2aWi34unvUD6w&oh=00_AfFs17_Hiv2zJBgTSjIFJMBqj-5SDxg3Gkn5vndnzzNDyg&oe=6801C937",
                     featured: true,
                 },
                 {
@@ -316,7 +313,17 @@ export default function VendorDetailLayout({
 
                     {/* VendorNavigation */}
                     <VendorNavigation />
-                    {children}
+
+                    {/* Main content */}
+                    <div className="py-8">
+                        <div className="container">
+                            <div className="grid grid-cols-12 gap-8">
+                                <div className="col-span-12 lg:col-span-8">
+                                    {children}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </VendorContextProvider>
         </>

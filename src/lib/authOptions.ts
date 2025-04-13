@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
                 const res = await authService.login({
                     email: credentials.email,
                     password: credentials.password,
-                });
+                }) as { status: number; data: any };
 
                 if (res.status !== 200) {
                     throw new Error("Invalid credentials");

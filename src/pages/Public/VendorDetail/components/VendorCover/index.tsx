@@ -52,7 +52,7 @@ const VendorCover = () => {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                    {vendorData?.tags.slice(0, 5).map((tag: any, index: number) => (
+                                    {vendorData?.tags?.slice(0, 5).map((tag: any, index: number) => (
                                         <Badge key={index} className="text-xs">
                                             {tag}
                                         </Badge>
