@@ -267,3 +267,9 @@
     border-radius: 11px;
     margin-bottom: 0;
 }
+
+.active {
+    background-color: var(--bg-primary);
+    color: var(--light);
+    font-weight: 600;
+}
