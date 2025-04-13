@@ -25,7 +25,11 @@
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     }
 
-
+    &:not([class*="hover:bg-"]) {
+        &:hover {
+            background-color: #ff922c;
+        }
+    }
     cursor: pointer;
     transition: background-color 0.3s,
     transform 0.2s;
@@ -33,10 +37,6 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-
-    &:hover {
-        background-color: #ff922c;
-    }
 
     &:disabled {
         cursor: not-allowed;
