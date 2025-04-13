@@ -3,9 +3,6 @@
         background-color: var(--bg-primary);
     }
 
-    &:not([class*="text-"]) {
-        color: white;
-    }
 
     &:not([class*="border"]) {
         border: none;
@@ -16,7 +13,8 @@
     }
 
     &:not([class*="text-"]) {
-        font-size: 1rem;
+        font-size: inherit;
+        color: white;
     }
 
     &:not([class*="rounded"]) {
