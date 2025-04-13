@@ -2,6 +2,7 @@ import Header from "@components/Organisms/Header";
 import { VendorContextProvider } from "@lib/vendorContext";
 import VendorCover from "@pages/Public/VendorDetail/components/VendorCover";
 import VendorNavigation from "@pages/Public/VendorDetail/components/VendorNavigation";
+import VendorContactInfomation from "@pages/Public/VendorDetail/Right/ContactInfomation";
 
 export default function VendorDetailLayout({
     children,
@@ -318,8 +319,14 @@ export default function VendorDetailLayout({
                     <div className="py-8">
                         <div className="container">
                             <div className="grid grid-cols-12 gap-8">
+                                {/* Left Content */}
                                 <div className="col-span-12 lg:col-span-8">
                                     {children}
+                                </div>
+
+                                <div className="hidden lg:block lg:col-span-4 space-y-6">
+                                    {/* Right Content */}
+                                    <VendorContactInfomation />
                                 </div>
                             </div>
                         </div>

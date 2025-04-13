@@ -7,6 +7,7 @@ import ButtonVendorDetail from '../../components/ButtonVendorDetail'
 import Link from 'next/link'
 import { ROUTES } from '@routes'
 import Button from '@components/Atoms/Button'
+import { replaceParam } from '@utils/helpers/ReplaceParam'
 
 const VendorOverviewPage = () => {
 
@@ -43,7 +44,7 @@ const VendorOverviewPage = () => {
               ))}
           </div>
           <div className="mt-4 text-center">
-            <Link href={ROUTES.PUBLIC.VENDOR_DETAIL.replace(":page", "portfolio")} className="gap-1">
+            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "portfolio")} className="gap-1">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
             </Link>
@@ -134,7 +135,7 @@ const VendorOverviewPage = () => {
               ))} */}
           </div >
           <div className="mt-6 text-center">
-            <Link href={ROUTES.PUBLIC.VENDOR_DETAIL.replace(":page", "portfolio")}>
+            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "portfolio")}>
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
             </Link>
@@ -221,7 +222,7 @@ const VendorOverviewPage = () => {
             ))} */}
           </div>
           <div className="mt-6 text-center">
-            <Link href={ROUTES.PUBLIC.VENDOR_DETAIL.replace(":page", "reviews")} className="gap-1">
+            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "reviews")} className="gap-1">
               Xem tất cả đánh giá
               <ChevronRight className="h-4 w-4" />
             </Link>
