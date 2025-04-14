@@ -14,7 +14,7 @@ const PUBLIC = {
     CONTACT: '/contact',
     STUDIO: '/studio',
     FREELANCER: '/freelancer',
-    VENDOR_DETAIL: '/:category/:service-type/:slug/:page',
+    VENDOR_DETAIL: '/:slug/:page',
     ABOUT: '/about',
 };
 

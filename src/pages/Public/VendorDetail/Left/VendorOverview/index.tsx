@@ -1,7 +1,7 @@
 'use client'
 
 import { useVendor } from '@lib/vendorContext'
-import { Badge, CheckCircle, ChevronRight, Clock, Star } from 'lucide-react'
+import { Badge, CheckCircle, ChevronRight, Clock, Eye, Info, Star } from 'lucide-react'
 import React from 'react'
 import ButtonVendorDetail from '../../components/ButtonVendorDetail'
 import Link from 'next/link'
@@ -10,17 +10,13 @@ import Button from '@components/Atoms/Button'
 import { useParams, useRouter } from 'next/navigation'
 import ButtonNoBackground from '@components/Atoms/ButtonNoBackground'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
+import { Card } from '@components/Atoms/Card'
 
 const VendorOverviewPage = () => {
 
   const vendorData = useVendor() as any
   const params = useParams()
   const router = useRouter()
-  const category = params?.category
-  const service_type = params?.['service-type']
-  const slug = params?.slug
-
-  const href = `/${category}/${service_type}/${slug}`
 
 
   return (
@@ -54,7 +50,7 @@ const VendorOverviewPage = () => {
               ))}
           </div>
           <div className="flex justify-center mt-4 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/portfolio`)} className="flex items-center gap-1 border px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -64,7 +60,7 @@ const VendorOverviewPage = () => {
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Gói dịch vụ phổ biến</h2>
           <div className="space-y-6">
-            {/* {vendorData?.packages
+            {vendorData?.packages
               .filter((pkg: any) => pkg.popular)
               .map((pkg: any) => (
                 <Card key={pkg?.id} className="overflow-hidden">
@@ -92,34 +88,34 @@ const VendorOverviewPage = () => {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button>Đặt ngay</Button> */}
-            {/* <Dialog>
-                          <DialogTrigger asChild>
+                        <Button>Đặt ngay</Button>
+                        <div>
+                          <div>
                             <Button variant="outline" className="flex items-center gap-1">
                               <Eye className="h-4 w-4" />
                               Xem concept
                             </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl">
-                            <DialogHeader>
-                              <DialogTitle className="flex items-center gap-2">
+                          </div>
+                          <div className="max-w-4xl">
+                            <div>
+                              <div className="flex items-center gap-2">
                                 <Info className="h-5 w-5" />
                                 Concept cho {pkg.name}
-                              </DialogTitle>
-                              <DialogDescription>
+                              </div>
+                              <div>
                                 Dưới đây là một số concept đã thực hiện cho gói dịch vụ này
-                              </DialogDescription>
-                            </DialogHeader>
+                              </div>
+                            </div>
                             <div className="space-y-4">
-                              {pkg.concept.map((item, index) => (
+                              {pkg.concept.map((item: any, index: number) => (
                                 <div key={index}>
                                   <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                                  <Carousel className="w-full">
-                                    <CarouselContent>
-                                      {item.images.map((img, imgIndex) => (
-                                        <CarouselItem key={imgIndex} className="md:basis-1/2 lg:basis-1/3">
+                                  <div className="w-full">
+                                    <div>
+                                      {item.images.map((img: any, imgIndex: number) => (
+                                        <div key={imgIndex} className="md:basis-1/2 lg:basis-1/3">
                                           <div className="p-1">
-                                            <Image
+                                            <img
                                               src={img || "/placeholder.svg"}
                                               alt={`${item.title} - Ảnh ${imgIndex + 1}`}
                                               width={400}
@@ -127,25 +123,25 @@ const VendorOverviewPage = () => {
                                               className="rounded-lg w-full h-48 object-cover"
                                             />
                                           </div>
-                                        </CarouselItem>
+                                        </div>
                                       ))}
-                                    </CarouselContent>
-                                    <CarouselPrevious className="hidden md:flex" />
-                                    <CarouselNext className="hidden md:flex" />
-                                  </Carousel>
+                                    </div>
+                                    <div className="hidden md:flex" />
+                                    <div className="hidden md:flex" />
+                                  </div>
                                 </div>
                               ))}
                             </div>
-                          </DialogContent>
-                        </Dialog> */}
-            {/* </div>
+                          </div>
+                        </div>
+                      </div>
                     </div >
                   </div >
                 </Card >
-              ))} */}
+              ))}
           </div >
           <div className="mt-6 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/packages`)} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'packges')}`)} className="gap-1">
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -232,7 +228,7 @@ const VendorOverviewPage = () => {
             ))} */}
           </div>
           <div className="mt-6 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/reviews`)} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'reviews')}`)} className="gap-1">
               Xem tất cả đánh giá
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>

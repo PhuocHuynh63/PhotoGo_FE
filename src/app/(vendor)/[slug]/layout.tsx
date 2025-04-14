@@ -102,7 +102,7 @@ export default function VendorDetailLayout({ children,
                     "Trang phục (2 bộ)",
                     "Hỗ trợ đạo cụ",
                 ],
-                image: "/placeholder.svg?height=400&width=600&text=Wedding Package",
+                image: "https://bizweb.dktcdn.net/100/080/968/files/p4-d774994e-6233-4b08-acac-6030ec167697.jpg?v=1691746140498",
                 popular: false,
                 concept: [
                     {
@@ -129,7 +129,7 @@ export default function VendorDetailLayout({ children,
                     "Hỗ trợ đạo cụ",
                     "Tư vấn trang phục",
                 ],
-                image: "/placeholder.svg?height=400&width=600&text=Family Package",
+                image: "https://bizweb.dktcdn.net/100/080/968/files/p4-d774994e-6233-4b08-acac-6030ec167697.jpg?v=1691746140498",
                 popular: true,
                 concept: [
                     {

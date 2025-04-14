@@ -3,7 +3,7 @@ import { Star } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-const SimilarVendor = () => {
+const PackagesVendor = () => {
 
     const vendorData = [
         {
@@ -59,4 +59,4 @@ const SimilarVendor = () => {
     )
 }
 
-export default SimilarVendor
+export default PackagesVendor
