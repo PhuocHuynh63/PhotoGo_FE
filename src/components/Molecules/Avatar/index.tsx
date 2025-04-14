@@ -16,6 +16,7 @@ interface AvatarProps extends ICOMPONENTS.AvatarProps {
     rank?: UserRank
     showRankLabel?: boolean
     rankSize?: "sm" | "md" | "lg"
+    onClick?: () => void
 }
 
 const Avatar = forwardRef<
@@ -69,6 +70,7 @@ const Avatar = forwardRef<
                 showLabel={showRankLabel}
                 size={rankSize}
                 className={className}
+                onClick={props.onClick}
             >
                 {avatarContent}
             </RankFrame>
