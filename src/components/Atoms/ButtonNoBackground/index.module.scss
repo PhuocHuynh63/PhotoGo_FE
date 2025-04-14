@@ -38,9 +38,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    box-shadow: none;
 
     &:hover {
-        background-color: rgba(235, 170, 109, 0.831);
+        background-color: #e5e7ebd3 !important;
     }
 
     &:disabled {
