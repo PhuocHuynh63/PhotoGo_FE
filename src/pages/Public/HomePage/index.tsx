@@ -2,15 +2,13 @@
 
 import Button from "@components/Atoms/Button"
 import ClearButton from "@components/Atoms/ClearButton"
-import StarRating from "@components/Molecules/StarRating"
 import Header from "@components/Organisms/Header"
 import Image from "next/image"
 import { useEffect, useState, useRef } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
-import { Avatar } from "@components/Molecules/Avatar"
-import EmblaCarousel from "@components/Organisms/Carousel"
+import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
 import { motion } from 'framer-motion'
-
+import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
         id: 1,
@@ -37,6 +35,82 @@ const carouselItems: ICOMPONENTS.CarouselItem[] = [
         image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744624539/themyxungtoiko_pslpth.png',
     },
 ];
+
+const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
+    {
+        id: 1,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 2,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 3,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 3,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 1,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 4,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 2,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 5,
+        name: 'Huỳnh Minh Phước',
+
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 4,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 6,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 7,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 8,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 9,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 10,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+]
+
+
 const HomePage = () => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -53,7 +127,6 @@ const HomePage = () => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
-
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -318,53 +391,9 @@ const HomePage = () => {
                             animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                             transition={{ duration: 0.8 }}
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {/* Testimonial cards */}
-                                <div className="p-6 shadow-xl rounded-xl">
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 rounded-full bg-gray-200">
-                                            <Avatar size={50} src="https://cdn.tcdulichtphcm.vn/upload/4-2024/images/2024-11-11/1731317465-hnlh3081-copy.jpg" fallback="anh_jack_mat_vest" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                            <div className="flex text-yellow-400">
-                                                <StarRating stars={3.5} size={16} color={"var(--orange)"} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Nhiếp ảnh gia mà tôi đặt qua PHOTOGO thật tuyệt vời! Họ đã chụp ảnh cưới của tôi một cách tuyệt đẹp và rất chuyên nghiệp trong suốt ngày.&quot;</p>
-                                </div>
-                                <div className="p-6 shadow-xl rounded-xl">
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 rounded-full bg-gray-200">
-                                            <Avatar size={50} src="https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ" fallback="anh_jack_mat_vest" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                            <div className="flex text-yellow-400">
-                                                <StarRating stars={5} size={16} color={"var(--orange)"} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Studio tôi thuê rất lý tưởng cho buổi chụp ảnh sản phẩm của tôi. Được trang bị đầy đủ và quá trình đặt chỗ diễn ra suôn sẻ.&quot;</p>
-                                </div>
-                                <div className="p-6 shadow-xl rounded-xl">
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 rounded-full bg-gray-200">
-                                            <Avatar size={50} src="https://kenh14cdn.com/203336854389633024/2023/1/11/photo-3-1673436433884550875846.jpg" fallback="anh_jack_mat_vest" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                            <div className="flex text-yellow-400">
-                                                <StarRating stars={4} size={16} color={"var(--orange)"} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p className="text-md break-words whitespace-pre-wrap">&quot;Chuyên gia trang điểm mà tôi đã đặt thật tuyệt vời! Cô ấy hiểu chính xác những gì tôi muốn và giúp tôi trông thật tuyệt vời trong buổi chụp ảnh.&quot;</p>
-                                </div>
-                            </div>
-                            <div className="flex justify-center mt-8">
-                                <Button width={160} height={40} className="text-lg text-white">Xem thêm</Button>
+                            {/* Testimonial cards */}
+                            <div className="w-full h-full">
+                                <AutoScrollCarousel slides={autoScrollItems} autoScroll={true} />
                             </div>
                         </motion.div>
                     </div>

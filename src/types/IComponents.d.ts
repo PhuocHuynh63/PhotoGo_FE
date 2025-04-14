@@ -373,5 +373,18 @@ declare namespace ICOMPONENTS {
         cart: CartItem[];
         notifications: Notification[];
     }
+    interface AutoScrollItem {
+        id: string | number;
+        name?: string;
+        avatar?: string;
+        star?: number;
+        comment?: string;
+    }
+    type PropType = {
+        slides: AutoScrollItem[]
+        options?: EmblaOptionsType
+        autoScroll?: boolean
+        showControls?: boolean
+    }
 
 }

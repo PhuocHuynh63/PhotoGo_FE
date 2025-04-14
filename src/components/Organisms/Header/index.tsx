@@ -16,6 +16,9 @@ import LucideIcon from "@components/Atoms/LucideIcon"
 import Button from "@components/Atoms/Button"
 import { motion } from "framer-motion"
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal"
+import LocationButton from "../LocationButton/LocationButton"
+import NavLink from "@utils/helpers/NavLink"
+import './index.scss'
 const timeAgo = (date: string) => {
     const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
     let interval = Math.floor(seconds / 31536000);
@@ -114,7 +117,7 @@ export default function Header() {
     // }, []);
 
     return (
-        <header className={`p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
+        <header  className={`header p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -131,11 +134,11 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 ${isScrolled ? 'text-black' : 'text-white'}`}>
-                        <Link href={ROUTES.PUBLIC.HOME}>Trang chủ</Link>
-                        <Link href={ROUTES.PUBLIC.STUDIO}>Studio</Link>
-                        <Link href={ROUTES.PUBLIC.FREELANCER}>Freelancer</Link>
-                        <Link href={ROUTES.PUBLIC.ABOUT}>Về chúng tôi</Link>
-                    </div>
+  <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span>Trang chủ</span></NavLink>
+  <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span>Studio</span></NavLink>
+  <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span>Freelancer</span></NavLink>
+  <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span>Về chúng tôi</span></NavLink>
+</div>
 
                     {/* right */}
                     <div className="flex items-center gap-4">
@@ -171,6 +174,16 @@ export default function Header() {
 
                             {user ? (
                                 <div className="flex items-center gap-5 relative">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <LocationButton />
+                                    </motion.div>
+
+
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -271,10 +284,10 @@ export default function Header() {
                                                         setIsNotificationOpen(!isNotificationOpen);
                                                     }}
                                                     alt={user.name}
-                                                    size={user.rank === "unranked" ? 50 : 30}
-                                                    rank={user.rank as ICOMPONENTS.UserRank ? user.rank as ICOMPONENTS.UserRank : "unranked"}
-                                                    showRankLabel={false}
-                                                    rankSize="sm"
+                                                // size={user.rank === "unranked" ? 50 : 30}
+                                                // rank={user.rank as ICOMPONENTS.UserRank ? user.rank as ICOMPONENTS.UserRank : "unranked"}
+                                                // showRankLabel={false}
+                                                // rankSize="sm"
                                                 />
                                             </motion.div>
                                         </DropdownMenuTrigger>
