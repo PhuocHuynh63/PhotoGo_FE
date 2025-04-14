@@ -333,6 +333,7 @@ declare namespace ICOMPONENTS {
         showLabel?: boolean
         size?: "sm" | "md" | "lg"
         children?: React.ReactNode
+        onClick?: () => void
     }
 
     type Notification = {

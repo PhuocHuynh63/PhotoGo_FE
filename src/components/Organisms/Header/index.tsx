@@ -35,6 +35,8 @@ export default function Header() {
     const [user, setUser] = useState<ICOMPONENTS.User | null>(null);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
     useEffect(() => {
         const userFromLocalStorage = localStorage.getItem("user");
         if (userFromLocalStorage) {
@@ -54,6 +56,9 @@ export default function Header() {
                 ],
             });
         }
+
+        // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
+        setIsScrolled(window.scrollY > 120);
     }, []);
 
     const handleLogout = () => {
@@ -70,15 +75,31 @@ export default function Header() {
     useEffect(() => {
         setNotifications(user?.notifications || []);
     }, [user]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            requestAnimationFrame(() => {
+                setIsScrolled(window.scrollY > 120);
+            });
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
+    useEffect(() => {
+        setIsScrolled(window.scrollY > 120);
+    }, []);
+
     return (
-        <header className="bg-white shadow-md p-2 px-4 md:px-8 w-full rounded-md sticky top-0 z-50">
+        <header className={`shadow-md p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] backdrop-blur-md' : 'bg-transparent'}`}>
             <div className="flex justify-between items-center">
                 <Link href={ROUTES.PUBLIC.HOME}>
-                    <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="logo" width={60} height={60} style={{ width: 'auto', height: 'auto' }} priority />
+                    <Image src={`${isScrolled ? 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg' : 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg'}`} alt="logo" width={60} height={60} style={{ width: 'auto', height: 'auto' }} priority />
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex gap-12 font-medium text-lg">
+                <div className={`hidden md:flex gap-12 font-medium text-lg ${isScrolled ? 'text-black' : 'text-white'}`}>
                     <Link href={ROUTES.PUBLIC.HOME}>Trang chủ</Link>
                     <Link href={ROUTES.PUBLIC.STUDIO}>Studio</Link>
                     <Link href={ROUTES.PUBLIC.FREELANCER}>Freelancer</Link>
@@ -120,7 +141,7 @@ export default function Header() {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <div onClick={handleOpenNotification} className="cursor-pointer relative mt-2">
-                                            <LucideIcon name="Bell" iconSize={26} />
+                                            <LucideIcon name="Bell" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                             <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                 {unreadNotifications.length}
                                             </span>
@@ -178,7 +199,11 @@ export default function Header() {
                                 <DropdownMenu >
                                     <DropdownMenuTrigger asChild>
                                         <Avatar
+                                            className="cursor-pointer"
                                             src={user.avatar}
+                                            onClick={() => {
+                                                setIsNotificationOpen(!isNotificationOpen);
+                                            }}
                                             alt={user.name}
                                             size={user.rank === "unranked" ? 50 : 30}
                                             rank={user.rank as ICOMPONENTS.UserRank ? user.rank as ICOMPONENTS.UserRank : "unranked"}
@@ -210,11 +235,12 @@ export default function Header() {
                                             </DropdownMenuItem>
                                         </Link>
                                         <DropdownMenuSeparator />
-                                        <Link href={"/ROUTES.PUBLIC.LOGIN"}>
-                                            <DropdownMenuItem icon="LogOut">
+                                        <DropdownMenuItem icon="LogOut" onClick={handleLogout}>
+                                            <Link href={"ROUTES.PUBLIC.LOGIN"}>
                                                 <span>Đăng xuất</span>
-                                            </DropdownMenuItem>
-                                        </Link>
+                                            </Link>
+                                        </DropdownMenuItem>
+
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -230,7 +256,7 @@ export default function Header() {
 
             {/* Mobile */}
             <div
-                className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
+                className={`md:hidden transition-all duration-300 ease-in-out rounded-md ${isMobileMenuOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'} ${isScrolled ? '' : 'bg-[rgba(216,212,212,0.9)] '}`}
             >
                 <div className="px-4 py-2 mt-2 border-b">
                     {user ? (
@@ -273,7 +299,7 @@ export default function Header() {
                                     Về chúng tôi
                                 </Link>
 
-                                <div className="border-t pt-4">
+                                <div className="border-t pt-4 flex flex-col gap-2">
                                     <Link
                                         href="/profile"
                                         className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"

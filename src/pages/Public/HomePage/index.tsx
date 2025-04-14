@@ -5,17 +5,30 @@ import ClearButton from "@components/Atoms/ClearButton"
 import StarRating from "@components/Molecules/StarRating"
 import Header from "@components/Organisms/Header"
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
 import LucideIcon from "@components/Atoms/LucideIcon"
 import { Avatar } from "@components/Molecules/Avatar"
 
 const HomePage = () => {
+    const [scrollY, setScrollY] = useState(0)
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollY(window.scrollY)
+        }
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
+    const zoomLevel = 1 + scrollY / 10000
+
     return (
         <div>
-            <Header />
             {/* Hero section */}
-            <div className="relative w-full h-full">
-                <div className="absolute inset-0">
+            <Header />
+            <div className="relative w-full h-[80vh] overflow-hidden">
+                <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                     <Image
                         src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg"
                         alt="Background"
@@ -27,7 +40,7 @@ const HomePage = () => {
                     />
                 </div>
                 <div className="relative container mx-auto px-4 py-16">
-                    <div className="flex flex-col gap-8 max-w-2xl text-primary">
+                    <div className="flex flex-col gap-8 max-w-2xl text-primary mt-20">
                         <h1 className="text-5xl font-bold ">
                             Ghi lại khoảnh khắc hoàn hảo của bạn
                         </h1>

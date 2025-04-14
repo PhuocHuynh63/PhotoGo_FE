@@ -5,7 +5,7 @@ import { Camera } from "lucide-react"
 
 
 
-export function RankFrame({ rank = "unranked", className, showLabel = true, size = "sm", children }: ICOMPONENTS.RankFrameProps) {
+export function RankFrame({ rank = "unranked", className, showLabel = true, size = "sm", children, onClick }: ICOMPONENTS.RankFrameProps) {
     const sizeClasses = {
         sm: "w-16 h-16",
         md: "w-24 h-24",
@@ -20,8 +20,8 @@ export function RankFrame({ rank = "unranked", className, showLabel = true, size
     }
 
     return (
-        <div className={cn("", className)}>
-            <div className={cn("relative", sizeClasses[size])}>
+        <div className={cn("", className)} onClick={onClick}>
+            <div className={cn("relative cursor-pointer", sizeClasses[size])}>
                 {/* Frame SVG based on rank */}
                 {/* {rank === "unranked" && (
                     <svg className="w-full h-full -mt-1" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
