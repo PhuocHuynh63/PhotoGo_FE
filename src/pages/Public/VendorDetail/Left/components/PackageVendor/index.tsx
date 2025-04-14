@@ -1,15 +1,12 @@
-import { ROUTES } from '@routes'
 import React from 'react'
 import ButtonNoBackgroundVendorDetail from '../ButtonNoBackGroundVendorDetail'
-import { Badge, ChevronRight, Clock, Eye, Info } from 'lucide-react'
+import { Clock, Eye } from 'lucide-react'
 import Button from '@components/Atoms/Button'
 import { Card } from '@components/Atoms/Card'
 import { useVendor } from '@lib/vendorContext'
 import { useRouter } from 'next/navigation'
 
 const PackageVendor = () => {
-    const router = useRouter()
-
     const vendorData = useVendor() as any
     return (
         <div className="space-y-6">

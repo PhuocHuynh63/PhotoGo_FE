@@ -242,8 +242,8 @@ export default function VendorDetailLayout({ children,
                     "Tôi rất hài lòng với dịch vụ chụp ảnh cưới tại Ánh Dương Studio. Ekip làm việc chuyên nghiệp, nhiệt tình. Nhiếp ảnh gia rất tâm huyết, tư vấn tận tình và có nhiều ý tưởng sáng tạo. Ảnh cưới của chúng tôi đẹp hơn mong đợi!",
                 service: "Gói Chụp Ảnh Cưới Cơ Bản",
                 photos: [
-                    "/placeholder.svg?height=200&width=300&text=Review 1.1",
-                    "/placeholder.svg?height=200&width=300&text=Review 1.2",
+                    "https://scontent.fsgn5-5.fna.fbcdn.net/v/t39.30808-6/490698575_1102836111884935_2861881000549557857_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeEdNWuqbs8_S36td5Mf5R_hrKMHzRZQJxmsowfNFlAnGWrO8rZyrfr4_GqdvIShWLjm2Mfx0PzYpTVwAZH4JIEx&_nc_ohc=E1hdVRSX5IEQ7kNvwGAFBYU&_nc_oc=AdmQG0DoS80Qg-ez-XuH8CXWQfqZcodfyrQxLPgqYLW6qbTPZPohC7AyXidYQ2unVKU&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=A17n828TRns8Vz_z81EF2Q&oh=00_AfEs89Dyq1ZXoK8n5HQrKwxnPAUJAWFRfjeFcNgev3FZbQ&oe=680324D4",
+                    "https://scontent.fsgn5-14.fna.fbcdn.net/v/t39.30808-6/491104915_1102836091884937_5720658211719902326_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeHq0_b7GMwN7iMOeqv5XZ1zmPXdoK-dnmOY9d2gr52eY46jqhv5pqbkqtShYXlkMpJx1RJ2Rjc2b_Ys6XvwsrYZ&_nc_ohc=ou8eB8vq7vgQ7kNvwFA-Lon&_nc_oc=Adku6voFfpEqg2PtYC2EfIFLzkj58rttB_M-9loSuxwbskr--ujpUWmMyIY_LcJr9ao&_nc_zt=23&_nc_ht=scontent.fsgn5-14.fna&_nc_gid=47RYZW9aKb2iKvji0A7rkg&oh=00_AfEdEDMZMRTOgCNC4g5rINoaqIM4tLjCOUsEs0ZOuUpuWw&oe=68031DB6",
                 ],
             },
             {
@@ -258,7 +258,7 @@ export default function VendorDetailLayout({ children,
                 comment:
                     "Chúng tôi chụp ảnh gia đình tại Ánh Dương Studio và rất hài lòng với kết quả. Nhiếp ảnh gia biết cách tương tác với trẻ em, giúp bọn trẻ thoải mái và có những khoảnh khắc tự nhiên. Chỉ tiếc là thời gian chờ đợi để nhận ảnh hơi lâu.",
                 service: "Gói Chụp Ảnh Gia Đình",
-                photos: ["/placeholder.svg?height=200&width=300&text=Review 2.1"],
+                photos: ["https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/489049169_1098808842287662_9131602266807149425_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=f727a1&_nc_eui2=AeFxag8MNsrveCOj2hOCpUFKyuARCfcGB4XK4BEJ9wYHhW4tFA_B7vH3aedoHNVaVzhzIKUWvjQgWWfXjuVifDwC&_nc_ohc=FIjDTKv3sowQ7kNvwGu6U0_&_nc_oc=Adn7Frw98tqfyXR1JWgmBT71B5JET7lp6GLLmN1p0Jlz4DbBTmfBmaOJeVtxVS_84Ps&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=AxTgDRtNrcI3orIrtdweXg&oh=00_AfFIqvB-I0oNGo50V0leDpmr4W4d4oNoSnhB6QTn8EI7bg&oe=680325FC"],
             },
             {
                 id: 3,
