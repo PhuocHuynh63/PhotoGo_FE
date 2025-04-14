@@ -80,17 +80,17 @@ const VendorOverviewPage = () => {
             </div>
           </div>
           <div className="space-y-6">
-            {vendorData?.reviews?.slice(0, 2).map((review: any) => (
-              <div key={review.id} className="bg-muted/50 rounded-lg p-4">
+            {vendorData?.reviews?.slice(0, 2)?.map((review: any) => (
+              <div key={review?.id} className="bg-muted/50 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={review.user.avatar} alt={review.user.name} />
-                      <AvatarFallback>{review.user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
                     <div>
-                      <h3 className="font-semibold">{review.user.name}</h3>
-                      <p className="text-xs text-muted-foreground">{review.date}</p>
+                      <img src={review?.user?.avatar} alt={review?.user?.name} />
+                      <p>{review?.user?.name?.charAt(0)}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{review?.user?.name}</h3>
+                      <p className="text-xs text-muted-foreground">{review?.date}</p>
                     </div>
                   </div>
                   <div className="flex">
@@ -99,20 +99,20 @@ const VendorOverviewPage = () => {
                       .map((_, idx) => (
                         <Star
                           key={idx}
-                          className={`h-4 w-4 ${idx < review.rating ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`}
+                          className={`h-4 w-4 ${idx < review?.rating ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`}
                         />
                       ))}
                   </div>
                 </div>
-                <h4 className="font-medium mb-1">{review.title}</h4>
-                <p className="text-muted-foreground text-sm mb-3">{review.comment}</p>
-                {review.photos && review.photos.length > 0 && (
+                <h4 className="font-medium mb-1">{review?.title}</h4>
+                <p className="text-muted-foreground text-sm mb-3">{review?.comment}</p>
+                {review?.photos && review?.photos.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pb-2">
-                    {review.photos.map((photo, photoIdx) => (
+                    {review?.photos?.map((photo: any, photoIdx: number) => (
                       <img
                         key={photoIdx}
                         src={photo || "/placeholder.svg"}
-                        alt={`Đánh giá từ ${review.user.name}`}
+                        alt={`Đánh giá từ ${review?.user?.name}`}
                         width={100}
                         height={100}
                         className="rounded-lg w-20 h-20 object-cover"
@@ -120,8 +120,8 @@ const VendorOverviewPage = () => {
                     ))}
                   </div>
                 )}
-                <Badge variant="outline" className="mt-2 text-xs">
-                  {review.service}
+                <Badge className="mt-2 text-xs">
+                  {review?.service}
                 </Badge>
               </div>
             ))}
