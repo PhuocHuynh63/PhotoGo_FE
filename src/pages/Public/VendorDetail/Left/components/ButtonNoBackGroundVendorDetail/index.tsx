@@ -17,7 +17,7 @@ export default function ButtonNoBackgroundVendorDetail({
 }: ICOMPONENTS.ButtonProps) {
 
     return (
-        <ButtonNoBackground className={`flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors ${className}`}
+        <ButtonNoBackground className={`flex items-center gap-1 border px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors ${className}`}
             style={{ boxShadow: 'none', ...style }} disabled={disabled} {...rest}>
             {children}
         </ButtonNoBackground>

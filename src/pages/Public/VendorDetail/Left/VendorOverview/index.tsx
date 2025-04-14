@@ -11,6 +11,7 @@ import { useParams, useRouter } from 'next/navigation'
 import ButtonNoBackground from '@components/Atoms/ButtonNoBackground'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 import { Card } from '@components/Atoms/Card'
+import PackageVendor from '../components/PackageVendor'
 
 const VendorOverviewPage = () => {
 
@@ -50,7 +51,7 @@ const VendorOverviewPage = () => {
               ))}
           </div>
           <div className="flex justify-center mt-4 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -59,89 +60,9 @@ const VendorOverviewPage = () => {
 
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Gói dịch vụ phổ biến</h2>
-          <div className="space-y-6">
-            {vendorData?.packages
-              .filter((pkg: any) => pkg.popular)
-              .map((pkg: any) => (
-                <Card key={pkg?.id} className="overflow-hidden">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3">
-                      <img
-                        src={pkg?.image || "/placeholder.svg"}
-                        alt={pkg?.name}
-                        width={400}
-                        height={300}
-                        className="w-full h-48 md:h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 p-6">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-lg">{pkg?.name}</h3>
-                        <Badge className="bg-primary">Phổ biến</Badge>
-                      </div>
-                      <p className="text-muted-foreground mb-4">{pkg?.description}</p>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="text-lg font-bold text-primary">{pkg?.price}</div>
-                        <div className="text-sm text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {pkg?.duration}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button>Đặt ngay</Button>
-                        <div>
-                          <div>
-                            <Button variant="outline" className="flex items-center gap-1">
-                              <Eye className="h-4 w-4" />
-                              Xem concept
-                            </Button>
-                          </div>
-                          <div className="max-w-4xl">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Info className="h-5 w-5" />
-                                Concept cho {pkg.name}
-                              </div>
-                              <div>
-                                Dưới đây là một số concept đã thực hiện cho gói dịch vụ này
-                              </div>
-                            </div>
-                            <div className="space-y-4">
-                              {pkg.concept.map((item: any, index: number) => (
-                                <div key={index}>
-                                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                                  <div className="w-full">
-                                    <div>
-                                      {item.images.map((img: any, imgIndex: number) => (
-                                        <div key={imgIndex} className="md:basis-1/2 lg:basis-1/3">
-                                          <div className="p-1">
-                                            <img
-                                              src={img || "/placeholder.svg"}
-                                              alt={`${item.title} - Ảnh ${imgIndex + 1}`}
-                                              width={400}
-                                              height={300}
-                                              className="rounded-lg w-full h-48 object-cover"
-                                            />
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                    <div className="hidden md:flex" />
-                                    <div className="hidden md:flex" />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div >
-                  </div >
-                </Card >
-              ))}
-          </div >
+          <PackageVendor />
           <div className="mt-6 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'packges')}`)} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'packges')}`)} className="gap-1 mt-4">
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -228,7 +149,7 @@ const VendorOverviewPage = () => {
             ))} */}
           </div>
           <div className="mt-6 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'reviews')}`)} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'reviews')}`)} className="gap-1 mt-4">
               Xem tất cả đánh giá
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>

@@ -117,10 +117,10 @@ export default function VendorDetailLayout({ children,
             },
             {
                 id: 2,
-                name: "Gói Chụp Ảnh Gia Đình",
+                name: "Combo studio ngày cưới",
                 price: "2,800,000đ",
-                duration: "3 giờ",
-                description: "Gói chụp ảnh gia đình chuyên nghiệp, lưu giữ khoảnh khắc hạnh phúc bên người thân yêu.",
+                duration: "",
+                description: "Với kinh nghiệm hơn 10 năm trong ngành cưới, Tony sẽ là người bạn đồng hành chia sẻ cho bạn mọi thứ về việc chụp album cưới trọn gói nhé.",
                 features: [
                     "3 giờ chụp hình",
                     "1 địa điểm chụp",
