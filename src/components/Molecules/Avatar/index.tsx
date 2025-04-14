@@ -5,12 +5,34 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar"
 import styles from './index.module.scss'
 import avatarStyles from '@/components/Atoms/AvatarImage/index.module.scss'
 import fallbackStyles from '@/components/Atoms/AvatarFallback/index.module.scss'
+import AvatarFallback from '@components/Atoms/AvatarFallback'
+import AvatarImage from '@components/Atoms/AvatarImage'
+import { RankFrame } from '@components/Atoms/AvatarFrame/AvatarFrame'
 
+
+type UserRank = "unranked" | "bronze" | "silver" | "gold"
+
+interface AvatarProps extends ICOMPONENTS.AvatarProps {
+    rank?: UserRank
+    showRankLabel?: boolean
+    rankSize?: "sm" | "md" | "lg"
+    onClick?: () => void
+}
 
 const Avatar = forwardRef<
     React.ElementRef<typeof AvatarPrimitive.Root>,
-    ICOMPONENTS.AvatarProps
->(({ className = '', size = 40, src, alt, fallback, ...props }, ref) => {
+    AvatarProps
+>(({
+    className = '',
+    size = 40,
+    src,
+    alt = '',
+    fallback,
+    rank,
+    showRankLabel = true,
+    rankSize = "md",
+    ...props
+}, ref) => {
     const getInitials = (name?: string) => {
         if (!name) return '?'
         return name
@@ -21,25 +43,41 @@ const Avatar = forwardRef<
             .slice(0, 2)
     }
 
-    return (
+    const avatarContent = (
         <AvatarPrimitive.Root
             ref={ref}
             className={`${styles.avatar_root} ${className}`}
-            style={{ width: size, height: size }}
+            style={{ width: size, height: size, cursor: "pointer" }}
             {...props}
         >
             {src && (
-                <AvatarPrimitive.Image
+                <AvatarImage
                     className={avatarStyles.avatar_image}
                     src={src}
                     alt={alt}
                 />
             )}
-            <AvatarPrimitive.Fallback className={fallbackStyles.avatar_fallback}>
+            <AvatarFallback className={fallbackStyles.avatar_fallback}>
                 {fallback || getInitials(alt)}
-            </AvatarPrimitive.Fallback>
+            </AvatarFallback>
         </AvatarPrimitive.Root>
     )
+
+    if (rank) {
+        return (
+            <RankFrame
+                rank={rank}
+                showLabel={showRankLabel}
+                size={rankSize}
+                className={className}
+                onClick={props.onClick}
+            >
+                {avatarContent}
+            </RankFrame>
+        )
+    }
+
+    return avatarContent
 })
 Avatar.displayName = AvatarPrimitive.Root.displayName
 

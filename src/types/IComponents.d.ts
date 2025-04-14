@@ -46,6 +46,7 @@ declare namespace ICOMPONENTS {
         loadingText?: string;
         spinIcon?: boolean;
         className?: string;
+        variant?: string;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -69,6 +70,7 @@ declare namespace ICOMPONENTS {
         name: keyof typeof import('lucide-react');
         className?: string;
         spin?: boolean;
+        fill?: string;
     }
 
     export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, BaseProps {
@@ -84,11 +86,16 @@ declare namespace ICOMPONENTS {
         onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     }
 
+    export interface Option {
+        label: string;
+        value: string;
+    }
+
     export interface RadioButtonGroupProps extends React.InputHTMLAttributes<HTMLInputElement> {
-        name?: string;
-        options?: { label: string; value: string }[];
-        value?: string;
-        onChange?: (value: string) => void;
+        name: string;
+        options: Option[];
+        value: string;
+        onChange: (value: string) => void;
     }
 
     export interface CardBaseProps extends React.HTMLAttributes<HTMLDivElement>, BaseProps { }
@@ -204,10 +211,145 @@ declare namespace ICOMPONENTS {
         src: string;
         alt: string;
         className?: string;
+        alt?: string;
     }
 
     interface AvatarFallbackProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> {
         children: React.ReactNode;
         className?: string;
     }
+
+    export interface CarouselItem {
+        id: number | string;
+        image?: string;
+        title?: string;
+        description?: string;
+        [key: string]: string | number | undefined;
+    }
+
+    export interface CarouselProps {
+        items: CarouselItem[];
+        renderItem?: (item: CarouselItem) => React.ReactNode;
+        autoScroll?: boolean;
+        scrollInterval?: number;
+        scrollSpeed?: number;
+        width?: number;
+        height?: number;
+    }
+
+    export interface AdminStaffHeaderProps {
+        userRole: 'admin' | 'staff'
+        userName?: string
+        userAvatar?: string
+    }
+
+    export interface SidebarItem {
+        title: string
+        path?: string
+        icon?: keyof typeof import('lucide-react')
+        children?: SidebarItem[]
+        isExpanded?: boolean
+    }
+
+    export interface SidebarProps {
+        items: SidebarItem[]
+        isCollapsed: boolean
+        toggleCollapse: () => void
+    }
+    export interface ChartTooltipProps {
+        active?: boolean
+        payload?: Array<any>
+        label?: string
+        className?: string
+        formatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface ChartLegendItemProps {
+        color: string
+        label: string
+        value?: string | number
+    }
+
+    export interface ChartContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+        children: React.ReactNode
+    }
+
+    interface ChartDataPoint {
+        name: string
+        [key: string]: string | number
+    }
+
+    export interface LineChartProps {
+        data: LineChartDataPoint[]
+        lines: {
+            dataKey: string
+            stroke: string
+            name?: string
+        }[]
+        height?: number | string
+        xAxisDataKey?: string
+        showGrid?: boolean
+        showLegend?: boolean
+        tooltipFormatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface BarChartProps {
+        data: BarChartDataPoint[]
+        bars: {
+            dataKey: string
+            fill: string
+            name?: string
+        }[]
+        height?: number | string
+        xAxisDataKey?: string
+        showGrid?: boolean
+        showLegend?: boolean
+        layout?: "vertical" | "horizontal"
+        tooltipFormatter?: (value: number, name: string) => React.ReactNode
+    }
+
+    export interface DataChartProps {
+        data: BarChartDataPoint[]
+        title?: string
+        description?: string
+        className?: string
+    }
+
+    type StatsCardProps = {
+        title: string;
+        icon: React.ReactNode;
+        value: string | number;
+        change: string;
+        changeColor?: string;
+        changeIcon?: React.ReactNode;
+        subtitle?: string;
+    };
+
+    type UserRank = "unranked" | "bronze" | "silver" | "gold"
+
+    interface RankFrameProps extends React.HTMLAttributes<HTMLDivElement> {
+        rank: UserRank
+        className?: string
+        showLabel?: boolean
+        size?: "sm" | "md" | "lg"
+        children?: React.ReactNode
+        onClick?: () => void
+    }
+
+    type Notification = {
+        id: string | number;
+        title: string;
+        description: string;
+        read: boolean;
+        createdAt: string;
+    }
+    interface User {
+        id: string | number;
+        name: string;
+        email: string;
+        avatar: string;
+        rank: UserRank;
+        notifications: Notification[];
+    }
+
 }

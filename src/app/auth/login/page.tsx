@@ -1,10 +1,10 @@
 import LoginPage from "@pages/Auth/Login";
 
-export default function Login() {
+export default async function Login() {
 
     return (
         <>
-            <LoginPage />
+            <LoginPage/>
         </>
     );
 }

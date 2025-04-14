@@ -8,6 +8,7 @@ export default function LucideIcon({
     iconColor = 'currentColor',
     className = '',
     spin = false,
+    fill = 'none',
 }: ICOMPONENTS.LucideIconProps) {
     const IconComponent = Icons[name as keyof typeof Icons] as React.FC<LucideProps>;
 
@@ -23,6 +24,7 @@ export default function LucideIcon({
             size={iconSize}
             color={iconColor}
             className={combinedClass}
+            fill={fill}
         />
     );
 }

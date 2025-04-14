@@ -12,7 +12,7 @@ import { ArrowLeft, KeyRound } from "lucide-react"
 import OTPInput from "@components/Atoms/OTPInput"
 import Input from "@components/Atoms/Input"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useGetLocalStorage } from "@utils/hooks/localStorage"
 
@@ -20,6 +20,8 @@ const VerifyOtpPage = () => {
     //#region define variables
     const { value, isReady } = useGetLocalStorage('email')
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const purpose = searchParams?.get('purpose')
     //#endregion
 
 
@@ -35,7 +37,12 @@ const VerifyOtpPage = () => {
     })
     const onSubmit = (data: IUserOTPRequest) => {
         console.log(data);
-        router.push(ROUTES.AUTH.RESET_PASSWORD)
+
+        if (purpose === 'reset-password') {
+            router.push(ROUTES.AUTH.RESET_PASSWORD)
+        } else if (purpose === 'activate-account') {
+            router.push(ROUTES.PUBLIC.HOME)
+        }
     }
     //#endregion
 
@@ -82,6 +89,10 @@ const VerifyOtpPage = () => {
     }
     //#endregion
 
+    const handleBack = () => {
+        router.back()
+    }
+
     return (
         <TransitionWrapper>
             {/* Main card container */}
@@ -97,7 +108,7 @@ const VerifyOtpPage = () => {
 
                     <div className="flex flex-col items-center">
                         <h1 className="text-2xl font-bold mb-2">Xác thực OTP</h1>
-                        <p className="text-description text-center whitespace-pre-line">Nhập mã OTP đã được gửi đến email {value} và mật khẩu mới của bạn</p>
+                        <p className="text-description text-center whitespace-pre-line">Nhập mã OTP đã được gửi đến email {value}</p>
                     </div>
 
                     {/* Form */}
@@ -148,9 +159,9 @@ const VerifyOtpPage = () => {
                     </form>
 
 
-                    <p className="flex mt-5 justify-center items-center text-description-title">
+                    <p className="cursor-pointer flex mt-5 justify-center items-center text-description-title hover:underline" onClick={handleBack} >
                         <ArrowLeft size={20} className="text-dark mr-2" />
-                        <Link href={ROUTES.AUTH.FORGOT_PASSWORD} className="font-sm text-dark hover:underline">
+                        <Link href={''} onClick={handleBack} className="font-sm text-dark">
                             Quay lại
                         </Link>
                     </p>

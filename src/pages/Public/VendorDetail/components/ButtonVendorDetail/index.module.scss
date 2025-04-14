@@ -1,0 +1,12 @@
+.buttonVendorDetail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent !important;
+    color: var(--color-dark) !important;
+    box-shadow: none !important;
+
+    &:hover {
+        background-color: #e5e7eb67 !important;
+    }
+}
