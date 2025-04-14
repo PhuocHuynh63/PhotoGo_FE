@@ -345,12 +345,32 @@ declare namespace ICOMPONENTS {
         read: boolean;
         createdAt: string;
     }
+    interface CartItem {
+        id: number
+        name: string
+        img: string
+        price: number
+        vendor_id: number
+        duration: number
+        booked_date: Date
+    }
+    interface VendorGroup {
+        vendor_id: number
+        items: CartItem[]
+    }
+
+    interface ShoppingCartModalProps {
+        isOpen: boolean
+        onClose: () => void
+        cart: CartItem[]
+    }
     interface User {
         id: string | number;
         name: string;
         email: string;
         avatar: string;
         rank: UserRank;
+        cart: CartItem[];
         notifications: Notification[];
     }
 

@@ -101,7 +101,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 1.5 }}
                     >
                         <div className="flex flex-col gap-8 max-w-2xl text-light mt-20">
                             <h1 className="text-5xl font-bold drop-shadow">
@@ -129,7 +129,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 1.5 }}
                     >
                         <div className="flex flex-col gap-4 text-black items-center justify-center">
                             <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -142,11 +142,11 @@ const HomePage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Photographers Card */}
                         <motion.div
-                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full"
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
                             ref={el => { sectionRefs.current[1] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5, delay: 0.1 }}
+                            transition={{ duration: 1.5, delay: 0.1 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Camera" iconSize={24} iconColor={"var(--orange)"} />
@@ -182,11 +182,11 @@ const HomePage = () => {
 
                         {/* Studios Card */}
                         <motion.div
-                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full"
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
                             ref={el => { sectionRefs.current[2] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
+                            transition={{ duration: 1.5, delay: 0.2 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Home" iconSize={24} iconColor={"var(--orange)"} />
@@ -220,11 +220,11 @@ const HomePage = () => {
 
                         {/* Makeup Artists Card */}
                         <motion.div
-                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full"
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
                             ref={el => { sectionRefs.current[3] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
+                            transition={{ duration: 1.5, delay: 0.3 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Palette" iconSize={24} iconColor={"var(--orange)"} />
@@ -270,7 +270,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5 }}
+                            transition={{ duration: 1.5 }}
                         >
                             <div className="flex flex-col gap-4 text-black items-center justify-center">
                                 <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -287,7 +287,7 @@ const HomePage = () => {
                                     className="flex flex-col items-center text-center gap-4"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    transition={{ duration: 1.5, delay: index * 0.1 }}
                                 >
                                     <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">{index + 1}</div>
                                     <h3 className="font-semibold text-lg">{step}</h3>
@@ -310,7 +310,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5 }}
+                            transition={{ duration: 1.5 }}
                         >
                             <div className="flex flex-col gap-4 text-black items-center justify-center">
                                 <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -322,7 +322,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5 }}
+                            transition={{ duration: 1.5 }}
                         >
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {/* Testimonial cards */}
@@ -369,11 +369,12 @@ const HomePage = () => {
                                     <p className="text-md break-words whitespace-pre-wrap">&quot;Chuyên gia trang điểm mà tôi đã đặt thật tuyệt vời! Cô ấy hiểu chính xác những gì tôi muốn và giúp tôi trông thật tuyệt vời trong buổi chụp ảnh.&quot;</p>
                                 </div>
                             </div>
+                            <div className="flex justify-center mt-8">
+                                <Button width={160} height={40} className="text-lg text-white">Xem thêm</Button>
+                            </div>
                         </motion.div>
                     </div>
-                    <div className="flex justify-center mt-8">
-                        <Button width={160} height={40} className="text-lg text-white">Xem thêm</Button>
-                    </div>
+
                 </div>
             </motion.div>
 
@@ -387,7 +388,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={ctaAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 1.5 }}
                     >
                         <div className="flex flex-col gap-4 text-black items-center justify-center">
                             <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -395,11 +396,12 @@ const HomePage = () => {
                             </h1>
                             <span className="text-center text-lg break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</span>
                         </div>
+                        <div className="flex justify-center mt-8">
+                            <Button width={160} height={40} className="text-lg text-white">Đặt lịch ngay</Button>
+                        </div>
                     </motion.div>
                 </div>
-                <div className="flex justify-center mt-8">
-                    <Button width={160} height={40} className="text-lg text-white">Đặt lịch ngay</Button>
-                </div>
+
             </motion.div>
         </div >
     )
