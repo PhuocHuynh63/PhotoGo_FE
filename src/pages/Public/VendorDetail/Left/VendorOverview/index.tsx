@@ -12,6 +12,7 @@ import ButtonNoBackground from '@components/Atoms/ButtonNoBackground'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 import { Card } from '@components/Atoms/Card'
 import PackageVendor from '../components/PackageVendor'
+import TeamVendor from '../components/TeamVendor'
 
 const VendorOverviewPage = () => {
 
@@ -69,32 +70,9 @@ const VendorOverviewPage = () => {
           </div>
         </section >
 
-        {/* <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Đội ngũ chuyên gia</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {vendorData?.team?.map((member: any) => (
-              <div key={member.id} className="text-center">
-                <Avatar className="w-24 h-24 mx-auto mb-3">
-                  <AvatarImage src={member.avatar} alt={member.name} />
-                  <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <h3 className="font-semibold">{member.name}</h3>
-                <p className="text-sm text-muted-foreground">{member.role}</p>
-                <p className="text-xs text-muted-foreground">{member.experience}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Button variant="outline" className="gap-1" onClick={() => setSelectedTab("team")}>
-              Xem chi tiết về đội ngũ
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </section> */}
-
         <section className="mb-8" >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Đánh giá từ khách hàng</h2>
+            <h2 className="text-2xl font-bold">Đánh giá từ khách hàng <></></h2>
             <div className="flex items-center">
               <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
               <span className="ml-1 font-medium">{vendorData?.rating}</span>
@@ -102,7 +80,7 @@ const VendorOverviewPage = () => {
             </div>
           </div>
           <div className="space-y-6">
-            {/* {vendorData?.reviews?.slice(0, 2).map((review: any) => (
+            {vendorData?.reviews?.slice(0, 2).map((review: any) => (
               <div key={review.id} className="bg-muted/50 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-3">
@@ -131,7 +109,7 @@ const VendorOverviewPage = () => {
                 {review.photos && review.photos.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pb-2">
                     {review.photos.map((photo, photoIdx) => (
-                      <Image
+                      <img
                         key={photoIdx}
                         src={photo || "/placeholder.svg"}
                         alt={`Đánh giá từ ${review.user.name}`}
@@ -146,7 +124,7 @@ const VendorOverviewPage = () => {
                   {review.service}
                 </Badge>
               </div>
-            ))} */}
+            ))}
           </div>
           <div className="mt-6 text-center">
             <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'reviews')}`)} className="gap-1 mt-4">
