@@ -30,7 +30,7 @@ const PackageVendor = () => {
                             <div className="flex-1 p-6">
                                 <div className="flex justify-between items-start mb-2">
                                     <h3 className="font-bold text-lg">{pkg?.name}</h3>
-                                    <Badge className="bg-primary">Phổ biến</Badge>
+                                    <div className="bg-primary text-white px-4 py-0.5 text-sm rounded-4xl">Phổ biến</div>
                                 </div>
                                 <p className="text-muted-foreground mb-4">{pkg?.description}</p>
                                 <div className="flex items-center gap-3 mb-4">

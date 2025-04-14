@@ -34,7 +34,7 @@ const SimilarVendor = () => {
             <div className="space-y-4" >
                 {
                     vendorData.map((i: any) => (
-                        <Link href={ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', i.id)} key={i.id} className="cursor-pointer flex gap-3">
+                        <Link href={ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', i.id).replace(':page', '')} key={i.id} className="cursor-pointer flex gap-3">
                             <img
                                 src={`${i.image}`}
                                 alt={`Studio tương tự ${i.id}`}
