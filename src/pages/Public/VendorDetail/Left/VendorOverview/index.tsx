@@ -7,11 +7,18 @@ import ButtonVendorDetail from '../../components/ButtonVendorDetail'
 import Link from 'next/link'
 import { ROUTES } from '@routes'
 import Button from '@components/Atoms/Button'
-import { replaceParam } from '@utils/helpers/ReplaceParam'
+import { useParams } from 'next/navigation'
 
 const VendorOverviewPage = () => {
 
   const vendorData = useVendor() as any
+  const params = useParams()
+  const category = params?.category
+  const service_type = params?.['service-type']
+  const slug = params?.slug
+
+  const href = `/${category}/${service_type}/${slug}`
+
 
   return (
     <>
@@ -44,7 +51,7 @@ const VendorOverviewPage = () => {
               ))}
           </div>
           <div className="mt-4 text-center">
-            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "portfolio")} className="gap-1">
+            <Link href={`${href}/portfolio`} className="gap-1">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
             </Link>
@@ -135,7 +142,7 @@ const VendorOverviewPage = () => {
               ))} */}
           </div >
           <div className="mt-6 text-center">
-            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "portfolio")}>
+            <Link href={`${href}/packages`} className="gap-1">
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
             </Link>
@@ -222,7 +229,7 @@ const VendorOverviewPage = () => {
             ))} */}
           </div>
           <div className="mt-6 text-center">
-            <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, "page", "reviews")} className="gap-1">
+            <Link href={`${href}/reviews`} className="gap-1">
               Xem tất cả đánh giá
               <ChevronRight className="h-4 w-4" />
             </Link>

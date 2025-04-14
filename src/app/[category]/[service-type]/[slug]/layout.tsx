@@ -1,14 +1,10 @@
 'use client'
 
 import Header from "@components/Organisms/Header";
+import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
 import { VendorContextProvider } from "@lib/vendorContext";
-import VendorCover from "@pages/Public/VendorDetail/components/VendorCover";
-import VendorNavigation from "@pages/Public/VendorDetail/components/VendorNavigation";
-import VendorContactInformation from "@pages/Public/VendorDetail/Right/ContactInformation";
-import { motion } from "framer-motion";
 
-export default function VendorDetailLayout({
-    children,
+export default function VendorDetailLayout({ children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
@@ -311,42 +307,9 @@ export default function VendorDetailLayout({
         <>
             <Header />
             <VendorContextProvider value={studioData}>
-                <div className="flex min-h-screen flex-col">
-                    <motion.div
-                        initial={{ y: -50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                    >
-                        <VendorCover />
-                        <VendorNavigation />
-                    </motion.div>
-                    {/* Main content */}
-                    <div className="py-8">
-                        <div className="container">
-                            <div className="grid grid-cols-12 gap-8">
-                                {/* Left Content */}
-                                <motion.div
-                                    initial={{ x: -100, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
-                                    className="col-span-12 lg:col-span-8"
-                                >
-                                    {children}
-                                </motion.div>
-
-                                {/* Right Content */}
-                                <motion.div
-                                    initial={{ x: 100, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
-                                    className="hidden lg:block lg:col-span-4 space-y-6"
-                                >
-                                    <VendorContactInformation />
-                                </motion.div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <VendorDetailLayoutPage>
+                    {children}
+                </VendorDetailLayoutPage>
             </VendorContextProvider>
         </>
     );

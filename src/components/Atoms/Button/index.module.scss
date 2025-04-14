@@ -27,9 +27,10 @@
 
     &:not([class*="hover:bg-"]) {
         &:hover {
-            background-color: #ff922c;
+            background-color: #f8a150;
         }
     }
+
     cursor: pointer;
     transition: background-color 0.3s,
     transform 0.2s;
