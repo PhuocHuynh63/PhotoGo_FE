@@ -25,7 +25,7 @@ const RegisterPage = () => {
     //#endregion
 
     const initial = { opacity: 0, x: -20 }
-    return (
+    return ( 
         <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
             {/* Main card container */}
             {/* --- MODIFIED left side - Photo collage --- */}

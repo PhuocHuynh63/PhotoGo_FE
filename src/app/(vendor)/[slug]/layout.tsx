@@ -13,7 +13,7 @@ export default function VendorDetailLayout({ children,
         id: 1,
         name: "Tony Wedding",
         logo: "https://scontent.fsgn5-8.fna.fbcdn.net/v/t39.30808-6/326270028_551076800292757_5486219224858901364_n.png?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHfbXEAo58IWIrVD-jk5ZhsQ40zOgiA5wxDjTM6CIDnDApHKRR7FC5IJaqFe7ZlURwYzIhXbCao1leSItTrTdze&_nc_ohc=9VyzPlmF7QMQ7kNvwGjHRD1&_nc_oc=AdkHnmQvMTRv26eeS1Zf7OwziR4vwUmhuWceCeMwXGpSKCk4EqHKW64pM9uACk4Jtsk&_nc_zt=23&_nc_ht=scontent.fsgn5-8.fna&_nc_gid=YyFD-UuHEv-0KnMcJeKmZg&oh=00_AfGHLpyoY8AWwGBUlz2FMmqaDIXN0nbH7to7qByDCDZrHQ&oe=6801D27E",
-        coverImage: "https://cdnphoto.dantri.com.vn/AY4jG-HsLgmXzx135UWWsHtw3qQ=/thumb_w/1360/2022/08/26/tony-wedding-x-dan-tri-fixdocx-1661499437532.png",
+        coverImage: "https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/486943588_1085840013584545_8123007123664132290_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=86c6b0&_nc_eui2=AeEYfY38xQ5tdlDCMPYkCd79UD05TW8vRZ9QPTlNby9Fn_NQcpQL0guOe-CPFiDCaygKd8HSr6A3AHrX_8QKjvxj&_nc_ohc=DDSCtJiSjbgQ7kNvwHmcmKW&_nc_oc=AdlCNW6JBOw5zHZa_8keHsWq17IGaoWEqSe8_5BG8LBCiwi9bjkn8M7qRoym59MbNFk&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=n-N7FwEbhD-4XBkqSwpsBA&oh=00_AfHDBRwNv3shhCQzSt2aYdPs0G4Z4hOjucFficePbPWG7A&oe=68032D65",
         rating: 4.8,
         reviewCount: 128,
         location: {

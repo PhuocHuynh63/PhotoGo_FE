@@ -1,8 +1,13 @@
+'use client'
+
 import React from 'react'
+import PackageVendor from '../components/PackageVendor'
 
 const VendorPackagesPage = () => {
     return (
-        <div>VendorPackagesPage</div>
+        <>
+            <PackageVendor />
+        </>
     )
 }
 

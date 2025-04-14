@@ -1,8 +1,9 @@
 import React from 'react'
+import PortfolioVendor from '../components/PortfolioVendor'
 
 const VendorPortfolioPage = () => {
     return (
-        <div>VendorPortfolioPage</div>
+        <PortfolioVendor />
     )
 }
 

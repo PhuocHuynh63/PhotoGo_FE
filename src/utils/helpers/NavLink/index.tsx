@@ -4,8 +4,6 @@ import { usePathname } from "next/navigation";
 export default function NavLink({ href, children, className, ...rest }: UTILS.INavLink) {
     const pathname = usePathname();
     const cleanPath = (url: string) => url.replace(/\/+$/, '');
-    console.log(cleanPath(pathname || ''))
-    console.log(cleanPath(href));
 
     const isActive = cleanPath(pathname || '') === cleanPath(href);
 
