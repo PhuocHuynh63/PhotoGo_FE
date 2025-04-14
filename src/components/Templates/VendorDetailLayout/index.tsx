@@ -5,6 +5,8 @@ import VendorNavigation from '@pages/Public/VendorDetail/components/VendorNaviga
 import React from 'react'
 import { motion } from "framer-motion";
 import VendorContactInformation from '@pages/Public/VendorDetail/Right/ContactInformation';
+import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
+import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 
 const VendorDetailLayoutPage = ({ children,
 }: Readonly<{
@@ -38,9 +40,11 @@ const VendorDetailLayoutPage = ({ children,
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-                        className="hidden lg:block lg:col-span-4 space-y-6 w-sm ml-4"
+                        className="hidden lg:block lg:col-span-4 w-sm ml-4"
                     >
                         <VendorContactInformation />
+                        <GoogleMapVendor />
+                        <SimilarVendor />
                     </motion.div>
                 </div>
             </div>

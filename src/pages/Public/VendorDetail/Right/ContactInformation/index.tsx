@@ -20,7 +20,7 @@ const VendorContactInformation = () => {
 
     return (
         <>
-            <div className="py-6 px-6.5 rounded-md bg-primary-opacity-2 ">
+            <div className="py-6 px-6.5 rounded-md bg-primary-opacity- border border-grey">
                 <h3 className="font-bold text-lg mb-4">Thông tin liên hệ</h3>
                 <div className="space-y-3">
                     <div className="flex items-start gap-3">

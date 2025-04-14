@@ -1,0 +1,68 @@
+.button {
+    &:not([class*="bg-"]) {
+        background-color: var(--bg-primary);
+    }
+
+
+    &:not([class*="border"]) {
+        border: none;
+    }
+
+    &:not([class*="p-"]) {
+        padding: 0.5rem 1rem;
+    }
+
+    &:not([class*="text-"]) {
+        font-size: inherit;
+        color: white;
+    }
+
+    &:not([class*="rounded"]) {
+        border-radius: 8px;
+    }
+
+    &:not([class*="shadow"]) {
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    &:not([class*="hover:bg-"]) {
+        &:hover {
+            background-color: #f8a150;
+        }
+    }
+
+    cursor: pointer;
+    transition: background-color 0.3s,
+    transform 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: none;
+
+    &:hover {
+        background-color: #e5e7ebd3 !important;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        transform: none;
+        opacity: 0.7;
+    }
+}
+
+.loadingText {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+    color: #f3f3f3;
+}
+
+.lucide-spin {
+    animation: lucide-spin 1s linear infinite;
+}
+
+@keyframes lucide-spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -7,12 +7,15 @@ import ButtonVendorDetail from '../../components/ButtonVendorDetail'
 import Link from 'next/link'
 import { ROUTES } from '@routes'
 import Button from '@components/Atoms/Button'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
+import ButtonNoBackground from '@components/Atoms/ButtonNoBackground'
+import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 
 const VendorOverviewPage = () => {
 
   const vendorData = useVendor() as any
   const params = useParams()
+  const router = useRouter()
   const category = params?.category
   const service_type = params?.['service-type']
   const slug = params?.slug
@@ -50,11 +53,11 @@ const VendorOverviewPage = () => {
                 </div>
               ))}
           </div>
-          <div className="mt-4 text-center">
-            <Link href={`${href}/portfolio`} className="gap-1">
+          <div className="flex justify-center mt-4 text-center">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/portfolio`)} className="flex items-center gap-1 border px-3 py-2 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
-            </Link>
+            </ButtonNoBackgroundVendorDetail>
           </div>
         </section >
 
@@ -142,10 +145,10 @@ const VendorOverviewPage = () => {
               ))} */}
           </div >
           <div className="mt-6 text-center">
-            <Link href={`${href}/packages`} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/packages`)} className="gap-1">
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
-            </Link>
+            </ButtonNoBackgroundVendorDetail>
           </div>
         </section >
 
@@ -229,10 +232,10 @@ const VendorOverviewPage = () => {
             ))} */}
           </div>
           <div className="mt-6 text-center">
-            <Link href={`${href}/reviews`} className="gap-1">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${href}/reviews`)} className="gap-1">
               Xem tất cả đánh giá
               <ChevronRight className="h-4 w-4" />
-            </Link>
+            </ButtonNoBackgroundVendorDetail>
           </div>
         </section >
       </div >
