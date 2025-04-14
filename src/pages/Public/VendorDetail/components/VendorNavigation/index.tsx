@@ -11,9 +11,8 @@ const VendorNavigation = () => {
 
     const tabs = [
         { label: 'Tổng quan', page: '' },
-        { label: 'Gói dịch vụ', page: 'services' },
+        { label: 'Gói dịch vụ', page: 'packages' },
         { label: 'Tác phẩm', page: 'portfolio' },
-        { label: 'Đội ngũ', page: 'team' },
         { label: 'Đánh giá', page: 'reviews' },
         { label: 'FAQ', page: 'faq' },
         { label: 'Đặt lịch', page: 'booking' },

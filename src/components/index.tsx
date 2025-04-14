@@ -36,7 +36,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/Molecules/DropdownMenu";
-import { Carousel } from "@components/Organisms/Carousel/index";
+
 // import Image from "next/image";
 
 interface User extends ICOMPONENTS.SortableRecord {
@@ -430,16 +430,6 @@ export default function Home() {
                 width={800}
                 height={400}
             /> */}
-
-
-            <Carousel
-                items={carouselItems}
-                renderItem={customRenderItem}
-                autoScroll={true}
-                scrollSpeed={1000}
-                width={800}
-                height={400}
-            />
 
         </div>
     );
