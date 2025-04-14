@@ -92,7 +92,7 @@ export default function Header() {
     }, []);
 
     return (
-        <header className={`shadow-md p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] backdrop-blur-md' : 'bg-transparent'}`}>
+        <header className={`p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] backdrop-blur-md shadow-md ' : 'bg-transparent'}`}>
             <div className="flex justify-between items-center">
                 <Link href={ROUTES.PUBLIC.HOME}>
                     <Image src={`${isScrolled ? 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg' : 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg'}`} alt="logo" width={60} height={60} style={{ width: 'auto', height: 'auto' }} priority />

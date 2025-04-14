@@ -47,6 +47,7 @@ declare namespace ICOMPONENTS {
         spinIcon?: boolean;
         className?: string;
         variant?: string;
+        ref?: React.RefObject<HTMLButtonElement>;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -233,8 +234,9 @@ declare namespace ICOMPONENTS {
         autoScroll?: boolean;
         scrollInterval?: number;
         scrollSpeed?: number;
-        width?: number;
-        height?: number;
+        width?: number | string;
+        height?: number | string;
+        showNavigation?: boolean;
     }
 
     export interface AdminStaffHeaderProps {
