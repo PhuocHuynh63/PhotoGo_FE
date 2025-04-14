@@ -8,6 +8,7 @@ import { useParams, useRouter } from 'next/navigation'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 import PackageVendor from '../components/PackageVendor'
 import ReviewVendor from '../components/ReviewVendor'
+import PortfolioVendor from '../components/PortfolioVendor'
 
 
 const VendorOverviewPage = () => {
@@ -29,25 +30,7 @@ const VendorOverviewPage = () => {
         {/* Portfolio */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Tác phẩm nổi bật</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {vendorData?.portfolio?.items
-              .filter((item: any) => item?.featured)
-              .map((item: any) => (
-                <div key={item?.id} className="relative group overflow-hidden rounded-lg">
-                  <img
-                    src={item?.image || "/placeholder.svg"}
-                    alt={item?.title}
-                    width={400}
-                    height={300}
-                    className="w-full h-64 object-contain transition-transform group-hover:scale-105"
-                  />
-                  <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <h3 className="text-white font-semibold">{item?.title}</h3>
-                    <p className="text-white/80 text-sm">{item?.category}</p>
-                  </div>
-                </div>
-              ))}
-          </div>
+          <PortfolioVendor />
 
           <div className="flex justify-center mt-4 text-center">
             <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
