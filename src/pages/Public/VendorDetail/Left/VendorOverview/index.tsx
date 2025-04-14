@@ -1,14 +1,14 @@
 'use client'
 
 import { useVendor } from '@lib/vendorContext'
-import { Badge, CheckCircle, ChevronRight, Clock, Eye, Info, Star } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import React from 'react'
 import { ROUTES } from '@routes'
 import { useParams, useRouter } from 'next/navigation'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 import PackageVendor from '../components/PackageVendor'
-import { Avatar } from '@components/Molecules/Avatar'
 import ReviewVendor from '../components/ReviewVendor'
+
 
 const VendorOverviewPage = () => {
 
