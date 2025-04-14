@@ -14,7 +14,7 @@ import { motion } from 'framer-motion'
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
         id: 1,
-        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
         id: 2,
@@ -63,12 +63,6 @@ const HomePage = () => {
                     if (entry.target.id === 'how-it-works') setHowItWorksAnimation(true)
                     if (entry.target.id === 'testimonials') setTestimonialsAnimation(true)
                     if (entry.target.id === 'cta') setCtaAnimation(true)
-                } else {
-                    if (entry.target.id === 'hero') setHeroAnimation(false)
-                    if (entry.target.id === 'services') setServicesAnimation(false)
-                    if (entry.target.id === 'how-it-works') setHowItWorksAnimation(false)
-                    if (entry.target.id === 'testimonials') setTestimonialsAnimation(false)
-                    if (entry.target.id === 'cta') setCtaAnimation(false)
                 }
             });
         });
@@ -101,7 +95,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 1.5 }}
+                        transition={{ duration: 0.6 }}
                     >
                         <div className="flex flex-col gap-8 max-w-2xl text-light mt-20">
                             <h1 className="text-5xl font-bold drop-shadow">
@@ -129,7 +123,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 1.5 }}
+                        transition={{ duration: 0.8 }}
                     >
                         <div className="flex flex-col gap-4 text-black items-center justify-center">
                             <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -146,7 +140,7 @@ const HomePage = () => {
                             ref={el => { sectionRefs.current[1] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5, delay: 0.1 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Camera" iconSize={24} iconColor={"var(--orange)"} />
@@ -186,7 +180,7 @@ const HomePage = () => {
                             ref={el => { sectionRefs.current[2] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5, delay: 0.2 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Home" iconSize={24} iconColor={"var(--orange)"} />
@@ -224,7 +218,7 @@ const HomePage = () => {
                             ref={el => { sectionRefs.current[3] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5, delay: 0.3 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
                         >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Palette" iconSize={24} iconColor={"var(--orange)"} />
@@ -270,7 +264,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5 }}
+                            transition={{ duration: 0.8 }}
                         >
                             <div className="flex flex-col gap-4 text-black items-center justify-center">
                                 <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -287,7 +281,7 @@ const HomePage = () => {
                                     className="flex flex-col items-center text-center gap-4"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                                    transition={{ duration: 1.5, delay: index * 0.1 }}
+                                    transition={{ duration: 0.8, delay: index * 0.1 }}
                                 >
                                     <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">{index + 1}</div>
                                     <h3 className="font-semibold text-lg">{step}</h3>
@@ -310,7 +304,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5 }}
+                            transition={{ duration: 0.8 }}
                         >
                             <div className="flex flex-col gap-4 text-black items-center justify-center">
                                 <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
@@ -322,7 +316,7 @@ const HomePage = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                            transition={{ duration: 1.5 }}
+                            transition={{ duration: 0.8 }}
                         >
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {/* Testimonial cards */}
@@ -388,7 +382,7 @@ const HomePage = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={ctaAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 1.5 }}
+                        transition={{ duration: 0.8 }}
                     >
                         <div className="flex flex-col gap-4 text-black items-center justify-center">
                             <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">

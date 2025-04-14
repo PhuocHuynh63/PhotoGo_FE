@@ -109,17 +109,17 @@ export default function Header() {
     }, [isOpenCart]);
 
     // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
-    useEffect(() => {
-        setIsScrolled(window.scrollY > 120);
-    }, []);
+    // useEffect(() => {
+    //     setIsScrolled(window.scrollY > 120);
+    // }, []);
 
     return (
-        <header className={`p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-50 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] backdrop-blur-md shadow-md ' : 'bg-transparent'}`}>
+        <header className={`p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 1.5 }}
+                transition={{ duration: 1 }}
             >
                 <div className="flex justify-between items-center">
                     {/* Logo */}
@@ -130,7 +130,7 @@ export default function Header() {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className={`hidden md:flex gap-12 font-medium text-lg ${isScrolled ? 'text-black' : 'text-white'}`}>
+                    <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 ${isScrolled ? 'text-black' : 'text-white'}`}>
                         <Link href={ROUTES.PUBLIC.HOME}>Trang chủ</Link>
                         <Link href={ROUTES.PUBLIC.STUDIO}>Studio</Link>
                         <Link href={ROUTES.PUBLIC.FREELANCER}>Freelancer</Link>
@@ -171,7 +171,6 @@ export default function Header() {
 
                             {user ? (
                                 <div className="flex items-center gap-5 relative">
-
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
