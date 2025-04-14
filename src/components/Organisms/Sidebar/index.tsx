@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LucideIcon from '@components/Atoms/LucideIcon'
 import { cn } from '@helpers/CN'
-import { Tooltip } from '@components/Molecules/Tooltip'
+import { SimpleTooltip as Tooltip } from '@components/Molecules/Tooltip'
 
 export interface SidebarItem {
   title: string
