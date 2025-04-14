@@ -38,6 +38,10 @@
     justify-content: center;
     gap: 0.5rem;
 
+    &:hover {
+        background-color: rgba(235, 170, 109, 0.831);
+    }
+
     &:disabled {
         cursor: not-allowed;
         transform: none;
