@@ -399,4 +399,21 @@ declare namespace ICOMPONENTS {
         label: string
     }
 
+
+
+    interface ServiceCard {
+        id: number
+        name: string
+        type: string[]
+        district: string
+        city: string
+        rating: number
+        reviewCount: number
+        priceRange: [number, number]
+        categories: string[]
+        image: string
+        available: boolean
+        featured: boolean
+    }
+
 }

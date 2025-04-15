@@ -51,9 +51,9 @@ export default React.forwardRef<HTMLButtonElement, ICOMPONENTS.ButtonProps>(func
     return (
         <button
             ref={ref}
-            className={`${styles.button} ${className}`}
+            className={`${styles.button} ${className} `}
             style={style}
-            onClick={onClick}
+            onClick={disabled ? undefined : onClick}
             disabled={isLoading || disabled}
             {...buttonProps}
         >

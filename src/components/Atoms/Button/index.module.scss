@@ -40,6 +40,7 @@
 
     &:disabled {
         cursor: not-allowed;
+        background-color: #ccc;
         transform: none;
         opacity: 0.7;
     }
