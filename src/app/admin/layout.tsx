@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import AdminStaffHeader from '@components/Organisms/AdminStaffHeader'
 import Sidebar, { SidebarItem } from '@components/Organisms/Sidebar'
 import { ROUTES } from '@routes'
 import { Toaster } from 'react-hot-toast'
-
+import BackToTop from '@components/Atoms/BackToTop'
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -13,6 +13,7 @@ export default function AdminLayout({
 }>) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [, setIsMobile] = useState(false)
+  const mainRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -29,6 +30,17 @@ export default function AdminLayout({
       window.removeEventListener('resize', checkIfMobile)
     }
   }, [])
+
+  // Force a scroll event to initialize the BackToTop component
+  useEffect(() => {
+    if (mainRef.current) {
+      // Trigger a scroll event after a short delay to ensure the component is mounted
+      setTimeout(() => {
+        const scrollEvent = new Event('scroll')
+        mainRef.current?.dispatchEvent(scrollEvent)
+      }, 500)
+    }
+  }, [mainRef])
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed)
@@ -221,11 +233,14 @@ export default function AdminLayout({
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <AdminStaffHeader userRole="admin" userName="Admin User" />
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-4 relative" ref={mainRef}>
           <Toaster />
           {children}
         </main>
+        {/* Place BackToTop outside the scrollable container but still within the layout */}
+        <BackToTop containerRef={mainRef} />
       </div>
     </div>
   )
 }
+
