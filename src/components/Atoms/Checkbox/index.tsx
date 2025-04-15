@@ -1,17 +1,29 @@
 'use client';
-import React from 'react';
 
-export default function Checkbox({ label, checked, onChange, ...props }: ICOMPONENTS.CheckboxProps) {
+export default function Checkbox({
+    onChange,
+    direction = "vertical",
+    options,
+    value = [],
+    ...props
+}: ICOMPONENTS.CheckboxProps & { value: string[] }) {
     return (
-        <label className="inline-flex items-center gap-2 cursor-pointer">
-            <input
-                type="checkbox"
-                checked={checked}
-                onChange={onChange}
-                {...props}
-                className="accent-primary w-5 h-5"
-            />
-            <span>{label}</span>
-        </label>
+        <div>
+            {options && options.map((option, index) => (
+                <label
+                    key={index}
+                    className={`items-center gap-2 cursor-pointer ${direction === "horizontal" ? "inline-flex" : "flex"}`}
+                >
+                    <input
+                        type="checkbox"
+                        onChange={(e) => onChange && onChange(e, option.key)}
+                        checked={value.includes(option.key)}
+                        {...props}
+                        className="w-4 h-4"
+                    />
+                    <span>{option.label}</span>
+                </label>
+            ))}
+        </div>
     );
 }

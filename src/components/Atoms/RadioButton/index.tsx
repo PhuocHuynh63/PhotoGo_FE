@@ -16,7 +16,7 @@ export default function RadioButtonGroup({ name, options, value, onChange }: ICO
                         onChange={() => onChange(opt.value)}
                         className="accent-primary w-5 h-5"
                     />
-                    <span>{opt.label}</span>
+                    <span className='flex'>{opt.label}</span>
                 </label>
             ))}
         </div>

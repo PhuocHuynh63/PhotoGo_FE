@@ -47,6 +47,7 @@ declare namespace ICOMPONENTS {
         spinIcon?: boolean;
         className?: string;
         variant?: string;
+        onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
         ref?: React.RefObject<HTMLButtonElement>;
     }
 
@@ -84,11 +85,13 @@ declare namespace ICOMPONENTS {
     export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
         label?: string;
         checked?: boolean;
-        onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+        direction?: "vertical" | "horizontal";
+        onChange?: (event: React.ChangeEvent<HTMLInputElement>, key: string) => void;
+        options?: { key: string; label: string; }[];
     }
 
     export interface Option {
-        label: string;
+        label: string | React.ReactNode;
         value: string;
     }
 
@@ -385,6 +388,15 @@ declare namespace ICOMPONENTS {
         options?: EmblaOptionsType
         autoScroll?: boolean
         showControls?: boolean
+    }
+
+    interface ServiceType {
+        key: string
+        label: string
+    }
+    interface AddressType {
+        key: string
+        label: string
     }
 
 }
