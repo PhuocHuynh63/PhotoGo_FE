@@ -58,7 +58,10 @@ const EmblaCarousel: React.FC<ICOMPONENTS.PropType> = (props) => {
     }, [emblaApi])
 
     return (
-        <div className="w-full container mx-auto">
+        <div className="w-full relative">
+            <div className="absolute top-0 right-0 w-6 h-full rounded-l-md" style={{ background: 'linear-gradient(to left, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0))' }}>
+                {/* Đổ bóng mờ dần từ phải sang trái */}
+            </div>
             <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex ">
                     {slides.map((item) => (

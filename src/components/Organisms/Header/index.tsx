@@ -41,6 +41,7 @@ export default function Header() {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false)
     useEffect(() => {
         const userFromLocalStorage = localStorage.getItem("user");
         if (userFromLocalStorage) {
@@ -67,7 +68,7 @@ export default function Header() {
                 ]
             });
         }
-
+        setIsLoaded(true)
         // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
         setIsScrolled(window.scrollY > 120);
     }, []);
@@ -117,7 +118,7 @@ export default function Header() {
     // }, []);
 
     return (
-        <header  className={`header p-2 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
+        <header className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -134,11 +135,11 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 ${isScrolled ? 'text-black' : 'text-white'}`}>
-  <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span>Trang chủ</span></NavLink>
-  <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span>Studio</span></NavLink>
-  <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span>Freelancer</span></NavLink>
-  <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span>Về chúng tôi</span></NavLink>
-</div>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span>Trang chủ</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span>Studio</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span>Freelancer</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span>Về chúng tôi</span></NavLink>
+                    </div>
 
                     {/* right */}
                     <div className="flex items-center gap-4">
@@ -173,14 +174,16 @@ export default function Header() {
                         <div className="hidden md:block">
 
                             {user ? (
-                                <div className="flex items-center gap-5 relative">
+                                <div className="flex items-center justify-center gap-5 relative">
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
                                         transition={{ duration: 0.3 }}
                                     >
-                                        <LocationButton />
+                                        <div className="flex items-center justify-center mt-2">
+                                            <LocationButton className="hover:bg-white/10 p-1 rounded-md" isScrolled={isScrolled} isLoaded={isLoaded} />
+                                        </div>
                                     </motion.div>
 
 
@@ -190,9 +193,9 @@ export default function Header() {
                                         exit={{ opacity: 0, y: -10 }}
                                         transition={{ duration: 0.3 }}
                                     >
-                                        <div onClick={() => {
-                                            handlOpenCart()
-                                        }} className="cursor-pointer relative mt-2">
+                                        <div
+                                            onClick={handlOpenCart}
+                                            className="cursor-pointer relative mt-2 hover:bg-[var(--bg-primary)] p-1 rounded-md">
                                             <LucideIcon name="ShoppingCart" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                 {user?.cart.length}
@@ -211,7 +214,7 @@ export default function Header() {
                                                 exit={{ opacity: 0, y: -10 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-                                                <div onClick={handleOpenNotification} className="cursor-pointer relative mt-2">
+                                                <div onClick={handleOpenNotification} className="cursor-pointer relative mt-2 hover:bg-[var(--bg-primary)] p-1 rounded-md">
                                                     <LucideIcon name="Bell" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                                     <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                         {unreadNotifications.length}
