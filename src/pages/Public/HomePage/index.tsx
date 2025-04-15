@@ -9,6 +9,8 @@ import LucideIcon from "@components/Atoms/LucideIcon"
 import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
 import { motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
+import Link from 'next/link'
+
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
         id: 1,
@@ -178,8 +180,12 @@ const HomePage = () => {
                                 Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
                             </p>
                             <div className="flex gap-4">
-                                <Button width={160} height={50} className="text-lg text-white">Đặt lịch ngay</Button>
-                                <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
+                                <Link href="/booking" passHref>
+                                    <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
+                                </Link>
+                                <Link href="/services" passHref>
+                                    <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
@@ -242,9 +248,11 @@ const HomePage = () => {
                                     <span>Lựa chọn linh hoạt</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">
-                                Xem tất cả Photographers
-                            </ClearButton>
+                            <Link href="/photographers" passHref>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">
+                                    Xem tất cả Photographers
+                                </ClearButton>
+                            </Link>
                         </motion.div>
 
                         {/* Studios Card */}
@@ -282,7 +290,9 @@ const HomePage = () => {
                                     <span>Cho thuê theo giờ hoặc theo ngày</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch Studio</ClearButton>
+                            <Link href="/studios" passHref>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
+                            </Link>
                         </motion.div>
 
                         {/* Makeup Artists Card */}
@@ -320,7 +330,9 @@ const HomePage = () => {
                                     <span>Sản phẩm chất lượng cao cấp</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch với Makeup Artist</ClearButton>
+                            <Link href="/makeup-artists" passHref className="w-full">
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
+                            </Link>
                         </motion.div>
                     </div>
                 </div>
@@ -341,7 +353,7 @@ const HomePage = () => {
                         >
                             <div className="flex flex-col gap-4 text-black items-center justify-center">
                                 <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
-                                    Nền tảng chúng tôi hoạt động như thế nà
+                                    Nền tảng chúng tôi hoạt động như thế nào
                                 </h1>
                                 <span className="text-center text-lg">Đặt lịch chụp ảnh hoàn hảo của bạn chưa bao giờ dễ dàng hơn thế</span>
                             </div>
@@ -420,7 +432,9 @@ const HomePage = () => {
                             <span className="text-center text-lg break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</span>
                         </div>
                         <div className="flex justify-center mt-8">
-                            <Button width={160} height={40} className="text-lg text-white">Đặt lịch ngay</Button>
+                            <Link href="/booking" passHref>
+                                <Button width={160} height={40} className="text-lg text-white w-full">Đặt lịch ngay</Button>
+                            </Link>
                         </div>
                     </motion.div>
                 </div>

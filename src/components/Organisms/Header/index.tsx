@@ -19,6 +19,7 @@ import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal"
 import LocationButton from "../LocationButton/LocationButton"
 import NavLink from "@utils/helpers/NavLink"
 import './index.scss'
+
 const timeAgo = (date: string) => {
     const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
     let interval = Math.floor(seconds / 31536000);
@@ -319,7 +320,7 @@ export default function Header() {
                                             </Link>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem icon="LogOut" onClick={handleLogout}>
-                                                <Link href={"ROUTES.PUBLIC.LOGIN"}>
+                                                <Link href={ROUTES.PUBLIC.HOME}>
                                                     <span>Đăng xuất</span>
                                                 </Link>
                                             </DropdownMenuItem>
@@ -328,9 +329,13 @@ export default function Header() {
                                     </DropdownMenu>
                                 </div>
                             ) : (
-                                <div className="flex gap-2">
-                                    <Button onClick={() => {/* handle register */ }}>Đăng ký</Button>
-                                    <Button onClick={() => {/* handle login */ }}>Đăng nhập</Button>
+                                <div className="flex gap-2 ">
+                                    <Link href={ROUTES.AUTH.REGISTER}>
+                                        <Button className="bg-primary text-white">Đăng ký</Button>
+                                    </Link>
+                                    <Link href={ROUTES.AUTH.LOGIN}>
+                                        <Button className="bg-primary text-white">Đăng nhập</Button>
+                                    </Link>
                                 </div>
                             )}
                         </div>
@@ -413,8 +418,8 @@ export default function Header() {
                             <h2 className="text-lg font-semibold mb-2">Chào mừng bạn đến với chúng tôi!</h2>
                             <p className="text-sm text-gray-600 mb-4">Vui lòng đăng nhập hoặc đăng ký để tiếp tục.</p>
                             <div className="flex justify-center gap-3 items-center">
-                                <Button onClick={() => {/* handle register */ }} className="bg-blue-500 text-white hover:bg-blue-600">Đăng ký</Button>
-                                <Button onClick={() => {/* handle login */ }} className="bg-green-500 text-white hover:bg-green-600">Đăng nhập</Button>
+                                <Link href={ROUTES.AUTH.REGISTER}>Đăng ký</Link>
+                                <Link href={ROUTES.AUTH.LOGIN}>Đăng nhập</Link>
                             </div>
                         </div>
                     )}
