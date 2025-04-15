@@ -3,8 +3,7 @@
         background-color: var(--bg-primary);
     }
 
-
-    &:not([class*="border"]) {
+    &:not([class*="border-"]) {
         border: none;
     }
 
@@ -21,7 +20,7 @@
         border-radius: 8px;
     }
 
-    &:not([class*="shadow"]) {
+    &:not([class*="shadow-"]) {
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     }
 
@@ -38,10 +37,6 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-
-    &:hover {
-        background-color: rgba(235, 170, 109, 0.831);
-    }
 
     &:disabled {
         cursor: not-allowed;

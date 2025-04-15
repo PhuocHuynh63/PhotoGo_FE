@@ -66,17 +66,17 @@ export default function LocationButton({ className, isScrolled, isLoaded }: Loca
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
-                        // variant="ghost"
                         onClick={getUserLocation}
-                        className={`relative text-white hover:bg-white/10 ${className}`}
+                        className={`relative shadow-none  text-white ${className}`}
                         disabled={loading}
+
                     >
-                        <LucideIcon name="MapPin" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} className={`${loading ? "animate-pulse" : ""}`} />
+                        <LucideIcon name="MapPin" iconSize={26} iconColor={location ? isScrolled ? '#51c778' : '#50C878' : 'white'} />
                         {/* <MapPin className={`h-5 w-5 ${loading ? "animate-pulse" : ""}`} /> */}
                         {location ? (
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                {/* <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span> */}
                             </span>
                         ) : (<>{error}</>)}
                     </Button>

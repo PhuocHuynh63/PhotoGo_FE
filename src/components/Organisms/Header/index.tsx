@@ -119,7 +119,7 @@ export default function Header() {
     // }, []);
 
     return (
-        <header className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.51)] shadow-md ' : 'bg-transparent'}`}>
+        <header className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.65)] shadow-xl' : 'bg-transparent'}`}>
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -135,11 +135,11 @@ export default function Header() {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 ${isScrolled ? 'text-black' : 'text-white'}`}>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span>Trang chủ</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span>Studio</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span>Freelancer</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span>Về chúng tôi</span></NavLink>
+                    <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 `}>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Trang chủ</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Studio</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Freelancer</span></NavLink>
+                        <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Về chúng tôi</span></NavLink>
                     </div>
 
                     {/* right */}
@@ -196,7 +196,7 @@ export default function Header() {
                                     >
                                         <div
                                             onClick={handlOpenCart}
-                                            className="cursor-pointer relative mt-2 hover:bg-[var(--bg-primary)] p-1 rounded-md">
+                                            className="cursor-pointer relative mt-2 p-1 rounded-md hover:bg-[#c9c9ce21]">
                                             <LucideIcon name="ShoppingCart" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                 {user?.cart.length}
@@ -215,7 +215,7 @@ export default function Header() {
                                                 exit={{ opacity: 0, y: -10 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-                                                <div onClick={handleOpenNotification} className="cursor-pointer relative mt-2 hover:bg-[var(--bg-primary)] p-1 rounded-md">
+                                                <div onClick={handleOpenNotification} className="hover:bg-[#c9c9ce21] cursor-pointer relative mt-2 p-1 rounded-md">
                                                     <LucideIcon name="Bell" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                                     <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                         {unreadNotifications.length}
@@ -360,28 +360,28 @@ export default function Header() {
                             <div className="flex flex-col gap-4 py-4">
                                 <Link
                                     href={ROUTES.PUBLIC.HOME}
-                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Trang chủ
                                 </Link>
                                 <Link
                                     href={ROUTES.PUBLIC.STUDIO}
-                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Studio
                                 </Link>
                                 <Link
                                     href={ROUTES.PUBLIC.FREELANCER}
-                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Freelancer
                                 </Link>
                                 <Link
                                     href={ROUTES.PUBLIC.ABOUT}
-                                    className="px-4 py-2 hover:bg-gray-100 rounded-md"
+                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Về chúng tôi
