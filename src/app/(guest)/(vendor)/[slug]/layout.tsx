@@ -1,5 +1,3 @@
-'use client'
-
 import Header from "@components/Organisms/Header";
 import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
 import { VendorContextProvider } from "@lib/vendorContext";
