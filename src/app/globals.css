@@ -78,8 +78,8 @@
 
 /* BORDER */
 :root {
-    --border-orange: #F6AC69;
-    --border-orange-opacity: rgba(246, 172, 105, 0.2);
+    --border-primary: #F6AC69;
+    --border-primary-opacity: rgba(246, 172, 105, 0.2);
     --border-grey: #E4E4E7;
     --border-successful: #BBF7D0;
     --border-pending: #FEF08A;
@@ -232,12 +232,12 @@
 }
 
 /* BORDER */
-.border-orange {
-    border-color: var(--border-orange);
+.border-primary {
+    border-color: var(--border-primary);
 }
 
-.border-orange-opacity {
-    border-color: var(--border-orange-opacity);
+.border-primary-opacity {
+    border-color: var(--border-primary-opacity);
 }
 
 .border-grey {
