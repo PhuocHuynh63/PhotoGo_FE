@@ -1,13 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import { MapPin } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/Molecules/Tooltip"
 import Button from "@components/Atoms/Button"
+import LucideIcon from "@components/Atoms/LucideIcon"
 
-export default function LocationButton() {
-    const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
+interface LocationButtonProps {
+    className?: string
+    isScrolled?: boolean
+    isLoaded?: boolean
+}
+
+export default function LocationButton({ className, isScrolled, isLoaded }: LocationButtonProps) {
+    const [location, setLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -22,10 +28,9 @@ export default function LocationButton() {
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                setLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                })
+                const { latitude, longitude } = position.coords
+                setLocation({ lat: latitude, lng: longitude })
+                fetchAddress(latitude, longitude)
                 setLoading(false)
             },
             (error) => {
@@ -35,18 +40,39 @@ export default function LocationButton() {
             },
         )
     }
+    useEffect(() => {
+        if (isLoaded) {
+            getUserLocation()
+        }
+    }, [isLoaded])
+    const fetchAddress = async (lat: number, lng: number) => {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+            const data = await response.json();
+            if (data && data.display_name) {
+                setLocation({ lat, lng, address: data.display_name });
+            } else {
+                setError("Unable to retrieve address");
+            }
+        } catch (error) {
+            setError("Error fetching address");
+            console.error("Error fetching address:", error);
+        }
+    }
+
 
     return (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
-                        variant="ghost"
+                        // variant="ghost"
                         onClick={getUserLocation}
-                        className="relative text-white hover:bg-white/10"
+                        className={`relative text-white hover:bg-white/10 ${className}`}
                         disabled={loading}
                     >
-                        <MapPin className={`h-5 w-5 ${loading ? "animate-pulse" : ""}`} />
+                        <LucideIcon name="MapPin" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} className={`${loading ? "animate-pulse" : ""}`} />
+                        {/* <MapPin className={`h-5 w-5 ${loading ? "animate-pulse" : ""}`} /> */}
                         {location ? (
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -59,7 +85,9 @@ export default function LocationButton() {
                     {loading
                         ? "Getting location..."
                         : location
-                            ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`
+                            ? location.address
+                                ? location.address
+                                : `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}, ${location.address}`
                             : "Get your location"}
                 </TooltipContent>
             </Tooltip>

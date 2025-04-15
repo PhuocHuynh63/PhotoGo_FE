@@ -372,7 +372,7 @@ const HomePage = () => {
                 className="py-16"
                 ref={el => { sectionRefs.current[2] = el; }}
             >
-                <div className="container mx-auto px-4">
+                <div className="">
                     <div className="flex flex-col gap-8">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -393,11 +393,11 @@ const HomePage = () => {
                         >
                             {/* Testimonial cards */}
                             <div className="w-full h-full">
+
                                 <AutoScrollCarousel slides={autoScrollItems} autoScroll={true} />
                             </div>
                         </motion.div>
                     </div>
-
                 </div>
             </motion.div>
 
