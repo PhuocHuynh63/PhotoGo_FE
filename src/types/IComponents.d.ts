@@ -318,13 +318,19 @@ declare namespace ICOMPONENTS {
     }
 
     type StatsCardProps = {
-        title: string;
-        icon: React.ReactNode;
-        value: string | number;
-        change: string;
-        changeColor?: string;
-        changeIcon?: React.ReactNode;
-        subtitle?: string;
+        title: string
+        value: string | number
+        icon?: ReactNode
+        iconClassName?: string
+        description?: string
+        subtitle?: string
+        trend?: "up" | "down" | "neutral"
+        trendValue?: string
+        change?: string
+        changeIcon?: ReactNode
+        changeColor?: string
+        layout?: "header" | "side" 
+        className?: string
     };
 
     type UserRank = "unranked" | "bronze" | "silver" | "gold"
