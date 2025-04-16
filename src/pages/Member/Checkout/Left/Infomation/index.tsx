@@ -45,21 +45,6 @@ const Infomation = () => {
                     </label>
                     <TextArea id="notes" placeholder="Ghi chú thêm (nếu có)" rows={4} />
                 </div>
-
-                <div className="flex items-start space-x-2">
-                    <Checkbox id="terms" />
-                    <div className="grid gap-1.5 leading-none">
-                        <label
-                            htmlFor="terms"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            Tôi đồng ý với{" "}
-                            <Button className="text-[#f0a06a]">
-                                điều khoản và điều kiện
-                            </Button>
-                        </label>
-                    </div>
-                </div>
             </div>
         </>
     )
