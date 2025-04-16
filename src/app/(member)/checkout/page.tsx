@@ -1,4 +1,4 @@
-import CheckoutPage from "@pages/Member/Checkout/Left/Method";
+import CheckoutPage from "@pages/Member/Checkout";
 
 export default function Checkout() {
 

@@ -32,8 +32,8 @@ const VendorBookingPage = () => {
     <>
       <h2 className="text-2xl font-bold mb-6">Đặt lịch dịch vụ</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
+        <div>
+          <div className="flex flex-col justify-center items-center space-y-4">
             <div>
               <Label htmlFor="service">Gói dịch vụ</Label>
               <select
@@ -85,7 +85,7 @@ const VendorBookingPage = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <div>
               <Label htmlFor="name">Họ và tên</Label>
               <Input
@@ -133,7 +133,7 @@ const VendorBookingPage = () => {
                 {...register('note')}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <Button type="submit" className="w-full">

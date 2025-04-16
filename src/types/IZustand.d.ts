@@ -8,5 +8,6 @@ declare module IZUSTAND {
         prevStep: () => void
         selectDeposit: (percent: number) => void
         selectMethod: (method: string | null) => void
+        // reset: () => void
     }
 }
