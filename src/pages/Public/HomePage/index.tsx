@@ -2,16 +2,125 @@
 
 import Button from "@components/Atoms/Button"
 import ClearButton from "@components/Atoms/ClearButton"
-import StarRating from "@components/Molecules/StarRating"
 import Header from "@components/Organisms/Header"
 import Image from "next/image"
-import { useEffect, useState } from "react"
-
+import { useEffect, useState, useRef } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
-import { Avatar } from "@components/Molecules/Avatar"
+import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
+import { motion } from 'framer-motion'
+import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
+import Link from 'next/link'
+
+const carouselItems: ICOMPONENTS.CarouselItem[] = [
+    {
+        id: 1,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        id: 2,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744623477/themyvanhungcaicay.png',
+    },
+    {
+        id: 3,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744622616/themyvacayco.jpg',
+    },
+    {
+        id: 4,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744623544/themyvacaicay_tb7frq.jpg',
+    },
+    {
+        id: 5,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744624604/Screenshot_2025-04-14_165634_ofatn1.png',
+    },
+    {
+        id: 6,
+        image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744624539/themyxungtoiko_pslpth.png',
+    },
+];
+
+const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
+    {
+        id: 1,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 2,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 3,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 3,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 1,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 4,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 2,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
+    },
+    {
+        id: 5,
+        name: 'Huỳnh Minh Phước',
+
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 4,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 6,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 7,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 8,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 9,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+    {
+        id: 10,
+        name: 'Huỳnh Minh Phước',
+        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        star: 5,
+        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
+    },
+]
+
 
 const HomePage = () => {
     const [scrollY, setScrollY] = useState(0)
+    const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
+    const [heroAnimation, setHeroAnimation] = useState(true)
+    const [servicesAnimation, setServicesAnimation] = useState(false)
+    const [howItWorksAnimation, setHowItWorksAnimation] = useState(false)
+    const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
+    const [ctaAnimation, setCtaAnimation] = useState(false)
 
     useEffect(() => {
         const handleScroll = () => {
@@ -20,54 +129,98 @@ const HomePage = () => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.id === 'hero') setHeroAnimation(true)
+                    if (entry.target.id === 'services') setServicesAnimation(true)
+                    if (entry.target.id === 'how-it-works') setHowItWorksAnimation(true)
+                    if (entry.target.id === 'testimonials') setTestimonialsAnimation(true)
+                    if (entry.target.id === 'cta') setCtaAnimation(true)
+                }
+            });
+        });
+
+        sectionRefs.current.forEach(ref => {
+            if (ref) {
+                observer.observe(ref)
+            }
+        })
+
+        return () => {
+            sectionRefs.current.forEach(ref => {
+                if (ref) {
+                    observer.unobserve(ref)
+                }
+            })
+        }
+    }, [])
 
     const zoomLevel = 1 + scrollY / 10000
-
     return (
         <div>
             {/* Hero section */}
             <Header />
-            <div className="relative w-full h-[80vh] overflow-hidden">
+            <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
                 <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
-                    <Image
-                        src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg"
-                        alt="Background"
-                        fill
-                        quality={100}
-                        loading="lazy"
-                        blurDataURL="https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ"
-                        className="object-cover brightness-50"
-                    />
+                    <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
                 </div>
-                <div className="relative container mx-auto px-4 py-16">
-                    <div className="flex flex-col gap-8 max-w-2xl text-primary mt-20">
-                        <h1 className="text-5xl font-bold ">
-                            Ghi lại khoảnh khắc hoàn hảo của bạn
-                        </h1>
-                        <p className="text-xl">
-                            Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
-                        </p>
-                        <div className="flex gap-4">
-                            <Button width={160} height={50} className="text-lg text-white">Đặt lịch ngay</Button>
-                            <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
+                <div className="relative container mx-auto px-4 py-40">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <div className="flex flex-col gap-8 max-w-2xl text-light mt-20">
+                            <h1 className="text-5xl font-bold drop-shadow">
+                                Ghi lại khoảnh khắc hoàn hảo của bạn
+                            </h1>
+                            <p className="text-xl drop-shadow">
+                                Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
+                            </p>
+                            <div className="flex gap-4">
+                                <Link href="/booking" passHref>
+                                    <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
+                                </Link>
+                                <Link href="/services" passHref>
+                                    <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
             {/* Services section */}
-            <div className="flex container mx-auto px-4 py-16 items-center justify-center">
+            <motion.div
+                id="services"
+                className="flex container mx-auto px-4 py-16 items-center justify-center"
+                ref={el => { sectionRefs.current[0] = el; }}
+            >
                 <div className="flex flex-col gap-8 w-full">
-                    <div className="flex flex-col gap-4 text-black items-center justify-center">
-                        <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
-                            Dịch vụ của chúng tôi
-                        </h1>
-                        <span className="text-center text-lg">PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <div className="flex flex-col gap-4 text-black items-center justify-center">
+                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                Dịch vụ của chúng tôi
+                            </h1>
+                            <span className="text-center text-lg">PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh để đáp ứng mọi nhu cầu của bạn</span>
+                        </div>
+                    </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Photographers Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
+                        <motion.div
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
+                            ref={el => { sectionRefs.current[1] = el; }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8, delay: 0.1 }}
+                        >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Camera" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
@@ -95,13 +248,21 @@ const HomePage = () => {
                                     <span>Lựa chọn linh hoạt</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">
-                                Xem tất cả Photographers
-                            </ClearButton>
-                        </div>
+                            <Link href="/photographers" passHref>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">
+                                    Xem tất cả Photographers
+                                </ClearButton>
+                            </Link>
+                        </motion.div>
 
                         {/* Studios Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
+                        <motion.div
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
+                            ref={el => { sectionRefs.current[2] = el; }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                        >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Home" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
@@ -129,11 +290,19 @@ const HomePage = () => {
                                     <span>Cho thuê theo giờ hoặc theo ngày</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch Studio</ClearButton>
-                        </div>
+                            <Link href="/studios" passHref>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
+                            </Link>
+                        </motion.div>
 
                         {/* Makeup Artists Card */}
-                        <div className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full">
+                        <motion.div
+                            className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
+                            ref={el => { sectionRefs.current[3] = el; }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                        >
                             <div className="bg-orange-100 rounded-full p-2 w-12 h-12 flex items-center justify-center">
                                 <LucideIcon name="Palette" iconSize={24} iconColor={"var(--orange)"} />
                             </div>
@@ -161,128 +330,116 @@ const HomePage = () => {
                                     <span>Sản phẩm chất lượng cao cấp</span>
                                 </li>
                             </ul>
-                            <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto">Đặt lịch với Makeup Artist</ClearButton>
-                        </div>
+                            <Link href="/makeup-artists" passHref className="w-full">
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
+                            </Link>
+                        </motion.div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* How it works section */}
-            <div className="bg-gray-50 py-16">
+            <motion.div
+                id="how-it-works"
+                className="bg-gray-50 py-16"
+                ref={el => { sectionRefs.current[1] = el; }}
+            >
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col gap-8">
-                        <div className="flex flex-col gap-4 text-black items-center justify-center">
-                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
-                                Nền tảng chúng tôi hoạt động như thế nà
-                            </h1>
-                            <span className="text-center text-lg">Đặt lịch chụp ảnh hoàn hảo của bạn chưa bao giờ dễ dàng hơn thế</span>
-                        </div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <div className="flex flex-col gap-4 text-black items-center justify-center">
+                                <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                    Nền tảng chúng tôi hoạt động như thế nào
+                                </h1>
+                                <span className="text-center text-lg">Đặt lịch chụp ảnh hoàn hảo của bạn chưa bao giờ dễ dàng hơn thế</span>
+                            </div>
+                        </motion.div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                             {/* Step items */}
-                            <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">1</div>
-                                <h3 className="font-semibold text-lg">Chọn dịch vụ</h3>
-                                <p className="text-md text-gray-600">Chọn từ nhiều dịch vụ chụp ảnh khác nhau của chúng tôi</p>
-                            </div>
-                            <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">2</div>
-                                <h3 className="font-semibold text-lg">Chọn một chuyên gia</h3>
-                                <p className="text-md text-gray-600">Duyệt hồ sơ và chọn đối tượng phù hợp hoàn hảo của bạn</p>
-                            </div>
-                            <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">3</div>
-                                <h3 className="font-semibold text-lg">Chọn ngày</h3>
-                                <p className="text-md text-gray-600">Chọn ngày và giờ bạn muốn</p>
-                            </div>
-                            <div className="flex flex-col items-center text-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">4</div>
-                                <h3 className="font-semibold text-lg">Tận hưởng dịch vụ của bạn</h3>
-                                <p className="text-md text-gray-600">Thư giãn và tận hưởng buổi chụp ảnh chuyên nghiệp của bạn</p>
-                            </div>
-
+                            {['Chọn dịch vụ', 'Chọn một chuyên gia', 'Chọn ngày', 'Tận hưởng dịch vụ của bạn'].map((step, index) => (
+                                <motion.div
+                                    key={index}
+                                    className="flex flex-col items-center text-center gap-4"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={howItWorksAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-light font-medium text-xl">{index + 1}</div>
+                                    <h3 className="font-semibold text-lg">{step}</h3>
+                                    <p className="text-md text-gray-600">Mô tả cho {step.toLowerCase()}</p>
+                                </motion.div>
+                            ))}
                         </div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Testimonials section */}
-            <div className="py-16">
-                <div className="container mx-auto px-4">
+            <motion.div
+                id="testimonials"
+                className="py-16"
+                ref={el => { sectionRefs.current[2] = el; }}
+            >
+                <div className="">
                     <div className="flex flex-col gap-8">
-                        <div className="flex flex-col gap-4 text-black items-center justify-center">
-                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
-                                Khách hàng của chúng tôi nói gì
-                            </h1>
-                            <span className="text-center text-lg">Hãy lắng nghe những người đã sử dụng dịch vụ của chúng tôi</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <div className="flex flex-col gap-4 text-black items-center justify-center">
+                                <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                    Khách hàng của chúng tôi nói gì
+                                </h1>
+                                <span className="text-center text-lg">Hãy lắng nghe những người đã sử dụng dịch vụ của chúng tôi</span>
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={testimonialsAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8 }}
+                        >
                             {/* Testimonial cards */}
-                            <div className="p-6 shadow-xl rounded-xl">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-gray-200">
-                                        <Avatar size={50} src="https://cdn.tcdulichtphcm.vn/upload/4-2024/images/2024-11-11/1731317465-hnlh3081-copy.jpg" fallback="anh_jack_mat_vest" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                        <div className="flex text-yellow-400">
-                                            <StarRating stars={3.5} size={16} color={"var(--orange)"} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Nhiếp ảnh gia mà tôi đặt qua PHOTOGO thật tuyệt vời! Họ đã chụp ảnh cưới của tôi một cách tuyệt đẹp và rất chuyên nghiệp trong suốt ngày.&quot;</p>
+                            <div className="w-full h-full">
+
+                                <AutoScrollCarousel slides={autoScrollItems} autoScroll={true} />
                             </div>
-                            <div className="p-6 shadow-xl rounded-xl">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-gray-200">
-                                        <Avatar size={50} src="https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ" fallback="anh_jack_mat_vest" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                        <div className="flex text-yellow-400">
-                                            <StarRating stars={5} size={16} color={"var(--orange)"} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="text-md text-gray-600 break-words whitespace-pre-wrap">&quot;Studio tôi thuê rất lý tưởng cho buổi chụp ảnh sản phẩm của tôi. Được trang bị đầy đủ và quá trình đặt chỗ diễn ra suôn sẻ.&quot;</p>
-                            </div>
-                            <div className="p-6 shadow-xl rounded-xl">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-gray-200">
-                                        <Avatar size={50} src="https://kenh14cdn.com/203336854389633024/2023/1/11/photo-3-1673436433884550875846.jpg" fallback="anh_jack_mat_vest" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold">Huỳnh Minh Phước</h4>
-                                        <div className="flex text-yellow-400">
-                                            <StarRating stars={4} size={16} color={"var(--orange)"} />
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="text-md break-words whitespace-pre-wrap">&quot;Chuyên gia trang điểm mà tôi đã đặt thật tuyệt vời! Cô ấy hiểu chính xác những gì tôi muốn và giúp tôi trông thật tuyệt vời trong buổi chụp ảnh.&quot;</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex justify-center mt-8">
-                        <Button width={160} height={40} className="text-lg text-white">Xem thêm</Button>
+                        </motion.div>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* CTA section */}
-            <div className="bg-gray-50 py-16">
+            <motion.div
+                id="cta"
+                className="bg-gray-50 py-16"
+                ref={el => { sectionRefs.current[3] = el; }}
+            >
                 <div className="container mx-auto px-4 text-center">
-
-                    <div className="flex flex-col gap-4 text-black items-center justify-center">
-                        <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
-                            Bạn đã sẵn sàng đặt buổi chụp hình hoàn hảo của mình chưa?
-                        </h1>
-                        <span className="text-center text-lg break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</span>
-                    </div>
-
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={ctaAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <div className="flex flex-col gap-4 text-black items-center justify-center">
+                            <h1 className="text-5xl break-words whitespace-pre-wrap font-bold">
+                                Bạn đã sẵn sàng đặt buổi chụp hình hoàn hảo của mình chưa?
+                            </h1>
+                            <span className="text-center text-lg break-words whitespace-pre-wrap">Tham gia cùng hàng ngàn khách hàng hài lòng đã tìm thấy sự kết hợp nhiếp ảnh hoàn hảo của họ với PhotoGo</span>
+                        </div>
+                        <div className="flex justify-center mt-8">
+                            <Link href="/booking" passHref>
+                                <Button width={160} height={40} className="text-lg text-white w-full">Đặt lịch ngay</Button>
+                            </Link>
+                        </div>
+                    </motion.div>
                 </div>
-                <div className="flex justify-center mt-8">
-                    <Button width={160} height={40} className="text-lg text-white">Đặt lịch ngay</Button>
-                </div>
-            </div>
+
+            </motion.div>
         </div >
     )
 }

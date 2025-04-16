@@ -2,21 +2,24 @@ import React, { useMemo } from 'react';
 import styles from './index.module.scss';
 import LucideIcon from '@/components/Atoms/LucideIcon';
 
-export default function Button({
-    children,
-    width,
-    height,
-    icon,
-    iconPosition = 'left',
-    iconSize = 18,
-    iconColor = 'currentColor',
-    isLoading = false,
-    loadingText = 'Loading...',
-    spinIcon = false,
-    disabled = false,
-    className = '',
-    ...rest
-}: ICOMPONENTS.ButtonProps) {
+export default React.forwardRef<HTMLButtonElement, ICOMPONENTS.ButtonProps>(function Button(
+    {
+        children,
+        width,
+        height,
+        icon,
+        iconPosition = 'left',
+        iconSize = 18,
+        iconColor = 'currentColor',
+        isLoading = false,
+        loadingText = 'Loading...',
+        spinIcon = false,
+        disabled = false,
+        className = '',
+        ...rest
+    }: ICOMPONENTS.ButtonProps,
+    ref
+) {
     const { ...buttonProps } = rest;
 
     const { style, showIcon, loadingIndicator } = useMemo(() => {
@@ -43,8 +46,10 @@ export default function Button({
 
         return { style: computedStyle, showIcon: computedShowIcon, loadingIndicator: computedLoadingIndicator };
     }, [width, height, icon, iconSize, iconColor, spinIcon, isLoading, loadingText]);
+
     return (
         <button
+            ref={ref}
             className={`${styles.button} ${className}`}
             style={style}
             disabled={isLoading || disabled}
@@ -61,4 +66,4 @@ export default function Button({
             )}
         </button>
     );
-}
+});

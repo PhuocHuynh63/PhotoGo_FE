@@ -5,14 +5,20 @@ import { useVendor } from '@lib/vendorContext'
 import { Badge, Heart, MapPin, Share2, Star } from 'lucide-react'
 import React from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
+import { useParams, useRouter } from 'next/navigation'
+import { ROUTES } from '@routes'
 
 const VendorCover = () => {
 
     const vendorData = useVendor() as any
+    const router = useRouter()
+    const params = useParams()
+    const slug = params?.slug as string
+
 
     return (
         <section className="relative">
-            <div className="h-[300px] md:h-[320px] w-full relative">
+            <div className="h-[300px] md:h-[400px] w-full relative">
                 <img
                     src={vendorData?.coverImage || "/placeholder.svg"}
                     alt={vendorData?.name}
@@ -73,7 +79,7 @@ const VendorCover = () => {
                                     <Share2 className="h-4 w-4" />
                                     <span className="hidden sm:inline">Chia sẻ</span>
                                 </ButtonVendorDetail>
-                                <Button>Đặt lịch ngay</Button>
+                                <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'booking')}`)}>Đặt lịch ngay</Button>
                             </div>
                         </div>
                     </div>

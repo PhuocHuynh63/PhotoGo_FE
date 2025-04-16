@@ -3,17 +3,21 @@
 import { useVendor } from '@lib/vendorContext'
 import { CalendarIcon, Clock, Globe, Mail, MapPin, Phone } from 'lucide-react'
 import React from 'react'
-import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
+import Button from '@components/Atoms/Button'
 import { ROUTES } from '@routes'
-import { replaceParam } from '@utils/helpers/ReplaceParam'
 
 const VendorContactInformation = () => {
 
     const vendorData = useVendor() as any
+    const params = useParams()
+    const slug = params?.slug as string
+    const router = useRouter()
+
 
     return (
         <>
-            <div className="py-6 px-6.5 rounded-md bg-primary-opacity-2 ">
+            <div className="py-6 px-6.5 rounded-md bg-primary-opacity- border border-grey">
                 <h3 className="font-bold text-lg mb-4">Thông tin liên hệ</h3>
                 <div className="space-y-3">
                     <div className="flex items-start gap-3">
@@ -60,10 +64,11 @@ const VendorContactInformation = () => {
                 </div>
 
                 <div className="mt-6">
-                    <Link href={replaceParam(ROUTES.PUBLIC.VENDOR_DETAIL, 'page', 'booking')} className="w-full flex items-center gap-2">
+                    <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'booking')}`)} className="w-full flex justify-center items-center gap-2
+                     rounded-md py-2 transition-all duration-200 ease-in-out">
                         <CalendarIcon className="h-4 w-4" />
                         Đặt lịch ngay
-                    </Link>
+                    </Button>
                 </div>
             </div>
         </>

@@ -47,6 +47,7 @@ declare namespace ICOMPONENTS {
         spinIcon?: boolean;
         className?: string;
         variant?: string;
+        ref?: React.RefObject<HTMLButtonElement>;
     }
 
     export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>, BaseProps, IconProps {
@@ -233,8 +234,9 @@ declare namespace ICOMPONENTS {
         autoScroll?: boolean;
         scrollInterval?: number;
         scrollSpeed?: number;
-        width?: number;
-        height?: number;
+        width?: number | string;
+        height?: number | string;
+        showNavigation?: boolean;
     }
 
     export interface AdminStaffHeaderProps {
@@ -316,13 +318,19 @@ declare namespace ICOMPONENTS {
     }
 
     type StatsCardProps = {
-        title: string;
-        icon: React.ReactNode;
-        value: string | number;
-        change: string;
-        changeColor?: string;
-        changeIcon?: React.ReactNode;
-        subtitle?: string;
+        title: string
+        value: string | number
+        icon?: ReactNode
+        iconClassName?: string
+        description?: string
+        subtitle?: string
+        trend?: "up" | "down" | "neutral"
+        trendValue?: string
+        change?: string
+        changeIcon?: ReactNode
+        changeColor?: string
+        layout?: "header" | "side" 
+        className?: string
     };
 
     type UserRank = "unranked" | "bronze" | "silver" | "gold"
@@ -343,13 +351,46 @@ declare namespace ICOMPONENTS {
         read: boolean;
         createdAt: string;
     }
+    interface CartItem {
+        id: number
+        name: string
+        img: string
+        price: number
+        vendor_id: number
+        duration: number
+        booked_date: Date
+    }
+    interface VendorGroup {
+        vendor_id: number
+        items: CartItem[]
+    }
+
+    interface ShoppingCartModalProps {
+        isOpen: boolean
+        onClose: () => void
+        cart: CartItem[]
+    }
     interface User {
         id: string | number;
         name: string;
         email: string;
         avatar: string;
         rank: UserRank;
+        cart: CartItem[];
         notifications: Notification[];
+    }
+    interface AutoScrollItem {
+        id: string | number;
+        name?: string;
+        avatar?: string;
+        star?: number;
+        comment?: string;
+    }
+    type PropType = {
+        slides: AutoScrollItem[]
+        options?: EmblaOptionsType
+        autoScroll?: boolean
+        showControls?: boolean
     }
 
 }
