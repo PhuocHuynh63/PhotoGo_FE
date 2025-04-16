@@ -197,9 +197,9 @@ export default function Left() {
                 />
             </div>
 
-            <button className="w-full bg-orange-100 text-orange-500 py-2 rounded-md text-sm font-medium">
+            <Button className="w-full py-2 rounded-md text-sm font-medium">
                 Áp dụng bộ lọc
-            </button>
+            </Button>
         </div>
     )
 }

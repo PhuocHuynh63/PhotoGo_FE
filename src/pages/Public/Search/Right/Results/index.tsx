@@ -125,8 +125,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
 ]
 
 export default function Right() {
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-    const [sortBy, setSortBy] = useState("relevant")
+    // const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+    const [sortBy, setSortBy] = useState("")
     const [resultCount, setResultCount] = useState(6)
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
@@ -143,7 +143,7 @@ export default function Right() {
         currentPage * itemsPerPage
     );
 
-    console.log('viewMode', viewMode, 'sortBy', sortBy, 'resultCount', resultCount)
+    console.log('viewMode', 'sortBy', sortBy, 'resultCount', resultCount)
 
     return (
         <div className="flex-1 pl-6 p-3">
@@ -152,8 +152,8 @@ export default function Right() {
                 <p className="text-sm text-gray-500">Tìm thấy {resultCount} kết quả</p>
             </div>
 
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center rounded-lg">
+            <div className="flex items-center justify-end mb-4">
+                {/* <div className="flex items-center rounded-lg">
                     <Button
                         className={`p-3 rounded-lg rounded-tr-none rounded-br-none ${viewMode === "grid" ? "text-light" : "text-dark bg-white"}`}
                         onClick={() => setViewMode("grid")}
@@ -166,28 +166,26 @@ export default function Right() {
                     >
                         <LucideIcon name="List" />
                     </Button>
-                </div>
-                <div className="flex justify-center">
-                    <Pagination current={currentPage} total={totalPages} onChange={handlePageChange} />
-                </div>
+                </div> */}
+
                 <div className="flex items-center">
-                    <Select label="" options={["Phù hợp nhất", "Giá thấp đến cao", "Giá cao đến thấp", "Đánh giá cao nhất"]} className="w-40" value={sortBy} onChange={(e) => setSortBy(e.target.value)} />
+                    <Select  options={[{ value: "Phù hợp nhất" }, { value: "Giá thấp đến cao" }, { value: "Giá cao đến thấp" }, { value: "Đánh giá cao nhất" }]} className="w-40" value={sortBy} onValueChange={(e) => setSortBy(e)} />
                 </div>
             </div>
 
             <div
-                className={`grid ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "grid-cols-1 gap-4"}`}
+                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
             >
                 {currentServices.map((service) => (
                     <div key={service.id} className="border rounded-lg overflow-hidden relative">
                         <div className="absolute top-2 right-2 z-10">
-                            <Button className="p-2 rounded-full bg-white/80 hover:bg-gray-200 flex items-center justify-center">
-                                <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "none"} className="text-gray-500" />
+                            <Button className="shadow-none hover:bg-none flex items-center justify-center">
+                                <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "black"} />
                             </Button>
                         </div>
 
                         {service.featured && (
-                            <div className="absolute top-2 left-2 z-20">
+                            <div className="absolute top-2 left-2 z-10">
                                 <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full">
                                     {service.featured ? "Nổi bật" : ""}
                                 </span>
@@ -196,7 +194,7 @@ export default function Right() {
 
                         <div className="relative bg-yellow-300">
                             {!service.available && (
-                                <div className="absolute z-50 bg-black/60 w-full h-full flex items-center justify-center">
+                                <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
                                     <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
                                         {service.available ? "Không có sẵn" : "Không có sẵn"}
                                     </span>
@@ -272,8 +270,9 @@ export default function Right() {
                     </div>
                 ))}
             </div>
-
-
+            <div className="flex justify-center my-4">
+                <Pagination current={currentPage} total={totalPages} onChange={handlePageChange} />
+            </div>
         </div>
     )
 }

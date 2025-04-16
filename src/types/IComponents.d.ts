@@ -65,7 +65,15 @@ declare namespace ICOMPONENTS {
     export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>, BaseProps {
         label?: string;
         labelClassName?: string;
-        options?: string[];
+        options: SelectOption[];
+        icon?: string;
+        placeHolder?: string;
+        value?: string;
+        selectIcon?: string;
+        className?: string;
+        style?: React.CSSProperties;
+        placeHolder?: string;
+        onValueChange?: (value: string) => void;
     }
 
     export interface LucideIconProps extends IconProps {
@@ -332,7 +340,7 @@ declare namespace ICOMPONENTS {
         change?: string
         changeIcon?: ReactNode
         changeColor?: string
-        layout?: "header" | "side" 
+        layout?: "header" | "side"
         className?: string
     };
 
@@ -422,4 +430,8 @@ declare namespace ICOMPONENTS {
         featured: boolean
     }
 
+    interface SelectOption {
+        value: string | number
+        icon?: string
+    }
 }
