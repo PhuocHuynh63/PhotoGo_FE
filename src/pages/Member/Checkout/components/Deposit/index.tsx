@@ -1,3 +1,5 @@
+'use client'
+
 import { useCheckoutDeposit, useSetCheckoutDeposit } from '@stores/checkout/selector'
 import React from 'react'
 
