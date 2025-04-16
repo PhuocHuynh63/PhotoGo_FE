@@ -11,9 +11,12 @@ export default function CheckoutLayout({
         <div className="bg-gradient-primary" style={{ background: '' }}>
             <div className="container mx-auto py-8 px-4 max-w-7xl">
                 <HeaderCheckout />
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left */}
                     {children}
 
+                    {/* Right */}
                     <SummaryInformation />
                 </div>
             </div>
