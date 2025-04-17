@@ -1,11 +1,12 @@
 'use client'
 import Button from "@components/Atoms/Button";
-import Left from "../Left/Filter";
-import Right from "../Right/Results";
+
 import Search from "@components/Molecules/Search/Search";
 import Select from "@components/Atoms/Select";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Left from "./Left/Filter";
+import Right from "./Right/Results";
 
 export default function SearchVendor() {
   const [search, setSearch] = useState("");

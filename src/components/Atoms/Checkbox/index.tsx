@@ -8,7 +8,7 @@ export default function Checkbox({
     options,
     value = [],
     ...props
-}: ICOMPONENTS.CheckboxProps & { value: string[] }) {
+}: ICOMPONENTS.CheckboxProps) {
     // Define a type for the props that excludes incompatible ones
     type RadixCheckboxProps = Omit<React.ComponentProps<typeof RadixCheckbox.Root>, 'onAnimationStart' | 'labels'>;
 
@@ -21,20 +21,20 @@ export default function Checkbox({
                 >
                     <RadixCheckbox.Root
                         {...(props as RadixCheckboxProps)} // Cast props to the new type
-                        checked={value.includes(option.key)}
+                        checked={String(value).includes(option.key)}
                         onCheckedChange={(checked) => {
                             if (!onChange) return;
                             const isChecked = checked === true;
                             const mockEvent = { target: { checked: isChecked } } as React.ChangeEvent<HTMLInputElement>;
                             onChange(mockEvent, option.key);
                         }}
-                        className="w-5 h-5 bg-white border border-gray-400 rounded data-[state=checked]:bg-black flex items-center justify-center transition-colors"
+                        className="w-5 h-5 bg-white border border-gray-400 rounded data-[state=checked]:bg-[#F6AC69] flex items-center justify-center transition-colors"
                     >
                         <RadixCheckbox.Indicator>
                             <LucideIcon name='Check' iconColor='white' className="bg-primary w-4 h-4" />
                         </RadixCheckbox.Indicator>
                     </RadixCheckbox.Root>
-                    <span>{option.label}</span>
+                    <span>{option.key}</span>
                 </label>
             ))}
         </div>

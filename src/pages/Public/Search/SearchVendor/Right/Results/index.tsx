@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Button from "@components/Atoms/Button"
 import Select from "@components/Atoms/Select"
@@ -9,8 +9,9 @@ import { ROUTES } from "@routes"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 
-const services: ICOMPONENTS.ServiceCard[] = [
+const mockData: ICOMPONENTS.ServiceCard[] = [
     {
         id: 1,
         name: "Studio Ánh Sáng",
@@ -23,7 +24,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Chân dung", "Thời trang", "Sản phẩm"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1744624539/themyxungtoiko_pslpth.png",
         available: true,
-        featured: true
+        featured: true,
+        available_dates: ["18-4-2025", "19-4-2025"]
     },
     {
         id: 2,
@@ -37,7 +39,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Cưới", "Gia đình", "Sự kiện"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744793982/HAN01484_wimasr.webp",
         available: true,
-        featured: true
+        featured: true,
+        available_dates: ["20-4-2025", "21-4-2025"]
     },
     {
         id: 3,
@@ -51,7 +54,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Cô dâu", "Dạ tiệc", "Thời trang"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744794598/chill_bar_g9uqul.jpg",
         available: false,
-        featured: true
+        featured: true,
+        available_dates: []
     },
     {
         id: 4,
@@ -65,7 +69,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Cưới", "Chân dung", "Gia đình"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744794557/penstudio_b2rwse.jpg",
         available: true,
-        featured: true
+        featured: true,
+        available_dates: ["22-4-2025", "23-4-2025"]
     },
     {
         id: 5,
@@ -79,7 +84,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Sự kiện", "Du lịch", "Gia đình"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744796228/muahuynhva3anhtrai_dgridz.jpg",
         available: true,
-        featured: true
+        featured: true,
+        available_dates: ["24-4-2025", "25-4-2025"]
     },
     {
         id: 6,
@@ -93,7 +99,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Cô dâu", "Nghệ thuật", "Sân khấu"],
         image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744795292/kumovacaimayanh_lr2nto.jpg",
         available: true,
-        featured: false
+        featured: false,
+        available_dates: ["26-4-2025", "27-4-2025"]
     },
     {
         id: 7,
@@ -107,7 +114,8 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Gia đình", "Sản phẩm", "Doanh nghiệp"],
         image: "/placeholder.svg?height=200&width=200",
         available: false,
-        featured: false
+        featured: false,
+        available_dates: []
     },
     {
         id: 8,
@@ -121,7 +129,38 @@ const services: ICOMPONENTS.ServiceCard[] = [
         categories: ["Chân dung", "Thời trang", "Nghệ thuật"],
         image: "/placeholder.svg?height=200&width=200",
         available: false,
-        featured: true
+        featured: true,
+        available_dates: []
+    },
+    {
+        id: 9,
+        name: "Hoàng Anh Photographer",
+        type: ["Nhiếp ảnh gia"],
+        district: "Quận Hoàn Kiếm",
+        city: "Hà Nội",
+        rating: 4.7,
+        reviewCount: 89,
+        priceRange: [850000, 3200000],
+        categories: ["Chân dung", "Thời trang", "Nghệ thuật"],
+        image: "/placeholder.svg?height=200&width=200",
+        available: true,
+        featured: true,
+        available_dates: []
+    },
+    {
+        id: 10,
+        name: "Hoàng Anh Photographer",
+        type: ["Nhiếp ảnh gia"],
+        district: "Quận Hoàn Kiếm",
+        city: "Hà Nội",
+        rating: 4.7,
+        reviewCount: 89,
+        priceRange: [850000, 3200000],
+        categories: ["Chân dung", "Thời trang", "Nghệ thuật"],
+        image: "/placeholder.svg?height=200&width=200",
+        available: true,
+        featured: false,
+        available_dates: []
     },
 ]
 
@@ -132,12 +171,13 @@ const cardVariants = {
 };
 
 export default function Right() {
-    // const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [sortBy, setSortBy] = useState("")
-    const [resultCount, setResultCount] = useState(6)
+    const [services, setServices] = useState<ICOMPONENTS.ServiceCard[]>([])
+    const [resultCount, setResultCount] = useState(mockData.length)
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(6);
-
+    const [loading, setLoading] = useState(false)
+    const searchParams = useSearchParams()
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
@@ -150,7 +190,60 @@ export default function Right() {
         currentPage * itemsPerPage
     );
 
-    console.log('viewMode', 'sortBy', sortBy, 'resultCount', resultCount)
+    useEffect(() => {
+        setLoading(true)
+
+        // Get filter values from URL
+        const typeFilter = searchParams?.get("serviceType")?.split(",") || []
+        const minRating = Number(searchParams?.get("minRating")) || 0
+        const minPrice = Number(searchParams?.get("minPrice")) || 0
+        const maxPrice = Number(searchParams?.get("maxPrice")) || Number.POSITIVE_INFINITY
+        const addressFilter = searchParams?.get("addresses")?.split(",") || []
+        const dateFilter = searchParams?.get("date") || ""
+console.log(mockData)
+
+        // Apply filters
+        const filteredPackages = mockData.filter((pkg) => {
+            // Filter by status (only show active)
+            if (!pkg.available) return false
+
+            // Filter by type
+            if (typeFilter.length > 0 && !pkg.type.some((t) => typeFilter.includes(t))) return false
+
+            // Filter by rating
+            if (pkg.rating < minRating) return false
+
+            // Filter by price
+            if (pkg.priceRange[0] < minPrice || pkg.priceRange[1] > maxPrice) return false
+
+            // Filter by vendor
+            if (addressFilter.length > 0 && !addressFilter.includes(pkg.city)) return false
+
+            // Filter by date
+            if (dateFilter && !pkg.available_dates.includes(dateFilter)) return false
+
+            return true
+        })
+
+        // Apply sorting
+        const sortedPackages = [...filteredPackages]
+        if (sortBy === "price-low") {
+            sortedPackages.sort((a, b) => a.priceRange[0] - b.priceRange[0])
+        } else if (sortBy === "price-high") {
+            sortedPackages.sort((a, b) => b.priceRange[0] - a.priceRange[0])
+        } else if (sortBy === "review") {
+            sortedPackages.sort((a, b) => b.reviewCount - a.reviewCount)
+        } else if (sortBy === "rating") {
+            sortedPackages.sort((a, b) => b.rating - a.rating)
+        }
+
+        // Simulate API delay
+        setTimeout(() => {
+            setServices(sortedPackages)
+            setResultCount(sortedPackages.length)
+            setLoading(false)
+        }, 500)
+    }, [searchParams, sortBy])
 
     return (
         <div className="flex-1 pl-6 p-3">
@@ -191,7 +284,7 @@ export default function Right() {
                 {currentServices.map((service, index) => (
                     <motion.div
                         key={service.id}
-                        className="border rounded-lg overflow-hidden relative hover:scale-105 transition-transform duration-300"
+                        className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300"
                         variants={cardVariants}
                         initial="hidden"
                         animate="visible"

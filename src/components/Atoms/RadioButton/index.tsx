@@ -14,9 +14,9 @@ export default function RadioButtonGroup({ name, options, value, onChange }: ICO
                 <div key={opt.value} className="flex items-center gap-2">
                     <RadioGroup.Item
                         value={opt.value}
-                        className="w-5 h-5 rounded-full border border-gray-400 
+                        className="w-5 h-5 rounded-full border border-gray-400 cursor-pointer
                                    data-[state=checked]:bg-[#ffffff] 
-                                   data-[state=checked]:border-[#838383] 
+                                   data-[state=checked]:border-[#F6AC69] 
                                    flex items-center justify-center transition-colors"
                     >
                         <RadioGroup.Indicator className="w-2.5 h-2.5 rounded-full bg-primary" />

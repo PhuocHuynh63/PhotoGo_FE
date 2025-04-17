@@ -39,7 +39,7 @@ export default function Select({
         <div className="flex flex-col gap-1" style={customStyle}>
             {label && <label className={`text-sm font-medium ${labelClassName ?? ''}`}>{label}</label>}
 
-            <RadixSelect.Root value={value} onValueChange={onValueChange}>
+            <RadixSelect.Root value={String(value)} onValueChange={onValueChange}>
                 <RadixSelect.Trigger
                     className={`inline-flex items-center justify-between px-3 py-2 rounded-md border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${height} ${className ?? ''}`}
                 >

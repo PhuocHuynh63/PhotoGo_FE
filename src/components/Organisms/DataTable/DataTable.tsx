@@ -273,9 +273,15 @@ export function DataTable<T extends { id: string | number } & ICOMPONENTS.Sortab
 
                     <div className="flex items-center gap-2 text-sm text-description-title">
                         <Select
-                            options={["5", "10", "20", "50", "100"]}
+                            options={[
+                                { value: 5 },
+                                { value: 10 },
+                                { value: 20 },
+                                { value: 50 },
+                                { value: 100 },
+                            ]}
                             value={pageSize.toString()}
-                            onChange={(e) => handlePageSizeChange(e.target.value)}
+                            onValueChange={(value) => handlePageSizeChange(value)}
                         />
                         <span>dòng mỗi trang</span>
                     </div>
