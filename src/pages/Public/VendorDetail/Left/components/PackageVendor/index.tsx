@@ -19,7 +19,9 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
 
     //#region View Concept
     const [isOpen, setIsOpen] = useState(false)
-    const handleViewConcept = () => {
+    const [selectedPackage, setSelectedPackage] = useState<any>(null)
+    const handleViewConcept = (id: string) => {
+        setSelectedPackage(id)
         setIsOpen(!isOpen)
     }
     //#endregion
@@ -55,8 +57,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                                     )}
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <Button className='py-2 h-11'>Đặt ngay</Button>
-                                    <ButtonNoBackgroundVendorDetail variant="outline" className="flex items-center">
+                                    <ButtonNoBackgroundVendorDetail variant="outline" className="flex items-center" onClick={() => handleViewConcept(firstPackage.id)}>
                                         <Eye className="h-4 w-4" />
                                         Xem concept
                                     </ButtonNoBackgroundVendorDetail>
@@ -97,8 +98,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                                         )}
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <Button className='py-2 h-11'>Đặt ngay</Button>
-                                        <ButtonNoBackgroundVendorDetail variant="outline" className="flex items-center" onClick={handleViewConcept}>
+                                        <ButtonNoBackgroundVendorDetail variant="outline" className="flex items-center" onClick={() => handleViewConcept(pkg.id)}>
                                             <Eye className="h-4 w-4" />
                                             Xem concept
                                         </ButtonNoBackgroundVendorDetail>
@@ -109,7 +109,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                     ))}
             </div >
 
-            <ViewConcept isOpen={isOpen} onOpenChange={handleViewConcept} />
+            <ViewConcept isOpen={isOpen} onOpenChange={() => handleViewConcept(selectedPackage)} />
         </>
     )
 }
