@@ -64,7 +64,7 @@ const VendorContactInformation = () => {
                 </div>
 
                 <div className="mt-6">
-                    <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'booking')}`)} className="w-full flex justify-center items-center gap-2
+                    <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)} className="w-full flex justify-center items-center gap-2
                      rounded-md py-2 transition-all duration-200 ease-in-out">
                         <CalendarIcon className="h-4 w-4" />
                         Đặt lịch ngay

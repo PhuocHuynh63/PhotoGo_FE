@@ -15,7 +15,6 @@ const VendorNavigation = () => {
         { label: 'Tác phẩm', page: 'portfolio' },
         { label: 'Đánh giá', page: 'reviews' },
         { label: 'FAQ', page: 'faq' },
-        { label: 'Đặt lịch', page: 'booking' },
     ]
 
     return (

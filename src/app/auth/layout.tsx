@@ -1,5 +1,9 @@
+import { authOptions } from "@lib/authOptions";
+import { ROUTES } from "@routes";
 import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { Geist, Geist_Mono } from "next/font/google";
+import { redirect } from "next/navigation";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -16,11 +20,25 @@ export const metadata: Metadata = {
     description: "Login to PhotoGo platform",
 };
 
-export default function AuthLayout({
+export default async function AuthLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const session = await getServerSession(authOptions) as METADATA.ISession;
+
+    switch (session?.user?.role.name) {
+        case "admin":
+            return redirect(ROUTES.ADMIN.DASHBOARD);
+        case "staff":
+            return redirect(ROUTES.STAFF.DASHBOARD);
+        case "user":
+            return redirect(ROUTES.USER.DASHBOARD);
+        default:
+            return redirect(ROUTES.AUTH.LOGIN);
+    }
+
+
     return (
         <html lang="en">
             <body
