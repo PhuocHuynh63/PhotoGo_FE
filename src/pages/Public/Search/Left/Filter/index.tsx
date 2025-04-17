@@ -8,6 +8,7 @@ import StarRating from "@components/Molecules/StarRating"
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
+import { motion } from "framer-motion"
 
 export default function Left() {
     const router = useRouter();
@@ -82,6 +83,18 @@ export default function Left() {
         router.push("?");
     }
 
+    function handleApplyFilter() {
+        // Logic to apply the selected filters
+        // This could involve updating the URL parameters or fetching data based on the selected filters
+        // router.push(`?${new URLSearchParams({
+        //     price: selectPriceRange.join(','),
+        //     service: serviceType.map(s => s.key).join(','),
+        //     address: addresses.map(a => a.key).join(','),
+        //     rating: rating.toString(),
+        //     date: selectedDate.toLocaleDateString('vi-VN').replace(/\//g, '-')
+        // }).toString()}`);
+    }
+
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
 
@@ -98,37 +111,47 @@ export default function Left() {
 
         const ratingFromUrl = params.get("rating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
-    }, [searchParams]); // 👈 Bắt buộc phải thêm vào
+    }, [searchParams])
 
 
     return (
-        <div className="w-64 pr-4 border-r p-3">
+        <motion.div
+            className="w-64 pr-4 border-r p-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
             <div className="mb-4">
                 <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
                     Bộ lọc tìm kiếm
-                    <Button className="bg-none text-blue-600 hover:bg-gray-200" onClick={handleResetAll}>Xóa tất cả</Button>
+                    <Button onClick={handleResetAll}>Xóa tất cả</Button>
                 </h3>
             </div>
 
             {/* Service Type */}
-            <div className="mb-4 border-t pt-4">
+            <motion.div
+                className="mb-4 border-t pt-4"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
                 <Checkbox
                     options={services}
                     value={serviceType.map(service => service.key)}
                     onChange={(e, key) => {
                         handleServiceTypeChange(key);
-                        // if (e.target.checked) {
-                        //     setServiceType(prev => [...prev, { key, label: key }]);
-                        // } else {
-                        //     setServiceType(prev => prev.filter(item => item.key !== key));
-                        // }
                     }}
                 />
-            </div>
+            </motion.div>
 
             {/* Date */}
-            <div className="mb-4 border-t pt-4">
+            <motion.div
+                className="mb-4 border-t pt-4"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <h3 className="font-medium text-sm mb-2">Ngày Đặt lịch</h3>
                 <div className="flex items-center">
                     <CustomDatePicker
@@ -143,10 +166,15 @@ export default function Left() {
                         }}
                     />
                 </div>
-            </div>
+            </motion.div>
 
             {/* Price Range */}
-            <div className="mb-4 border-t pt-4">
+            <motion.div
+                className="mb-4 border-t pt-4"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
                     min={500000}
@@ -158,27 +186,32 @@ export default function Left() {
                         updateQueryParam("price", val);
                     }}
                 />
-            </div>
+            </motion.div>
 
             {/* Location */}
-            <div className="mb-4 border-t pt-4">
+            <motion.div
+                className="mb-4 border-t pt-4"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <h3 className="font-medium text-sm mb-2">Địa điểm</h3>
                 <Checkbox
                     options={address}
                     value={addresses.map(service => service.key)}
                     onChange={(e, key) => {
                         handleAddressChange(key);
-                        // if (e.target.checked) {
-                        //     setAddresses(prev => [...prev, { key, label: key }]);
-                        // } else {
-                        //     setAddresses(prev => prev.filter(item => item.key !== key));
-                        // }
                     }}
                 />
-            </div>
+            </motion.div>
 
             {/* Rating */}
-            <div className="mb-4 border-t pt-4">
+            <motion.div
+                className="mb-4 border-t pt-4"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
                 <RadioButtonGroup
                     options={[
@@ -195,11 +228,11 @@ export default function Left() {
                     }}
                     name="rating"
                 />
-            </div>
+            </motion.div>
 
-            <Button className="w-full py-2 rounded-md text-sm font-medium">
+            <Button className="w-full" onClick={handleApplyFilter}>
                 Áp dụng bộ lọc
             </Button>
-        </div>
+        </motion.div>
     )
 }

@@ -8,6 +8,7 @@ import Link from "next/link"
 import { ROUTES } from "@routes"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
+import { motion } from "framer-motion"
 
 const services: ICOMPONENTS.ServiceCard[] = [
     {
@@ -34,7 +35,7 @@ const services: ICOMPONENTS.ServiceCard[] = [
         reviewCount: 96,
         priceRange: [800000, 3500000],
         categories: ["Cưới", "Gia đình", "Sự kiện"],
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744793982/HAN01484_wimasr.webp",
         available: true,
         featured: true
     },
@@ -48,7 +49,7 @@ const services: ICOMPONENTS.ServiceCard[] = [
         reviewCount: 105,
         priceRange: [600000, 2000000],
         categories: ["Cô dâu", "Dạ tiệc", "Thời trang"],
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744794598/chill_bar_g9uqul.jpg",
         available: false,
         featured: true
     },
@@ -62,7 +63,7 @@ const services: ICOMPONENTS.ServiceCard[] = [
         reviewCount: 112,
         priceRange: [1000000, 4500000],
         categories: ["Cưới", "Chân dung", "Gia đình"],
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744794557/penstudio_b2rwse.jpg",
         available: true,
         featured: true
     },
@@ -76,7 +77,7 @@ const services: ICOMPONENTS.ServiceCard[] = [
         reviewCount: 82,
         priceRange: [900000, 3800000],
         categories: ["Sự kiện", "Du lịch", "Gia đình"],
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744796228/muahuynhva3anhtrai_dgridz.jpg",
         available: true,
         featured: true
     },
@@ -90,7 +91,7 @@ const services: ICOMPONENTS.ServiceCard[] = [
         reviewCount: 93,
         priceRange: [700000, 3000000],
         categories: ["Cô dâu", "Nghệ thuật", "Sân khấu"],
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744795292/kumovacaimayanh_lr2nto.jpg",
         available: true,
         featured: false
     },
@@ -124,6 +125,12 @@ const services: ICOMPONENTS.ServiceCard[] = [
     },
 ]
 
+const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.8 }
+};
+
 export default function Right() {
     // const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
     const [sortBy, setSortBy] = useState("")
@@ -147,10 +154,15 @@ export default function Right() {
 
     return (
         <div className="flex-1 pl-6 p-3">
-            <div className="mb-6">
+            <motion.div
+                className="mb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+            >
                 <h2 className="text-lg font-medium">Kết quả tìm kiếm</h2>
                 <p className="text-sm text-gray-500">Tìm thấy {resultCount} kết quả</p>
-            </div>
+            </motion.div>
 
             <div className="flex items-center justify-end mb-4">
                 {/* <div className="flex items-center rounded-lg">
@@ -169,15 +181,23 @@ export default function Right() {
                 </div> */}
 
                 <div className="flex items-center">
-                    <Select  options={[{ value: "Phù hợp nhất" }, { value: "Giá thấp đến cao" }, { value: "Giá cao đến thấp" }, { value: "Đánh giá cao nhất" }]} className="w-40" value={sortBy} onValueChange={(e) => setSortBy(e)} />
+                    <Select options={[{ value: "Phù hợp nhất" }, { value: "Giá thấp đến cao" }, { value: "Giá cao đến thấp" }, { value: "Đánh giá cao nhất" }]} className="cursor-pointer" value={sortBy} onValueChange={(e) => setSortBy(e)} />
                 </div>
             </div>
 
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
             >
-                {currentServices.map((service) => (
-                    <div key={service.id} className="border rounded-lg overflow-hidden relative">
+                {currentServices.map((service, index) => (
+                    <motion.div
+                        key={service.id}
+                        className="border rounded-lg overflow-hidden relative hover:scale-105 transition-transform duration-300"
+                        variants={cardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                    >
                         <div className="absolute top-2 right-2 z-10">
                             <Button className="shadow-none hover:bg-none flex items-center justify-center">
                                 <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "black"} />
@@ -186,8 +206,8 @@ export default function Right() {
 
                         {service.featured && (
                             <div className="absolute top-2 left-2 z-10">
-                                <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full">
-                                    {service.featured ? "Nổi bật" : ""}
+                                <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
+                                    Nổi bật
                                 </span>
                             </div>
                         )}
@@ -200,8 +220,11 @@ export default function Right() {
                                     </span>
                                 </div>
                             )}
-                            <div className="relative h-50">
-                                <Image src={service.image || "/placeholder.svg"} fill objectFit="cover" loading="lazy" alt={service.name} />
+                            <div className="relative h-60">
+                                <Image src={service.image || "/placeholder.svg"} fill style={{
+                                    objectFit: 'cover',
+                                }}
+                                    loading="lazy" alt={service.name} />
                             </div>
                         </div>
 
@@ -267,7 +290,7 @@ export default function Right() {
                                 </Link>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
             <div className="flex justify-center my-4">

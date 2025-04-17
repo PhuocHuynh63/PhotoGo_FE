@@ -34,7 +34,7 @@ export default function PriceRangeSlider({
                 onValueChange={handleChange}
             >
                 <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
-                    <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />
+                    <Slider.Range className="absolute bg-primary rounded-full h-full" />
                     <div className="flex items-center justify-center mt-2 text-sm font-medium text-gray-700">
                         {value[0].toLocaleString()} đ - {value[1].toLocaleString()} đ
                     </div>

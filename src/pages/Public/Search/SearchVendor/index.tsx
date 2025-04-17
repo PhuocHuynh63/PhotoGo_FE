@@ -5,13 +5,19 @@ import Right from "../Right/Results";
 import Search from "@components/Molecules/Search/Search";
 import Select from "@components/Atoms/Select";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function SearchVendor() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <motion.div
+      className="bg-gray-50 min-h-screen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-6">Tìm kiếm dịch vụ</h1>
 
@@ -25,11 +31,16 @@ export default function SearchVendor() {
           <Button className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium shadow-lg">Tìm kiếm</Button>
         </div>
 
-        <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm">
+        <motion.div
+          className="flex flex-col md:flex-row bg-white rounded-lg shadow-sm"
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <Left />
           <Right />
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
