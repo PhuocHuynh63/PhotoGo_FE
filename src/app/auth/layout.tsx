@@ -20,6 +20,12 @@ export const metadata: Metadata = {
     description: "Login to PhotoGo platform",
 };
 
+const ROLE_REDIRECT_MAP: Record<string, string> = {
+    admin: ROUTES.ADMIN.DASHBOARD,
+    staff: ROUTES.STAFF.DASHBOARD,
+    user: ROUTES.USER.DASHBOARD,
+};
+
 export default async function AuthLayout({
     children,
 }: Readonly<{
@@ -27,17 +33,11 @@ export default async function AuthLayout({
 }>) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
 
-    switch (session?.user?.role.name) {
-        case "admin":
-            return redirect(ROUTES.ADMIN.DASHBOARD);
-        case "staff":
-            return redirect(ROUTES.STAFF.DASHBOARD);
-        case "user":
-            return redirect(ROUTES.USER.DASHBOARD);
-        default:
-            return redirect(ROUTES.AUTH.LOGIN);
+    const role = session?.user?.role?.name;
+    const redirectPath = role ? ROLE_REDIRECT_MAP[role] : null;
+    if (redirectPath) {
+        redirect(redirectPath);
     }
-
 
     return (
         <html lang="en">
