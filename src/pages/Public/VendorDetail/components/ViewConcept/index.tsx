@@ -2,10 +2,11 @@
 
 import Button from "@components/Atoms/Button";
 import ButtonNoBackground from "@components/Atoms/ButtonNoBackground";
-import { Dialog, DialogContent, DialogHeader } from "@components/Molecules/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
 import { Calendar } from "lucide-react";
 import { useState } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
+import Booking from "../Booking";
 
 type ConceptProps = {
     isOpen: boolean;
@@ -14,8 +15,6 @@ type ConceptProps = {
 
 export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps) {
     const [activeTab, setActiveTab] = useState("Hình ảnh");
-    const [selectedConcept, setSelectedConcept] = useState(0);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const selectConcept = [
         {
@@ -47,6 +46,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps
         },
     ];
 
+    //#region handle action img
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [selectedConcept, setSelectedConcept] = useState(0);
     const handlePrevImage = () => {
         setCurrentImageIndex((prev) =>
             prev === 0 ? selectConcept[selectedConcept].images.length - 1 : prev - 1
@@ -58,9 +60,18 @@ export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps
             prev === selectConcept[selectedConcept].images.length - 1 ? 0 : prev + 1
         );
     };
+    //#endregion
+
+
+    //#region 
+    const [isOpenBooking, setIsOpenBooking] = useState(false);
+    const handleDialogBooking = () => {
+        setIsOpenBooking(!isOpenBooking);
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogTitle />
             <DialogContent className="xl:max-w-[1200px] max-h-[100vh] overflow-hidden">
                 <DialogHeader className="font-bold text-xl border-b border-gray-200 pb-4 flex flex-row justify-between items-center">
                     <span>Xem Concept - Tony Wedding</span>
@@ -230,7 +241,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps
                                     <p className="text-sm text-gray-500 mt-2">Đặt lịch trước 1 tuần để đảm bảo có thời gian chuẩn bị tốt nhất.</p>
 
                                     <div className="flex gap-4">
-                                        <Button className="mt-6"><Calendar size={18} />Đặt lịch với concept này</Button>
+                                        <Button className="mt-6" onClick={handleDialogBooking} ><Calendar size={18} />Đặt lịch với concept này</Button>
                                         <ButtonNoBackgroundVendorDetail className="mt-6">Thêm concept vào giỏ hàng</ButtonNoBackgroundVendorDetail>
                                     </div>
                                 </div>
@@ -238,7 +249,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps
                         )}
                     </div>
                 </div>
+
             </DialogContent>
+            <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} />
         </Dialog>
     );
 }
