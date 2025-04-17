@@ -23,11 +23,12 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
                 const user = {
-                    id: res.data.user.id || res.data.user.email,
+                    id: res.data.user.id,
                     email: res.data.user.email,
                     role: res.data.user.role,
                     accessToken: res.data.access_token,
                 }
+
                 return user;
             },
         }),
@@ -35,12 +36,14 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }: any) {
             if (user) {
+                token.id = user.id;
                 token.role = user.role;
                 token.accessToken = user.accessToken;
             }
             return token;
         },
         async session({ session, token }: any) {
+            session.user.id = token.id;
             session.user.role = token.role;
             (session as any).accessToken = token.accessToken;
             return session;
