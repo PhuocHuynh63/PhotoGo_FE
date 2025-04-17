@@ -79,7 +79,7 @@ const VendorCover = () => {
                                     <Share2 className="h-4 w-4" />
                                     <span className="hidden sm:inline">Chia sẻ</span>
                                 </ButtonVendorDetail>
-                                <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'booking')}`)}>Đặt lịch ngay</Button>
+                                <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)}>Đặt lịch ngay</Button>
                             </div>
                         </div>
                     </div>
