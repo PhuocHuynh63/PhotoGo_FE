@@ -19,13 +19,11 @@ export const authOptions: NextAuthOptions = {
                     password: credentials.password,
                 }) as { statusCode: number; data: any };
 
-                console.log('>>>>>>>', res);
-
                 if ((res.statusCode !== 200 && res.statusCode !== 201) || !res.data?.user) {
                     return null;
                 }
                 const user = {
-                    id: res.data.user.id || res.data.user.email, // Use a unique identifier
+                    id: res.data.user.id || res.data.user.email,
                     email: res.data.user.email,
                     role: res.data.user.role,
                     accessToken: res.data.access_token,
