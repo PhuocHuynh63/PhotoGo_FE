@@ -38,6 +38,14 @@
                 display: none;
             }
         }
+
+        &.scrolled::after {
+            background-color: black;
+        }
+
+        &.scrolled.active::before {
+            background-color: black;
+        }
     }
 }
 
