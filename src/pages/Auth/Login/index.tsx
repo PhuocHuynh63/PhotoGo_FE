@@ -37,11 +37,11 @@ const LoginPage = () => {
             redirect: false,
             ...data,
         })
-        console.log(res);
 
         switch (res?.status) {
             case 200:
                 router.push(ROUTES.PUBLIC.HOME)
+                router.refresh();
                 break;
             case 400:
                 toast.error("Tài khoản hoặc mật khẩu không chính xác")

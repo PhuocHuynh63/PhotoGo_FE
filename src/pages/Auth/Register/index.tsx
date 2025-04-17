@@ -25,7 +25,7 @@ const RegisterPage = () => {
     //#endregion
 
     const initial = { opacity: 0, x: -20 }
-    return ( 
+    return (
         <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row" initial={initial}>
             {/* Main card container */}
             {/* --- MODIFIED left side - Photo collage --- */}
@@ -125,12 +125,12 @@ const RegisterPage = () => {
                             Số điện thoại
                         </label>
                         <Input
-                            id="phone"
+                            id="phoneNumber"
                             placeholder="0912345678"
-                            {...register("phone")}
-                            className={errors.phone ? 'input-error' : ''}
+                            {...register("phoneNumber")}
+                            className={errors.phoneNumber ? 'input-error' : ''}
                         />
-                        {errors.phone && <span className="text-red-500 text-sm">{errors.phone.message}</span>}
+                        {errors.phoneNumber && <span className="text-red-500 text-sm">{errors.phoneNumber.message}</span>}
                     </div>
 
                     <div className="flex flex-col space-y-2  mb-2">
@@ -140,13 +140,13 @@ const RegisterPage = () => {
 
                         <div className="flex flex-col space-y-2 mb-3">
                             <Input
-                                id="password"
+                                id="passwordHash"
                                 type="password"
                                 placeholder="********"
-                                {...register("password")}
-                                className={errors.password ? 'input-error' : ''}
+                                {...register("passwordHash")}
+                                className={errors.passwordHash ? 'input-error' : ''}
                             />
-                            {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
+                            {errors.passwordHash && <span className="text-red-500 text-sm">{errors.passwordHash?.message}</span>}
                         </div>
                     </div>
 
