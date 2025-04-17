@@ -6,6 +6,11 @@ const userService = {
             next: { revalidate: 10 }
         })
     },
+    getAUser: async (id: string) => {
+        return await http.get(`/users/${id}`, {
+            next: {tags:[`user${id}`]}
+        })
+    }
 }
 
 export default userService

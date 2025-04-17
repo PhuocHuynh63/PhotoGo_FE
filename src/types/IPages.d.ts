@@ -1,10 +1,11 @@
+import { IUser } from '@models/user/common.model';
 declare namespace PAGES {
-    export interface ILogin {
+    interface ILogin {
         data: any;
     }
 
     interface IHeader {
-        session: METADATA.ISession;
+        user: IUser | undefined;
     }
 
 }
