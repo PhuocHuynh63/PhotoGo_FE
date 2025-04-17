@@ -1,4 +1,4 @@
-// middleware.ts
+
 import { ROUTES } from "@/routes";
 import { withAuth } from "next-auth/middleware";
 

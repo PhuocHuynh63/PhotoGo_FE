@@ -11,18 +11,25 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
             },
+
             async authorize(credentials) {
                 if (!credentials) return null;
                 const res = await authService.login({
                     email: credentials.email,
                     password: credentials.password,
-                }) as { status: number; data: any };
+                }) as { statusCode: number; data: any };
 
-                if (res.status !== 200) {
-                    throw new Error("Invalid credentials");
+                console.log('>>>>>>>', res);
+
+                if ((res.statusCode !== 200 && res.statusCode !== 201) || !res.data?.user) {
+                    return null;
                 }
-                const user = res.data;
-                if (!user) return null;
+                const user = {
+                    id: res.data.user.id || res.data.user.email, // Use a unique identifier
+                    email: res.data.user.email,
+                    role: res.data.user.role,
+                    accessToken: res.data.access_token,
+                }
                 return user;
             },
         }),
@@ -31,11 +38,13 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }: any) {
             if (user) {
                 token.role = user.role;
+                token.accessToken = user.accessToken;
             }
             return token;
         },
         async session({ session, token }: any) {
             session.user.role = token.role;
+            (session as any).accessToken = token.accessToken;
             return session;
         },
     },
