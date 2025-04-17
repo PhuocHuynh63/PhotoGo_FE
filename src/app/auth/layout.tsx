@@ -32,9 +32,10 @@ export default async function AuthLayout({
     children: React.ReactNode;
 }>) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
-
     const role = session?.user?.role?.name;
-    const redirectPath = role ? ROLE_REDIRECT_MAP[role] : null;
+
+    // Check if the user has a role and redirect accordingly
+    const redirectPath = role ? ROLE_REDIRECT_MAP[role] : ROUTES.PUBLIC.HOME;
     if (redirectPath) {
         redirect(redirectPath);
     }
