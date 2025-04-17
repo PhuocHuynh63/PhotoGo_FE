@@ -47,7 +47,7 @@ const Avatar = forwardRef<
         <AvatarPrimitive.Root
             ref={ref}
             className={`${styles.avatar_root} ${className}`}
-            style={{ width: size, height: size, cursor: "pointer" }}
+            style={{ width: size, height: size}}
             {...props}
         >
             {src && (
