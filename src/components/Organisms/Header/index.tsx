@@ -19,6 +19,9 @@ import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal"
 import LocationButton from "../LocationButton/LocationButton"
 import NavLink from "@utils/helpers/NavLink"
 import './index.scss'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@lib/authOptions"
+import { signOut } from "next-auth/react"
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
@@ -35,7 +38,7 @@ const timeAgo = (date: string) => {
     return `${seconds} giây trước`;
 };
 
-export default function Header() {
+export default function Header({ session }: PAGES.IHeader) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [user, setUser] = useState<ICOMPONENTS.User | null>(null);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
@@ -43,42 +46,9 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
-    useEffect(() => {
-        const userFromLocalStorage = localStorage.getItem("user");
-        if (userFromLocalStorage) {
-            setUser(JSON.parse(userFromLocalStorage));
-        } else {
-            setUser({
-                id: 1,
-                name: "Nguyễn Văn A",
-                email: "nguyenvana@gmail.com",
-                avatar: "https://static-images.vnncdn.net/vps_images_publish/000001/000003/2025/1/20/ngan-ngam-thay-ca-si-jack-j97-72911.jpg?width=0&s=OQaz1tZ-7uFLA8UTXffWFQ",
-                rank: "gold",
-                notifications: [
-                    { id: 1, title: "Thông báo 1", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-03-05T10:46:58.557+00:00" },
-                    { id: 2, title: "Thông báo 2", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-04-01T10:46:58.557+00:00" },
-                    { id: 3, title: "Thông báo 3", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: false, createdAt: "2025-04-13T10:46:58.557+00:00" },
-                    { id: 4, title: "Thông báo 4", description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.", read: true, createdAt: "2025-04-13T16:02:58.557+00:00" },
-                ],
-                cart: [
-                    { id: 1, name: "Sản phẩm 1", img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg", price: 100000, vendor_id: 1, duration: 30, booked_date: new Date() },
-                    { id: 2, name: "Sản phẩm 2", img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg", price: 100000, vendor_id: 2, duration: 60, booked_date: new Date() },
-                    { id: 3, name: "Sản phẩm 3", img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg", price: 100000, vendor_id: 3, duration: 120, booked_date: new Date() },
-                    { id: 4, name: "Sản phẩm 4", img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg", price: 100000, vendor_id: 4, duration: 90, booked_date: new Date() },
-                    { id: 5, name: "Sản phẩm 5", img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744562854/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg", price: 200000, vendor_id: 4, duration: 120, booked_date: new Date() },
-                ]
-            });
-        }
-        setIsLoaded(true)
-        // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
-        setIsScrolled(window.scrollY > 120);
-    }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem("user");
-        setUser(null);
-    }
-
+    console.log(session);
+    // setUser(session?.user);
     const unreadNotifications = useMemo(() => {
         return notifications.filter(notification => !notification.read)
     }, [notifications]);
@@ -199,7 +169,7 @@ export default function Header() {
                                             className="cursor-pointer relative mt-2 p-1 rounded-md hover:bg-[#c9c9ce21]">
                                             <LucideIcon name="ShoppingCart" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                {user?.cart.length}
+                                                {/* {user?.cart.length} */}
                                             </span>
                                         </div>
 
@@ -319,10 +289,12 @@ export default function Header() {
                                                 </DropdownMenuItem>
                                             </Link>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem icon="LogOut" onClick={handleLogout}>
-                                                <Link href={ROUTES.PUBLIC.HOME}>
+                                            <DropdownMenuItem icon="LogOut">
+                                                <span onClick={() => {
+                                                    signOut()
+                                                }}>
                                                     <span>Đăng xuất</span>
-                                                </Link>
+                                                </span>
                                             </DropdownMenuItem>
 
                                         </DropdownMenuContent>
@@ -343,7 +315,7 @@ export default function Header() {
                 </div>
             </motion.div>
             {/* Mobile */}
-            <div
+            {/* <div
                 className={`md:hidden transition-all duration-300 ease-in-out rounded-md ${isMobileMenuOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'} ${isScrolled ? '' : 'bg-[rgba(216,212,212,0.9)] '}`}
             >
                 <div className="px-4 py-2 mt-2 border-b">
@@ -424,7 +396,7 @@ export default function Header() {
                         </div>
                     )}
                 </div>
-            </div>
+            </div> */}
         </header>
     )
 }
