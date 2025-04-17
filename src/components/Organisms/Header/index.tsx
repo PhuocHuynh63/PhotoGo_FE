@@ -22,6 +22,7 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
+import Checkbox from "@components/Atoms/Checkbox";
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor(
@@ -47,7 +48,26 @@ export default function Header({ user }: PAGES.IHeader) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false);
-
+    const cart: ICOMPONENTS.CartItem[] = [
+        {
+            id: 1,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 2,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 1,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+    ];
     console.log("User in Header:", user);
 
     useEffect(() => {
@@ -118,22 +138,22 @@ export default function Header({ user }: PAGES.IHeader) {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex gap-12 font-medium text-lg ml-5">
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.HOME}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Trang chủ
                             </span>
                         </NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.STUDIO}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Studio
                             </span>
                         </NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.FREELANCER}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Freelancer
                             </span>
                         </NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.ABOUT}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Về chúng tôi
                             </span>
@@ -204,11 +224,12 @@ export default function Header({ user }: PAGES.IHeader) {
                                                 iconColor={isScrolled ? "black" : "white"}
                                             />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                {/* {user.cart.length} */}
+                                                {cart?.length || 0}
                                             </span>
                                         </div>
                                     </motion.div>
-                                    {/* <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={user?.cart || []} /> */}
+                                    <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={cart || []} />
+                                    {/* <Checkbox className="bg-red-600 text-green-600" options={[{ key: "" }]} /> */}
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <motion.div

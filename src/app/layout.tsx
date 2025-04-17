@@ -6,10 +6,6 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Suspense } from "react";
 import LoadingPage from "@components/Organisms/Loading";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@lib/authOptions";
-import { IUser } from "@models/user/common.model";
-import { IUserResponse } from "@models/user/response.model";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
