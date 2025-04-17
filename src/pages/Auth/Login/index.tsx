@@ -37,7 +37,6 @@ const LoginPage = () => {
             redirect: false,
             ...data,
         })
-        console.log(res);
 
         switch (res?.status) {
             case 200:
