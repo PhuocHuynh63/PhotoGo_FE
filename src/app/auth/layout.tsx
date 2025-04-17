@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 const ROLE_REDIRECT_MAP: Record<string, string> = {
     admin: ROUTES.ADMIN.DASHBOARD,
     staff: ROUTES.STAFF.DASHBOARD,
-    user: ROUTES.USER.DASHBOARD,
+    user: ROUTES.PUBLIC.HOME,
 };
 
 export default async function AuthLayout({
@@ -34,12 +34,19 @@ export default async function AuthLayout({
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const role = session?.user?.role?.name;
 
-    // Check if the user has a role and redirect accordingly
-    const redirectPath = role ? ROLE_REDIRECT_MAP[role] : ROUTES.PUBLIC.HOME;
+    //#region If the user is already logged in, redirect to the appropriate dashboard
+    if (session) {
+        redirect(ROUTES.PUBLIC.HOME);
+    }
+    //#endregion
+
+
+    //#region If the user is not logged in, redirect to the appropriate dashboard
+    const redirectPath = role ? ROLE_REDIRECT_MAP[role] : null;
     if (redirectPath) {
         redirect(redirectPath);
     }
-
+    //#endregion
     return (
         <html lang="en">
             <body
