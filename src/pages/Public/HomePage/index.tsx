@@ -2,7 +2,6 @@
 
 import Button from "@components/Atoms/Button"
 import ClearButton from "@components/Atoms/ClearButton"
-import Header from "@components/Organisms/Header"
 import Image from "next/image"
 import { useEffect, useState, useRef } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
@@ -161,7 +160,6 @@ const HomePage = () => {
     return (
         <div>
             {/* Hero section */}
-            <Header />
             <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
                 <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                     <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
