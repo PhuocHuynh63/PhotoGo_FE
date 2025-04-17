@@ -2,27 +2,31 @@
 
 import * as Slider from "@radix-ui/react-slider";
 
-interface PriceRangeSliderProps {
-    min?: number;
-    max?: number;
-    step?: number;
-    value: [number, number];
-    onValueChange?: (value: [number, number]) => void;
-    unit?: string;
+interface DurationRangeSliderProps {
+    min?: number; // Thời gian tối thiểu (phút)
+    max?: number; // Thời gian tối đa (phút)
+    step?: number; // Bước nhảy (phút)
+    value: [number, number]; // Giá trị hiện tại (phút)
+    onValueChange?: (value: [number, number]) => void; // Hàm callback khi giá trị thay đổi
 }
 
-export default function PriceRangeSlider({
+export default function DurationRangeSlider({
     min = 0,
-    max = 10000000,
-    step = 100000,
+    max = 1440, // 24 giờ = 1440 phút
+    step = 60, // Bước nhảy 60 phút
     value,
     onValueChange,
-    unit = "đ"
-}: PriceRangeSliderProps) {
+}: DurationRangeSliderProps) {
 
     const handleChange = (value: number[]) => {
         const newRange: [number, number] = [value[0], value[1]];
         onValueChange?.(newRange);
+    };
+
+    const formatDuration = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours} giờ ${mins} phút`;
     };
 
     return (
@@ -38,18 +42,18 @@ export default function PriceRangeSlider({
                 <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
                     <Slider.Range className="absolute bg-primary rounded-full h-full" />
                     <div className="flex items-center justify-center mt-2 text-sm font-medium text-gray-700">
-                        {value[0].toLocaleString()} {unit ? unit : ""} - {value[1].toLocaleString()} {unit ? unit : ""}
+                        {formatDuration(value[0])} - {formatDuration(value[1])}
                     </div>
                 </Slider.Track>
                 <Slider.Thumb
                     className="block w-5 h-5 bg-white border border-blue-500 rounded-full shadow hover:bg-blue-100 focus:outline-none"
-                    aria-label="Minimum price"
+                    aria-label="Thời gian tối thiểu"
                 />
                 <Slider.Thumb
                     className="block w-5 h-5 bg-white border border-blue-500 rounded-full shadow hover:bg-blue-100 focus:outline-none"
-                    aria-label="Maximum price"
+                    aria-label="Thời gian tối đa"
                 />
             </Slider.Root>
         </div>
     );
-}
+} 

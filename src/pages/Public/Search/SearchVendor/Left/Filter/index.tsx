@@ -14,36 +14,36 @@ export default function Left() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([2000000, 7000000]);
+    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
     const [serviceType, setServiceType] = useState<ICOMPONENTS.ServiceType[]>([]);
     const [rating, setRating] = useState(5);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const services = [
-        { key: "Studio", label: "Studio" },
-        { key: "Photographer", label: "Nhiếp ảnh gia" },
-        { key: "Makeup", label: "Makeup Artist" },
+        { key: "Studio" },
+        { key: "Nhiếp ảnh gia" },
+        { key: "Makeup Artist" },
     ];
 
     const address = [
-        { key: "HCM", label: "HCM" },
-        { key: "HaNoi", label: "Hà Nội" },
-        { key: "DaNang", label: "Đà Nẵng" },
-        { key: "TinhThanhKhac", label: "Tỉnh thành khác" },
+        { key: "HCM" },
+        { key: "Hà Nội" },
+        { key: "Đà Nẵng" },
+        { key: "Tỉnh thành khác" },
     ];
 
-    function updateQueryParam(key: string, value: string | number | string[] | number[]) {
-        if (!searchParams) return;
-        const params = new URLSearchParams(searchParams.toString());
-        if (Array.isArray(value)) {
-            params.delete(key);
-            value.forEach(v => params.append(key, v.toString()));
-        } else {
-            params.set(key, value.toString());
-        }
-        router.replace(`?${params.toString()}`);
-    }
+    // function updateQueryParam(key: string, value: string | number | string[] | number[]) {
+    //     if (!searchParams) return;
+    //     const params = new URLSearchParams(searchParams.toString());
+    //     if (Array.isArray(value)) {
+    //         params.delete(key);
+    //         value.forEach(v => params.append(key, v.toString()));
+    //     } else {
+    //         params.set(key, value.toString());
+    //     }
+    //     router.replace(`?${params.toString()}`);
+    // }
 
     function handleServiceTypeChange(key: string) {
         setServiceType(prev => {
@@ -52,10 +52,9 @@ export default function Left() {
             if (isSelected) {
                 updated = prev.filter(service => service.key !== key);
             } else {
-                const option = services.find(opt => opt.key === key);
-                updated = [...prev, { key, label: option?.label || key }];
+                updated = [...prev, { key }];
             }
-            updateQueryParam("service", updated.map(s => s.key));
+            // updateQueryParam("service", String(updated.map(s => s.key)));
             return updated;
         });
     }
@@ -67,16 +66,15 @@ export default function Left() {
             if (isSelected) {
                 updated = prev.filter(item => item.key !== key);
             } else {
-                const option = address.find(opt => opt.key === key);
-                updated = [...prev, { key, label: option?.label || key }];
+                updated = [...prev, { key }];
             }
-            updateQueryParam("address", updated.map(a => a.key));
+            // updateQueryParam("address", updated.map(a => a.key));
             return updated;
         });
     }
 
     function handleResetAll() {
-        setSelectPriceRange([2000000, 7000000]);
+        setSelectPriceRange([5000000, 70000000]);
         setServiceType([]);
         setRating(5);
         setAddresses([]);
@@ -93,17 +91,28 @@ export default function Left() {
         //     rating: rating.toString(),
         //     date: selectedDate.toLocaleDateString('vi-VN').replace(/\//g, '-')
         // }).toString()}`);
+        const params = new URLSearchParams();
+
+        if (serviceType.length > 0) params.set("serviceType", serviceType.map(s => s.key).join(","));
+        if (rating > 0) params.set("minRating", rating.toString());
+        params.set("minPrice", selectPriceRange[0].toString());
+        params.set("maxPrice", selectPriceRange[1].toString());
+        params.set("date", selectedDate.toLocaleDateString('vi-VN').replace(/\//g, '-'));
+        if (addresses.length > 0) params.set("address", addresses.map(a => a.key).join(","));
+
+        router.push(`?${params.toString()}`);
     }
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams?.toString());
 
-        const price = params.getAll("price").map(Number);
-        if (price.length === 2) {
-            setSelectPriceRange([price[0], price[1]]);
+        const minPrice = params.getAll("minPrice")
+        const maxPrice = params.getAll("maxPrice")
+        if (minPrice.length > 0 && maxPrice.length > 0) {
+            setSelectPriceRange([Number(minPrice[0]), Number(maxPrice[0])]);
         }
 
-        const servicesFromUrl = params.getAll("service");
+        const servicesFromUrl = params.getAll("serviceType");
         setServiceType(services.filter(s => servicesFromUrl.includes(s.key)));
 
         const addressesFromUrl = params.getAll("address");
@@ -111,6 +120,14 @@ export default function Left() {
 
         const ratingFromUrl = params.get("rating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
+
+        const dateFromUrl = params.get("date");
+        if (dateFromUrl) {
+            const [day, month, year] = dateFromUrl.split('-').map(Number);
+            const dateObject = new Date(year, month - 1, day);
+            setSelectedDate(dateObject);
+        }
+
     }, [searchParams])
 
 
@@ -138,7 +155,7 @@ export default function Left() {
                 <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
                 <Checkbox
                     options={services}
-                    value={serviceType.map(service => service.key)}
+                    value={String(serviceType.map(service => service.key))}
                     onChange={(e, key) => {
                         handleServiceTypeChange(key);
                     }}
@@ -160,7 +177,7 @@ export default function Left() {
                         onChange={(date) => {
                             if (date) {
                                 setSelectedDate(date)
-                                updateQueryParam("date", date.toLocaleDateString('vi-VN').replace(/\//g, '-'));
+                                // updateQueryParam("date", date.toLocaleDateString('vi-VN').replace(/\//g, '-'));
                             }
 
                         }}
@@ -178,12 +195,12 @@ export default function Left() {
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
                     min={500000}
-                    max={10000000}
+                    max={70000000}
                     step={500000}
                     value={selectPriceRange}
                     onValueChange={(val) => {
                         setSelectPriceRange(val);
-                        updateQueryParam("price", val);
+                        // updateQueryParam("price", val);
                     }}
                 />
             </motion.div>
@@ -224,7 +241,7 @@ export default function Left() {
                     value={rating.toString()}
                     onChange={(value) => {
                         setRating(Number(value));
-                        updateQueryParam("rating", value);
+                        // updateQueryParam("rating", value);
                     }}
                     name="rating"
                 />

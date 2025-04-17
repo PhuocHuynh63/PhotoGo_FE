@@ -63,12 +63,12 @@ declare namespace ICOMPONENTS {
     }
 
     export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>, BaseProps {
-        label?: string;
+        label?: string | number;
         labelClassName?: string;
         options: SelectOption[];
         icon?: string;
         placeHolder?: string;
-        value?: string;
+        value?: string | number;
         selectIcon?: string;
         className?: string;
         style?: React.CSSProperties;
@@ -95,7 +95,7 @@ declare namespace ICOMPONENTS {
         checked?: boolean;
         direction?: "vertical" | "horizontal";
         onChange?: (event: React.ChangeEvent<HTMLInputElement>, key: string) => void;
-        options?: { key: string; label: string; }[];
+        options?: { key: string }[];
     }
 
     export interface Option {
@@ -405,12 +405,13 @@ declare namespace ICOMPONENTS {
     }
 
     interface ServiceType {
-        key: string
-        label: string
+        key: string | number
+    }
+    interface VendorType {
+        key: string | number
     }
     interface AddressType {
         key: string
-        label: string
     }
 
 
@@ -428,6 +429,7 @@ declare namespace ICOMPONENTS {
         image: string
         available: boolean
         featured: boolean
+        available_dates: string[]
     }
 
     interface SelectOption {
