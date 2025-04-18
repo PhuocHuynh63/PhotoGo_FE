@@ -36,6 +36,7 @@ export default function LocationButton({ className, isScrolled, isLoaded }: Loca
             (error) => {
                 setError("Unable to retrieve your location")
                 setLoading(false)
+                setError(error.message)
             },
         )
     }

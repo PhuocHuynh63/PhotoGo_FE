@@ -37,11 +37,11 @@ const LoginPage = () => {
             redirect: false,
             ...data,
         })
-        console.log(res);
 
         switch (res?.status) {
             case 200:
                 router.push(ROUTES.PUBLIC.HOME)
+                router.refresh();
                 break;
             case 400:
                 toast.error("Tài khoản hoặc mật khẩu không chính xác")
@@ -93,8 +93,8 @@ const LoginPage = () => {
                 {/* Left side - Login form */}
                 <div className="w-full md:w-1/2 p-8 md:p-12">
                     {/* Center logo */}
-                    <Link href={ROUTES.AUTH.LOGIN} className="flex justify-center mb-10">
-                        <img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="" />
+                    <Link href={ROUTES.AUTH.LOGIN} className="flex justify-center mb-10 w-full h-12 relative">
+                        <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" fill alt="" />
                     </Link>
 
                     <h1 className="text-2xl font-bold mb-2">Đăng nhập</h1>

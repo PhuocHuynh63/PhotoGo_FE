@@ -96,6 +96,10 @@ declare namespace ICOMPONENTS {
         direction?: "vertical" | "horizontal";
         onChange?: (event: React.ChangeEvent<HTMLInputElement>, key: string) => void;
         options?: { key: string }[];
+        value?: string[] | number[] | boolean[] | boolean;
+        mode?: "single" | "multiple";
+        groupValues?: string | number | boolean;
+        onGroupChange?: (value: string | number | boolean) => void;
     }
 
     export interface Option {

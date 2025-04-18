@@ -1,4 +1,3 @@
-import Header from "@components/Organisms/Header";
 import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
 import { VendorContextProvider } from "@lib/vendorContext";
 
@@ -303,7 +302,6 @@ export default function VendorDetailLayout({ children,
 
     return (
         <>
-            <Header />
             <VendorContextProvider value={studioData}>
                 <VendorDetailLayoutPage>
                     {children}

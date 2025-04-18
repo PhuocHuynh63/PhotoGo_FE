@@ -1,9 +1,10 @@
-'use client'
-import { Avatar } from "@components/Molecules/Avatar"
-import { ROUTES } from "@routes"
-import Image from "next/image"
-import Link from "next/link"
-import { useEffect, useState, useMemo } from "react"
+"use client";
+
+import { Avatar } from "@components/Molecules/Avatar";
+import { ROUTES } from "@routes";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState, useMemo } from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,17 +13,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/Molecules/DropdownMenu";
-import LucideIcon from "@components/Atoms/LucideIcon"
-import Button from "@components/Atoms/Button"
-import { motion } from "framer-motion"
-import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal"
-import LocationButton from "../LocationButton/LocationButton"
-import NavLink from "@utils/helpers/NavLink"
-import './index.scss'
-import { signOut } from "next-auth/react"
+import LucideIcon from "@components/Atoms/LucideIcon";
+import Button from "@components/Atoms/Button";
+import { motion } from "framer-motion";
+import LocationButton from "../LocationButton/LocationButton";
+import NavLink from "@utils/helpers/NavLink";
+import "./index.scss";
+import { signOut } from "next-auth/react";
+import { PAGES } from "../../../types/IPages";
+import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 
 const timeAgo = (date: string) => {
-    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+    const seconds = Math.floor(
+        (new Date().getTime() - new Date(date).getTime()) / 1000
+    );
     let interval = Math.floor(seconds / 31536000);
     if (interval > 1) return `${interval} năm trước`;
     interval = Math.floor(seconds / 2592000);
@@ -36,44 +40,86 @@ const timeAgo = (date: string) => {
     return `${seconds} giây trước`;
 };
 
-export default function Header() {
+export default function Header({ user }: PAGES.IHeader) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [user, setUser] = useState<ICOMPONENTS.User | null>(null);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isOpenCart, setIsOpenCart] = useState(false)
-    const [isLoaded, setIsLoaded] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isOpenCart, setIsOpenCart] = useState(false);
+    const cart: ICOMPONENTS.CartItem[] = [
+        {
+            id: 1,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 2,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 1,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 3,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 4,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 1,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 5,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 6,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 3,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+    ];
+    console.log("User in Header:", user);
+
     useEffect(() => {
-        const userFromLocalStorage = localStorage.getItem("user");
-        if (userFromLocalStorage) {
-            setUser(JSON.parse(userFromLocalStorage));
-        } else {
-            setUser(null);
-        }
-        setIsLoaded(true)
-        // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
-        setIsScrolled(window.scrollY > 120);
+        setIsLoaded(true);
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem("user");
-        setUser(null);
-    }
-
     const unreadNotifications = useMemo(() => {
-        return notifications.filter(notification => !notification.read)
+        return notifications.filter((notification) => !notification.read);
     }, [notifications]);
+
     const handleOpenNotification = () => {
         setIsNotificationOpen(!isNotificationOpen);
-    }
-    useEffect(() => {
-        setNotifications(user?.notifications || []);
-    }, [user]);
+    };
 
-    const handlOpenCart = () => {
+    const handleOpenCart = () => {
         setIsOpenCart(!isOpenCart);
-    }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -81,27 +127,25 @@ export default function Header() {
                 setIsScrolled(window.scrollY > 120);
             });
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener("scroll", handleScroll);
 
         if (isOpenCart) {
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = "auto";
         }
 
         return () => {
-            window.removeEventListener('scroll', handleScroll);
-            document.body.style.overflow = 'auto';
+            window.removeEventListener("scroll", handleScroll);
+            document.body.style.overflow = "auto";
         };
     }, [isOpenCart]);
 
-    // Kiểm tra vị trí cuộn ngay khi component được khởi tạo
-    // useEffect(() => {
-    //     setIsScrolled(window.scrollY > 120);
-    // }, []);
-
     return (
-        <header className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? 'bg-[rgba(177,177,177,0.65)] shadow-xl' : 'bg-transparent'}`}>
+        <header
+            className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? "bg-[rgba(177,177,177,0.65)] shadow-xl" : "bg-transparent"
+                }`}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -112,19 +156,46 @@ export default function Header() {
                     {/* Logo */}
                     <div>
                         <Link href={ROUTES.PUBLIC.HOME}>
-                            <Image src={`${isScrolled ? 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg' : 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg'}`} alt="logo" width={60} height={60} style={{ width: 'auto', height: 'auto' }} priority />
+                            <Image
+                                src={
+                                    isScrolled
+                                        ? "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
+                                        : "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg"
+                                }
+                                alt="logo"
+                                width={60}
+                                height={60}
+                                style={{ width: "auto", height: "auto" }}
+                                priority
+                            />
                         </Link>
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className={`hidden md:flex gap-12 font-medium text-lg ml-5 `}>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.HOME}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Trang chủ</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.STUDIO}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Studio</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.FREELANCER}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Freelancer</span></NavLink>
-                        <NavLink className="nav-link" href={ROUTES.PUBLIC.ABOUT}><span className={`${isScrolled ? 'text-black' : 'text-white'}`}>Về chúng tôi</span></NavLink>
+                    <div className="hidden md:flex gap-12 font-medium text-lg ml-5">
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.HOME}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
+                                Trang chủ
+                            </span>
+                        </NavLink>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.STUDIO}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
+                                Studio
+                            </span>
+                        </NavLink>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.FREELANCER}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
+                                Freelancer
+                            </span>
+                        </NavLink>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.ABOUT}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
+                                Về chúng tôi
+                            </span>
+                        </NavLink>
                     </div>
 
-                    {/* right */}
+                    {/* Right */}
                     <div className="flex items-center gap-4">
                         <button
                             className="md:hidden p-2 rounded-md hover:bg-gray-100"
@@ -155,7 +226,6 @@ export default function Header() {
                         </button>
 
                         <div className="hidden md:block">
-
                             {user ? (
                                 <div className="flex items-center justify-center gap-5 relative">
                                     <motion.div
@@ -165,10 +235,13 @@ export default function Header() {
                                         transition={{ duration: 0.3 }}
                                     >
                                         <div className="flex items-center justify-center mt-2">
-                                            <LocationButton className="hover:bg-white/10 p-1 rounded-md" isScrolled={isScrolled} isLoaded={isLoaded} />
+                                            <LocationButton
+                                                className="hover:bg-white/10 p-1 rounded-md"
+                                                isScrolled={isScrolled}
+                                                isLoaded={isLoaded}
+                                            />
                                         </div>
                                     </motion.div>
-
 
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
@@ -177,17 +250,21 @@ export default function Header() {
                                         transition={{ duration: 0.3 }}
                                     >
                                         <div
-                                            onClick={handlOpenCart}
-                                            className="cursor-pointer relative mt-2 p-1 rounded-md hover:bg-[#c9c9ce21]">
-                                            <LucideIcon name="ShoppingCart" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
+                                            onClick={handleOpenCart}
+                                            className="cursor-pointer relative mt-2 p-1 rounded-md hover:bg-[#c9c9ce21]"
+                                        >
+                                            <LucideIcon
+                                                name="ShoppingCart"
+                                                iconSize={26}
+                                                iconColor={isScrolled ? "black" : "white"}
+                                            />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                {user?.cart.length}
+                                                {cart?.length || 0}
                                             </span>
                                         </div>
-
                                     </motion.div>
 
-                                    <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={user?.cart || []} />
+                                    <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={cart || []} />
 
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -197,8 +274,15 @@ export default function Header() {
                                                 exit={{ opacity: 0, y: -10 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-                                                <div onClick={handleOpenNotification} className="hover:bg-[#c9c9ce21] cursor-pointer relative mt-2 p-1 rounded-md">
-                                                    <LucideIcon name="Bell" iconSize={26} iconColor={isScrolled ? 'black' : 'white'} />
+                                                <div
+                                                    onClick={handleOpenNotification}
+                                                    className="hover:bg-[#c9c9ce21] cursor-pointer relative mt-2 p-1 rounded-md"
+                                                >
+                                                    <LucideIcon
+                                                        name="Bell"
+                                                        iconSize={26}
+                                                        iconColor={isScrolled ? "black" : "white"}
+                                                    />
                                                     <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                         {unreadNotifications.length}
                                                     </span>
@@ -211,7 +295,12 @@ export default function Header() {
                                                 <Button
                                                     className="text-sm whitespace-pre text-blue-500 bg-none shadow-none hover:bg-gray-200"
                                                     onClick={() => {
-                                                        setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+                                                        setNotifications(
+                                                            notifications.map((notification) => ({
+                                                                ...notification,
+                                                                read: true,
+                                                            }))
+                                                        );
                                                     }}
                                                 >
                                                     Đánh dấu đã đọc
@@ -224,20 +313,28 @@ export default function Header() {
                                                         key={notification.id}
                                                         onClick={(e) => {
                                                             e.preventDefault();
-                                                            setNotifications(prevNotifications =>
-                                                                prevNotifications.map(n =>
-                                                                    n.id === notification.id ? { ...n, read: true } : n
+                                                            setNotifications((prevNotifications) =>
+                                                                prevNotifications.map((n) =>
+                                                                    n.id === notification.id
+                                                                        ? { ...n, read: true }
+                                                                        : n
                                                                 )
                                                             );
                                                         }}
                                                     >
                                                         <div className="flex flex-col gap-2 w-full">
                                                             <div className="flex w-full justify-between items-center">
-                                                                <p className="text-sm font-medium">{notification.title}</p>
-                                                                <p className="text-xs text-gray-400">{timeAgo(notification.createdAt)}</p>
+                                                                <p className="text-sm font-medium">
+                                                                    {notification.title}
+                                                                </p>
+                                                                <p className="text-xs text-gray-400">
+                                                                    {timeAgo(notification.createdAt)}
+                                                                </p>
                                                             </div>
                                                             <div className="flex w-full justify-between">
-                                                                <p className="text-xs text-gray-500 whitespace-normal break-words">{notification.description}</p>
+                                                                <p className="text-xs text-gray-500 whitespace-normal break-words">
+                                                                    {notification.description}
+                                                                </p>
                                                                 <div className="flex items-center gap-2">
                                                                     {!notification.read && (
                                                                         <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
@@ -249,13 +346,15 @@ export default function Header() {
                                                 ))
                                             ) : (
                                                 <DropdownMenuItem disabled>
-                                                    <p className="text-sm text-gray-500">Không có thông báo mới.</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Không có thông báo mới.
+                                                    </p>
                                                 </DropdownMenuItem>
                                             )}
                                         </DropdownMenuContent>
                                     </DropdownMenu>
 
-                                    <DropdownMenu >
+                                    <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <motion.div
                                                 initial={{ opacity: 0, y: 10 }}
@@ -265,55 +364,47 @@ export default function Header() {
                                             >
                                                 <Avatar
                                                     className="cursor-pointer"
-                                                    src={user.avatar}
-                                                    onClick={() => {
-                                                        setIsNotificationOpen(!isNotificationOpen);
-                                                    }}
-                                                    alt={user.name}
-                                                // size={user.rank === "unranked" ? 50 : 30}
-                                                // rank={user.rank as ICOMPONENTS.UserRank ? user.rank as ICOMPONENTS.UserRank : "unranked"}
-                                                // showRankLabel={false}
-                                                // rankSize="sm"
+                                                    src={user.avatarUrl || "/default-avatar.png"}
+                                                    onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                                    alt={user.fullName || "User"}
                                                 />
                                             </motion.div>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent>
                                             <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                                             <DropdownMenuSeparator />
-                                            <Link href={"/hello"}>
+                                            <Link href="/hello">
                                                 <DropdownMenuItem icon="UserCircle">
                                                     <span>Thông tin cá nhân</span>
                                                 </DropdownMenuItem>
                                             </Link>
-                                            <Link href={"/ROUTES.PRIVATE.SETTINGS"}>
+                                            <Link href={''}>
                                                 <DropdownMenuItem icon="Settings">
                                                     <span>Cài đặt</span>
                                                 </DropdownMenuItem>
                                             </Link>
-                                            <Link href={"/ROUTES.PRIVATE.MESSAGES"}>
+                                            <Link href={''}>
                                                 <DropdownMenuItem icon="MessageSquare">
                                                     <span>Tin nhắn</span>
                                                 </DropdownMenuItem>
                                             </Link>
-                                            <Link href={"/ROUTES.PRIVATE.HELP"}>
+                                            <Link href={''}>
                                                 <DropdownMenuItem icon="HelpCircle">
                                                     <span>Trợ giúp</span>
                                                 </DropdownMenuItem>
                                             </Link>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem icon="LogOut">
-                                                <span onClick={() => {
-                                                    signOut()
-                                                }}>
-                                                    <span>Đăng xuất</span>
-                                                </span>
+                                            <DropdownMenuItem
+                                                icon="LogOut"
+                                                onClick={() => signOut()}
+                                            >
+                                                <span>Đăng xuất</span>
                                             </DropdownMenuItem>
-
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
                             ) : (
-                                <div className="flex gap-2 ">
+                                <div className="flex gap-2">
                                     <Link href={ROUTES.AUTH.REGISTER}>
                                         <Button className="bg-primary text-white">Đăng ký</Button>
                                     </Link>
@@ -326,89 +417,6 @@ export default function Header() {
                     </div>
                 </div>
             </motion.div>
-            {/* Mobile */}
-            <div
-                className={`md:hidden transition-all duration-300 ease-in-out rounded-md ${isMobileMenuOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'} ${isScrolled ? '' : 'bg-[rgba(216,212,212,0.9)] '}`}
-            >
-                <div className="px-4 py-2 mt-2 border-b">
-                    {user ? (
-                        <div className="flex items-center gap-3 mb-4">
-                            <Avatar
-                                size={40}
-                                src={user.avatar}
-                                fallback={user.name.charAt(0)} />
-                            <div className="flex flex-col">
-                                <span className="font-medium">{user.name}</span>
-                                <span className="text-sm text-gray-500">{user.email}</span>
-                            </div>
-                            <div className="flex flex-col gap-4 py-4">
-                                <Link
-                                    href={ROUTES.PUBLIC.HOME}
-                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Trang chủ
-                                </Link>
-                                <Link
-                                    href={ROUTES.PUBLIC.STUDIO}
-                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Studio
-                                </Link>
-                                <Link
-                                    href={ROUTES.PUBLIC.FREELANCER}
-                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Freelancer
-                                </Link>
-                                <Link
-                                    href={ROUTES.PUBLIC.ABOUT}
-                                    className={`px-4 py-2 hover:bg-gray-100 rounded-md ${isScrolled ? 'text-black' : 'text-white'}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Về chúng tôi
-                                </Link>
-
-                                <div className="border-t pt-4 flex flex-col gap-2">
-                                    <Link
-                                        href="/profile"
-                                        className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <LucideIcon name="User" iconSize={18} />
-                                        Hồ sơ của tôi
-                                    </Link>
-                                    <Link
-                                        href="/settings"
-                                        className="px-4 py-2 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        <LucideIcon name="Settings" iconSize={18} />
-                                        Cài đặt
-                                    </Link>
-                                    <Button icon="LogOut" iconSize={18} className="w-full" onClick={() => {
-                                        handleLogout()
-                                        setIsMobileMenuOpen(false);
-                                    }}>
-                                        Đăng xuất
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center mb-4">
-                            <h2 className="text-lg font-semibold mb-2">Chào mừng bạn đến với chúng tôi!</h2>
-                            <p className="text-sm text-gray-600 mb-4">Vui lòng đăng nhập hoặc đăng ký để tiếp tục.</p>
-                            <div className="flex justify-center gap-3 items-center">
-                                <Link href={ROUTES.AUTH.REGISTER}>Đăng ký</Link>
-                                <Link href={ROUTES.AUTH.LOGIN}>Đăng nhập</Link>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
         </header>
-    )
+    );
 }
