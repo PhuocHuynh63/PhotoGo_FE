@@ -46,6 +46,7 @@ const VerifyOtpPage = () => {
             if (purpose === 'reset-password') {
                 router.push(ROUTES.AUTH.RESET_PASSWORD)
             } else if (purpose === 'activate-account') {
+                toast.success(res.message || 'Xác thực tài khoản thành công')
                 router.push(ROUTES.AUTH.LOGIN)
             }
         }
@@ -160,7 +161,7 @@ const VerifyOtpPage = () => {
 
                             )}
                         </div>
-                        <Button type="submit" style={{ width: "100%" }}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={isLoading} disabled={isLoading}>
                             Tiếp tục
                         </Button>
                     </form>
