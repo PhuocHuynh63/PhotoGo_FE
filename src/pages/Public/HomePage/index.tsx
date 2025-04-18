@@ -9,6 +9,7 @@ import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
 import { motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
+import { IVendor } from "@models/vendor/common.model"
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
@@ -112,7 +113,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = () => {
+const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -120,8 +121,12 @@ const HomePage = () => {
     const [howItWorksAnimation, setHowItWorksAnimation] = useState(false)
     const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
     const [ctaAnimation, setCtaAnimation] = useState(false)
-
+    const [vendorData, setVendorData] = useState<IVendor[]>([])
     useEffect(() => {
+        console.log(vendors)
+        setVendorData(vendors)
+
+        console.log(vendorData)
         const handleScroll = () => {
             setScrollY(window.scrollY)
         }
@@ -155,6 +160,8 @@ const HomePage = () => {
             })
         }
     }, [])
+
+
 
     const zoomLevel = 1 + scrollY / 10000
     return (
@@ -247,7 +254,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/photographers" passHref>
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">
                                     Xem tất cả Photographers
                                 </ClearButton>
                             </Link>
@@ -289,7 +296,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/studios" passHref>
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
                             </Link>
                         </motion.div>
 
@@ -329,7 +336,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/makeup-artists" passHref className="w-full">
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
                             </Link>
                         </motion.div>
                     </div>

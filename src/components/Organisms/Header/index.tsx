@@ -103,7 +103,6 @@ export default function Header({ user }: PAGES.IHeader) {
             booked_date: new Date("2023-01-01"),
         },
     ];
-    console.log("User in Header:", user);
 
     useEffect(() => {
         setIsLoaded(true);
