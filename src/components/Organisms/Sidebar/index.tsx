@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LucideIcon from '@components/Atoms/LucideIcon'
 import { cn } from '@helpers/CN'
-import { SimpleTooltip as Tooltip } from '@components/Molecules/Tooltip'
+import { SimpleTooltip } from '@components/Molecules/Tooltip'
 
 export interface SidebarItem {
   title: string
@@ -24,6 +24,35 @@ export interface SidebarProps {
 const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
   const pathname = usePathname()
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({})
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+
+  // Initialize expanded items based on current path
+  useEffect(() => {
+    // Find which items should be expanded based on the current path
+    const shouldExpandItems: Record<string, boolean> = {};
+
+    const findActiveParent = (items: SidebarItem[]) => {
+      for (const item of items) {
+        if (item.children?.length) {
+          // Check if any child is active
+          const hasActiveChild = item.children.some(child =>
+            child.path === pathname ||
+            child.children?.some(grandchild => grandchild.path === pathname)
+          );
+
+          if (hasActiveChild && item.title) {
+            shouldExpandItems[item.title] = true;
+          }
+
+          // Recursively check children
+          findActiveParent(item.children);
+        }
+      }
+    };
+
+    findActiveParent(items);
+    setExpandedItems(shouldExpandItems);
+  }, [pathname, items]);
 
   const toggleExpand = (title: string) => {
     setExpandedItems(prev => ({
@@ -32,17 +61,32 @@ const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
     }))
   }
 
+  const toggleDropdown = (title: string) => {
+    setActiveDropdown(prev => prev === title ? null : title);
+  }
+
   const renderNavItems = (items: SidebarItem[], level = 0) => {
     return items.map((item, index) => {
       const isActive = item.path ? pathname === item.path : false
       const hasChildren = item.children && item.children.length > 0
       const isExpanded = expandedItems[item.title] || false
+      const isDropdownActive = activeDropdown === item.title
+
+      // Check if any child is active
+      const isChildActive = hasChildren && item.children?.some(child =>
+        child.path === pathname ||
+        (child.children?.some(grandchild => grandchild.path === pathname))
+      )
+
+      // Determine the path to navigate to when clicking on a parent item in collapsed mode
+      const defaultChildPath = hasChildren && item.children && item.children[0].path ? item.children[0].path : item.path;
 
       return (
-        <div key={`${item.title}-${index}`} className="w-full">
+        <div key={`${item.title}-${index}`} className="w-full relative">
+          {/* Simple item with no children */}
           {item.path && !hasChildren ? (
             <Link href={item.path}>
-              <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
+              <SimpleTooltip content={item.title} side="right" disabled={!isCollapsed}>
                 <div
                   className={cn(
                     'flex items-center gap-2 px-3 py-2 rounded-md transition-colors',
@@ -50,7 +94,7 @@ const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
                       ? 'bg-orange-100 text-orange-700'
                       : 'hover:bg-gray-100',
                     isCollapsed && 'justify-center',
-                    level > 0 && 'ml-6'
+                    level > 0 && !isCollapsed && 'ml-6'
                   )}
                 >
                   {item.icon && (
@@ -62,70 +106,83 @@ const Sidebar = ({ items, isCollapsed, toggleCollapse }: SidebarProps) => {
                   )}
                   {!isCollapsed && <span className="text-sm">{item.title}</span>}
                 </div>
-              </Tooltip>
+              </SimpleTooltip>
             </Link>
           ) : (
             <>
-              {isCollapsed && item.children && item.children.length > 0 && item.children[0].path ? (
-                <Link href={item.children[0].path}>
-                  <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
-                    <div
-                      className={cn(
-                        'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
-                        isCollapsed ? 'justify-center' : 'justify-between',
-                        level > 0 && 'ml-6'
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        {item.icon && (
-                          <LucideIcon
-                            name={item.icon}
-                            iconSize={20}
-                          />
-                        )}
-                        {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
-                      </div>
-                      {!isCollapsed && hasChildren && (
-                        <LucideIcon
-                          name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
-                          iconSize={16}
-                        />
-                      )}
-                    </div>
-                  </Tooltip>
-                </Link>
-              ) : (
-                <Tooltip content={item.title} side="right" disabled={!isCollapsed}>
-                  <div
-                    className={cn(
-                      'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
-                      isCollapsed ? 'justify-center' : 'justify-between',
-                      level > 0 && 'ml-6'
-                    )}
-                    onClick={() => {
-                      if (!isCollapsed && hasChildren) {
-                        toggleExpand(item.title);
-                      }
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      {item.icon && (
-                        <LucideIcon
-                          name={item.icon}
-                          iconSize={20}
-                        />
-                      )}
-                      {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
-                    </div>
-                    {!isCollapsed && hasChildren && (
-                      <LucideIcon
-                        name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
-                        iconSize={16}
-                      />
-                    )}
-                  </div>
-                </Tooltip>
+              {/* Parent item with children */}
+              <div
+                className={cn(
+                  'flex items-center gap-2 px-3 py-2 rounded-md transition-colors cursor-pointer',
+                  (isActive || isChildActive) && 'bg-orange-100 text-orange-700',
+                  !isActive && !isChildActive && 'hover:bg-gray-100',
+                  isCollapsed ? 'justify-center' : 'justify-between',
+                  level > 0 && !isCollapsed && 'ml-6'
+                )}
+                onClick={() => {
+                  if (isCollapsed) {
+                    toggleDropdown(item.title);
+                  } else {
+                    toggleExpand(item.title);
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  {item.icon && (
+                    <LucideIcon
+                      name={item.icon}
+                      iconSize={20}
+                      iconColor={(isActive || isChildActive) ? 'var(--color-orange-700)' : 'currentColor'}
+                    />
+                  )}
+                  {!isCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+                </div>
+                {!isCollapsed && hasChildren && (
+                  <LucideIcon
+                    name={isExpanded ? 'ChevronDown' : 'ChevronRight'}
+                    iconSize={16}
+                    iconColor={(isActive || isChildActive) ? 'var(--color-orange-700)' : 'currentColor'}
+                  />
+                )}
+              </div>
+
+              {/* Dropdown for collapsed sidebar */}
+              {isCollapsed && hasChildren && isDropdownActive && (
+                <div
+                  className="fixed left-16 top-0 bg-white shadow-lg rounded-md py-2 z-[9999] w-56 border border-gray-200"
+                  style={{ marginTop: `${index * 40 + 60}px` }}
+                >
+                  <div className="px-3 py-2 font-medium border-b border-gray-100 mb-1">{item.title}</div>
+                  {item.children?.map((child, childIndex) => {
+                    const childIsActive = child.path === pathname;
+                    return (
+                      <Link
+                        key={`${item.title}-child-${childIndex}`}
+                        href={child.path || '#'}
+                        className="block"
+                      >
+                        <div
+                          className={cn(
+                            "px-4 py-2 hover:bg-gray-100 flex items-center gap-2",
+                            childIsActive && "bg-orange-100 text-orange-700"
+                          )}
+                        >
+                          {child.icon && (
+                            <LucideIcon
+                              name={child.icon}
+                              iconSize={16}
+                              iconColor={childIsActive ? 'var(--color-orange-700)' : 'currentColor'}
+                            />
+                          )}
+                          <span className="text-sm">{child.title}</span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
+
+              {/* Expanded children for non-collapsed sidebar */}
               {!isCollapsed && hasChildren && isExpanded && item.children && (
                 <div className="mt-1 mb-1">
                   {renderNavItems(item.children, level + 1)}

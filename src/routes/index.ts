@@ -14,7 +14,6 @@ const PUBLIC = {
     CONTACT: '/contact',
     STUDIO: '/studio',
     FREELANCER: '/freelancer',
-    VENDOR_DETAIL: '/:slug/:page',
     ABOUT: '/about',
 };
 
@@ -37,7 +36,7 @@ const USER ={
     },
     LOYALTY:{
 
-    }, 
+    },
     PROMOTION:{
 
     },
@@ -95,50 +94,54 @@ const VENDOR = {
 const ADMIN = {
     DASHBOARD: '/admin/dashboard',
     USER_MANAGEMENT : {
-        LIST :'/admin/user-management/list',
+        CUSTOMER_LIST :'/admin/user-management/customer-list',
+        STAFF_LIST :'/admin/user-management/staff-list'
     },
     VENDOR_MANAGEMENT : {
         LIST :'/admin/vendor-management/list',
     },
     SERVICE_PACKAGE_MANAGEMENT : {
         LIST :'/admin/service-package-management/list',
-    },  
+        APPROVAL :'/admin/service-package-management/approval',
+        CONCEPTS :'/admin/service-package-management/concepts',
+        STYLE_TAGS :'/admin/service-package-management/style-tags',
+        VENDOR_CATEGORIES :'/admin/service-package-management/vendor-categories'
+    },
     BOOKING_MANAGEMENT : {
         LIST :'/admin/booking-management/list',
         DISPUTES :'/admin/booking-management/disputes',
     },
     FINANCE: {
         OVERVIEW :'/admin/finance/overview',
-        TRANSACTION :'/admin/finance/transaction',
-        INVOICE :'/admin/finance/invoice',
-        REVENUE:'/admin/finance/revenue',
-        PAYOUT:'/admin/finance/payout',
-        REFUND:'/admin/finance/refund',
-    },
-    SUBCRIPTIONS:{
-        PLANS:'/admin/subscriptions/plans',
-        CUSTOMER_PLAN:'/admin/subscriptions/customer-plan',
-        VENDOR_PLAN:'/admin/subscriptions/vendor-plan',
-        BILLING_LOGS:'/admin/subscriptions/billing-logs',
+        TRANSACTIONS :'/admin/finance/transactions',
+        VENDOR_PAYMENTS :'/admin/finance/vendor-payments',
+        REFUNDS :'/admin/finance/refunds',
+        WALLET :'/admin/finance/wallet',
+        SETTINGS :'/admin/finance/settings'
     },
     MARKETING:{
-        CAMPAIGN:'/admin/marketing/campaign',
-        PROMOTION:'/admin/marketing/promotion',
-        FEATURED_VENDOR :'/admin/marketing/featured-vendor',
-        SEASONAL_PROMOS:'/admin/marketing/seasonal-promos',
+        CAMPAIGNS :'/admin/marketing/campaigns',
+        VOUCHERS :'/admin/marketing/vouchers',
+        SEASONAL_PROMOS :'/admin/marketing/seasonal-promos',
+        FEATURED_VENDORS :'/admin/marketing/featured-vendors',
+        LOYALTY :'/admin/marketing/loyalty'
+    },
+    SUBSCRIPTIONS:{
+        CUSTOMER_PLANS :'/admin/subscriptions/customer-plans',
+        VENDOR_PLANS :'/admin/subscriptions/vendor-plans',
+        PAYMENT_HISTORY :'/admin/subscriptions/payment-history'
     },
     REPORTS:{
-        PERFORMANCE:'/admin/reports/performance',
+        PERFORMANCE :'/admin/reports/performance',
     },
     CUSTOMER_SUPPORT:{
-        TICKETS:'/admin/customer-support/tickets',
-        //CHATS:'/admin/customer-support/chats',
+        REQUESTS :'/admin/customer-support/requests',
+        HISTORY :'/admin/customer-support/history'
     },
     CONTENT_MANAGEMENT:{
-        BLOG:'/admin/content-management/blog',
-        //BANNERS:'/admin/content-management/banners',
+        BLOG :'/admin/content-management/blog',
+        BANNERS :'/admin/content-management/banners'
     }
-
 };
 
 const STAFF =  {
@@ -149,7 +152,7 @@ const STAFF =  {
     },
     BOOKINGS : {
         LIST:'/staff/bookings/list',
-    },  
+    },
     DISPUTES:{
         LIST:'/staff/disputes/list',
     },
