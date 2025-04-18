@@ -25,6 +25,7 @@ const LoginPage = () => {
 
 
     //#region Handle form submit
+    const [loading, setLoading] = useState<boolean>(false)
     const {
         register,
         handleSubmit,
@@ -33,6 +34,7 @@ const LoginPage = () => {
         resolver: zodResolver(UserLoginRequest),
     })
     const onSubmit = async (data: IUserLoginRequest) => {
+        setLoading(true)
         const res = await signIn("credentials", {
             redirect: false,
             ...data,
@@ -43,8 +45,8 @@ const LoginPage = () => {
                 router.push(ROUTES.PUBLIC.HOME)
                 router.refresh();
                 break;
-            case 400:
-                toast.error("Tài khoản hoặc mật khẩu không chính xác")
+            case 401:
+                toast.error(res.error)
                 break;
             case 403:
                 const delay = 3
@@ -56,6 +58,8 @@ const LoginPage = () => {
             default:
                 toast.error("Có lỗi xảy ra, vui lòng thử lại sau")
         }
+
+        setLoading(false)
     }
     //#endregion
 
@@ -137,7 +141,7 @@ const LoginPage = () => {
                             </div>
                         </div>
 
-                        <Button type="submit" style={{ width: "100%" }}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={loading} disabled={loading}>
                             Đăng nhập
                         </Button>
                     </form>
@@ -240,7 +244,7 @@ const LoginPage = () => {
                     </div>
                 </div>
                 {/* --- End of MODIFIED Right side --- */}
-            </TransitionWrapper>
+            </TransitionWrapper >
         </>
     )
 }

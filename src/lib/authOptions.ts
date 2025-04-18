@@ -17,10 +17,10 @@ export const authOptions: NextAuthOptions = {
                 const res = await authService.login({
                     email: credentials.email,
                     password: credentials.password,
-                }) as { statusCode: number; data: any };
+                }) as { statusCode: number; data: any; message: string };
 
                 if ((res.statusCode !== 200 && res.statusCode !== 201) || !res.data?.user) {
-                    return null;
+                    throw new Error(res.message || "Login failed");
                 }
                 const user = {
                     id: res.data.user.id,
