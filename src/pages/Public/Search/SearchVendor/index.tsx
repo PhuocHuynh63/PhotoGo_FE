@@ -19,7 +19,7 @@ export default function SearchVendor() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="container mx-auto px-4 py-6">
+      <div className="mx-10 px-4 py-6">
         <h1 className="text-2xl font-bold mb-6">Tìm kiếm dịch vụ</h1>
 
         <div className="mb-6 flex items-center gap-2">
