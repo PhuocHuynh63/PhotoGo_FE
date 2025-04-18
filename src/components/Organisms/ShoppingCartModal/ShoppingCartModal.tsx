@@ -4,15 +4,14 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { ShoppingBag, Clock, Calendar } from "lucide-react"
 import Button from "@components/Atoms/Button"
-import Checkbox from "@components/Atoms/Checkbox"
 import { Separator } from "@components/Atoms/Seperator/Seperator"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
+import SingleCheckbox from "@components/Atoms/Checkbox/SingleCheckBox"
 
 export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS.ShoppingCartModalProps) {
     const [selectedItems, setSelectedItems] = useState<number[]>([])
     const [selectedVendor, setSelectedVendor] = useState<number | null>(null)
 
-    // Group cart items by vendor
     const vendorGroups: ICOMPONENTS.VendorGroup[] = cart.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
         const existingGroup = groups.find((group) => group.vendor_id === item.vendor_id)
         if (existingGroup) {
@@ -23,7 +22,6 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
         return groups
     }, [])
 
-    // Reset selections when modal opens/closes
     useEffect(() => {
         if (!isOpen) {
             setSelectedItems([])
@@ -35,10 +33,8 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
 
     const handleItemSelect = (itemId: number, vendorId: number) => {
         if (selectedItems.includes(itemId)) {
-            // Unselect item
             setSelectedItems(selectedItems.filter((id) => id !== itemId))
 
-            // If no more items from this vendor are selected, reset selectedVendor
             const vendorItemsStillSelected = cart
                 .filter((item) => item.vendor_id === vendorId && selectedItems.includes(item.id))
                 .filter((item) => item.id !== itemId)
@@ -47,10 +43,8 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                 setSelectedVendor(null)
             }
         } else {
-            // Select item
             setSelectedItems([...selectedItems, itemId])
 
-            // If no vendor is selected yet, set this as the selected vendor
             if (selectedVendor === null) {
                 setSelectedVendor(vendorId)
             }
@@ -62,19 +56,13 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
         const allSelected = vendorItemIds.every((id) => selectedItems.includes(id))
 
         if (allSelected) {
-            // Unselect all items from this vendor
             setSelectedItems(selectedItems.filter((id) => !vendorItemIds.includes(id)))
-
-            // If no more items are selected, reset selectedVendor
             if (selectedItems.length === vendorItemIds.length) {
                 setSelectedVendor(null)
             }
         } else {
-            // Select all items from this vendor
             const newSelectedItems = [...selectedItems.filter((id) => !vendorItemIds.includes(id)), ...vendorItemIds]
             setSelectedItems(newSelectedItems)
-
-            // Set this as the selected vendor
             setSelectedVendor(vendorId)
         }
     }
@@ -107,22 +95,14 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                 <span>{item.duration} phút</span>
             </div>
         </div>
-    );
+    )
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-            onClick={onClose}
-        >
-            <div
-                className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg"
-                onClick={(e) => e.stopPropagation()}
-            >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+            <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between border-b p-4">
                     <h2 className="text-xl font-semibold">Giỏ hàng của bạn</h2>
-                    <Button icon="CircleX" onClick={onClose} className="">
-                        <span className="sr-only">Đóng</span>
-                    </Button>
+                    <Button icon="CircleX" onClick={onClose}><span className="sr-only">Đóng</span></Button>
                 </div>
 
                 <div className="overflow-y-auto p-4 max-h-[60vh]">
@@ -131,9 +111,7 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                             <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-lg font-medium">Giỏ hàng của bạn đang trống</p>
                             <p className="text-sm text-muted-foreground mt-1">Thêm một số dịch vụ vào giỏ hàng để xem chúng ở đây.</p>
-                            <Button className="mt-6 bg-[#D2B48C] hover:bg-[#C19A6B] text-white" onClick={onClose}>
-                                Tiếp tục mua sắm
-                            </Button>
+                            <Button className="mt-6 bg-[#D2B48C] hover:bg-[#C19A6B] text-white" onClick={onClose}>Tiếp tục mua sắm</Button>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -142,57 +120,33 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                                 const allSelected = areAllVendorItemsSelected(group.items)
 
                                 return (
-                                    <div
-                                        key={group.vendor_id}
-                                        className={`border rounded-md overflow-hidden ${isDisabled ? "opacity-50" : ""}`}
-                                    >
-                                        {/* Vendor header with select all checkbox */}
+                                    <div key={group.vendor_id} className={`border rounded-md overflow-hidden ${isDisabled ? "opacity-50" : ""}`}>
                                         <div className="bg-gray-50 p-3 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <Checkbox
+                                                <SingleCheckbox
                                                     checked={allSelected}
-                                                    onChange={() => {
-                                                        if (!isDisabled) {
-                                                            handleSelectAllVendor(group.vendor_id, group.items)
-                                                        }
-                                                    }}
+                                                    onChange={() => !isDisabled && handleSelectAllVendor(group.vendor_id, group.items)}
                                                     disabled={isDisabled && !allSelected}
-                                                    className="border-[#D2B48C] data-[state=checked]:bg-[#D2B48C] data-[state=checked]:text-white"
                                                 />
                                                 <h3 className="font-medium">Nhà cung cấp {group.vendor_id}</h3>
                                             </div>
                                             <span className="text-sm text-muted-foreground">{group.items.length} dịch vụ</span>
                                         </div>
 
-                                        {/* Vendor items */}
                                         <div className="divide-y">
                                             {group.items.map((item) => {
                                                 const isSelected = selectedItems.includes(item.id)
 
                                                 return (
                                                     <div key={item.id} className="flex items-center gap-4 p-4">
-                                                        <div className="flex items-center h-full">
-                                                            <Checkbox
-                                                                checked={isSelected}
-                                                                onChange={() => {
-                                                                    if (!isDisabled) {
-                                                                        handleItemSelect(item.id, item.vendor_id)
-                                                                    }
-                                                                }}
-                                                                disabled={isDisabled && !isSelected}
-                                                                className="border-[#D2B48C] data-[state=checked]:bg-[#D2B48C] data-[state=checked]:text-white"
-                                                            />
-                                                        </div>
-
+                                                        <SingleCheckbox
+                                                            checked={isSelected}
+                                                            onChange={() => !isDisabled && handleItemSelect(item.id, item.vendor_id)}
+                                                            disabled={isDisabled && !isSelected}
+                                                        />
                                                         <div className="relative h-20 w-20 overflow-hidden rounded-md border">
-                                                            <Image
-                                                                src={item.img || "/placeholder.svg"}
-                                                                alt={item.name}
-                                                                fill
-                                                                className="object-cover"
-                                                            />
+                                                            <Image src={item.img || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
                                                         </div>
-
                                                         <div className="flex flex-1 flex-col justify-between">
                                                             <div className="flex justify-between">
                                                                 <div>
