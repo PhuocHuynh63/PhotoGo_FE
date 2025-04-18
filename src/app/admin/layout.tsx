@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import AdminStaffHeader from '@components/Organisms/AdminStaffHeader'
 import Sidebar, { SidebarItem } from '@components/Organisms/Sidebar'
 import { ROUTES } from '@routes'
 import { Toaster } from 'react-hot-toast'
-import BackToTop from '@components/Atoms/BackToTop'
+import { TooltipProvider } from '@components/Molecules/Tooltip'
+
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -13,7 +14,6 @@ export default function AdminLayout({
 }>) {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [, setIsMobile] = useState(false)
-  const mainRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -31,24 +31,13 @@ export default function AdminLayout({
     }
   }, [])
 
-  // Force a scroll event to initialize the BackToTop component
-  useEffect(() => {
-    if (mainRef.current) {
-      // Trigger a scroll event after a short delay to ensure the component is mounted
-      setTimeout(() => {
-        const scrollEvent = new Event('scroll')
-        mainRef.current?.dispatchEvent(scrollEvent)
-      }, 500)
-    }
-  }, [mainRef])
-
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed)
   }
 
   const adminNavItems: SidebarItem[] = [
     {
-      title: 'TRANG CHỦ',
+      title: 'TỔNG QUAN',
       path: ROUTES.ADMIN.DASHBOARD,
       icon: 'LayoutDashboard'
     },
@@ -57,9 +46,14 @@ export default function AdminLayout({
       icon: 'Users',
       children: [
         {
-          title: 'DANH SÁCH',
-          path: ROUTES.ADMIN.USER_MANAGEMENT.LIST,
-          icon: 'List'
+          title: 'KHÁCH HÀNG',
+          path: ROUTES.ADMIN.USER_MANAGEMENT.CUSTOMER_LIST,
+          icon: 'User'
+        },
+        {
+          title: 'NHÂN VIÊN',
+          path: ROUTES.ADMIN.USER_MANAGEMENT.STAFF_LIST,
+          icon: 'UserCog'
         }
       ]
     },
@@ -79,23 +73,43 @@ export default function AdminLayout({
       icon: 'Package',
       children: [
         {
-          title: 'DANH SÁCH',
+          title: 'DANH SÁCH GÓI DỊCH VỤ',
           path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.LIST,
           icon: 'List'
+        },
+        {
+          title: 'PHÊ DUYỆT DỊCH VỤ MỚI',
+          path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.APPROVAL,
+          icon: 'CheckCircle'
+        },
+        {
+          title: 'CONCEPT TRONG GÓI DỊCH VỤ',
+          path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.CONCEPTS,
+          icon: 'Lightbulb'
+        },
+        {
+          title: 'THẺ PHONG CÁCH DỊCH VỤ',
+          path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.STYLE_TAGS,
+          icon: 'Tag'
+        },
+        {
+          title: 'DANH MỤC NHÀ CUNG CẤP',
+          path: ROUTES.ADMIN.SERVICE_PACKAGE_MANAGEMENT.VENDOR_CATEGORIES,
+          icon: 'FolderTree'
         }
       ]
     },
     {
-      title: 'QUẢN LÝ ĐƠN HÀNG',
+      title: 'QUẢN LÝ ĐẶT LỊCH',
       icon: 'Calendar',
       children: [
         {
-          title: 'DANH SÁCH',
+          title: 'TẤT CẢ ĐẶT LỊCH',
           path: ROUTES.ADMIN.BOOKING_MANAGEMENT.LIST,
           icon: 'List'
         },
         {
-          title: 'TRANH CHẤP',
+          title: 'XỬ LÝ TRANH CHẤP',
           path: ROUTES.ADMIN.BOOKING_MANAGEMENT.DISPUTES,
           icon: 'AlertTriangle'
         }
@@ -112,54 +126,28 @@ export default function AdminLayout({
         },
         {
           title: 'GIAO DỊCH',
-          path: ROUTES.ADMIN.FINANCE.TRANSACTION,
+          path: ROUTES.ADMIN.FINANCE.TRANSACTIONS,
           icon: 'ArrowLeftRight'
         },
         {
-          title: 'HÓA ĐƠN',
-          path: ROUTES.ADMIN.FINANCE.INVOICE,
-          icon: 'Receipt'
-        },
-        {
-          title: 'DOANH THU',
-          path: ROUTES.ADMIN.FINANCE.REVENUE,
-          icon: 'TrendingUp'
-        },
-        {
-          title: 'THANH TOÁN',
-          path: ROUTES.ADMIN.FINANCE.PAYOUT,
+          title: 'CHI TRẢ CHO VENDOR',
+          path: ROUTES.ADMIN.FINANCE.VENDOR_PAYMENTS,
           icon: 'CreditCard'
         },
         {
           title: 'HOÀN TIỀN',
-          path: ROUTES.ADMIN.FINANCE.REFUND,
+          path: ROUTES.ADMIN.FINANCE.REFUNDS,
           icon: 'RefreshCcw'
-        }
-      ]
-    },
-    {
-      title: 'GÓI ĐĂNG KÝ',
-      icon: 'Repeat',
-      children: [
-        {
-          title: 'GÓI DỊCH VỤ',
-          path: ROUTES.ADMIN.SUBCRIPTIONS.PLANS,
-          icon: 'Layers'
         },
         {
-          title: 'GÓI KHÁCH HÀNG',
-          path: ROUTES.ADMIN.SUBCRIPTIONS.CUSTOMER_PLAN,
-          icon: 'Users'
+          title: 'VÍ',
+          path: ROUTES.ADMIN.FINANCE.WALLET,
+          icon: 'Wallet'
         },
         {
-          title: 'GÓI NHÀ CUNG CẤP',
-          path: ROUTES.ADMIN.SUBCRIPTIONS.VENDOR_PLAN,
-          icon: 'Store'
-        },
-        {
-          title: 'LỊCH SỬ THANH TOÁN',
-          path: ROUTES.ADMIN.SUBCRIPTIONS.BILLING_LOGS,
-          icon: 'FileText'
+          title: 'CÀI ĐẶT TÀI CHÍNH',
+          path: ROUTES.ADMIN.FINANCE.SETTINGS,
+          icon: 'Settings'
         }
       ]
     },
@@ -169,23 +157,49 @@ export default function AdminLayout({
       children: [
         {
           title: 'CHIẾN DỊCH',
-          path: ROUTES.ADMIN.MARKETING.CAMPAIGN,
+          path: ROUTES.ADMIN.MARKETING.CAMPAIGNS,
           icon: 'Target'
         },
         {
-          title: 'KHUYẾN MÃI',
-          path: ROUTES.ADMIN.MARKETING.PROMOTION,
-          icon: 'Tag'
-        },
-        {
-          title: 'NHÀ CUNG CẤP NỔI BẬT',
-          path: ROUTES.ADMIN.MARKETING.FEATURED_VENDOR,
-          icon: 'Award'
+          title: 'VOUCHERS',
+          path: ROUTES.ADMIN.MARKETING.VOUCHERS,
+          icon: 'Ticket'
         },
         {
           title: 'KHUYẾN MÃI THEO MÙA',
           path: ROUTES.ADMIN.MARKETING.SEASONAL_PROMOS,
           icon: 'Calendar'
+        },
+        {
+          title: 'VENDOR NỔI BẬT',
+          path: ROUTES.ADMIN.MARKETING.FEATURED_VENDORS,
+          icon: 'Award'
+        },
+        {
+          title: 'LOYALTY',
+          path: ROUTES.ADMIN.MARKETING.LOYALTY,
+          icon: 'Heart'
+        }
+      ]
+    },
+    {
+      title: 'SUBSCRIPTION',
+      icon: 'Repeat',
+      children: [
+        {
+          title: 'GÓI KHÁCH HÀNG',
+          path: ROUTES.ADMIN.SUBSCRIPTIONS.CUSTOMER_PLANS,
+          icon: 'Users'
+        },
+        {
+          title: 'GÓI VENDOR',
+          path: ROUTES.ADMIN.SUBSCRIPTIONS.VENDOR_PLANS,
+          icon: 'Store'
+        },
+        {
+          title: 'LỊCH SỬ THANH TOÁN',
+          path: ROUTES.ADMIN.SUBSCRIPTIONS.PAYMENT_HISTORY,
+          icon: 'FileText'
         }
       ]
     },
@@ -201,46 +215,55 @@ export default function AdminLayout({
       ]
     },
     {
-      title: 'CSKH',
+      title: 'HỖ TRỢ KHÁCH HÀNG',
       icon: 'HeadphonesIcon',
       children: [
         {
-          title: 'YÊU CẦU HỖ TRỢ',
-          path: ROUTES.ADMIN.CUSTOMER_SUPPORT.TICKETS,
+          title: 'DANH SÁCH YÊU CẦU',
+          path: ROUTES.ADMIN.CUSTOMER_SUPPORT.REQUESTS,
           icon: 'Ticket'
+        },
+        {
+          title: 'LỊCH SỬ HỖ TRỢ',
+          path: ROUTES.ADMIN.CUSTOMER_SUPPORT.HISTORY,
+          icon: 'History'
         }
       ]
     },
     {
-      title: 'NỘI DUNG',
+      title: 'QUẢN LÝ NỘI DUNG',
       icon: 'FileText',
       children: [
         {
           title: 'BLOG',
           path: ROUTES.ADMIN.CONTENT_MANAGEMENT.BLOG,
           icon: 'BookOpen'
+        },
+        {
+          title: 'BANNER',
+          path: ROUTES.ADMIN.CONTENT_MANAGEMENT.BANNERS,
+          icon: 'Image'
         }
       ]
     }
   ]
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar
-        items={adminNavItems}
-        isCollapsed={isSidebarCollapsed}
-        toggleCollapse={toggleSidebar}
-      />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminStaffHeader userRole="admin" userName="Admin User" />
-        <main className="flex-1 overflow-y-auto p-4 relative" ref={mainRef}>
-          <Toaster />
-          {children}
-        </main>
-        {/* Place BackToTop outside the scrollable container but still within the layout */}
-        <BackToTop containerRef={mainRef} />
+    <TooltipProvider>
+      <div className="flex h-screen bg-gray-50">
+        <Sidebar
+          items={adminNavItems}
+          isCollapsed={isSidebarCollapsed}
+          toggleCollapse={toggleSidebar}
+        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AdminStaffHeader userRole="admin" userName="Admin User" />
+          <main className="flex-1 overflow-y-auto p-4">
+            <Toaster />
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   )
 }
-
