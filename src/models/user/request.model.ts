@@ -17,7 +17,7 @@ export type IUserLoginRequest = z.TypeOf<typeof UserLoginRequest>;
  * @param password - Password of user
  */
 export const UserRegisterRequest = z.object({
-    fullname: z.string().min(1, 'Họ tên không được bỏ trống').max(50, 'Họ tên không được quá 50 ký tự'),
+    fullName: z.string().min(1, 'Họ tên không được bỏ trống').max(50, 'Họ tên không được quá 50 ký tự'),
     email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
     passwordHash: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
     phoneNumber: z.string()

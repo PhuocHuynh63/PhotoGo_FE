@@ -15,3 +15,4 @@ export const BackendResponseModel = <T extends z.ZodTypeAny>(dataModel: T) =>
             path: [],
         }
     );
+export type IBackendResponse<T extends z.ZodTypeAny> = z.infer<ReturnType<typeof BackendResponseModel<T>>>;

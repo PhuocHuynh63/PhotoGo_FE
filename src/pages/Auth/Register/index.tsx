@@ -11,8 +11,18 @@ import Button from "@components/Atoms/Button"
 import { IUserRegisterRequest, UserRegisterRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
+import authService from "@services/auth"
+import toast from "react-hot-toast"
+import { IUserRegisterResponse } from "@models/user/response.model"
+import { useRouter } from "next/navigation"
 
 const RegisterPage = () => {
+
+    //#region define values
+    const router = useRouter()
+    //#endregion
+
+
     //#region Handle form submit
     const {
         register,
@@ -21,7 +31,23 @@ const RegisterPage = () => {
     } = useForm<IUserRegisterRequest>({
         resolver: zodResolver(UserRegisterRequest),
     })
-    const onSubmit = (data: IUserRegisterRequest) => console.log(data)
+    const onSubmit = async (data: IUserRegisterRequest) => {
+        const res = await authService.register(data) as IUserRegisterResponse
+        console.log(res.message);
+        if (res.statusCode === 201) {
+            router.push(ROUTES.AUTH.VERIFY_OTP + `?purpose=activate-account`)
+            localStorage.setItem('email', data.email);
+            toast.success(res.message || "Đăng ký thành công. Vui lofng kiểm tra email để xác thực tài khoản")
+        } else {
+            toast.error(res.message || "Đăng ký thất bại")
+        }
+
+        // const resLogin = await signIn("credentials", {
+        //     redirect: false,
+        //     email: data.email,
+        //     password: data.passwordHash,
+        // }) 
+    }
     //#endregion
 
     const initial = { opacity: 0, x: -20 }
@@ -95,16 +121,16 @@ const RegisterPage = () => {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className={"flex flex-col space-y-2"}>
-                        <label htmlFor="fullname" className="text-sm font-medium">
+                        <label htmlFor="fullName" className="text-sm font-medium">
                             Họ tên
                         </label>
                         <Input
-                            id="fullname"
+                            id="fullName"
                             placeholder="PhotoGo"
-                            {...register("fullname")}
-                            className={errors.fullname ? 'input-error' : ''}
+                            {...register("fullName")}
+                            className={errors.fullName ? 'input-error' : ''}
                         />
-                        {errors.fullname && <span className="text-red-500 text-sm">{errors.fullname.message}</span>}
+                        {errors.fullName && <span className="text-red-500 text-sm">{errors.fullName.message}</span>}
                     </div>
 
                     <div className={"flex flex-col space-y-2"}>
