@@ -22,7 +22,6 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import Checkbox from "@components/Atoms/Checkbox";
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor(
@@ -64,6 +63,42 @@ export default function Header({ user }: PAGES.IHeader) {
             price: 11111,
             img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
             vendor_id: 1,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 3,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 4,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 1,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 5,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 2,
+            duration: 120,
+            booked_date: new Date("2023-01-01"),
+        },
+        {
+            id: 6,
+            name: "string",
+            price: 11111,
+            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
+            vendor_id: 3,
             duration: 120,
             booked_date: new Date("2023-01-01"),
         },
@@ -228,8 +263,9 @@ export default function Header({ user }: PAGES.IHeader) {
                                             </span>
                                         </div>
                                     </motion.div>
+
                                     <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={cart || []} />
-                                    {/* <Checkbox className="bg-red-600 text-green-600" options={[{ key: "" }]} /> */}
+
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <motion.div

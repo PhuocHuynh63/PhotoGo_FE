@@ -14,7 +14,8 @@ export default function Checkbox({
 
     return (
         <div className={`flex ${direction === 'horizontal' ? 'flex-row gap-4' : 'flex-col gap-2'}`}>
-            {options?.map((option, index) => (
+
+            {options && options.map((option, index) => (
                 <label
                     key={index}
                     className="flex items-center gap-2 cursor-pointer"
@@ -36,7 +37,9 @@ export default function Checkbox({
                     </RadixCheckbox.Root>
                     <span>{option.key}</span>
                 </label>
-            ))}
+            ))
+            }
+
         </div>
     );
 }
