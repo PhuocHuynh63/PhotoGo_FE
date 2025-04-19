@@ -23,7 +23,7 @@ import { AuthError } from "@constants/errors"
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
-    localStorage.removeItem("otp")
+    useRemoveLocalStorage("otp")
     const router = useRouter()
     //#endregion
 
@@ -113,6 +113,12 @@ const LoginPage = () => {
     }, [countdown, emailToRedirect])
     //#endregion
 
+
+    const handleGoogleLogin = () => {
+        signIn("google", {
+            callbackUrl: `${window.location.origin}${ROUTES.PUBLIC.HOME}`,
+        })
+    }
 
     return (
         <>
