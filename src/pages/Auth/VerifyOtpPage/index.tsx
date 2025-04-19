@@ -41,7 +41,8 @@ const VerifyOtpPage = () => {
     const onSubmit = async (data: IUserOTPRequest) => {
         setIsLoading(true)
         const { email, otp } = data
-        const res = await authService.verifyOtp(email, otp) as IBackendResponse<any>
+        const res = await authService.activateAccount(email, otp) as IBackendResponse<any>
+
         if (res.statusCode === 201) {
             if (purpose === 'reset-password') {
                 router.push(ROUTES.AUTH.RESET_PASSWORD)

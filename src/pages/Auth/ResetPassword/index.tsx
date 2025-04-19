@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation"
 import { useGetLocalStorage } from "@utils/hooks/localStorage"
 import { useEffect } from "react"
 import toast from "react-hot-toast"
+import authService from "@services/auth"
 
 const ResetPassswordPage = () => {
     //#region define variables
@@ -34,6 +35,7 @@ const ResetPassswordPage = () => {
     })
 
     const onSubmit = (data: IUserResetPasswordRequest) => {
+        const res = authService.resetPassword(data) as Promise<any>
         localStorage.removeItem('email');
         console.log(data);
         toast.success('Đặt lại mật khẩu thành công')

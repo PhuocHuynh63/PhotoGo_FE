@@ -8,12 +8,15 @@ const authService = {
     register: async (data: IUserRegisterRequest) => {
         return await http.post("/auth/register", data)
     },
+    activateAccount: async (email: string, otp: string) => {
+        return await http.post(`/auth/activate?email=${email}&otp=${otp}`, {})
+    },
     sendOtp: async (email: string) => {
         return await http.post(`/mail/send-otp?email=${email}`, {})
     },
-    verifyOtp: async (email: string, otp: string) => {
-        return await http.post(`/mail/verify-otp?email=${email}&otp=${otp}`, {})
-    }
+    resetPassword: async (data: { email: string, newPassword: string }) => {
+        return await http.post("/auth/reset-password", data)
+    },
 }
 
 
