@@ -8,9 +8,9 @@ const configProject = configShema.safeParse({
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
 })
 
-if (!configProject.success) {
-    throw new Error('The value of the environment variable is not valid')
-}
+// if (!configProject.success) {
+//     throw new Error('The value of the environment variable is not valid')
+// }
 
 const envConfig = configProject.data
 export default envConfig

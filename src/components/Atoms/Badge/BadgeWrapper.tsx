@@ -1,5 +1,5 @@
 import { Badge } from "@/components/Atoms/Badge/index"
-import { cn } from "@helpers/CN"
+import { cn } from "@utils/helpers/CN"
 import type { ReactNode } from "react"
 
 type BadgeType = "rank" | "status" | "subscription" | "auth"
@@ -89,7 +89,6 @@ export function BadgeWrapper({
   count,
   variant = "outline",
 }: BadgeWrapperProps) {
-
   if (children) {
     return (
       <Badge variant={variant} className={cn("flex items-center gap-1.5", className)}>
@@ -102,11 +101,14 @@ export function BadgeWrapper({
     )
   }
 
-
   if (type && value && badgeStyles[type] && badgeStyles[type][value]) {
     return (
       <Badge variant={variant} className={cn(badgeStyles[type][value], className)}>
+        {icon && <span className="shrink-0 mr-1">{icon}</span>}
         {badgeLabels[type][value]}
+        {count !== undefined && (
+          <span className="ml-1 rounded-full bg-white bg-opacity-20 px-1.5 py-0.5 text-xs font-semibold">{count}</span>
+        )}
       </Badge>
     )
   }

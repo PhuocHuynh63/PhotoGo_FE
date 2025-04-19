@@ -47,6 +47,7 @@ declare namespace ICOMPONENTS {
         spinIcon?: boolean;
         className?: string;
         variant?: string;
+        onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
         ref?: React.RefObject<HTMLButtonElement>;
     }
 
@@ -62,9 +63,17 @@ declare namespace ICOMPONENTS {
     }
 
     export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement>, BaseProps {
-        label?: string;
+        label?: string | number;
         labelClassName?: string;
-        options?: string[];
+        options: SelectOption[];
+        icon?: string;
+        placeHolder?: string;
+        value?: string | number;
+        selectIcon?: string;
+        className?: string;
+        style?: React.CSSProperties;
+        placeHolder?: string;
+        onValueChange?: (value: string) => void;
     }
 
     export interface LucideIconProps extends IconProps {
@@ -84,11 +93,17 @@ declare namespace ICOMPONENTS {
     export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
         label?: string;
         checked?: boolean;
-        onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+        direction?: "vertical" | "horizontal";
+        onChange?: (event: React.ChangeEvent<HTMLInputElement>, key: string) => void;
+        options?: { key: string }[];
+        value?: string[] | number[] | boolean[] | boolean;
+        mode?: "single" | "multiple";
+        groupValues?: string | number | boolean;
+        onGroupChange?: (value: string | number | boolean) => void;
     }
 
     export interface Option {
-        label: string;
+        label: string | React.ReactNode;
         value: string;
     }
 
@@ -329,7 +344,7 @@ declare namespace ICOMPONENTS {
         change?: string
         changeIcon?: ReactNode
         changeColor?: string
-        layout?: "header" | "side" 
+        layout?: "header" | "side"
         className?: string
     };
 
@@ -393,4 +408,36 @@ declare namespace ICOMPONENTS {
         showControls?: boolean
     }
 
+    interface ServiceType {
+        key: string | number
+    }
+    interface VendorType {
+        key: string | number
+    }
+    interface AddressType {
+        key: string
+    }
+
+
+
+    interface ServiceCard {
+        id: number
+        name: string
+        type: string[]
+        district: string
+        city: string
+        rating: number
+        reviewCount: number
+        priceRange: [number, number]
+        categories: string[]
+        image: string
+        available: boolean
+        featured: boolean
+        available_dates: string[]
+    }
+
+    interface SelectOption {
+        value: string | number
+        icon?: string
+    }
 }

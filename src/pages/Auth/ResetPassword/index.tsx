@@ -14,10 +14,14 @@ import { useRouter } from "next/navigation"
 import { useGetLocalStorage } from "@utils/hooks/localStorage"
 import { useEffect } from "react"
 import toast from "react-hot-toast"
+import authService from "@services/auth"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
+import { signIn } from "next-auth/react"
 
 const ResetPassswordPage = () => {
     //#region define variables
     const { value, isReady } = useGetLocalStorage('email')
+    const { value: otp } = useGetLocalStorage('otp')
     const router = useRouter();
     //#endregion
 
@@ -33,11 +37,31 @@ const ResetPassswordPage = () => {
         resolver: zodResolver(UserResetPasswordRequest),
     })
 
-    const onSubmit = (data: IUserResetPasswordRequest) => {
+    const onSubmit = async (data: IUserResetPasswordRequest) => {
+        //#region api reset password
+        const res = await authService.resetPassword(data) as IBackendResponse<any>
+
+        if (res.statusCode !== 201) {
+            toast.error(res.message || 'Đặt lại mật khẩu thất bại')
+            return
+        }
         localStorage.removeItem('email');
-        console.log(data);
+        localStorage.removeItem('otp');
         toast.success('Đặt lại mật khẩu thành công')
+        //#endregion
+
+        //#region login after reset password
+        const resLogin = await signIn('credentials', {
+            email: data.email,
+            password: data.password,
+            redirect: false,
+        })
+        if (resLogin?.error) {
+            toast.error(resLogin?.error || 'Đăng nhập thất bại')
+            return
+        }
         router.push(ROUTES.PUBLIC.HOME)
+        //#endregion
     }
     //#endregion
 
@@ -47,7 +71,7 @@ const ResetPassswordPage = () => {
        * @returns 
        */
     const handleConfirmPassword = (value: string) => {
-        if (value !== watch('newPassword')) {
+        if (value !== watch('password')) {
             return 'Password does not match';
         }
         return true;
@@ -62,8 +86,9 @@ const ResetPassswordPage = () => {
             router.push(ROUTES.AUTH.FORGOT_PASSWORD)
         } else {
             setValue('email', value)
+            setValue('otp', otp || '')
         }
-    }, [isReady, value, router])
+    }, [isReady, value, otp, router])
     //#endregion
 
     return (
@@ -86,30 +111,33 @@ const ResetPassswordPage = () => {
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            {/* OTP */}
+                            <Input type="hidden" defaultValue={otp || ''} {...register('otp')} />
+
                             {/* Email */}
                             <Input type="hidden" defaultValue={value || ''} {...register('email')} />
 
                             {/* New Password */}
                             <div className="flex flex-col space-y-2  mb-2">
-                                <label htmlFor="newPassword" className="text-sm font-medium">
+                                <label htmlFor="password" className="text-sm font-medium">
                                     Mật khẩu mới
                                 </label>
 
-                                <div className="flex flex-col space-y-2">
+                                <div className="flex flex-col space-y-2 mb-2">
                                     <Input
-                                        id="newPassword"
+                                        id="password"
                                         type="password"
                                         togglePassword={true}
                                         placeholder="Nhập mật khẩu mới"
-                                        {...register("newPassword")}
-                                        className={errors.newPassword ? 'input-error' : ''}
+                                        {...register("password")}
+                                        className={errors.password ? 'input-error' : ''}
                                     />
-                                    {errors.newPassword && <span className="text-red-500 text-sm">{errors.newPassword?.message}</span>}
+                                    {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
                                 </div>
                             </div>
 
                             {/* Confirm Password */}
-                            <div className="flex flex-col space-y-2 mb-2">
+                            <div className="flex flex-col space-y-2 mb-4">
                                 <label htmlFor="confirmPassword" className="text-sm font-medium">
                                     Xác nhận mật khẩu
                                 </label>
@@ -119,7 +147,7 @@ const ResetPassswordPage = () => {
                                         id="confirmPassword"
                                         type="password"
                                         togglePassword={true}
-                                        placeholder="Nhập mật khẩu mới"
+                                        placeholder="Xác nhận mật khẩu mới"
                                         {...register("confirmPassword", {
                                             required: true,
                                             validate: handleConfirmPassword,

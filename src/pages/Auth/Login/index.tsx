@@ -16,15 +16,20 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
+import authService from "@services/auth"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
+import { AuthError } from "@constants/errors"
 
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
+    useRemoveLocalStorage("otp")
     const router = useRouter()
     //#endregion
 
 
     //#region Handle form submit
+    const [loading, setLoading] = useState<boolean>(false)
     const {
         register,
         handleSubmit,
@@ -33,30 +38,53 @@ const LoginPage = () => {
         resolver: zodResolver(UserLoginRequest),
     })
     const onSubmit = async (data: IUserLoginRequest) => {
-        const res = await signIn("credentials", {
-            redirect: false,
-            ...data,
-        })
-        console.log(res);
+        try {
+            setLoading(true);
 
-        switch (res?.status) {
-            case 200:
-                router.push(ROUTES.PUBLIC.HOME)
-                break;
-            case 400:
-                toast.error("Tài khoản hoặc mật khẩu không chính xác")
-                break;
-            case 403:
-                const delay = 3
-                toast.error(`Tài khoản của bạn chưa được kích hoạt. Chuyển hướng sau ${delay} giây...`)
+            const res = await signIn("credentials", {
+                redirect: false,
+                ...data,
+            });
+
+            //#region Handle response
+            const status = res?.status;
+            const error = res?.error;
+            const delay = 3;
+
+            //#region Handle success
+            if (status === 200) {
+                router.push(ROUTES.PUBLIC.HOME);
+                router.refresh();
+                return;
+            }
+            //#endregion
+
+            //#region Handle error
+            if (error === AuthError.INACTIVE) {
+                toast.error("Email chưa được xác thực. Vui lòng kiểm tra email để kích hoạt tài khoản. Chuyển hướng đến trang xác thực trong " + delay + " giây.");
+                const resSendOtp = await authService.sendOtp(data.email) as IBackendResponse<any>;
+                if (resSendOtp.statusCode !== 201) {
+                    toast.error(resSendOtp.message || "Gửi mã OTP thất bại");
+                    return;
+                }
+
                 setEmailToRedirect(data.email)
                 setCountdown(delay)
-                break;
-            case 500:
-            default:
-                toast.error("Có lỗi xảy ra, vui lòng thử lại sau")
+                return;
+            } else {
+                toast.error(res?.error || "Đăng nhập thất bại");
+                return;
+            }
+            //#endregion
+            //#endregion
+
+        } catch (err) {
+            toast.error("Đã xảy ra lỗi, vui lòng thử lại");
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
     //#endregion
 
 
@@ -86,6 +114,12 @@ const LoginPage = () => {
     //#endregion
 
 
+    const handleGoogleLogin = () => {
+        signIn("google", {
+            callbackUrl: `${window.location.origin}${ROUTES.PUBLIC.HOME}`,
+        })
+    }
+
     return (
         <>
             <TransitionWrapper className="w-full max-w-6xl bg-white rounded-xl overflow-hidden shadow-xl flex flex-col md:flex-row">
@@ -93,8 +127,8 @@ const LoginPage = () => {
                 {/* Left side - Login form */}
                 <div className="w-full md:w-1/2 p-8 md:p-12">
                     {/* Center logo */}
-                    <Link href={ROUTES.AUTH.LOGIN} className="flex justify-center mb-10">
-                        <img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" alt="" />
+                    <Link href={ROUTES.AUTH.LOGIN} className="flex justify-center mb-10 w-full h-12 relative">
+                        <Image src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg" fill alt="" />
                     </Link>
 
                     <h1 className="text-2xl font-bold mb-2">Đăng nhập</h1>
@@ -137,7 +171,7 @@ const LoginPage = () => {
                             </div>
                         </div>
 
-                        <Button type="submit" style={{ width: "100%" }}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={loading} disabled={loading}>
                             Đăng nhập
                         </Button>
                     </form>
@@ -240,7 +274,7 @@ const LoginPage = () => {
                     </div>
                 </div>
                 {/* --- End of MODIFIED Right side --- */}
-            </TransitionWrapper>
+            </TransitionWrapper >
         </>
     )
 }

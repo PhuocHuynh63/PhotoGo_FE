@@ -16,6 +16,7 @@ export default React.forwardRef<HTMLButtonElement, ICOMPONENTS.ButtonProps>(func
         spinIcon = false,
         disabled = false,
         className = '',
+        onClick,
         ...rest
     }: ICOMPONENTS.ButtonProps,
     ref
@@ -50,8 +51,9 @@ export default React.forwardRef<HTMLButtonElement, ICOMPONENTS.ButtonProps>(func
     return (
         <button
             ref={ref}
-            className={`${styles.button} ${className}`}
+            className={`${styles.button} ${className} `}
             style={style}
+            onClick={disabled ? undefined : onClick}
             disabled={isLoading || disabled}
             {...buttonProps}
         >

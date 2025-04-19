@@ -2,7 +2,6 @@
 
 import Button from "@components/Atoms/Button"
 import ClearButton from "@components/Atoms/ClearButton"
-import Header from "@components/Organisms/Header"
 import Image from "next/image"
 import { useEffect, useState, useRef } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
@@ -10,6 +9,7 @@ import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
 import { motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
+import { IVendor } from "@models/vendor/common.model"
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
@@ -113,7 +113,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = () => {
+const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -121,8 +121,12 @@ const HomePage = () => {
     const [howItWorksAnimation, setHowItWorksAnimation] = useState(false)
     const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
     const [ctaAnimation, setCtaAnimation] = useState(false)
-
+    const [vendorData, setVendorData] = useState<IVendor[]>([])
     useEffect(() => {
+        console.log(vendors)
+        setVendorData(vendors)
+
+        console.log(vendorData)
         const handleScroll = () => {
             setScrollY(window.scrollY)
         }
@@ -157,11 +161,12 @@ const HomePage = () => {
         }
     }, [])
 
+
+
     const zoomLevel = 1 + scrollY / 10000
     return (
         <div>
             {/* Hero section */}
-            <Header />
             <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
                 <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                     <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
@@ -249,7 +254,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/photographers" passHref>
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">
                                     Xem tất cả Photographers
                                 </ClearButton>
                             </Link>
@@ -291,7 +296,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/studios" passHref>
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">Đặt lịch Studio</ClearButton>
                             </Link>
                         </motion.div>
 
@@ -331,7 +336,7 @@ const HomePage = () => {
                                 </li>
                             </ul>
                             <Link href="/makeup-artists" passHref className="w-full">
-                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
+                                <ClearButton iconColor="var(--orange)" iconSize={16} icon="MoveRight" iconPosition="right" className="border border-primary text-lg text-primary mt-auto w-full">Đặt lịch với Makeup Artist</ClearButton>
                             </Link>
                         </motion.div>
                     </div>

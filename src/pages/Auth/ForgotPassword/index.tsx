@@ -12,6 +12,10 @@ import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { ArrowLeft, Mail } from "lucide-react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import userService from "@services/user"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
+import authService from "@services/auth"
+import { useState } from "react"
 
 const ForgotPasswordPage = () => {
     const router = useRouter();
@@ -25,15 +29,37 @@ const ForgotPasswordPage = () => {
         resolver: zodResolver(UserForgotPasswordRequest),
     })
 
-    const onSubmit = (data: IUserForgotPasswordRequest) => {
-        router.push(ROUTES.AUTH.VERIFY_OTP + `?purpose=reset-password`);
-        localStorage.setItem('email', data.email);
-        toast.success("Chúng tôi đã gửi mã OTP đến email của bạn. Vui lòng kiểm tra email để tiếp tục đặt lại mật khẩu.", {
-            duration: 5000,
-            position: "top-right",
-        });
-        console.log(data);
-    }
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const onSubmit = async (data: IUserForgotPasswordRequest) => {
+        try {
+            setIsLoading(true);
+
+            const res = await userService.getAUserByEmail(data.email) as IBackendResponse<any>;
+            if (!res.statusCode || ![200, 201].includes(res.statusCode)) {
+                toast.error(res.message || "Email không tồn tại trong hệ thống");
+                return;
+            }
+
+            const otpRes = await authService.sendOtp(data.email) as IBackendResponse<any>;
+            if (otpRes.statusCode !== 201) {
+                toast.error(otpRes.message || "Gửi mã OTP thất bại");
+                return;
+            }
+
+            localStorage.setItem('email', data.email);
+            toast.success("Chúng tôi đã gửi mã OTP đến email của bạn. Vui lòng kiểm tra email để tiếp tục đặt lại mật khẩu.", {
+                duration: 5000,
+                position: "top-right",
+            });
+
+            router.push(`${ROUTES.AUTH.VERIFY_OTP}?purpose=reset-password`);
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     //#endregion
 
     return (
@@ -65,7 +91,7 @@ const ForgotPasswordPage = () => {
                             {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
                         </div>
 
-                        <Button type="submit" style={{ width: "100%" }}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={isLoading} disabled={isLoading}>
                             Tiếp tục
                         </Button>
                     </form>

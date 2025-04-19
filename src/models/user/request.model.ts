@@ -17,10 +17,10 @@ export type IUserLoginRequest = z.TypeOf<typeof UserLoginRequest>;
  * @param password - Password of user
  */
 export const UserRegisterRequest = z.object({
-    fullname: z.string().min(1, 'Họ tên không được bỏ trống').max(50, 'Họ tên không được quá 50 ký tự'),
+    fullName: z.string().min(1, 'Họ tên không được bỏ trống').max(50, 'Họ tên không được quá 50 ký tự'),
     email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
-    password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
-    phone: z.string()
+    passwordHash: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    phoneNumber: z.string()
         .min(10, { message: "Số điện thoại phải từ 10 đến 11 ký tự" })
         .max(11, { message: "Số điện thoại phải từ 10 đến 11 ký tự" }),
 })
@@ -50,10 +50,11 @@ export type IUserOTPRequest = z.TypeOf<typeof UserOTPRequest>;
 
 
 export const UserResetPasswordRequest = z.object({
+    otp: z.string().length(6, 'Mã OTP phải gồm 6 ký tự'),
     email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
-    newPassword: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
     confirmPassword: z.string().min(1, 'Xác nhận mật khẩu không được bỏ trống'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
+}).refine((data) => data.password === data.confirmPassword, {
     message: 'Mật khẩu không khớp',
     path: ['confirmPassword'],
 })

@@ -15,6 +15,8 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useGetLocalStorage } from "@utils/hooks/localStorage"
+import authService from "@services/auth"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
 
 const VerifyOtpPage = () => {
     //#region define variables
@@ -35,13 +37,38 @@ const VerifyOtpPage = () => {
     } = useForm<IUserOTPRequest>({
         resolver: zodResolver(UserOTPRequest),
     })
-    const onSubmit = (data: IUserOTPRequest) => {
-        console.log(data);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const onSubmit = async (data: IUserOTPRequest) => {
+        try {
+            setIsLoading(true)
+            const { email, otp } = data
 
-        if (purpose === 'reset-password') {
-            router.push(ROUTES.AUTH.RESET_PASSWORD)
-        } else if (purpose === 'activate-account') {
-            router.push(ROUTES.PUBLIC.HOME)
+            if (purpose === 'reset-password') {
+                const res = await authService.verifyOtp(email, otp) as IBackendResponse<any>
+                if (res.statusCode !== 201) {
+                    toast.error(res.message || 'Xác thực OTP thất bại')
+                    setIsLoading(false)
+                    return
+                }
+                localStorage.setItem('otp', otp)
+                toast.success(res.message || 'Xác thực OTP thành công')
+                router.push(ROUTES.AUTH.RESET_PASSWORD)
+            } else if (purpose === 'activate-account') {
+                const res = await authService.activateAccount(email, otp) as IBackendResponse<any>
+
+                if (res.statusCode !== 201) {
+                    toast.error(res.message || 'Xác thực tài khoản thất bại')
+                    setIsLoading(false)
+                    return
+                }
+                toast.success(res.message || 'Xác thực tài khoản thành công')
+                router.push(ROUTES.AUTH.LOGIN)
+            }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.")
+            console.error(error)
+        } finally {
+            setIsLoading(false)
         }
     }
     //#endregion
@@ -68,8 +95,7 @@ const VerifyOtpPage = () => {
 
 
     //#region Countdown timer for OTP resend
-    //TODO: Để 5s cho dễ test, sau này để 60s
-    const [countdown, setCountdown] = useState<number>(5)
+    const [countdown, setCountdown] = useState<number>(0)
     useEffect(() => {
         if (countdown <= 0) return
         const interval = setInterval(() => {
@@ -79,13 +105,15 @@ const VerifyOtpPage = () => {
     }, [countdown])
 
     const handleResendOTP = async () => {
-        try {
-            // await api.sendOtpToEmail(value)
-            toast.success('Đã gửi lại mã OTP')
-            setCountdown(60)
-        } catch (error) {
-            toast.error('Gửi OTP thất bại')
+        setCountdown(60)
+        const res = await authService.sendOtp(value || '') as IBackendResponse<any>
+
+        if (res.statusCode !== 201) {
+            toast.error(res.message || 'Gửi OTP thất bại')
+            return
         }
+
+        toast.success(res.message || 'Gửi OTP thành công')
     }
     //#endregion
 
@@ -153,7 +181,7 @@ const VerifyOtpPage = () => {
 
                             )}
                         </div>
-                        <Button type="submit" style={{ width: "100%" }}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={isLoading} disabled={isLoading}>
                             Tiếp tục
                         </Button>
                     </form>

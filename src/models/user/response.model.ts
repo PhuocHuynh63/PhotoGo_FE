@@ -4,12 +4,31 @@ import { PaginationModel } from "../metadata";
 import { UserModel } from "./common.model";
 
 /**
- * UserModel is a Model for User response
+ * UserModel is a Model for Users response
  */
-export const UserModelResponse = z.object({
+export const UsersModelResponse = z.object({
     meta: PaginationModel,
     results: z.array(UserModel),
 })
+export const Users = BackendResponseModel(UsersModelResponse);
+export type IUsersResponse = z.TypeOf<typeof Users>
+//----------------------End----------------------//
+
+/**
+ * UserModel is a Model for User response
+ */
+export const UserModelResponse = z.object({
+    data: UserModel,
+})
 export const User = BackendResponseModel(UserModelResponse);
-export type IUser = z.TypeOf<typeof User>
+export type IUserResponse = z.TypeOf<typeof User>
+//----------------------End----------------------//
+
+
+/**
+ * UserModel is a Model for User Resigster response
+ */
+export const UserRegisterModelResponse = UserModel
+export const UserRegister = BackendResponseModel(UserRegisterModelResponse);
+export type IUserRegisterResponse = z.TypeOf<typeof UserRegister>
 //----------------------End----------------------//

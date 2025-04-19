@@ -44,7 +44,7 @@ const VendorOverviewPage = () => {
         {/* Packages */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Gói dịch vụ phổ biến</h2>
-          <PackageVendor />
+          <PackageVendor isOverview={true} />
           <div className="mt-6 text-center">
             <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'packges')}`)} className="gap-1 mt-4">
               Xem tất cả gói dịch vụ
