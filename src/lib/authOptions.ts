@@ -1,4 +1,5 @@
 import { ROUTES } from "@/routes";
+import { AuthError } from "@constants/errors";
 import authService from "@services/auth";
 import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -17,10 +18,21 @@ export const authOptions: NextAuthOptions = {
                 const res = await authService.login({
                     email: credentials.email,
                     password: credentials.password,
-                }) as { statusCode: number; data: any };
+                }) as { statusCode: number; data: any; message: string };
 
-                if ((res.statusCode !== 200 && res.statusCode !== 201) || !res.data?.user) {
-                    return null;
+                switch (res.statusCode) {
+                    case 404:
+                        throw new Error(res.message || AuthError.USER_NOT_FOUND);
+                    case 400:
+                        throw new Error(res.message || AuthError.WRONG_CREDENTIALS);
+                    case 401:
+                        throw new Error(res.message || AuthError.INACTIVE);
+                    case 200:
+                    case 201:
+                        break;
+
+                    default:
+                        throw new Error(res.message || "Đăng nhập thất bại");
                 }
                 const user = {
                     id: res.data.user.id,
