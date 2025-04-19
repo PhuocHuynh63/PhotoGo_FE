@@ -39,17 +39,35 @@ const VerifyOtpPage = () => {
     })
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const onSubmit = async (data: IUserOTPRequest) => {
-        setIsLoading(true)
-        const { email, otp } = data
-        const res = await authService.activateAccount(email, otp) as IBackendResponse<any>
+        try {
+            setIsLoading(true)
+            const { email, otp } = data
 
-        if (res.statusCode === 201) {
             if (purpose === 'reset-password') {
+                const res = await authService.verifyOtp(email, otp) as IBackendResponse<any>
+                if (res.statusCode !== 201) {
+                    toast.error(res.message || 'Xác thực OTP thất bại')
+                    setIsLoading(false)
+                    return
+                }
+                toast.success(res.message || 'Xác thực OTP thành công')
                 router.push(ROUTES.AUTH.RESET_PASSWORD)
             } else if (purpose === 'activate-account') {
+                const res = await authService.activateAccount(email, otp) as IBackendResponse<any>
+
+                if (res.statusCode !== 201) {
+                    toast.error(res.message || 'Xác thực tài khoản thất bại')
+                    setIsLoading(false)
+                    return
+                }
                 toast.success(res.message || 'Xác thực tài khoản thành công')
                 router.push(ROUTES.AUTH.LOGIN)
             }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.")
+            console.error(error)
+        } finally {
+            setIsLoading(false)
         }
     }
     //#endregion
