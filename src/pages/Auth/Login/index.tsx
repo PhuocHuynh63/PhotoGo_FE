@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
+import authService from "@services/auth"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
 
 const LoginPage = () => {
     //#region define variables
@@ -39,18 +41,20 @@ const LoginPage = () => {
             redirect: false,
             ...data,
         })
+        console.log(res);
 
         switch (res?.status) {
             case 200:
                 router.push(ROUTES.PUBLIC.HOME)
                 router.refresh();
                 break;
-            case 401:
-                toast.error(res.error)
+            case 400:
+                toast.error(res?.error || "Tài khoản hoặc mật khẩu không đúng")
                 break;
-            case 403:
+            case 401:
                 const delay = 3
                 toast.error(`Tài khoản của bạn chưa được kích hoạt. Chuyển hướng sau ${delay} giây...`)
+                const resSendOtp = await authService.sendOtp(data.email) as IBackendResponse<any>
                 setEmailToRedirect(data.email)
                 setCountdown(delay)
                 break;

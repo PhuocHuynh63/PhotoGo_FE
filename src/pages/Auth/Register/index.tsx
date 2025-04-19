@@ -35,7 +35,7 @@ const RegisterPage = () => {
         const res = await authService.register(data) as IUserRegisterResponse
         console.log(res.message);
         if (res.statusCode === 201) {
-            router.push(ROUTES.AUTH.VERIFY_OTP + `?purpose=activate-account`)
+            router.push(`${ROUTES.AUTH.VERIFY_OTP}?purpose=activate-account`)
             localStorage.setItem('email', data.email);
             toast.success(res.message || "Đăng ký thành công. Vui lofng kiểm tra email để xác thực tài khoản")
         } else {
