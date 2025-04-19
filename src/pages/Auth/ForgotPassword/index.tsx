@@ -91,7 +91,7 @@ const ForgotPasswordPage = () => {
                             {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
                         </div>
 
-                        <Button type="submit" style={{ width: "100%" }} disabled={isLoading}>
+                        <Button type="submit" style={{ width: "100%" }} isLoading={isLoading} disabled={isLoading}>
                             Tiếp tục
                         </Button>
                     </form>

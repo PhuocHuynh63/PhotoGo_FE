@@ -50,10 +50,11 @@ export type IUserOTPRequest = z.TypeOf<typeof UserOTPRequest>;
 
 
 export const UserResetPasswordRequest = z.object({
+    otp: z.string().length(6, 'Mã OTP phải gồm 6 ký tự'),
     email: z.string().min(1, 'Email không được bỏ trống').email('Email không đúng định dạng'),
-    newPassword: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
     confirmPassword: z.string().min(1, 'Xác nhận mật khẩu không được bỏ trống'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
+}).refine((data) => data.password === data.confirmPassword, {
     message: 'Mật khẩu không khớp',
     path: ['confirmPassword'],
 })

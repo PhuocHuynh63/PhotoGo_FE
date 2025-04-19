@@ -23,6 +23,7 @@ import { AuthError } from "@constants/errors"
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
+    localStorage.removeItem("otp")
     const router = useRouter()
     //#endregion
 

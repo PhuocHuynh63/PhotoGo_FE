@@ -1,5 +1,5 @@
 import http from "@configs/fetch"
-import { IUserLoginRequest, IUserRegisterRequest } from "@models/user/request.model"
+import { IUserLoginRequest, IUserRegisterRequest, IUserResetPasswordRequest } from "@models/user/request.model"
 
 const authService = {
     login: async (data: IUserLoginRequest) => {
@@ -15,9 +15,9 @@ const authService = {
         return await http.post(`/mail/send-otp?email=${email}`, {})
     },
     verifyOtp: async (email: string, otp: string) => {
-        return await http.post(`/auth/verify-otp?email=${email}&otp=${otp}`, {})
+        return await http.post(`/mail/verify-otp?email=${email}&otp=${otp}`, {})
     },
-    resetPassword: async (data: { email: string, newPassword: string }) => {
+    resetPassword: async (data: IUserResetPasswordRequest) => {
         return await http.post("/auth/reset-password", data)
     },
 }

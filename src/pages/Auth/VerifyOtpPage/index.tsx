@@ -50,6 +50,7 @@ const VerifyOtpPage = () => {
                     setIsLoading(false)
                     return
                 }
+                localStorage.setItem('otp', otp)
                 toast.success(res.message || 'Xác thực OTP thành công')
                 router.push(ROUTES.AUTH.RESET_PASSWORD)
             } else if (purpose === 'activate-account') {
