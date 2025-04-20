@@ -9,17 +9,17 @@ async function getAUser(id: string) {
     return await userService.getAUser(id);
 }
 
-async function getUserOrders(id: string) {
-    // return await userService.getUserOrders(id);
-}
+// async function getUserOrders(id: string) {
+//     // return await userService.getUserOrders(id);
+// }
 
-async function getUserFavorites(id: string) {
-    // return await userService.getUserFavorites(id);
-}
+// async function getUserFavorites(id: string) {
+//     // return await userService.getUserFavorites(id);
+// }
 
-async function getUserPromotions(id: string) {
-    // return await userService.getUserPromotions(id);
-}
+// async function getUserPromotions(id: string) {
+//     // return await userService.getUserPromotions(id);
+// }
 
 export default async function Profile() {
     const session = await getServerSession(authOptions) as METADATA.ISession;

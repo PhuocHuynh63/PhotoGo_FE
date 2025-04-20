@@ -1,7 +1,6 @@
 import Button from "@components/Atoms/Button";
 import { Card } from "@components/Atoms/Card";
 import { Heart, Star } from "lucide-react";
-
 export default function FavoritesContent(/*{ favorites }*/) {
     const favorites = [{
         id: 1,
