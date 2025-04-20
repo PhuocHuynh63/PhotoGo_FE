@@ -1,5 +1,6 @@
 'use client';
 
+import { Calendar } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
@@ -39,6 +40,9 @@ export default function CustomDatePicker({
                 value={formatDate(value)}
                 onClick={() => setOpen(!open)}
             />
+            <span className="absolute right-4 top-2 cursor-pointer" onClick={() => setOpen(!open)}>
+                <Calendar className='text-gray-600' />
+            </span>
             {open && today && (
                 <div className="absolute p-2 z-10 mt-2 bg-white border rounded-md shadow-md">
                     <DayPicker
@@ -63,7 +67,6 @@ export default function CustomDatePicker({
                         }}
                     />
                 </div>
-
             )}
         </div>
     );

@@ -189,7 +189,7 @@ const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
                                     <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
                                 </Link>
                                 <Link href="/services" passHref>
-                                    <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre">Khám phá dịch vụ</ClearButton>
+                                    <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre w-full">Khám phá dịch vụ</ClearButton>
                                 </Link>
                             </div>
                         </div>

@@ -2,14 +2,14 @@
 'use client'
 import { Card, CardContent } from "@components/Atoms/Card"
 import { Avatar } from "@components/Molecules/Avatar"
-import { ChevronRight, Ticket, Wallet, Gift, Star, ShoppingBag, MessageSquare, Heart, LogOut, Settings, CreditCard, User } from "lucide-react"
+import { ChevronRight, Ticket, Wallet, Star, ShoppingBag, MessageSquare, Heart, LogOut, CreditCard } from "lucide-react"
 import { PAGES } from '../../../../types/IPages'
 import Button from "@components/Atoms/Button"
 
 const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setActiveTab }) => {
 
     return (
-        <div className="w-full md:w-64 md:min-h-screen rounded-lg shadow-lg bg-white">
+        <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile Card */}
             <div className="bg-gradient-to-b from-orange-300 to-yellow-50 p-5 text-white rounded-lg">
                 <div className="flex flex-col items-center justify-center">
@@ -51,103 +51,102 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
             <nav className="p-4">
                 <ul className="space-y-4">
                     <li>
-                        <button
+                        <Button
                             onClick={() => setActiveTab("promotions")}
-                            className={`flex items-center justify-between w-full text-left ${activeTab === "promotions" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`flex items-center justify-between w-full text-left bg-none shadow-none hover:bg-none ${activeTab === "promotions" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
                             <div className="flex items-center">
                                 <Ticket className="w-5 h-5 mr-3" />
                                 <span>Mã ưu đãi</span>
                             </div>
-                            <span>Xem</span>
-                        </button>
+                            <span className="ml-auto">Xem</span>
+                        </Button>
                     </li>
                     <li>
-                        <button
-                            onClick={() => setActiveTab("xu")}
-                            className={`flex items-center justify-between w-full text-left ${activeTab === "xu" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                        <Button
+                            onClick={() => setActiveTab("points")}
+                            className={`flex items-center justify-between w-full text-left bg-none shadow-none hover:bg-none ${activeTab === "xu" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
                             <div className="flex items-center">
                                 <Wallet className="w-5 h-5 mr-3" />
-                                <span>Klook Xu</span>
+                                <span>Điểm tích lũy</span>
                             </div>
-                            <span>Xem</span>
-                        </button>
+                            <span className="ml-auto">Xem</span>
+                        </Button>
                     </li>
                     <li>
-                        <button
-                            onClick={() => setActiveTab("gifts")}
-                            className={`flex items-center justify-between w-full text-left ${activeTab === "gifts" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                        <Button
+                            onClick={() => setActiveTab("rewards")}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "rewards" ? "text-orange-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
                             <div className="flex items-center">
-                                <Gift className="w-5 h-5 mr-3" />
-                                <span>Phiếu quà tặng Klook</span>
+                                <Star className={`w-5 h-5 mr-3 ${activeTab === "rewards" ? "fill-orange-500" : ""}`} />
+                                <span>PhotoGo Rewards</span>
                             </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button
-                            onClick={() => setActiveTab("rewards")}
-                            className={`flex items-center w-full text-left ${activeTab === "rewards" ? "text-orange-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
-                        >
-                            <Star className={`w-5 h-5 mr-3 ${activeTab === "rewards" ? "fill-orange-500" : ""}`} />
-                            <span>Klook Rewards</span>
-                        </button>
+
+                        </Button>
                     </li>
                     <li className="pt-3 border-t">
-                        <button
+                        <Button
                             onClick={() => setActiveTab("orders")}
-                            className={`flex items-center w-full text-left ${activeTab === "orders" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "orders" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
-                            <ShoppingBag className="w-5 h-5 mr-3" />
-                            <span>Đơn hàng</span>
-                        </button>
+                            <div className="flex items-center">
+                                <ShoppingBag className="w-5 h-5 mr-3" />
+                                <span>Đơn hàng</span>
+                            </div>
+
+                        </Button>
                     </li>
                     <li>
-                        <button
+                        <Button
                             onClick={() => setActiveTab("reviews")}
-                            className={`flex items-center w-full text-left ${activeTab === "reviews" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "reviews" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
-                            <MessageSquare className="w-5 h-5 mr-3" />
-                            <span>Đánh giá</span>
-                        </button>
+                            <div className="flex items-center">
+                                <MessageSquare className="w-5 h-5 mr-3" />
+                                <span>Đánh giá</span>
+                            </div>
+
+                        </Button>
                     </li>
                     <li>
-                        <button
+                        <Button
                             onClick={() => setActiveTab("payment")}
-                            className={`flex items-center w-full text-left ${activeTab === "payment" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "payment" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
-                            <CreditCard className="w-5 h-5 mr-3" />
-                            <span>Quản lý phương thức thanh toán</span>
-                        </button>
+                            <div className="flex items-center">
+                                <CreditCard className="w-5 h-5 mr-3" />
+                                <span>Quản lý phương thức thanh toán</span>
+                            </div>
+
+                        </Button>
                     </li>
 
                     <li>
-                        <button
+                        <Button
                             onClick={() => setActiveTab("favorites")}
-                            className={`flex items-center w-full text-left ${activeTab === "favorites" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "favorites" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
-                            <Heart className="w-5 h-5 mr-3" />
-                            <span>Yêu thích</span>
-                        </button>
+
+                            <div className="flex items-center">
+                                <Heart className="w-5 h-5 mr-3" />
+                                <span>Yêu thích</span>
+                            </div>
+
+                        </Button>
                     </li>
                     <li>
-                        <button
+                        <Button
                             onClick={() => setActiveTab("login")}
-                            className={`flex items-center w-full text-left ${activeTab === "login" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"
-                                }`}
+                            className={`bg-none shadow-none hover:bg-none ${activeTab === "login" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
                         >
-                            <LogOut className="w-5 h-5 mr-3" />
-                            <span>Quản lý đăng nhập</span>
-                        </button>
+                            <div className="flex items-center">
+                                <LogOut className="w-5 h-5 mr-3" />
+                                <span>Quản lý đăng nhập</span>
+                            </div>
+
+                        </Button>
                     </li>
 
                 </ul>
