@@ -1,28 +1,42 @@
-// 'use client'
+'use client';
 
-// import { useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-// import { signIn } from 'next-auth/react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import LoadingPage from "@components/Organisms/Loading";
 
-// const GoogleCompletePage = () => {
-//     const router = useRouter();
+const GoogleCompletePage = () => {
+    const router = useRouter();
 
-//     useEffect(() => {
-//         const token = new URLSearchParams(window.location.search).get('token');
-//         if (!token) return router.push('/auth/login');
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const userRaw = params.get("user");
 
-//         signIn('credentials', {
-//             redirect: false,
-//             email: decoded.email,
-//             password: '__google__', // giả lập
-//             accessToken: token,
-//         }).then((res) => {
-//             if (res?.ok) router.push('/');
-//             else router.push('/auth/login');
-//         });
-//     }, [router]);
+        if (!token || !userRaw) {
+            router.push("/auth/login");
+            return;
+        }
 
-//     return <p className="text-sm text-center mt-8">Đang đăng nhập bằng Google...</p>;
-// };
+        const user = JSON.parse(decodeURIComponent(userRaw));
 
-// export default GoogleCompletePage;
+        signIn("credentials", {
+            redirect: false,
+            email: user.email,
+            password: "__google__",
+            accessToken: token,
+        }).then((res) => {
+            if (res?.ok) {
+                router.push("/");
+            } else {
+                router.push("/auth/login");
+            }
+        });
+    }, [router]);
+
+    return (
+        <LoadingPage />
+    )
+};
+
+export default GoogleCompletePage;
