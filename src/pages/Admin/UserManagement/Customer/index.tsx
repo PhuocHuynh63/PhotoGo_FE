@@ -92,7 +92,7 @@ interface UserFilterValues {
   bookingCount?: string
 }
 
-export function UserManagementListPage() {
+export default function UserManagementListPage() {
   const { toast } = useToast()
   const [addUserDialogOpen, setAddUserDialogOpen] = useState(false)
   const [users, setUsers] = useState<User[]>([

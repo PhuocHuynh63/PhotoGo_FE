@@ -155,7 +155,7 @@ export default function Left() {
                 <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
                 <Checkbox
                     options={services}
-                    value={String(serviceType.map(service => service.key))}
+                    // value={String(serviceType.map(service => service.key))}
                     onChange={(e, key) => {
                         handleServiceTypeChange(key);
                     }}

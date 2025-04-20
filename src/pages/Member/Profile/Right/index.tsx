@@ -11,20 +11,21 @@ const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, user
     console.log(user)
 
     const renderContent = () => {
-        switch (activeTab) {
-            case "profile":
-                return <ProfileContent user={user} />
-            case "rewards":
-                return <RewardsContent user={user} />
-            case "orders":
-                return <OrdersContent orders={userOrders} />
-            case "favorites":
-                return <FavoritesContent favorites={userFavorites} />
-            case "promotions":
-                return <PromotionsContent promotions={userPromotions} />
-            default:
-                return <RewardsContent user={user} />
-        }
+        // switch (activeTab) {
+        //     case "profile":
+        //         return <ProfileContent user={user} />
+        //     case "rewards":
+        //         return <RewardsContent user={user} />
+        //     case "orders":
+        //         return <OrdersContent orders={userOrders} />
+        //     case "favorites":
+        //         return <FavoritesContent favorites={userFavorites} />
+        //     case "promotions":
+        //         return <PromotionsContent promotions={userPromotions} />
+        //     default:
+        //         return <RewardsContent user={user} />
+        // }
+        return 1
     }
 
     return (

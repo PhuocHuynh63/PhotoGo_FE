@@ -32,9 +32,9 @@ export default async function Profile() {
         const user = await getAUser(session.user.id) as IUserResponse;
         userData = user?.data as IUser | undefined;
 
-        userOrders = await getUserOrders(session.user.id);
-        userFavorites = await getUserFavorites(session.user.id);
-        userPromotions = await getUserPromotions(session.user.id);
+        // userOrders = await getUserOrders(session.user.id);
+        // userFavorites = await getUserFavorites(session.user.id);
+        // userPromotions = await getUserPromotions(session.user.id);
     }
 
     return (

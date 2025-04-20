@@ -34,8 +34,9 @@ export default function OrdersContent(/*{ orders }*/) {
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-medium">{order.service}</h3>
                                     <Badge
-                                        variant={order.status === "Hoàn thành" ? "outline" : "default"}
-                                        className={order.status === "Hoàn thành" ? "text-green-500 border-green-200" : ""}
+                                        className={`${
+                                            order.status === "Hoàn thành" ? "text-green-500 border-green-200" : ""
+                                        }`}
                                     >
                                         {order.status}
                                     </Badge>
@@ -50,11 +51,11 @@ export default function OrdersContent(/*{ orders }*/) {
                             </div>
                         </div>
                         <div className="p-4 border-t flex justify-end gap-2">
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline">
                                 Xem chi tiết
                             </Button>
                             {order.status === "Hoàn thành" && (
-                                <Button variant="outline" size="sm">
+                                <Button variant="outline">
                                     Đánh giá
                                 </Button>
                             )}

@@ -146,7 +146,7 @@ export default function Left() {
                 <div className="space-y-2">
                     <Checkbox
                         options={services}
-                        value={String(serviceType.map(service => service.key))}
+                        // value={String(serviceType.map(service => service.key))}
                         onChange={(e, key) => {
                             handleServiceTypeChange(key);
                         }}
@@ -241,7 +241,7 @@ export default function Left() {
                     <h3 className="font-medium text-sm mb-2">Địa điểm</h3>
                     <Checkbox
                         options={providers}
-                        value={String(vendor.map(vendor => vendor.key))}
+                        // value={String(vendor.map(vendor => vendor.key))}
                         onChange={(e, key) => {
                             handleVendorChange(key);
                         }}

@@ -36,7 +36,6 @@ export default function FavoritesContent(/*{ favorites }*/) {
                             <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-full object-cover" />
                             <Button
                                 variant="ghost"
-                                size="icon"
                                 className="absolute top-2 right-2 h-8 w-8 bg-white/80 hover:bg-white text-red-500"
                             >
                                 <Heart className="h-4 w-4 fill-current" />
@@ -52,7 +51,7 @@ export default function FavoritesContent(/*{ favorites }*/) {
                                 </div>
                                 <p className="font-medium">{item.price.toLocaleString()}đ</p>
                             </div>
-                            <Button className="w-full mt-3" size="sm">
+                            <Button className="w-full mt-3">
                                 Xem chi tiết
                             </Button>
                         </div>
