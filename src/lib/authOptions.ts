@@ -3,6 +3,8 @@ import { AuthError } from "@constants/errors";
 import authService from "@services/auth";
 import NextAuth, { NextAuthOptions, SessionStrategy } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { jwtDecode } from "jwt-decode";
+
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -11,10 +13,23 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
+                accessToken: { label: "Access Token", type: "text" },
             },
 
             async authorize(credentials) {
                 if (!credentials) return null;
+
+                if (credentials?.accessToken) {
+                    const decoded: any = jwtDecode(credentials.accessToken);
+
+                    return {
+                        id: decoded.sub,
+                        role: decoded.role,
+                        email: credentials.email,
+                        accessToken: credentials.accessToken,
+                    };
+                }
+
                 const res = await authService.login({
                     email: credentials.email,
                     password: credentials.password,

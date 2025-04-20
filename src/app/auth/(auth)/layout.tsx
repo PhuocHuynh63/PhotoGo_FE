@@ -37,7 +37,6 @@ export default async function AuthLayout({
     }
     //#endregion
     return (
-
         <div className="min-h-screen bg-[rgba(246,172,105,0.2)] flex items-center justify-center p-4 sm:p-6 lg:p-8">
             {children}
         </div>
