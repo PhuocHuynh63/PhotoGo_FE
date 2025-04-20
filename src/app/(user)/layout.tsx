@@ -6,6 +6,7 @@ import Header from "@components/Organisms/Header";
 import userService from "@services/user";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
+import Footer from "@components/Organisms/Footer";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
@@ -27,6 +28,7 @@ export default async function RootLayout({
         <>
             <Header user={userData} />
             {children}
+            <Footer />
         </>
     );
 }

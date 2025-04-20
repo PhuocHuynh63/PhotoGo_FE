@@ -115,9 +115,7 @@ const LoginPage = () => {
 
 
     const handleGoogleLogin = () => {
-        signIn("google", {
-            callbackUrl: `${window.location.origin}${ROUTES.PUBLIC.HOME}`,
-        })
+        window.location.href = 'https://api.photogo.id.vn/api/v1/auth/google';
     }
 
     return (
@@ -191,6 +189,7 @@ const LoginPage = () => {
                             <button
                                 type="button"
                                 className="cursor-pointer flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                onClick={handleGoogleLogin}
                             >
                                 <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                                     {/* Google SVG Path Data */}
