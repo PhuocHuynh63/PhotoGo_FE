@@ -29,7 +29,9 @@ jobs:
       - name: Build and push Docker image
         if: github.event_name != 'pull_request'  # Chỉ push khi không phải PR
         run: |
-          docker build --platform linux/amd64 -t photogo-nextjs:latest .
+          docker build --platform linux/amd64 \
+            --build-arg NEXT_PUBLIC_API_URL=https://api.photogo.id.vn/api/v1 \
+            -t photogo-nextjs:latest .
           docker tag photogo-nextjs:latest photogo/photogo-nextjs:latest
           docker push photogo/photogo-nextjs:latest
 
