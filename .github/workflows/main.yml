@@ -48,6 +48,7 @@ jobs:
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /home/root/frontend &&
+            docker-compose down &&
             docker-compose pull &&
             docker-compose up -d
           "
