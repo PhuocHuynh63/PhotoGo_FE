@@ -15,7 +15,6 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import { usePathname } from "next/navigation";
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor(
@@ -34,10 +33,11 @@ const timeAgo = (date: string) => {
     return `${seconds} giây trước`;
 };
 
-export default function Header({ user }: PAGES.IHeader) {
+export default function HeaderHomePage({ user }: PAGES.IHeader) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false);
     const cart: ICOMPONENTS.CartItem[] = [
@@ -113,9 +113,30 @@ export default function Header({ user }: PAGES.IHeader) {
         setIsOpenCart(!isOpenCart);
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            requestAnimationFrame(() => {
+                setIsScrolled(window.scrollY > 120);
+            });
+        };
+        window.addEventListener("scroll", handleScroll);
+
+        if (isOpenCart) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            document.body.style.overflow = "auto";
+        };
+    }, [isOpenCart]);
+
     return (
         <header
-            className={`header p-4 px-4 md:px-8 w-full rounded-b-sm sticky top-0 z-40 transition-all duration-300 ease-in-out  bg-white shadow-xl`}
+            className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? "bg-[rgba(177,177,177,0.65)] shadow-xl" : "bg-transparent"
+                }`}
         >
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -128,7 +149,11 @@ export default function Header({ user }: PAGES.IHeader) {
                     <div>
                         <Link href={ROUTES.PUBLIC.HOME}>
                             <Image
-                                src={"https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"}
+                                src={
+                                    isScrolled
+                                        ? "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"
+                                        : "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg"
+                                }
                                 alt="logo"
                                 width={60}
                                 height={60}
@@ -140,23 +165,23 @@ export default function Header({ user }: PAGES.IHeader) {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex gap-12 font-medium text-lg ml-5">
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.HOME}>
-                            <span className={"text-black"}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.HOME}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
                                 Trang chủ
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.STUDIO}>
-                            <span className={"text-black"}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.STUDIO}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
                                 Studio
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.FREELANCER}>
-                            <span className={"text-black"}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.FREELANCER}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
                                 Freelancer
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.ABOUT}>
-                            <span className={"text-black"}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.ABOUT}>
+                            <span className={isScrolled ? "text-black" : "text-white"}>
                                 Về chúng tôi
                             </span>
                         </NavLink>
@@ -203,7 +228,8 @@ export default function Header({ user }: PAGES.IHeader) {
                                     >
                                         <div className="flex items-center justify-center mt-2">
                                             <LocationButton
-                                                className="hover:bg-white/10 p-1 rounded-md text-dark"
+                                                className="hover:bg-white/10 p-1 rounded-md"
+                                                isScrolled={isScrolled}
                                                 isLoaded={isLoaded}
                                             />
                                         </div>
@@ -222,7 +248,7 @@ export default function Header({ user }: PAGES.IHeader) {
                                             <LucideIcon
                                                 name="ShoppingCart"
                                                 iconSize={26}
-                                                iconColor={"black"}
+                                                iconColor={isScrolled ? "black" : "white"}
                                             />
                                             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                 {cart?.length || 0}
@@ -247,7 +273,7 @@ export default function Header({ user }: PAGES.IHeader) {
                                                     <LucideIcon
                                                         name="Bell"
                                                         iconSize={26}
-                                                        iconColor={"black"}
+                                                        iconColor={isScrolled ? "black" : "white"}
                                                     />
                                                     <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                                         {unreadNotifications.length}
