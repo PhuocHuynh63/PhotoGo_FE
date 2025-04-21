@@ -1,6 +1,6 @@
 import { ChevronRight, Info } from "lucide-react";
 
-export default function RewardsContent({ user }) {
+export default function RewardsContent({ user }: any) {
     return (
         <>
             {/* Photo Rewards Header */}
@@ -105,7 +105,7 @@ export default function RewardsContent({ user }) {
                     <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-blue-500 rounded-full"
-                            style={{ width: `${(user.spentAmount / user.requiredAmount) * 100}%` }}
+                            style={{ width: `${(user?.spentAmount / user?.requiredAmount) * 100}%` }}
                         ></div>
                     </div>
                     <div className="mt-4 text-xs text-gray-500">

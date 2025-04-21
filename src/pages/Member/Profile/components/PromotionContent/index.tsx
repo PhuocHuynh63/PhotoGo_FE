@@ -39,14 +39,14 @@ export default function PromotionsContent(/*{ promotions }*/) {
                     <Card key={promo.id} className="overflow-hidden">
                         <div className="p-4">
                             <div className="flex items-center justify-between">
-                                <Badge variant="outline" className="text-orange-500 border-orange-200">
+                                <Badge className="text-orange-500 border-orange-200">
                                     {promo.code}
                                 </Badge>
                                 <span className="text-xs text-gray-500">Hết hạn: {promo.expiry}</span>
                             </div>
                             <h3 className="font-medium mt-2">{promo.title}</h3>
                             <p className="text-sm text-gray-500 mt-1">{promo.description}</p>
-                            <Button variant="outline" size="sm" className="w-full mt-3">
+                            <Button variant="outline" className="w-full mt-3">
                                 Sử dụng ngay
                             </Button>
                         </div>

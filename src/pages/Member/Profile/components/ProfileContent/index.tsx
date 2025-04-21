@@ -13,7 +13,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
         <>
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Thông tin cá nhân</h1>
-                <Button variant={isEditing ? "default" : "outline"} size="sm" onClick={() => setIsEditing(!isEditing)}>
+                <Button variant={isEditing ? "default" : "outline"} onClick={() => setIsEditing(!isEditing)}>
                     {isEditing ? (
                         "Lưu"
                     ) : (
@@ -31,31 +31,31 @@ export default function ProfileContent({ user }: { user: IUser }) {
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="fullName">Họ và tên</Label>
-                                <Input id="fullName" defaultValue={user.fullName} disabled={!isEditing} />
+                                <Input id="fullName" defaultValue={user?.fullName} disabled={!isEditing} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" defaultValue={user.email} disabled={!isEditing} />
+                                <Input id="email" type="email" defaultValue={user?.email} disabled={!isEditing} />
                             </div>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="phoneNumber">Số điện thoại</Label>
-                                <Input id="phoneNumber" defaultValue={user.phoneNumber} disabled={!isEditing} />
+                                <Input id="phoneNumber" defaultValue={user?.phoneNumber} disabled={!isEditing} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="address">Địa chỉ</Label>
-                                <Input id="address" defaultValue={user?.address} disabled={!isEditing} />
+                                <Input id="address" disabled={!isEditing} />
                             </div>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="rank">Hạng thành viên</Label>
-                                <Input id="rank" defaultValue={user.rank} disabled={true} />
+                                <Input id="rank" defaultValue={user?.rank} disabled={true} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status">Ngày tham gia</Label>
-                                <Input id="status" defaultValue={new Date(user.createdAt).toLocaleDateString('vi-VN')} disabled={true} />
+                                <Input id="status" defaultValue={new Date(user?.createdAt).toLocaleDateString('vi-VN')} disabled={true} />
                             </div>
                         </div>
                     </form>

@@ -11,7 +11,7 @@ export default function ProfilePage({ user, userOrders, userFavorites, userPromo
 
     return (
         <div className="container mx-auto min-h-screen mt-20 p-4">
-            <div className="flex flex-col md:flex-row md:space-x-4">
+            <div className="flex flex-col md:flex-row">
                 <div className="md:w-1/4">
                     <ProfileLeft user={user} setActiveTab={setActiveTab} activeTab={activeTab} />
                 </div>
@@ -22,18 +22,3 @@ export default function ProfilePage({ user, userOrders, userFavorites, userPromo
         </div>
     )
 }
-
-// Profile Content Component
-
-
-// Rewards Content Component
-
-
-// Orders Content Component
-
-
-// Favorites Content Component
-
-
-// Promotions Content Component
-

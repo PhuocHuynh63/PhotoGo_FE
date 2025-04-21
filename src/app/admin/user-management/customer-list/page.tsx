@@ -1,5 +1,7 @@
 'use client'
-import { UserManagementListPage } from "@pages/Admin/UserManagement/Customer"
+
+import UserManagementListPage from "@pages/Admin/UserManagement/Customer"
+
 
 export default function UserManagementCustomerList() {
   return (
