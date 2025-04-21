@@ -10,17 +10,13 @@ async function getAUser(id: string) {
     return await userService.getAUser(id);
 }
 
-export default async function ProfileLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+export default async function Profile() {
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
     let userData: IUser | undefined;
-    let userOrders: any[] = [];
-    let userFavorites: any[] = [];
-    let userPromotions: any[] = [];
+    const userOrders: any[] = [];
+    const userFavorites: any[] = [];
+    const userPromotions: any[] = [];
 
     if (session?.user?.id) {
         const user = await getAUser(session.user.id) as IUserResponse;
@@ -36,7 +32,7 @@ export default async function ProfileLayout({
                 userOrders={userOrders}
                 userFavorites={userFavorites}
                 userPromotions={userPromotions}>
-                {children}
+
             </UserProfileLayout>
         </>
     );

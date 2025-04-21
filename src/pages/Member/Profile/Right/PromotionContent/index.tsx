@@ -1,65 +1,139 @@
-import Button from "@components/Atoms/Button";
-import { Card } from "@components/Atoms/Card";
-import { Badge, Gift } from "lucide-react";
+'use client';
 
-export default function PromotionsContent(/*{ promotions }*/) {
-    const promotions = [{
+import { useState } from "react";
+import { Card } from "@components/Atoms/Card";
+import Button from "@components/Atoms/Button";
+import { Camera, Building, Gift, XCircle } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@helpers/CN";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
+import { QRCodeCanvas } from "qrcode.react";
+const promotions = [
+    {
         id: 1,
-        code: "PROMO10",
-        expiry: "2023-12-31",
-        description: "Giảm 10% cho đơn hàng trên 100k",
+        code: "PHOTO10",
+        title: "Chụp Ảnh Nghệ Thuật",
+        description: "Giảm 10% cho buổi chụp nghệ thuật trên 1 triệu",
         discount: 10,
-        title: 'đasad',
-        type: "percentage",
-        usageLimit: 100,
-        usageCount: 50,
-        isActive: true,
-        createdAt: "2023-01-01",
-        updatedAt: "2023-01-01",
+        expiry: "2025-12-30",
+        isUsed: false,
+        icon: <Camera className="w-5 h-5 text-orange-300 absolute top-2 right-2 opacity-30" />,
     },
     {
         id: 2,
-        code: "PROMO20",
-        expiry: "2023-12-31",
-        description: "Giảm 20% cho đơn hàng trên 200k",
+        code: "STUDIO15",
+        title: "Studio + Makeup",
+        description: "Giảm 15% khi đặt studio và makeup",
+        discount: 15,
+        expiry: "2024-12-30",
+        isUsed: true,
+        icon: <Building className="w-5 h-5 text-orange-300 absolute top-2 right-2 opacity-30" />,
+    },
+    {
+        id: 3,
+        code: "OLDVOUCHER",
+        title: "Ưu đãi đã hết hạn",
+        description: "Mã này đã hết hạn từ năm ngoái",
         discount: 20,
-        title: 'đasad',
-        type: "percentage",
-        usageLimit: 50,
-        usageCount: 25,
-        isActive: true,
-        createdAt: "2023-01-01",
-    }]
-    return (
-        <div className="container mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Mã khuyến mãi</h1>
-            <div className="space-y-4">
-                {promotions.map((promo) => (
-                    <Card key={promo.id} className="overflow-hidden">
-                        <div className="p-4">
-                            <div className="flex items-center justify-between">
-                                <Badge className="text-orange-500 border-orange-200">
-                                    {promo.code}
-                                </Badge>
-                                <span className="text-xs text-gray-500">Hết hạn: {promo.expiry}</span>
-                            </div>
-                            <h3 className="font-medium mt-2">{promo.title}</h3>
-                            <p className="text-sm text-gray-500 mt-1">{promo.description}</p>
-                            <Button variant="outline" className="w-full mt-3">
-                                Sử dụng ngay
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
+        expiry: "2023-05-20",
+        isUsed: false,
+        icon: <XCircle className="w-5 h-5 text-red-300 absolute top-2 right-2 opacity-30" />,
+    },
+];
 
-                {promotions.length === 0 && (
-                    <div className="text-center py-12">
-                        <Gift className="mx-auto h-12 w-12 text-gray-300" />
-                        <p className="mt-4 text-gray-500">Bạn chưa có mã khuyến mãi nào</p>
-                        <Button className="mt-4">Khám phá ưu đãi</Button>
-                    </div>
-                )}
-            </div>
+function isExpired(date: string) {
+    return new Date(date) < new Date();
+}
+
+export default function PromotionsPage() {
+    const [tab, setTab] = useState("active");
+
+    const filterPromos = (type: string) => {
+        return promotions.filter((p) => {
+            if (type === "active") return !isExpired(p.expiry) && !p.isUsed;
+            if (type === "used") return p.isUsed;
+            if (type === "expired") return isExpired(p.expiry) && !p.isUsed;
+        });
+    };
+
+    return (
+        <div className="container mx-auto px-4 py-6">
+            <h1 className="text-3xl font-bold text-center mb-6 text-orange-600">Ưu đãi dành cho bạn</h1>
+
+            <Tabs defaultValue="active" value={tab} onValueChange={setTab} className="w-full">
+                <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
+                    <TabsTrigger value="active">Đang hoạt động</TabsTrigger>
+                    <TabsTrigger value="used">Đã sử dụng</TabsTrigger>
+                    <TabsTrigger value="expired">Hết hạn</TabsTrigger>
+                </TabsList>
+
+                {["active", "used", "expired"].map((status) => (
+                    <TabsContent value={status} key={status}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {filterPromos(status).map((promo) => (
+                                <Card
+                                    key={promo.id}
+                                    className={cn("relative flex border border-orange-200 bg-orange-50 shadow-sm rounded-xl overflow-hidden")}
+                                >
+                                    {promo.icon}
+
+                                    {/* Left */}
+                                    <div className="p-5 w-2/3 flex flex-col justify-between">
+                                        <div>
+                                            <h3 className="text-lg font-semibold text-orange-600">{promo.title}</h3>
+                                            <p className="text-sm text-gray-700 mt-1">{promo.description}</p>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-3">
+                                            HSD: {format(new Date(promo.expiry), 'dd/MM/yyyy')}
+                                        </p>
+                                    </div>
+
+                                    {/* Right */}
+                                    <div className="w-1/3 bg-white border-l border-dashed border-orange-300 flex flex-col justify-center items-center p-4 text-center">
+                                        <span className="text-xs text-gray-500 mb-1">Mã ưu đãi</span>
+                                        <div className="bg-orange-100 px-3 py-1 rounded-md font-mono text-orange-600 text-base font-bold tracking-wider shadow-inner">
+                                            {promo.code}
+                                        </div>
+
+                                        {/* Button or Status */}
+                                        {status === "active" && (
+                                            <div className="flex flex-col justify-center items-center mt-3">
+                                                <QRCodeCanvas
+                                                    value={promo.code}
+                                                    size={72}
+                                                    bgColor="#ffffff"
+                                                    fgColor="#f97316"
+                                                    level="H"
+                                                />
+                                                <Button
+                                                    className="mt-3 text-orange-500 border-orange-300 hover:bg-orange-100 w-full"
+                                                >
+                                                    Sử dụng ngay
+                                                </Button>
+                                            </div>
+
+                                        )}
+                                        {status === "used" && (
+                                            <span className="text-xs text-gray-400 mt-3 italic">Đã sử dụng</span>
+                                        )}
+                                        {status === "expired" && (
+                                            <span className="text-xs text-red-400 mt-3 italic">Hết hạn</span>
+                                        )}
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+
+                        {filterPromos(status).length === 0 && (
+                            <div className="text-center py-12 col-span-full">
+                                <Gift className="mx-auto h-12 w-12 text-gray-300" />
+                                <p className="mt-4 text-gray-500">Không có ưu đãi nào trong mục này</p>
+                                {status === "active" && <Button className="mt-4">Khám phá ưu đãi</Button>}
+                            </div>
+                        )}
+                    </TabsContent>
+                ))}
+            </Tabs>
         </div>
-    )
+    );
 }
