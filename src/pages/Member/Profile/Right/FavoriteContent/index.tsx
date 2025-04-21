@@ -25,7 +25,7 @@ export default function FavoritesContent(/*{ favorites }*/) {
         updatedAt: "2023-01-01",
     }]
     return (
-        <>
+        <div className="min-w-[1000px]">
             <h1 className="text-2xl font-bold mb-6">Danh sách yêu thích</h1>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -57,6 +57,6 @@ export default function FavoritesContent(/*{ favorites }*/) {
                     </Card>
                 ))}
             </div>
-        </>
+        </div>
     )
 }

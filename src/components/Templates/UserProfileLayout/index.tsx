@@ -1,30 +1,45 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from "framer-motion";
-// import ProfileLeft from '@pages/Member/Profile/Left';
-const UserProfileLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) => {
+import ProfileLeft from '@pages/Member/Profile/Left';
+import ProfileRight from '@pages/Member/Profile/Right';
+
+const UserProfileLayout = ({
+    user,
+    userOrders,
+    userFavorites,
+    userPromotions,
+}: Readonly<{
+    children: React.ReactNode;
+    user: any;
+    userOrders: any;
+    userFavorites: any;
+    userPromotions: any;
+}>) => {
+    const [activeTab, setActiveTab] = useState("rewards");
 
     return (
         <div className="flex min-h-screen flex-col">
-
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-
-                {/* Main content */}
-                <div className="mx-14 py-8">
-                    <div className="grid grid-cols-12 gap-12">
+                <div className="mx-40 mt-20">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Left Content */}
                         <motion.div
                             initial={{ x: -100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-                            className="col-span-12 lg:col-span-8"
+                            className="lg:col-span-4 col-span-12"
                         >
-                            {/* <ProfileLeft /> */}
+                            <ProfileLeft
+                                user={user}
+                                setActiveTab={setActiveTab}
+                                activeTab={activeTab}
+                            />
                         </motion.div>
 
                         {/* Right Content */}
@@ -32,15 +47,21 @@ const UserProfileLayout = ({ children }: Readonly<{ children: React.ReactNode; }
                             initial={{ x: 100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-                            className="hidden lg:block lg:col-span-4 w-sm ml-4"
+                            className="lg:col-span-8 col-span-12"
                         >
-                            {children}
+                            <ProfileRight
+                                user={user}
+                                activeTab={activeTab}
+                                userOrders={userOrders}
+                                userFavorites={userFavorites}
+                                userPromotions={userPromotions}
+                            />
                         </motion.div>
                     </div>
                 </div>
             </motion.div>
         </div>
-    )
-}
+    );
+};
 
 export default UserProfileLayout;

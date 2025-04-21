@@ -365,7 +365,7 @@ export default function Header({ user }: PAGES.IHeader) {
                                         <DropdownMenuContent>
                                             <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                                             <DropdownMenuSeparator />
-                                            <Link href="/hello">
+                                            <Link href={ROUTES.USER.PROFILE}>
                                                 <DropdownMenuItem icon="UserCircle">
                                                     <span>Thông tin cá nhân</span>
                                                 </DropdownMenuItem>

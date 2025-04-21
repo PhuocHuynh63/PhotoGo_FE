@@ -1,12 +1,12 @@
 // src/pages/Member/Profile/Right/index.tsx
-import RewardsContent from "../components/RewardsContent"
-import ProfileContent from "../components/ProfileContent"
-import OrdersContent from "../components/OrderContent"
-import FavoritesContent from "../components/FavoriteContent"
-import PromotionsContent from "../components/PromotionContent"
+import RewardsContent from "./RewardsContent"
+import ProfileContent from "./ProfileContent"
+import OrdersContent from "./OrderContent"
+import FavoritesContent from "./FavoriteContent"
+import PromotionsContent from "./PromotionContent"
 import { PAGES } from '../../../../types/IPages'
 import React from 'react';
-import PointsPage from "../components/PointContent/PointContent"
+import PointsPage from "./PointContent/PointContent"
 
 const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, userOrders, userFavorites, userPromotions }) => {
     console.log('right' + user)
@@ -35,8 +35,8 @@ const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, user
     }
 
     return (
-        <div className="flex-1">
-            <div className="max-w-5xl mx-auto">{renderContent()}</div>
+        <div className="flex-1 flex flex-col justify-center items-center">
+            <div className="container mx-auto">{renderContent()}</div>
         </div>
     )
 }

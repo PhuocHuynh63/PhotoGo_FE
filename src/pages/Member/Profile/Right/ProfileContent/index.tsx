@@ -3,14 +3,14 @@ import { Card, CardContent } from "@components/Atoms/Card"
 import Input from "@components/Atoms/Input"
 import Label from "@components/Atoms/Label"
 import { IUser } from "@models/user/common.model"
-import { Badge, Edit, Info } from "lucide-react"
+import { Edit, Info } from "lucide-react"
 import { useState } from "react"
 
 export default function ProfileContent({ user }: { user: IUser }) {
     const [isEditing, setIsEditing] = useState(false)
 
     return (
-        <>
+        <div className="container mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Thông tin cá nhân</h1>
                 <Button variant={isEditing ? "default" : "outline"} onClick={() => setIsEditing(!isEditing)}>
@@ -26,8 +26,8 @@ export default function ProfileContent({ user }: { user: IUser }) {
             </div>
 
             <Card>
-                <CardContent className="p-8">
-                    <form className="space-y-4">
+                <CardContent className="">
+                    <form className="my-4">
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="fullName">Họ và tên</Label>
@@ -63,8 +63,6 @@ export default function ProfileContent({ user }: { user: IUser }) {
             </Card>
 
             <div className="mt-8">
-
-
                 <div className="flex-1 rounded-lg overflow-hidden w-full">
                     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 text-white">
                         <div className="flex items-center">
@@ -88,12 +86,16 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                 hạng Vàng
                             </p>
                             <div className="flex items-center mt-1">
-                                <Info size={16} className="mr-1" />
+                                <Button
+                                    className="shadow-none hover:text-white hover:bg-white/10"
+                                >
+                                    <Info className="h-5 w-5" />
+                                </Button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
