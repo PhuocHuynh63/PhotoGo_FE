@@ -20,9 +20,9 @@ const PUBLIC = {
 
 const USER = {
     DASHBOARD: '/user',
-    PROFILE: {
-
-    },
+    PROFILE:
+        '/profile'
+    ,
     BOOKINGS: {
 
     },

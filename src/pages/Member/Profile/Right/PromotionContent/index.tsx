@@ -31,9 +31,8 @@ export default function PromotionsContent(/*{ promotions }*/) {
         createdAt: "2023-01-01",
     }]
     return (
-        <>
+        <div className="container mx-auto">
             <h1 className="text-2xl font-bold mb-6">Mã khuyến mãi</h1>
-
             <div className="space-y-4">
                 {promotions.map((promo) => (
                     <Card key={promo.id} className="overflow-hidden">
@@ -61,6 +60,6 @@ export default function PromotionsContent(/*{ promotions }*/) {
                     </div>
                 )}
             </div>
-        </>
+        </div>
     )
 }
