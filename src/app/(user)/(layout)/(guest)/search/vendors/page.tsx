@@ -1,10 +1,10 @@
-import SearchVendorPage from "@pages/Public/Search/SearchVendor";
+import Left from "@pages/Public/Search/SearchVendor/Left/Filter";
 
 export default function SearchVendor() {
 
     return (
         <>
-            <SearchVendorPage />
+            <Left />
         </>
     );
 }

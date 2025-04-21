@@ -10,6 +10,8 @@ import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { useSearchParams } from "next/navigation"
+import { IVendor } from "@models/vendor/common.model"
+import { VENDOR_CATEGORY } from "@constants/common"
 
 const mockData: ICOMPONENTS.ServiceCard[] = [
     {
@@ -170,7 +172,7 @@ const cardVariants = {
     exit: { opacity: 0, scale: 0.8 }
 };
 
-export default function Right() {
+export default function Right({ vendorData }: { vendorData: IVendor }) {
     const [sortBy, setSortBy] = useState("")
     const [services, setServices] = useState<ICOMPONENTS.ServiceCard[]>([])
     const [resultCount, setResultCount] = useState(mockData.length)
@@ -178,6 +180,7 @@ export default function Right() {
     const [itemsPerPage, setItemsPerPage] = useState(6);
     const [loading, setLoading] = useState(false)
     const searchParams = useSearchParams()
+    console.log('right', vendorData)
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
     };
@@ -200,7 +203,6 @@ export default function Right() {
         const maxPrice = Number(searchParams?.get("maxPrice")) || Number.POSITIVE_INFINITY
         const addressFilter = searchParams?.get("addresses")?.split(",") || []
         const dateFilter = searchParams?.get("date") || ""
-console.log(mockData)
 
         // Apply filters
         const filteredPackages = mockData.filter((pkg) => {
@@ -281,7 +283,7 @@ console.log(mockData)
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
             >
-                {currentServices.map((service, index) => (
+                {vendorData.map((service, index) => (
                     <motion.div
                         key={service.id}
                         className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300"
@@ -291,7 +293,7 @@ console.log(mockData)
                         exit="exit"
                         transition={{ duration: 0.5, delay: index * 0.2 }}
                     >
-                        <div className="absolute top-2 right-2 z-10">
+                        {/* <div className="absolute top-2 right-2 z-10">
                             <Button className="shadow-none hover:bg-none flex items-center justify-center">
                                 <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "black"} />
                             </Button>
@@ -303,18 +305,18 @@ console.log(mockData)
                                     Nổi bật
                                 </span>
                             </div>
-                        )}
+                        )} */}
 
                         <div className="relative bg-yellow-300">
-                            {!service.available && (
+                            {/* {!service.available && (
                                 <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
                                     <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
                                         {service.available ? "Không có sẵn" : "Không có sẵn"}
                                     </span>
                                 </div>
-                            )}
+                            )} */}
                             <div className="relative h-60">
-                                <Image src={service.image || "/placeholder.svg"} fill style={{
+                                <Image src={service.logo || "/placeholder.svg"} fill style={{
                                     objectFit: 'cover',
                                 }}
                                     loading="lazy" alt={service.name} />
@@ -328,11 +330,17 @@ console.log(mockData)
                                     <h3 className="text-dark font-medium text-lg">{service.name}</h3>
                                     <span className="text-dark text-xs flex">
                                         <LucideIcon name="MapPin" iconSize={14} />
-                                        {service.district}, {service.city}
+                                        {service.locations.map((location, index) => (
+                                            <span key={index} className="flex items-center justify-center">
+                                                {index > 0 && <span className="mx-1">•</span>}
+                                                {location.district}, {location.city}
+                                            </span>
+                                        ))}
+
                                     </span>
                                 </div>
                                 <div className=" shadow-md flex items-center text-dark text-xs rounded-full border px-2 py-1">
-                                    {service.type.map((type, i) => (
+                                    {/* {service.type.map((type, i) => (
                                         <span key={i} className="flex items-center justify-center">
                                             {i > 0 && <span className="mx-1">•</span>}
                                             {type === "Studio" && (
@@ -346,7 +354,20 @@ console.log(mockData)
                                             )}
                                             {type}
                                         </span>
-                                    ))}
+                                    ))} */}
+                                    <span className="flex items-center justify-center">
+                                        {VENDOR_CATEGORY.PHOTOGRAPHER.includes(service.category.id) && (
+                                            <LucideIcon iconSize={16} className="mr-1" name="Camera" />
+                                        )}
+                                        {VENDOR_CATEGORY.STUDIO === service.category.id && (
+                                            <LucideIcon iconSize={16} className="mr-1" name="User" />
+                                        )}
+                                        {VENDOR_CATEGORY.MAKEUP === service.category.id && (
+                                            <LucideIcon iconSize={16} className="mr-1" name="Paintbrush" />
+                                        )}
+                                        {service.category.id}
+                                    </span>
+
                                 </div>
 
                             </div>
@@ -356,21 +377,21 @@ console.log(mockData)
                                 <div className="flex text-yellow-400">
                                     <LucideIcon name="Star" iconSize={14} fill="yellow" />
                                 </div>
-                                <span className="text-sm font-medium ml-1">
+                                {/* <span className="text-sm font-medium ml-1">
 
                                     {service.rating}</span>
-                                <span className="text-xs text-gray-500 ml-1">({service.reviewCount} đánh giá)</span>
+                                <span className="text-xs text-gray-500 ml-1">({service.reviewCount} đánh giá)</span> */}
                             </div>
 
-                            <div className="flex flex-wrap gap-1 mb-2">
+                            {/* <div className="flex flex-wrap gap-1 mb-2">
                                 {service.categories.map((category, i) => (
                                     <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                                         {category}
                                     </span>
                                 ))}
-                            </div>
+                            </div> */}
 
-                            <div className="flex justify-between items-center">
+                            {/* <div className="flex justify-between items-center">
                                 <div className="text-sm">
                                     <span className="font-medium">
                                         {service.priceRange[0].toLocaleString()}đ - {service.priceRange[1].toLocaleString()}đ
@@ -381,7 +402,7 @@ console.log(mockData)
                                         Đặt lịch
                                     </Button>
                                 </Link>
-                            </div>
+                            </div> */}
                         </div>
                     </motion.div>
                 ))}

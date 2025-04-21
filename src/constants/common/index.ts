@@ -7,4 +7,9 @@ const ROLE = {
     MEMBER: 'member',
 };
 
-export { COOKIES, ROLE };
+const VENDOR_CATEGORY = {
+    PHOTOGRAPHER: ["C003", "CAT001"],
+    STUDIO: "C001",
+    MAKEUP: "C002",
+}
+export { COOKIES, ROLE, VENDOR_CATEGORY };
