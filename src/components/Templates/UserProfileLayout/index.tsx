@@ -11,7 +11,6 @@ const UserProfileLayout = ({
     userFavorites,
     userPromotions,
 }: Readonly<{
-    children: React.ReactNode;
     user: any;
     userOrders: any;
     userFavorites: any;

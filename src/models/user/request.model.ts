@@ -60,3 +60,10 @@ export const UserResetPasswordRequest = z.object({
 })
 export type IUserResetPasswordRequest = z.TypeOf<typeof UserResetPasswordRequest>;
 //----------------------End----------------------//
+
+export const UserUpdateProfileRequest = z.object({
+    fullName: z.string().min(1, 'Họ tên không được bỏ trống').max(50, 'Họ tên không được quá 50 ký tự'),
+    phoneNumber: z.string().min(10, 'Không đúng định dạng số điện thoại').max(11, 'Không đúng định dạng số điện thoại'),
+})
+export type IUserUpdateProfileRequest = z.TypeOf<typeof UserUpdateProfileRequest>;
+//----------------------End----------------------//

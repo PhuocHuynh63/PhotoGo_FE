@@ -2,66 +2,124 @@ import Button from "@components/Atoms/Button"
 import { Card, CardContent } from "@components/Atoms/Card"
 import Input from "@components/Atoms/Input"
 import Label from "@components/Atoms/Label"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { IUser } from "@models/user/common.model"
+import userService from "@services/user"
 import { Edit, Info } from "lucide-react"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
+
+interface UpdateUserForm {
+    fullName: string
+    phoneNumber: string
+}
 
 export default function ProfileContent({ user }: { user: IUser }) {
     const [isEditing, setIsEditing] = useState(false)
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+    } = useForm<UpdateUserForm>({
+        defaultValues: {
+            fullName: user?.fullName,
+            phoneNumber: String(user?.phoneNumber),
+        },
+    })
+
+    const onSubmit = async (data: UpdateUserForm) => {
+        console.log("Cập nhật thông tin:", data)
+
+        const response = await userService.updateUser(user.id, {
+            fullName: data?.fullName,
+            phoneNumber: data?.phoneNumber,
+        }) as IBackendResponse<any>
+        console.log(response)
+        if (response.statusCode === 200) {
+            toast.success("Cập nhật thông tin thành công")
+            setIsEditing(false)
+        } else {
+            reset()
+            toast.error("Cập nhật thông tin thất bại")
+        }
+        setIsEditing(false)
+    }
+
+    const handleCancel = () => {
+        reset() // reset về dữ liệu cũ
+        setIsEditing(false)
+    }
 
     return (
         <div className="container mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Thông tin cá nhân</h1>
-                <Button variant={isEditing ? "default" : "outline"} onClick={() => setIsEditing(!isEditing)}>
-                    {isEditing ? (
-                        "Lưu"
-                    ) : (
-                        <div className="flex items-center gap-1">
-                            <Edit size={16} />
-                            <span>Chỉnh sửa</span>
-                        </div>
-                    )}
-                </Button>
+                {isEditing ? (
+                    <div className="flex gap-2">
+                        <Button onClick={handleSubmit(onSubmit)}>Lưu</Button>
+                        <Button variant="outline" onClick={handleCancel}>Hủy</Button>
+                    </div>
+                ) : (
+                    <Button variant="outline" onClick={() => setIsEditing(true)}>
+                        <Edit size={16} className="mr-1" />
+                        Chỉnh sửa
+                    </Button>
+                )}
             </div>
 
             <Card>
-                <CardContent className="">
+                <CardContent>
                     <form className="my-4">
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="fullName">Họ và tên</Label>
-                                <Input id="fullName" defaultValue={user?.fullName} disabled={!isEditing} />
+                                <Input
+                                    id="fullName"
+                                    {...register("fullName", { required: "Vui lòng nhập họ tên" })}
+                                    disabled={!isEditing}
+                                />
+                                {errors?.fullName && <p className="text-red-500 text-sm">{errors?.fullName.message}</p>}
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" defaultValue={user?.email} disabled={!isEditing} />
-                            </div>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
                                 <Label htmlFor="phoneNumber">Số điện thoại</Label>
-                                <Input id="phoneNumber" defaultValue={user?.phoneNumber} disabled={!isEditing} />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="address">Địa chỉ</Label>
-                                <Input id="address" disabled={!isEditing} />
+                                <Input
+                                    id="phoneNumber"
+                                    {...register("phoneNumber", {
+                                        required: "Vui lòng nhập số điện thoại",
+                                        pattern: {
+                                            value: /^[0-9]{9,11}$/,
+                                            message: "Số điện thoại không hợp lệ",
+                                        },
+                                    })}
+                                    disabled={!isEditing}
+                                />
+                                {errors?.phoneNumber && <p className="text-red-500 text-sm">{errors?.phoneNumber.message}</p>}
                             </div>
                         </div>
+
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2">
-                                <Label htmlFor="rank">Hạng thành viên</Label>
-                                <Input id="rank" defaultValue={user?.rank} disabled={true} />
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" defaultValue={user?.email} disabled />
                             </div>
                             <div className="space-y-2">
+                                <Label htmlFor="rank">Hạng thành viên</Label>
+                                <Input id="rank" defaultValue={user?.rank} disabled />
+                            </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4 p-3">
+                            <div className="space-y-2">
                                 <Label htmlFor="status">Ngày tham gia</Label>
-                                <Input id="status" defaultValue={new Date(user?.createdAt).toLocaleDateString('vi-VN')} disabled={true} />
+                                <Input id="status" defaultValue={new Date(user?.createdAt).toLocaleDateString("vi-VN")} disabled />
                             </div>
                         </div>
                     </form>
                 </CardContent>
             </Card>
-
             <div className="mt-8">
                 <div className="flex-1 rounded-lg overflow-hidden w-full">
                     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 text-white">
