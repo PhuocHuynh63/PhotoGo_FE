@@ -5,7 +5,7 @@ interface RankCardProps {
     level: {
         level: number;
         name: string;
-        gradient: string;
+        gradient: string | undefined;
         current: boolean;
         spentGoal: number;
         spentVND: string;
@@ -17,7 +17,10 @@ interface RankCardProps {
     };
 }
 
-export const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level }) => {
+const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level }) => {
+    if (!level) {
+        return <div>Loading...</div>; // or handle the error as needed
+    }
     return (
         <div className="flex flex-col rounded-lg overflow-hidden bg-white shadow-lg">
             <div className={`bg-gradient-to-r ${level.gradient} p-4 text-white`}>
@@ -40,3 +43,4 @@ export const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level })
         </div>
     );
 };
+export default RankCard;

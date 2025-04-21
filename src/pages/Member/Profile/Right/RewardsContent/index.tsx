@@ -1,8 +1,9 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/Atoms/ui/carousel";
-import { ChevronRight } from "lucide-react";
-import { RankCard } from "../../components/RewardComponents/RankCard";
-import { ProgressSection } from "../../components/RewardComponents/ProgressSection";
-import { BenefitsList } from "../../components/RewardComponents/BenefitsList";
+import RankCard from "../../components/RankCard";
+import ProgressSection from "../../components/ProgressSection";
+import BenefitsList from "../../components/BenefitsList";
+
+
 
 const mockData = [{
     level: 1,

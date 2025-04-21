@@ -1,8 +1,7 @@
 // components/Rewards/BenefitsList.tsx
 import React from "react";
 import { ChevronRight } from "lucide-react";
-
-export const BenefitsList = () => {
+const BenefitsList = () => {
     return (
         <div className="mb-8">
             <h2 className="text-xl font-bold mb-4">Ưu đãi cho thành viên</h2>
@@ -106,3 +105,4 @@ export const BenefitsList = () => {
         </div>
     );
 };
+export default BenefitsList;

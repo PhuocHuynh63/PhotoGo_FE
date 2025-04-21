@@ -1,7 +1,7 @@
 // components/Rewards/ProgressSection.tsx
 import React from "react";
 
-export const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; required?: number }) => {
+const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; required?: number }) => {
     const percent = Math.min((spent / required) * 100, 100);
     return (
         <div className="w-full bg-gray-100 rounded-lg p-2">
@@ -27,3 +27,6 @@ export const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; r
         </div>
     );
 };
+
+
+export default ProgressSection;
