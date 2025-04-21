@@ -33,7 +33,7 @@ const timeAgo = (date: string) => {
     return `${seconds} giây trước`;
 };
 
-export default function Header({ user }: PAGES.IHeader) {
+export default function HeaderHomePage({ user }: PAGES.IHeader) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);

@@ -2,11 +2,11 @@ export const dynamic = "force-dynamic";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@lib/authOptions";
-import Header from "@components/Organisms/Header";
 import userService from "@services/user";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import Footer from "@components/Organisms/Footer";
+import HeaderHomePage from "@components/Organisms/HeaderHomePage";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
@@ -26,7 +26,7 @@ export default async function RootLayout({
 
     return (
         <>
-            <Header user={userData} />
+            <HeaderHomePage user={userData} />
             {children}
             <Footer />
         </>
