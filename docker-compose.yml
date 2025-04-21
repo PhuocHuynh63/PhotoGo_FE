@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  frontend:
+    image: photogo/photogo-nextjs:latest
+    container_name: frontend
+    expose:
+      - "3000"
+    env_file:
+      - .env.production
+    restart: always
+    networks:
+      - photogo-network
+
+networks:
+  photogo-network:
+    external: true
