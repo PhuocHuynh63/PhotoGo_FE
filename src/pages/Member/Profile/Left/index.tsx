@@ -110,18 +110,6 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
 
                         </Button>
                     </li>
-                    <li>
-                        <Button
-                            onClick={() => setActiveTab("payment")}
-                            className={`bg-none shadow-none hover:bg-none ${activeTab === "payment" ? "text-blue-500 font-medium" : "text-gray-700 hover:text-blue-500"}`}
-                        >
-                            <div className="flex items-center">
-                                <CreditCard className="w-5 h-5 mr-3" />
-                                <span>Quản lý phương thức thanh toán</span>
-                            </div>
-
-                        </Button>
-                    </li>
 
                     <li>
                         <Button

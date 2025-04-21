@@ -39,14 +39,6 @@ export default function PointsPage() {
         requestAnimationFrame(step)
     }, [points])
 
-    const increasePoints = () => {
-        setPoints(prevPoints => prevPoints + 10); // Increase points by 10
-    }
-
-    const decreasePoints = () => {
-        setPoints(prevPoints => prevPoints - 10); // Decrease points by 10
-    }
-
     // Update the xuTransactions object to use the new type
     const xuTransactions: { received: Transaction[]; used: Transaction[]; expired: Transaction[] } = {
         received: [
@@ -60,7 +52,7 @@ export default function PointsPage() {
         ],
         used: [
             {
-                id: 1,
+                id: 3,
                 amount: -30,
                 description: "Sử dụng cho đơn hàng #ORD-2024-0215",
                 date: "15/02/2024",
@@ -69,7 +61,7 @@ export default function PointsPage() {
         ],
         expired: [
             {
-                id: 1,
+                id: 5,
                 amount: 20,
                 description: "Khuyến mãi chào mừng",
                 date: "01/01/2023",
@@ -147,7 +139,7 @@ export default function PointsPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto">
             {/* Purple header with coins */}
             <div className="relative bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 mb-6 overflow-hidden">
                 {/* Decorative coins */}
@@ -181,20 +173,10 @@ export default function PointsPage() {
 
                 {/* Content */}
                 <div className="relative text-center text-white">
-                    <h1 className={`text-7xl font-bold mb-2 animate-spin`}>
-                        <div className="animate-pulse">
-                            <div className="animate-bounce">
-                                <div className="animate-ping">
-                                    {animatedPoints}
-                                </div>
-                            </div>
-                        </div>
+                    <h1 className={`text-7xl font-bold mb-2`}>
+                        {animatedPoints}
                     </h1>
                     <p className="text-white/90">Có vẻ như bạn đã hết điểm. Hãy đặt hoạt động để nhận điểm nhé!</p>
-                    <div className="flex justify-center space-x-4 mt-4">
-                        <Button onClick={increasePoints} className="bg-green-500 text-white">Tăng Điểm</Button>
-                        <Button onClick={decreasePoints} className="bg-red-500 text-white">Giảm Điểm</Button>
-                    </div>
                 </div>
             </div>
 
@@ -238,7 +220,7 @@ export default function PointsPage() {
             </div>
 
             {/* Information section */}
-            <div className="mt-8 bg-gray-50 p-4 rounded-lg">
+            <div className="my-8 bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-medium mb-2">Về PhotoGo Point</h3>
                 <ul className="text-sm text-gray-600 space-y-2">
                     <li>• PhotoGo Point là điểm thưởng bạn nhận được khi đặt các dịch vụ trên PhotoGo</li>
