@@ -7,6 +7,7 @@ import PromotionsContent from "./PromotionContent"
 import { PAGES } from '../../../../types/IPages'
 import React from 'react';
 import PointsPage from "./PointContent/PointContent"
+import ChangePasswordForm from "./ChangePasswordContent"
 
 const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, userOrders, userFavorites, userPromotions }) => {
     console.log('right' + user)
@@ -29,6 +30,8 @@ const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, user
                 return <PromotionsContent /*promotions={userPromotions}*/ />
             case "points":
                 return <PointsPage />
+            case "change-password":
+                return <ChangePasswordForm />
             default:
                 return <RewardsContent user={user} />
         }

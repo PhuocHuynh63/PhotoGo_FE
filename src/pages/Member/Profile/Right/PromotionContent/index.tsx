@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { cn } from "@helpers/CN";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { QRCodeCanvas } from "qrcode.react";
+import { motion, AnimatePresence } from "framer-motion"; // thêm dòng này
+
 const promotions = [
     {
         id: 1,
@@ -69,60 +71,89 @@ export default function PromotionsPage() {
 
                 {["active", "used", "expired"].map((status) => (
                     <TabsContent value={status} key={status}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <AnimatePresence mode="wait">
                             {filterPromos(status).map((promo) => (
-                                <Card
+                                <motion.div
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
                                     key={promo.id}
-                                    className={cn("relative flex border border-orange-200 bg-orange-50 shadow-sm rounded-xl overflow-hidden")}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
                                 >
-                                    {promo.icon}
+                                    <Card
+                                        className={cn(
+                                            "relative flex border border-orange-200 bg-orange-50 shadow-sm rounded-xl overflow-hidden hover:scale-[1.01] transition-transform duration-200"
+                                        )}
+                                    >
+                                        {promo.icon}
 
-                                    {/* Left */}
-                                    <div className="p-5 w-2/3 flex flex-col justify-between">
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-orange-600">{promo.title}</h3>
-                                            <p className="text-sm text-gray-700 mt-1">{promo.description}</p>
-                                        </div>
-                                        <p className="text-xs text-gray-500 mt-3">
-                                            HSD: {format(new Date(promo.expiry), 'dd/MM/yyyy')}
-                                        </p>
-                                    </div>
-
-                                    {/* Right */}
-                                    <div className="w-1/3 bg-white border-l border-dashed border-orange-300 flex flex-col justify-center items-center p-4 text-center">
-                                        <span className="text-xs text-gray-500 mb-1">Mã ưu đãi</span>
-                                        <div className="bg-orange-100 px-3 py-1 rounded-md font-mono text-orange-600 text-base font-bold tracking-wider shadow-inner">
-                                            {promo.code}
+                                        {/* Left */}
+                                        <div className="p-5 w-2/3 flex flex-col justify-between">
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-orange-600">{promo.title}</h3>
+                                                <p className="text-sm text-gray-700 mt-1">{promo.description}</p>
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-3">
+                                                HSD: {format(new Date(promo.expiry), 'dd/MM/yyyy')}
+                                            </p>
                                         </div>
 
-                                        {/* Button or Status */}
-                                        {status === "active" && (
-                                            <div className="flex flex-col justify-center items-center mt-3">
-                                                <QRCodeCanvas
-                                                    value={promo.code}
-                                                    size={72}
-                                                    bgColor="#ffffff"
-                                                    fgColor="#f97316"
-                                                    level="H"
-                                                />
-                                                <Button
-                                                    className="mt-3 text-orange-500 border-orange-300 hover:bg-orange-100 w-full"
-                                                >
-                                                    Sử dụng ngay
-                                                </Button>
+                                        {/* Right */}
+                                        <div className="w-1/3 bg-white border-l border-dashed border-orange-300 flex flex-col justify-center items-center p-4 text-center">
+                                            <span className="text-xs text-gray-500 mb-1">Mã ưu đãi</span>
+                                            <div className="bg-orange-100 px-3 py-1 rounded-md font-mono text-orange-600 text-base font-bold tracking-wider shadow-inner">
+                                                {promo.code}
                                             </div>
 
-                                        )}
-                                        {status === "used" && (
-                                            <span className="text-xs text-gray-400 mt-3 italic">Đã sử dụng</span>
-                                        )}
-                                        {status === "expired" && (
-                                            <span className="text-xs text-red-400 mt-3 italic">Hết hạn</span>
-                                        )}
-                                    </div>
-                                </Card>
+                                            {/* Button or Status */}
+                                            {status === "active" && (
+                                                <div className="flex flex-col justify-center items-center mt-3">
+                                                    <motion.div
+                                                        initial={{ scale: 0.9 }}
+                                                        animate={{ scale: 1 }}
+                                                        transition={{ type: "spring", stiffness: 300 }}
+                                                    >
+                                                        <QRCodeCanvas
+                                                            value={promo.code}
+                                                            size={72}
+                                                            bgColor="#ffffff"
+                                                            fgColor="#f97316"
+                                                            level="H"
+                                                        />
+                                                    </motion.div>
+                                                    <Button className="mt-3 text-orange-500 border-orange-300 hover:bg-orange-100 w-full">
+                                                        Sử dụng ngay
+                                                    </Button>
+                                                </div>
+                                            )}
+
+                                            {/* Animation cho trạng thái đã dùng và hết hạn */}
+                                            {status === "used" && (
+                                                <motion.span
+                                                    className="text-xs text-gray-400 mt-3 italic"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    transition={{ delay: 0.1 }}
+                                                >
+                                                    Đã sử dụng
+                                                </motion.span>
+                                            )}
+                                            {status === "expired" && (
+                                                <motion.span
+                                                    className="text-xs text-red-400 mt-3 italic"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    transition={{ delay: 0.1 }}
+                                                >
+                                                    Hết hạn
+                                                </motion.span>
+                                            )}
+                                        </div>
+                                    </Card>
+                                </motion.div>
                             ))}
-                        </div>
+                        </AnimatePresence>
 
                         {filterPromos(status).length === 0 && (
                             <div className="text-center py-12 col-span-full">

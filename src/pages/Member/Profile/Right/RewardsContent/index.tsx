@@ -48,7 +48,7 @@ const mockData = [{
 
 export default function RewardsContent({ user }: any) {
     return (
-        <div className="container mx-auto">
+        <div className="">
             {/* Photo Rewards Header */}
             <div className="flex items-center my-8">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
