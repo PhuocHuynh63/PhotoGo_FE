@@ -25,13 +25,13 @@ const UserProfileLayout = ({
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-                <div className="mx-40 mt-20">
+                <div className="mx-4 lg:mx-40 mt-10 lg:mt-20">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Left Content */}
                         <motion.div
                             initial={{ x: -100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
+                            transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
                             className="lg:col-span-4 col-span-12"
                         >
                             <ProfileLeft
@@ -40,12 +40,11 @@ const UserProfileLayout = ({
                                 activeTab={activeTab}
                             />
                         </motion.div>
-
                         {/* Right Content */}
                         <motion.div
                             initial={{ x: 100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
+                            transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
                             className="lg:col-span-8 col-span-12"
                         >
                             <ProfileRight

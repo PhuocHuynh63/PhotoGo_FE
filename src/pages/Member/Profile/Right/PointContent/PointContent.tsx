@@ -5,7 +5,7 @@ import Image from "next/image"
 import { HelpCircle } from "lucide-react"
 import Button from "@components/Atoms/Button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs"
-
+import { motion } from 'framer-motion'
 // Define the type for a transaction
 type Transaction = {
     id: number;
@@ -27,13 +27,14 @@ export default function PointsPage() {
         const initialValue = animatedPoints
         const diff = points - initialValue
 
+        const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
+
         const step = (timestamp: number) => {
             if (!start) start = timestamp
             const progress = Math.min((timestamp - start) / duration, 1)
-            setAnimatedPoints(Math.floor(initialValue + diff * progress))
-            if (progress < 1) {
-                requestAnimationFrame(step)
-            }
+            const eased = easeOutCubic(progress)
+            setAnimatedPoints(Math.floor(initialValue + diff * eased))
+            if (progress < 1) requestAnimationFrame(step)
         }
 
         requestAnimationFrame(step)
@@ -117,7 +118,13 @@ export default function PointsPage() {
         return (
             <div className="space-y-4">
                 {transactions.map((transaction) => (
-                    <div key={transaction.id} className="border rounded-lg p-4">
+                    <motion.div
+                        key={transaction.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: transaction.id * 0.05 }}
+                        className="border rounded-lg p-4"
+                    >
                         <div className="flex justify-between items-center">
                             <div>
                                 <p className="font-medium">{transaction.description}</p>
@@ -132,7 +139,7 @@ export default function PointsPage() {
                                 {transaction.amount} pp
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         )
@@ -212,10 +219,53 @@ export default function PointsPage() {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="all">{renderTransactions()}</TabsContent>
-                    <TabsContent value="received">{renderTransactions()}</TabsContent>
-                    <TabsContent value="used">{renderTransactions()}</TabsContent>
-                    <TabsContent value="expired">{renderTransactions()}</TabsContent>
+                    <TabsContent value="all">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderTransactions()}
+                        </motion.div>
+                    </TabsContent>
+                    <TabsContent value="received">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderTransactions()}
+                        </motion.div>
+
+                    </TabsContent>
+                    <TabsContent value="used">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderTransactions()}
+
+                        </motion.div>
+                    </TabsContent>
+                    <TabsContent value="expired">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderTransactions()}
+
+                        </motion.div>
+                    </TabsContent>
                 </Tabs>
             </div>
 
