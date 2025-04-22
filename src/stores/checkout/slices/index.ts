@@ -1,4 +1,6 @@
-export const createCheckoutSlice = (): IZUSTAND.CheckoutState => ({
+export const createCheckoutSlice = (
+    set: any
+): ZUSTAND.ICheckoutState => ({
     currentStep: 1,
     selectedMethod: 'payos',
     selectedDeposit: 30,
@@ -8,7 +10,7 @@ export const createCheckoutSlice = (): IZUSTAND.CheckoutState => ({
     },
 
     selectMethod: (method) => {
-        return set((state: IZUSTAND.CheckoutState) => ({
+        return set((state: ZUSTAND.ICheckoutState) => ({
             selectedMethod: state.selectedMethod === method ? null : method,
         }))
     },
@@ -17,13 +19,13 @@ export const createCheckoutSlice = (): IZUSTAND.CheckoutState => ({
         return set(() => ({ selectedDeposit: value }))
     },
     nextStep: () => {
-        return set((state: IZUSTAND.CheckoutState) => ({
+        return set((state: ZUSTAND.ICheckoutState) => ({
             currentStep: state.currentStep + 1,
         }));
     },
 
     prevStep: () => {
-        return set((state: IZUSTAND.CheckoutState) => ({
+        return set((state: ZUSTAND.ICheckoutState) => ({
             currentStep: state.currentStep > 1 ? state.currentStep - 1 : 1,
         }));
     },

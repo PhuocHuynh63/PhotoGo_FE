@@ -440,4 +440,9 @@ declare namespace ICOMPONENTS {
         value: string | number
         icon?: string
     }
+
+    interface PricingPackage {
+        subscriptions: any;
+        numberOfPackages?: number;
+    }
 }
