@@ -1,9 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useSelectMethod, useSetSelectedMethod } from '@stores/pricing/selectors'
+import React from 'react'
 
 const SelectionPricing = () => {
-    const [selected, setSelected] = useState<'month' | 'session'>('month')
+    const selected = useSelectMethod()
+    const setSelected = useSetSelectedMethod()
 
     return (
         <div className='flex justify-center items-center gap-4 mb-10'>
@@ -13,9 +15,8 @@ const SelectionPricing = () => {
                         ${selected === 'month' ? 'left-0' : 'left-1/2'}
                     `}
                 />
-
                 <button
-                    className={`relative z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
+                    className={`relative cursor-pointer z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
                         ${selected === 'month' ? 'text-white' : 'text-description'}
                     `}
                     onClick={() => setSelected('month')}
@@ -23,7 +24,7 @@ const SelectionPricing = () => {
                     Theo tháng
                 </button>
                 <button
-                    className={`relative z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
+                    className={`relative cursor-pointer z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
                         ${selected === 'session' ? 'text-white' : 'text-description'}
                     `}
                     onClick={() => setSelected('session')}

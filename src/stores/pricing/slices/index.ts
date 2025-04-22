@@ -1,4 +1,6 @@
-export const createCheckoutSlice = (): ZUSTAND.ISelectedMethodState => ({
+export const createPricingSlice = (
+    set: any 
+): ZUSTAND.ISelectedMethodState => ({
     selectedMethod: 'month',
 
     setSelectedMethod: (method: string | null) => {

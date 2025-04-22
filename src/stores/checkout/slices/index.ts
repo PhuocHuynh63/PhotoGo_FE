@@ -1,4 +1,6 @@
-export const createCheckoutSlice = (): ZUSTAND.ICheckoutState => ({
+export const createCheckoutSlice = (
+    set: any
+): ZUSTAND.ICheckoutState => ({
     currentStep: 1,
     selectedMethod: 'payos',
     selectedDeposit: 30,

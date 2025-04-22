@@ -10,7 +10,6 @@ const FooterAction = () => {
     const router = useRouter()
 
     const currentStep = useCheckoutStep()
-    console.log('currentStep', currentStep);
 
     const setCurrentStep = useSetCheckoutStep()
     const handleBack = () => {
