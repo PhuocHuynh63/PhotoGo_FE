@@ -1,9 +1,9 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/Atoms/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from "@/components/Atoms/ui/carousel";
 import RankCard from "../../components/RankCard";
 import ProgressSection from "../../components/ProgressSection";
 import BenefitsList from "../../components/BenefitsList";
-
-
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const mockData = [{
     level: 1,
@@ -16,7 +16,6 @@ const mockData = [{
     deadline: "31/12/2023",
     reward: "100000",
     description: "Đặt 5 đơn hàng hoặc chi tiêu 1000 USD trong tháng này",
-    btnText: "Nâng hạng"
 },
 {
     level: 2,
@@ -29,7 +28,6 @@ const mockData = [{
     deadline: "31/12/2023",
     reward: "200000",
     description: "Đặt 10 đơn hàng hoặc chi tiêu 2000 USD trong tháng này",
-    btnText: "Nâng hạng"
 },
 {
     level: 3,
@@ -47,10 +45,25 @@ const mockData = [{
 ]
 
 export default function RewardsContent({ user }: any) {
+    const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+
+    useEffect(() => {
+        if (carouselApi) {
+            const currentIndex = mockData.findIndex((item) => item.current);
+            if (currentIndex !== -1) {
+                const timer = setTimeout(() => {
+                    carouselApi.scrollTo(currentIndex, false);
+                }, 500); // giảm từ 1000ms xuống 500ms
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [carouselApi]);
+
+
     return (
         <div className="">
             {/* Photo Rewards Header */}
-            <div className="flex items-center my-8">
+            <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -70,7 +83,7 @@ export default function RewardsContent({ user }: any) {
             <h1 className="text-2xl font-bold mb-6">Mức Rank</h1>
             <div className="flex justify-center">
                 <div className="w-3/4">
-                    <Carousel>
+                    <Carousel setApi={setCarouselApi}>
                         <div className="absolute z-10 top-0 right-0 w-6 h-full rounded-l-md" style={{ background: 'linear-gradient(to left, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0))' }}>
                         </div>
                         <div className="absolute z-10 top-0 left-0 w-6 h-full rounded-r-md" style={{ background: 'linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0))' }}>
@@ -80,9 +93,17 @@ export default function RewardsContent({ user }: any) {
                             {mockData.map((level, index) => (
                                 <CarouselItem
                                     key={index}
-                                    className={`transition-all duration-300 ${level.current ? "opacity-100 shadow-lg border-2 rounded-xl border-primary" : "opacity-40 pointer-events-none"}`}
+                                    className={`transition-all duration-300 ${level.current ? "opacity-100" : "opacity-40"
+                                        }`}
                                 >
-                                    <RankCard level={level} />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 20 }}
+                                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                                    >
+                                        <RankCard level={level} />
+                                    </motion.div>
                                 </CarouselItem>
                             ))}
                         </CarouselContent>

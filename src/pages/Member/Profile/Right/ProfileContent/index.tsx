@@ -80,6 +80,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                     id="fullName"
                                     {...register("fullName", { required: "Vui lòng nhập họ tên" })}
                                     disabled={!isEditing}
+                                    className={`${!isEditing ? "opacity-60 cursor-default" : "opacity-100 hover:opacity-100 focus:opacity-100"} transition-opacity duration-300`}
                                 />
                                 {errors?.fullName && <p className="text-red-500 text-sm">{errors?.fullName.message}</p>}
                             </div>
@@ -95,24 +96,25 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                         },
                                     })}
                                     disabled={!isEditing}
+                                    className={`${!isEditing ? "opacity-60 cursor-default" : "opacity-100 hover:opacity-100 focus:opacity-100"} transition-opacity duration-300`}
                                 />
                                 {errors?.phoneNumber && <p className="text-red-500 text-sm">{errors?.phoneNumber.message}</p>}
                             </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4 p-3">
-                            <div className="space-y-2">
+                            <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="email">Email</Label>
                                 <Input id="email" defaultValue={user?.email} disabled />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="rank">Hạng thành viên</Label>
                                 <Input id="rank" defaultValue={user?.rank} disabled />
                             </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4 p-3">
-                            <div className="space-y-2">
+                            <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="status">Ngày tham gia</Label>
                                 <Input id="status" defaultValue={new Date(user?.createdAt).toLocaleDateString("vi-VN")} disabled />
                             </div>

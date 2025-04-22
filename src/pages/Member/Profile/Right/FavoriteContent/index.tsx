@@ -1,62 +1,132 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Button from "@components/Atoms/Button";
 import { Card } from "@components/Atoms/Card";
 import { Heart, Star } from "lucide-react";
-export default function FavoritesContent(/*{ favorites }*/) {
-    const favorites = [{
-        id: 1,
-        name: "Sản phẩm 1",
-        image: "/placeholder.svg",
-        price: 100,
-        rating: 4.5,
-        vendor: 'nhà cung cấp 1',
-        reviews: 10,
-        createdAt: "2023-01-01",
-        updatedAt: "2023-01-01",
-    },
-    {
-        id: 2,
-        name: "Sản phẩm 2",
-        image: "/placeholder.svg",
-        price: 200,
-        rating: 4.0,
-        vendor: 'nhà cung cấp 1',
-        reviews: 5,
-        createdAt: "23-01-01",
-        updatedAt: "2023-01-01",
-    }]
-    return (
-        <div className="min-w-[1000px]">
-            <h1 className="text-2xl font-bold mb-6">Danh sách yêu thích</h1>
+import { Skeleton } from "@components/Atoms/ui/skeleton";
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {favorites.map((item) => (
-                    <Card key={item.id} className="overflow-hidden">
-                        <div className="relative h-40">
-                            <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-full object-cover" />
-                            <Button
-                                variant="ghost"
-                                className="absolute top-2 right-2 h-8 w-8 bg-white/80 hover:bg-white text-red-500"
+export default function FavoritesContent() {
+    const [favorites, setFavorites] = useState([
+        {
+            id: 1,
+            name: "Sản phẩm 1",
+            image: "/placeholder.svg",
+            price: 100000,
+            rating: 4.5,
+            vendor: "Nhà cung cấp 1",
+            reviews: 10,
+        },
+        {
+            id: 2,
+            name: "Sản phẩm 2",
+            image: "/placeholder.svg",
+            price: 200000,
+            rating: 4.0,
+            vendor: "Nhà cung cấp 2",
+            reviews: 5,
+        },
+    ]);
+    const [isLoading, setIsLoading] = useState(false);
+    const handleRemove = (id: number) => {
+        setFavorites((prev) => prev.filter((item) => item.id !== id));
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, scale: 0.95, y: 20 },
+        visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.3 } },
+        exit: { opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.3 } },
+    };
+
+    return (
+        <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-screen-xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6 text-center sm:text-left">
+                Danh sách yêu thích
+            </h1>
+
+
+            {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="space-y-3">
+                            <Skeleton className="h-40 w-full rounded-xl" />
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-3 w-1/2" />
+                        </div>
+                    ))}
+                </div>
+            ) : favorites.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <AnimatePresence>
+                        {favorites.map((item) => (
+                            <motion.div
+                                key={item.id}
+                                variants={cardVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                layout
                             >
-                                <Heart className="h-4 w-4 fill-current" />
-                            </Button>
-                        </div>
-                        <div className="p-4">
-                            <h3 className="font-medium line-clamp-1">{item.name}</h3>
-                            <p className="text-sm text-gray-500">{item.vendor}</p>
-                            <div className="flex items-center justify-between mt-2">
-                                <div className="flex items-center">
-                                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                    <span className="text-sm ml-1">{item.rating}</span>
-                                </div>
-                                <p className="font-medium">{item.price.toLocaleString()}đ</p>
-                            </div>
-                            <Button className="w-full mt-3">
-                                Xem chi tiết
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+                                <Card className="hover:shadow-lg transition-shadow duration-300 group rounded-2xl overflow-hidden border">
+                                    <div className="relative h-44 sm:h-48 overflow-hidden">
+                                        <img
+                                            src={item.image}
+                                            alt={item.name}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() => handleRemove(item.id)}
+                                            className="absolute top-2 right-2 h-8 w-8 bg-white/90 hover:bg-white text-red-500 shadow-sm rounded-full"
+                                        >
+                                            <Heart className="h-4 w-4 fill-current" />
+                                        </Button>
+                                    </div>
+
+                                    <div className="p-4 space-y-1">
+                                        <h3 className="font-semibold text-lg truncate">{item.name}</h3>
+                                        <p className="text-sm text-gray-500">{item.vendor}</p>
+
+                                        <div className="flex items-center justify-between mt-2 flex-wrap gap-1">
+                                            <div className="flex items-center text-yellow-500">
+                                                <Star className="h-4 w-4 fill-current" />
+                                                <span className="ml-1 text-sm">{item.rating}</span>
+                                                <span className="ml-2 text-xs text-gray-400">
+                                                    ({item.reviews} đánh giá)
+                                                </span>
+                                            </div>
+                                            <p className="font-semibold text-primary text-sm">
+                                                {item.price.toLocaleString()}đ
+                                            </p>
+                                        </div>
+
+                                        <Button className="w-full mt-4 text-sm font-medium">
+                                            Xem chi tiết
+                                        </Button>
+                                    </div>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>) : (<div className="flex flex-col items-center justify-center mt-12 text-center text-gray-500">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-24 w-24 text-gray-300 mb-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
+                    </svg>
+                    <p className="text-lg font-medium">Bạn chưa có sản phẩm yêu thích nào.</p>
+                    <p className="text-sm mt-1">Hãy khám phá và thêm vào danh sách yêu thích nhé!</p>
+                </div>)
+            }
+
         </div>
-    )
+    );
 }

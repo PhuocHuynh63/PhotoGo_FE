@@ -1,4 +1,5 @@
 // components/Rewards/RankCard.tsx
+import Button from "@components/Atoms/Button";
 import React from "react";
 
 interface RankCardProps {
@@ -22,7 +23,7 @@ const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level }) => {
         return <div>Loading...</div>; // or handle the error as needed
     }
     return (
-        <div className="flex flex-col rounded-lg overflow-hidden bg-white shadow-lg">
+        <div className={`flex flex-col rounded-lg overflow-hidden bg-white shadow-lg ${level.current ? "border-2 border-primary" : ""}`}>
             <div className={`bg-gradient-to-r ${level.gradient} p-4 text-white`}>
                 <div className="flex items-center">
                     <div className="bg-white/20 rounded-md px-2 py-1 text-xs">Lv. {level.level}</div>
@@ -35,7 +36,7 @@ const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level }) => {
             </div>
             <div className="p-4">
                 <p className="text-sm mb-2">{level.description}</p>
-                {level.btnText ? (<button className="mt-2 bg-blue-500 text-white py-2 px-4 rounded">{level.btnText}</button>) : ""}
+                {level.btnText ? (<Button className="mt-2 hover:animate-pulse duration-300 transition-all text-white py-2 px-4 rounded">{level.btnText}</Button>) : ""}
                 <div className="mt-2 text-lg font-bold">{level.reward}</div>
                 <p className="text-xs">Gói Khởi Động</p>
                 <p className="text-xs">Đặt 0/{level.orderGoal} đơn hoặc chi tiêu 0.00/US${level.spentGoal.toFixed(2)}</p>

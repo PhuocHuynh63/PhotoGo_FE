@@ -1,10 +1,16 @@
-// components/Rewards/ProgressSection.tsx
 import React from "react";
+import { motion } from "framer-motion";
 
 const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; required?: number }) => {
     const percent = Math.min((spent / required) * 100, 100);
     return (
-        <div className="w-full bg-gray-100 rounded-lg p-2">
+        <motion.div
+            className="w-full bg-gray-100 rounded-lg p-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.4 }}
+        >
             <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600">Gói Khởi Động</span>
             </div>
@@ -24,9 +30,8 @@ const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; required
                     Xem Điều khoản & Điều kiện
                 </a>
             </div>
-        </div>
+        </motion.div>
     );
 };
-
 
 export default ProgressSection;
