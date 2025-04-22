@@ -67,7 +67,6 @@ export const authOptions: NextAuthOptions = {
                 token.role = user.role;
                 token.accessToken = user.accessToken;
             }
-
             return token;
         },
         async session({ session, token }: any) {
@@ -77,18 +76,6 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
-
-    jwt: {
-        encode: async ({ token }) => {
-            return token?.accessToken as string;
-        },
-
-        decode: async ({ token }) => {
-            return jwtDecode(token!) as any;
-        },
-    },
-
-
     pages: {
         signIn: ROUTES.AUTH.LOGIN,
     },
