@@ -9,7 +9,7 @@ import React from 'react';
 import PointsPage from "./PointContent"
 import ChangePasswordForm from "./ChangePasswordContent"
 
-const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, userOrders, userFavorites, userPromotions }) => {
+const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ userToken, user, activeTab, userOrders, userFavorites, userPromotions }) => {
     console.log('right' + user)
 
     const renderContent = () => {
@@ -19,7 +19,7 @@ const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, user
 
         switch (activeTab) {
             case "profile":
-                return <ProfileContent user={user} />
+                return <ProfileContent user={user} userToken={userToken} />;
             case "rewards":
                 return <RewardsContent user={user} />
             case "orders":
