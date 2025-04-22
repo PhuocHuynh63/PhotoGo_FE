@@ -163,7 +163,7 @@ const OrdersContent = (/*{ userOrders }: any*/) => {
             )}
 
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-4 w-full md:w-auto">
+                <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
                     <TabsTrigger value="upcoming">Sắp tới</TabsTrigger>
                     <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>

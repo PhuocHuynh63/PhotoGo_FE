@@ -49,6 +49,7 @@ declare namespace PAGES {
         setActiveTab: (tab: string) => void;
     }
     interface ProfileRightProps extends ICommonProfileProps {
+        userToken: string;
         activeTab: string;
         userOrders: IOrder[];
         userFavorites: IFavorite[];

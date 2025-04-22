@@ -26,7 +26,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
             {/* User Profile */}
             <div className="bg-gradient-to-b from-orange-300 to-yellow-50 p-5 text-white rounded-lg">
                 <div className="flex flex-col items-center justify-center">
-                    <Avatar className="w-24 h-24 rounded-full" src={user?.avatarUrl || '/default-avatar.png'} alt={user?.fullName || 'User'} />
+                    <Avatar className="w-2 rounded-full" src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'} alt={user?.fullName || 'User'} size={200} />
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
                     <Button className={`my-2 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none ${activeTab === "profile" ? "text-dark bg-gray-200 p-1" : ""}`} onClick={() => setActiveTab("profile")}>
                         Cập nhật thông tin cá nhân <ChevronRight size={16} />
@@ -74,16 +74,16 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
                                 hidden: { opacity: 0, y: 10 },
                                 visible: { opacity: 1, y: 0 }
                             }}
-                            transition={{ duration: 3 }}
+                            transition={{ duration: 1 }}
                             className={["orders", "reviews", "favorites", "change-password"].includes(tab) && tab === "orders" ? "pt-3 border-t" : ""}
                         >
                             <Button
                                 onClick={() => setActiveTab(tab)}
                                 className={`{bg-none shadow-none hover:bg-none ${activeTab === tab
-                                    ? "text-blue-500 font-medium"
-                                    : "text-gray-700 hover:text-blue-500"}`}
+                                    ? "text-primary font-medium"
+                                    : "text-gray-700 hover:text-primary"}`}
                             >
-                                <Icon className={`w-5 h-5 mr-3 ${activeTab === "rewards" && tab === "rewards" ? "fill-orange-500" : ""}`} />
+                                <Icon className={`w-5 h-5 mr-3`} />
                                 <span>{label}</span>
                             </Button>
                         </motion.li>
