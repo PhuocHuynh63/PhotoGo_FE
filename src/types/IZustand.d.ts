@@ -1,5 +1,5 @@
-declare module IZUSTAND {
-    export interface CheckoutState {
+declare module ZUSTAND {
+    export interface ICheckoutState {
         currentStep: number
         selectedDeposit: number
         selectedMethod: string | null
@@ -9,5 +9,11 @@ declare module IZUSTAND {
         selectDeposit: (percent: number) => void
         selectMethod: (method: string | null) => void
         // reset: () => void
+    }
+
+    export interface ISelectedMethodState {
+        selectedMethod: string | null
+        setSelectedMethod: (method: string | null) => void
+        resetSelectedMethod: () => void
     }
 }

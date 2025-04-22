@@ -1,6 +1,6 @@
 'use client'
 
-import { useCheckoutStep } from '@stores/checkout/selector'
+import { useCheckoutStep } from '@stores/checkout/selectors'
 import React from 'react'
 import Method from './Left/Method'
 import Infomation from './Left/Infomation'

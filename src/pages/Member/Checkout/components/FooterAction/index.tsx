@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { useCheckoutStep, useSetCheckoutStep } from '@stores/checkout/selector'
+import { useCheckoutStep, useSetCheckoutStep } from '@stores/checkout/selectors'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'

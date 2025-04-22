@@ -1,6 +1,6 @@
 'use client'
 
-import { useCheckoutDeposit, useSetCheckoutDeposit } from '@stores/checkout/selector'
+import { useCheckoutDeposit, useSetCheckoutDeposit } from '@stores/checkout/selectors'
 import React from 'react'
 
 const Deposit = () => {

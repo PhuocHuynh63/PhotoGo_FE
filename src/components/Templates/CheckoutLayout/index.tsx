@@ -5,7 +5,7 @@ import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { useCheckoutStep } from "@stores/checkout/selector";
+import { useCheckoutStep } from "@stores/checkout/selectors";
 
 export default function CheckoutLayoutClient({
     children,
