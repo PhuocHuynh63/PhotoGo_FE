@@ -20,7 +20,7 @@ const Footer = () => {
                         />
                         <span className='font-bold text-xl'>PHOTOGO</span>
                     </h3>
-                    <p className="text-gray-400 leading-6 pr-48">
+                    <p className="text-gray-400 leading-6 pr-36">
                         Nền tảng duy nhất của bạn để đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm.
                     </p>
                     <div className="flex gap-4 mt-3">

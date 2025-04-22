@@ -1,6 +1,6 @@
 'use client'
 
-import { useSelectedMethod, useSelectMethod } from '@stores/checkout/selector'
+import { useSelectedMethod, useSelectMethod } from '@stores/checkout/selectors'
 import React from 'react'
 
 const PaymentMethod = () => {
