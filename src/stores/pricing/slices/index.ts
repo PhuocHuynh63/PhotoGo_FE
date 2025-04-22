@@ -1,11 +1,11 @@
 export const createPricingSlice = (
-    set: any 
+    set: any
 ): ZUSTAND.ISelectedMethodState => ({
     selectedMethod: 'month',
 
     setSelectedMethod: (method: string | null) => {
-        return set((state: ZUSTAND.ISelectedMethodState) => ({
-            selectedMethod: state.selectedMethod === method ? null : method,
+        return set(() => ({
+            selectedMethod: method,
         }))
     },
 

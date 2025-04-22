@@ -1,6 +1,6 @@
 import React from 'react'
 
-const HeaderPricing = () => {
+const TitlePricing = () => {
     return (
         <div className="text-center space-y-4 mb-8">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-primary">Các Gói Chụp Ảnh Tháng và Bảng Giá</h1>
@@ -11,4 +11,4 @@ const HeaderPricing = () => {
     )
 }
 
-export default HeaderPricing
+export default TitlePricing
