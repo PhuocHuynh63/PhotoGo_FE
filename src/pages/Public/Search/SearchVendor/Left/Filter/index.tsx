@@ -15,7 +15,7 @@ export default function Left() {
     const searchParams = useSearchParams();
 
     const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
-    const [serviceType, setServiceType] = useState<ICOMPONENTS.ServiceType[]>([]);
+    const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
     const [rating, setRating] = useState(5);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -76,21 +76,12 @@ export default function Left() {
     function handleResetAll() {
         setSelectPriceRange([5000000, 70000000]);
         setServiceType([]);
-        setRating(5);
+        setRating(1);
         setAddresses([]);
         router.push("?");
     }
 
     function handleApplyFilter() {
-        // Logic to apply the selected filters
-        // This could involve updating the URL parameters or fetching data based on the selected filters
-        // router.push(`?${new URLSearchParams({
-        //     price: selectPriceRange.join(','),
-        //     service: serviceType.map(s => s.key).join(','),
-        //     address: addresses.map(a => a.key).join(','),
-        //     rating: rating.toString(),
-        //     date: selectedDate.toLocaleDateString('vi-VN').replace(/\//g, '-')
-        // }).toString()}`);
         const params = new URLSearchParams();
 
         if (serviceType.length > 0) params.set("serviceType", serviceType.map(s => s.key).join(","));
@@ -112,11 +103,11 @@ export default function Left() {
             setSelectPriceRange([Number(minPrice[0]), Number(maxPrice[0])]);
         }
 
-        const servicesFromUrl = params.getAll("serviceType");
-        setServiceType(services.filter(s => servicesFromUrl.includes(s.key)));
+        const servicesFromUrl = params.get("serviceType");
+        setServiceType(services.filter(s => servicesFromUrl?.includes(s.key) ?? false));
 
-        const addressesFromUrl = params.getAll("address");
-        setAddresses(address.filter(a => addressesFromUrl.includes(a.key)));
+        const addressesFromUrl = params.get("address");
+        setAddresses(address.filter(a => addressesFromUrl?.includes(a.key) ?? false));
 
         const ratingFromUrl = params.get("rating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
@@ -155,7 +146,7 @@ export default function Left() {
                 <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
                 <Checkbox
                     options={services}
-                    // value={String(serviceType.map(service => service.key))}
+                    value={serviceType.map(service => service.key) as string[]}
                     onChange={(e, key) => {
                         handleServiceTypeChange(key);
                     }}
