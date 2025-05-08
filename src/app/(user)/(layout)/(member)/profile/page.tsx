@@ -28,9 +28,7 @@ export default async function Profile() {
     }
     return (
         <>
-            <UserProfileLayout
-                userToken={session?.accessToken}
-                user={userData}
+            <UserProfileLayout user={userData}
                 userOrders={userOrders}
                 userFavorites={userFavorites}
                 userPromotions={userPromotions}>
