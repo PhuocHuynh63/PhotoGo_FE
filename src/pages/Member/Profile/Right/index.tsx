@@ -9,8 +9,7 @@ import React from 'react';
 import PointsPage from "./PointContent"
 import ChangePasswordForm from "./ChangePasswordContent"
 
-const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ userToken, user, activeTab, userOrders, userFavorites, userPromotions }) => {
-    console.log('right' + user)
+const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, userOrders, userFavorites, userPromotions }) => {
 
     const renderContent = () => {
         if (!user) {
@@ -19,7 +18,7 @@ const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ userToken, user, acti
 
         switch (activeTab) {
             case "profile":
-                return <ProfileContent user={user} userToken={userToken} />;
+                return <ProfileContent user={user} />
             case "rewards":
                 return <RewardsContent user={user} />
             case "orders":

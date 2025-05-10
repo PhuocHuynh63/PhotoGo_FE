@@ -8,6 +8,7 @@ import Button from "@components/Atoms/Button"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Select from "@components/Atoms/Select"
+import Link from "next/link"
 // import { Badge } from "@/components/ui/badge"
 
 interface ServicePackage {
@@ -386,9 +387,11 @@ export default function Right() {
                                     <div className="text-md">
                                         <span className="font-medium">{pkg.price.toLocaleString()}đ</span>
                                     </div>
-                                    <Button>
-                                        Xem chi tiết
-                                    </Button>
+                                    <Link href={`/packages/${pkg.id}`}>
+                                        <Button>
+                                            Xem chi tiết
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>

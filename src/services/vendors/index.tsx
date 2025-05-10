@@ -1,12 +1,17 @@
 import http from "@configs/fetch"
 
 const vendorService = {
-    getVendors: async () => {
-        return await http.get("/vendors?current=1&pageSize=10&status=ho%E1%BA%A1t%20%C4%91%E1%BB%99ng", {
+    getVendorsWithFilter: async (searchParams: URLSearchParams) => {
+        return await http.get(`/vendors/filter?${searchParams.toString()}&pageSize=6`, {
             next: { revalidate: 10 }
         })
     },
 
+    getVendors: async () => {
+        return await http.get(`/vendors`, {
+            next: { revalidate: 10 }
+        })
+    }
 }
 
 export default vendorService

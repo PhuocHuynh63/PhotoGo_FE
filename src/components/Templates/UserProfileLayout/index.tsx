@@ -6,13 +6,11 @@ import ProfileLeft from '@pages/Member/Profile/Left';
 import ProfileRight from '@pages/Member/Profile/Right';
 
 const UserProfileLayout = ({
-    userToken,
     user,
     userOrders,
     userFavorites,
     userPromotions,
 }: Readonly<{
-    userToken: any;
     user: any;
     userOrders: any;
     userFavorites: any;
@@ -50,12 +48,12 @@ const UserProfileLayout = ({
                             className="lg:col-span-8 col-span-12"
                         >
                             <ProfileRight
-                                userToken={userToken}
                                 user={user}
                                 activeTab={activeTab}
                                 userOrders={userOrders}
                                 userFavorites={userFavorites}
                                 userPromotions={userPromotions}
+                                userToken={user?.token || ''}
                             />
                         </motion.div>
                     </div>

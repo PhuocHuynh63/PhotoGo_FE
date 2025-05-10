@@ -9,7 +9,7 @@ import StarRating from "@components/Molecules/StarRating"
 import { motion } from "framer-motion"
 import PriceRangeSlider from "@components/Atoms/2WaySlider/2WaySlider"
 import DurationRangeSlider from "@components/Atoms/DurationRangeSlider/DurationRangeSlider"
-export default function Left() {
+export default function Left({ onReset }: { onReset: () => void }) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [serviceType, setServiceType] = useState<ICOMPONENTS.ServiceType[]>([]);
@@ -84,13 +84,17 @@ export default function Left() {
         router.push(`?${params.toString()}`);
     }
 
-    const handleResetAll = () => {
-        setServiceType([])
-        setRating(0)
-        setSelectPriceRange([300000, 70000000])
-        setSelectDurationRange([60, 180])
-        setVendor([])
-        router.push("?");
+    function handleResetAll() {
+        setSelectPriceRange([5000000, 70000000]);
+        setServiceType([]);
+        setRating(1);
+
+        const params = new URLSearchParams();
+        params.set('current', "1");
+
+        router.push(`?${params.toString()}`);
+
+        onReset();
     }
 
     useEffect(() => {
