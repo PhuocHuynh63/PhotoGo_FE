@@ -10,7 +10,6 @@ import PointsPage from "./PointContent"
 import ChangePasswordForm from "./ChangePasswordContent"
 
 const ProfileRight: React.FC<PAGES.ProfileRightProps> = ({ user, activeTab, userOrders, userFavorites, userPromotions }) => {
-    console.log('right' + user)
 
     const renderContent = () => {
         if (!user) {

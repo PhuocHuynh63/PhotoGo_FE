@@ -53,6 +53,7 @@ const UserProfileLayout = ({
                                 userOrders={userOrders}
                                 userFavorites={userFavorites}
                                 userPromotions={userPromotions}
+                                userToken={user?.token || ''}
                             />
                         </motion.div>
                     </div>

@@ -2,31 +2,34 @@ import SearchVendorPage from "@pages/Public/Search/SearchVendor";
 import { IVendorsResponse } from "@models/vendor/response.model";
 import vendorService from "@services/vendors";
 
-async function getVendors(searchParams: { [key: string]: string | string[] | undefined }) {
-    const params = await Promise.resolve(searchParams);
+interface PageProps {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+async function getVendors({ searchParams }: PageProps) {
+    const resolvedParams = await searchParams;
 
     const queryParams = new URLSearchParams();
 
-    if (params.searchTerm) queryParams.append('searchTerm', params.searchTerm as string);
-    if (params.address) queryParams.append('location', params.address as string);
-    if (params.minPrice) queryParams.append('minPrice', params.minPrice as string);
-    if (params.maxPrice) queryParams.append('maxPrice', params.maxPrice as string);
-    if (params.minRating) queryParams.append('minRating', params.minRating as string);
-    if (params.date) queryParams.append('date', params.date as string);
+    if (resolvedParams.searchTerm) queryParams.append('searchTerm', resolvedParams.searchTerm as string);
+    if (resolvedParams.address) queryParams.append('location', resolvedParams.address as string);
+    if (resolvedParams.minPrice) queryParams.append('minPrice', resolvedParams.minPrice as string);
+    if (resolvedParams.maxPrice) queryParams.append('maxPrice', resolvedParams.maxPrice as string);
+    if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
+    if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
+    if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
+    if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
+    if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
 
     const response = await vendorService.getVendorsWithFilter(queryParams) as IVendorsResponse;
-    return response.data.data;
+    return response;
 }
 
-export default async function SearchVendor({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined }
-}) {
-    const vendors = await getVendors(searchParams);
+export default async function SearchVendorsPage({ searchParams }: PageProps) {
+    const vendors = await getVendors({ searchParams });
     return (
         <>
-            <SearchVendorPage vendors={vendors} />
+            <SearchVendorPage vendors={vendors.data} />
         </>
     );
 }

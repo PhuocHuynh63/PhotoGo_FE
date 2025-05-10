@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
 import { motion } from "framer-motion"
 
-export default function Left() {
+export default function Left({ onReset }: { onReset: () => void }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -78,11 +78,24 @@ export default function Left() {
         setServiceType([]);
         setRating(1);
         setAddresses([]);
-        router.push("?");
+        setSelectedDate(new Date());
+
+        const params = new URLSearchParams();
+        params.set('current', "1");
+
+        router.push(`?${params.toString()}`);
+
+        onReset();
     }
 
     function handleApplyFilter() {
         const params = new URLSearchParams();
+
+        // Giữ lại param current nếu có
+        const currentPage = searchParams?.get('current');
+        if (currentPage) {
+            params.set('current', "1");
+        }
 
         if (serviceType.length > 0) params.set("serviceType", serviceType.map(s => s.key).join(","));
         if (rating > 0) params.set("minRating", rating.toString());

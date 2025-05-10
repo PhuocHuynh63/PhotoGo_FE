@@ -5,22 +5,53 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Left from "./Left/Filter";
 import Right from "./Right/Results";
-import { IVendor } from "@models/vendor/common.model";
+import { IVendorsData } from "@models/vendor/response.model";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchVendor({ vendors }: { vendors: IVendor[] }) {
+export default function SearchVendor({ vendors }: { vendors: IVendorsData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState(searchParams?.get('sortBy') || "");
+
+  const handleResetAll = () => {
+    setSearch(""); // Reset search input
+    setFilter(""); // Reset filter select
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams?.toString());
     if (search) {
-      params.set('searchTerm', search);
+      params.set('q', search);
     } else {
-      params.delete('searchTerm');
+      params.delete('q');
     }
+    params.set('current', '1');
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleSort = (value: string) => {
+    const params = new URLSearchParams(searchParams?.toString());
+
+    switch (value) {
+      case "Giá thấp đến cao":
+        params.set('sortBy', 'price');
+        params.set('sortDirection', 'asc');
+        break;
+      case "Giá cao đến thấp":
+        params.set('sortBy', 'price');
+        params.set('sortDirection', 'desc');
+        break;
+      case "Đánh giá cao nhất":
+        params.set('sortBy', 'rating');
+        params.set('sortDirection', 'desc');
+        break;
+      default:
+        params.delete('sortBy');
+        params.delete('sortDirection');
+    }
+
+    params.set('current', '1');
     router.push(`?${params.toString()}`);
   };
 
@@ -40,12 +71,12 @@ export default function SearchVendor({ vendors }: { vendors: IVendor[] }) {
       transition={{ duration: 0.5 }}
     >
       <div className="mx-10 px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">Tìm kiếm dịch vụ</h1>
+        <h1 className="text-4xl font-bold mb-6">Tìm kiếm nhà cung cấp</h1>
 
         <div className="mb-6 flex items-center gap-2">
           <div className="flex-1">
             <Search
-              placeholder="Tìm kiếm dịch vụ"
+              placeholder="Tìm kiếm nhà cung cấp"
               searchWidth=""
               value={search}
               onChange={(e) => setSearch(e)}
@@ -57,7 +88,10 @@ export default function SearchVendor({ vendors }: { vendors: IVendor[] }) {
               height={"h-9"}
               selectIcon="Funnel"
               value={filter}
-              onValueChange={(value) => setFilter(value)}
+              onValueChange={(value) => {
+                setFilter(value);
+                handleSort(value);
+              }}
               options={[
                 { value: "Giá thấp đến cao", icon: "ArrowUpNarrowWide" },
                 { value: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
@@ -80,7 +114,7 @@ export default function SearchVendor({ vendors }: { vendors: IVendor[] }) {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Left />
+          <Left onReset={handleResetAll} />
           <Right vendors={vendors} />
         </motion.div>
       </div>

@@ -5,7 +5,10 @@ export const VendorsDataModel = z.object({
     data: z.array(VendorModel),
     message: z.string(),
     pagination: z.object({
-        totalItem: z.number()
+        totalItem: z.number(),
+        current: z.number(),
+        totalPage: z.number(),
+        pageSize: z.number()
     })
 });
 

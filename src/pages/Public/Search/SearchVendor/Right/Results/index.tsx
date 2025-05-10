@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Button from "@components/Atoms/Button"
 import Link from "next/link"
@@ -8,8 +8,8 @@ import { ROUTES } from "@routes"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { IVendor } from "@models/vendor/common.model"
-
+import { IVendorsData } from "@models/vendor/response.model"
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 const cardVariants = {
@@ -18,22 +18,33 @@ const cardVariants = {
     exit: { opacity: 0, scale: 0.8 }
 };
 
-export default function Right({ vendors }: { vendors: IVendor[] }) {
-    const resultCount = vendors.length
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(6);
+
+export default function Right({ vendors }: { vendors: IVendorsData }) {
+    const resultCount = vendors?.pagination.totalItem
+    const [currentPage, setCurrentPage] = useState(vendors?.pagination.current);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const totalPages = vendors?.pagination.totalPage
+
+    useEffect(() => {
+        const current = searchParams?.get('current');
+        if (current) {
+            setCurrentPage(Number(current));
+        } else {
+            setCurrentPage(1);
+        }
+    }, [searchParams]);
+
     const handlePageChange = (newPage: number) => {
         setCurrentPage(newPage);
+        const params = new URLSearchParams(searchParams?.toString());
+        if (newPage) {
+            params.set('current', newPage.toString());
+        } else {
+            params.delete('current');
+        }
+        router.push(`?${params.toString()}`);
     };
-
-    const totalServices = vendors.length;
-    const totalPages = Math.ceil(totalServices / itemsPerPage);
-
-    const currentServices = vendors.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
-
 
     return (
         <div className="flex-1 pl-6 p-3">
@@ -71,7 +82,7 @@ export default function Right({ vendors }: { vendors: IVendor[] }) {
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
             >
-                {currentServices.map((service, index) => (
+                {vendors?.data.map((service, index) => (
                     <motion.div
                         key={service.id}
                         className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300"
