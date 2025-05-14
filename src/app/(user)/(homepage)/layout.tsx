@@ -18,7 +18,6 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
-    console.log(session);
     let userData: IUser | undefined;
     if (session?.user?.id) {
         const user = await getAUser(session.user.id) as IUserResponse;

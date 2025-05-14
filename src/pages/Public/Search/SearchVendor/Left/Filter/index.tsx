@@ -114,8 +114,8 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
         }
 
         const servicesFromUrl = params.get("serviceType");
-        setServiceType(categories.data
-            .filter(s => servicesFromUrl?.includes(s.name) ?? false)
+        setServiceType(categories?.data
+            ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
             .map(category => ({ key: category.name })));
 
         const addressesFromUrl = params.get("address");
@@ -153,7 +153,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                 </Accordion.Header>
                 <Accordion.Content>
                     <Checkbox
-                        options={categories.data.map(category => ({ key: category.name }))}
+                        options={categories?.data.map(category => ({ key: category.name }))}
                         value={serviceType.map(service => service.key) as string[]}
                         onChange={(e, key) => handleServiceTypeChange(key)}
                     />
