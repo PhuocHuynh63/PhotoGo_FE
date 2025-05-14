@@ -13,9 +13,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 
 const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { opacity: 0, scale: 1 },
     visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.8 }
+    exit: { opacity: 0, scale: 1 }
 };
 
 
@@ -54,7 +54,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
             >
-                <h2 className="text-lg font-medium">Kết quả tìm kiếm</h2>
+                <h2 className="text-3xl font-medium">Kết quả tìm kiếm</h2>
                 <p className="text-sm text-gray-500">Tìm thấy {resultCount} kết quả</p>
             </motion.div>
 
@@ -82,15 +82,15 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
             >
-                {vendors?.data.map((service, index) => (
+                {vendors?.data.map((service) => (
                     <motion.div
                         key={service.id}
-                        className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300"
+                        className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer"
                         variants={cardVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                     >
                         {/* <div className="absolute top-2 right-2 z-10">
                             <Button className="shadow-none hover:bg-none flex items-center justify-center">
@@ -178,7 +178,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                         {/* {service.priceRange[0].toLocaleString()}đ - {service.priceRange[1].toLocaleString()}đ */}
                                     </span>
                                 </div>
-                                <Link href={ROUTES.PUBLIC.HOME} >
+                                <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL}?vendorId=${service.id}`} >
                                     <Button width={80} disabled={!service.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
                                         Đặt lịch
                                     </Button>
