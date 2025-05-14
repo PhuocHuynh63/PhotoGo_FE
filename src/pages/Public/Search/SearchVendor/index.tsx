@@ -6,12 +6,13 @@ import { motion } from "framer-motion";
 import Left from "./Left/Filter";
 import Right from "./Right/Results";
 import { IVendorsData } from "@models/vendor/response.model";
+import { ICategoriesData } from "@models/category/response.model";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchVendor({ vendors }: { vendors: IVendorsData }) {
+export default function SearchVendor({ vendors, categories }: { vendors: IVendorsData, categories: ICategoriesData }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
+  const [search, setSearch] = useState(searchParams?.get('name') || "");
   const [filter, setFilter] = useState(searchParams?.get('sortBy') || "");
 
   const handleResetAll = () => {
@@ -22,9 +23,9 @@ export default function SearchVendor({ vendors }: { vendors: IVendorsData }) {
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams?.toString());
     if (search) {
-      params.set('q', search);
+      params.set('name', search);
     } else {
-      params.delete('q');
+      params.delete('name');
     }
     params.set('current', '1');
     router.push(`?${params.toString()}`);
@@ -97,7 +98,7 @@ export default function SearchVendor({ vendors }: { vendors: IVendorsData }) {
                 { value: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
                 { value: "Đánh giá cao nhất", icon: "Stars" }
               ]}
-              className="flex items-center gap-1 px-3 py-2 border rounded-md bg-white text-dark shadow-lg"
+              className="flex items-center gap-1 px-3 py-2 border rounded-md bg-white text-dark shadow-lg cursor-pointer"
             />
           </div>
           {/* <Button
@@ -114,7 +115,7 @@ export default function SearchVendor({ vendors }: { vendors: IVendorsData }) {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Left onReset={handleResetAll} />
+          <Left onReset={handleResetAll} categories={categories} />
           <Right vendors={vendors} />
         </motion.div>
       </div>
