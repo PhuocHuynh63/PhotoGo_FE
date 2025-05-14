@@ -1,76 +1,48 @@
 import envConfig from "@configs/env";
-
+import { getSession } from "next-auth/react";
 
 type CustomOptions = RequestInit & {
-    baseUrl?: string | undefined;
-}
+  baseUrl?: string;
+};
 
-// class HttpError extends Error {
-//     status: number;
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     payload: any;
+const request = async <Response>(
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  url: string,
+  options: CustomOptions = {}
+) => {
+  let accessToken: string | undefined;
 
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     constructor({ status, payload }: { status: number; payload: any }) {
-//         super('Http Error');
-//         this.status = status;
-//         this.payload = payload;
-//     }
-// }
+  // Chỉ gọi getSession nếu đang chạy ở client
+  if (typeof window !== "undefined") {
+    const session = await getSession();
+    accessToken = (session as any)?.accessToken;
+  }
 
-const request = async<Response>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, options?: CustomOptions | undefined) => {
-    const body = options?.body ? JSON.stringify(options.body) : undefined;
-    const baseHeaders = {
-        'Content-Type': 'application/json',
-    };
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+    ...options.headers,
+  };
 
-    //Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_API_DEV_URL
-    //Nếu truyền baseUrl thì lấy từ baseUrl
-    const baseUrl = options?.baseUrl === undefined ? envConfig?.NEXT_PUBLIC_API_URL ?? '' : options.baseUrl;
-    console.log(`baseUrl: ${baseUrl}`);
+  const baseUrl = options.baseUrl || envConfig?.NEXT_PUBLIC_API_URL;
+  const fullUrl = `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
 
+  const res = await fetch(fullUrl, {
+    ...options,
+    method,
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
 
-
-    const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
-
-    const res = await fetch(fullUrl, {
-        ...options,
-        headers: {
-            ...baseHeaders,
-            ...options?.headers,
-        },
-        body,
-        method,
-    })
-    const payload: Response = await res.json();
-    // const data = {
-    //     status: res.status,
-    //     payload,
-    // }
-
-    // if (!res.ok) {
-    //     throw new HttpError(data);
-    // }
-    return payload;
-}
+  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+  return await res.json() as Response;
+};
 
 const http = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    get<Response>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
-        return request<Response>('GET', url, options);
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    post<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-        return request<Response>('POST', url, { ...options, body });
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    put<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-        return request<Response>('PUT', url, { ...options, body });
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    delete<Response>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-        return request<Response>('DELETE', url, { ...options, body });
-    }
-}
+  get: <T>(url: string, options?: Omit<CustomOptions, "body">) => request<T>("GET", url, options),
+  post: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("POST", url, { ...options, body }),
+  put: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("PUT", url, { ...options, body }),
+  delete: <T>(url: string, body: any, options?: Omit<CustomOptions, "body">) => request<T>("DELETE", url, { ...options, body }),
+};
 
 export default http;

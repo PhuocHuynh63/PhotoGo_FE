@@ -192,28 +192,24 @@ export default function PointsPage() {
                 <h2 className="text-xl font-bold mb-4">Thông tin PhotoGo Point</h2>
 
                 <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-                    <TabsList className="grid grid-cols-4 mb-6">
+                    <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
                         <TabsTrigger
                             value="all"
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-500 rounded-none"
                         >
                             Tất cả
                         </TabsTrigger>
                         <TabsTrigger
                             value="received"
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-500 rounded-none"
                         >
                             Đã nhận
                         </TabsTrigger>
                         <TabsTrigger
                             value="used"
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-500 rounded-none"
                         >
                             Đã sử dụng
                         </TabsTrigger>
                         <TabsTrigger
                             value="expired"
-                            className="data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:text-orange-500 rounded-none"
                         >
                             Đã hết hạn
                         </TabsTrigger>

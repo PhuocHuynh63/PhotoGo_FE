@@ -8,23 +8,20 @@ import StarRating from "@components/Molecules/StarRating"
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
-import { motion } from "framer-motion"
+import { ICategoriesData } from "@models/category/response.model"
+import { ChevronDown } from "lucide-react"
+import * as Accordion from '@radix-ui/react-accordion';
 
-export default function Left() {
+
+export default function Left({ onReset, categories }: { onReset: () => void, categories: ICategoriesData }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
     const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
-    const [serviceType, setServiceType] = useState<ICOMPONENTS.ServiceType[]>([]);
+    const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
     const [rating, setRating] = useState(5);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
-
-    const services = [
-        { key: "Studio" },
-        { key: "Nhiếp ảnh gia" },
-        { key: "Makeup Artist" },
-    ];
 
     const address = [
         { key: "HCM" },
@@ -76,22 +73,26 @@ export default function Left() {
     function handleResetAll() {
         setSelectPriceRange([5000000, 70000000]);
         setServiceType([]);
-        setRating(5);
+        setRating(1);
         setAddresses([]);
-        router.push("?");
+        setSelectedDate(new Date());
+
+        const params = new URLSearchParams();
+        params.set('current', "1");
+
+        router.push(`?${params.toString()}`);
+
+        onReset();
     }
 
     function handleApplyFilter() {
-        // Logic to apply the selected filters
-        // This could involve updating the URL parameters or fetching data based on the selected filters
-        // router.push(`?${new URLSearchParams({
-        //     price: selectPriceRange.join(','),
-        //     service: serviceType.map(s => s.key).join(','),
-        //     address: addresses.map(a => a.key).join(','),
-        //     rating: rating.toString(),
-        //     date: selectedDate.toLocaleDateString('vi-VN').replace(/\//g, '-')
-        // }).toString()}`);
         const params = new URLSearchParams();
+
+        // Giữ lại param current nếu có
+        const currentPage = searchParams?.get('current');
+        if (currentPage) {
+            params.set('current', "1");
+        }
 
         if (serviceType.length > 0) params.set("serviceType", serviceType.map(s => s.key).join(","));
         if (rating > 0) params.set("minRating", rating.toString());
@@ -112,11 +113,13 @@ export default function Left() {
             setSelectPriceRange([Number(minPrice[0]), Number(maxPrice[0])]);
         }
 
-        const servicesFromUrl = params.getAll("serviceType");
-        setServiceType(services.filter(s => servicesFromUrl.includes(s.key)));
+        const servicesFromUrl = params.get("serviceType");
+        setServiceType(categories?.data
+            ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
+            .map(category => ({ key: category.name })));
 
-        const addressesFromUrl = params.getAll("address");
-        setAddresses(address.filter(a => addressesFromUrl.includes(a.key)));
+        const addressesFromUrl = params.get("address");
+        setAddresses(address.filter(a => addressesFromUrl?.includes(a.key) ?? false));
 
         const ratingFromUrl = params.get("rating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
@@ -132,43 +135,33 @@ export default function Left() {
 
 
     return (
-        <motion.div
-            className="w-64 pr-4 border-r p-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-        >
-            <div className="mb-4">
-                <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
+        <Accordion.Root type="multiple" className="w-64 pr-4 border-r p-3">
+            <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-medium text-md mb-2 flex items-center justify-between">
                     Bộ lọc tìm kiếm
-                    <Button onClick={handleResetAll}>Xóa tất cả</Button>
                 </h3>
+                <Button onClick={handleResetAll}>Xóa tất cả</Button>
             </div>
 
             {/* Service Type */}
-            <motion.div
-                className="mb-4 border-t pt-4"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
-                <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
-                <Checkbox
-                    options={services}
-                    // value={String(serviceType.map(service => service.key))}
-                    onChange={(e, key) => {
-                        handleServiceTypeChange(key);
-                    }}
-                />
-            </motion.div>
+            <Accordion.Item value="serviceType">
+                <Accordion.Header>
+                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
+                        Loại dịch vụ
+                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
+                    </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                    <Checkbox
+                        options={categories?.data.map(category => ({ key: category.name }))}
+                        value={serviceType.map(service => service.key) as string[]}
+                        onChange={(e, key) => handleServiceTypeChange(key)}
+                    />
+                </Accordion.Content>
+            </Accordion.Item>
 
             {/* Date */}
-            <motion.div
-                className="mb-4 border-t pt-4"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
+            <div className="mb-4 border-t pt-4">
                 <h3 className="font-medium text-sm mb-2">Ngày Đặt lịch</h3>
                 <div className="flex items-center">
                     <CustomDatePicker
@@ -179,56 +172,42 @@ export default function Left() {
                                 setSelectedDate(date)
                                 // updateQueryParam("date", date.toLocaleDateString('vi-VN').replace(/\//g, '-'));
                             }
-
                         }}
                     />
                 </div>
-            </motion.div>
+            </div>
 
             {/* Price Range */}
-            <motion.div
-                className="mb-4 border-t pt-4"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
+            <div className="mb-4 border-t pt-4">
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
                     min={500000}
                     max={70000000}
                     step={500000}
                     value={selectPriceRange}
-                    onValueChange={(val) => {
-                        setSelectPriceRange(val);
-                        // updateQueryParam("price", val);
-                    }}
+                    onValueChange={setSelectPriceRange}
                 />
-            </motion.div>
+            </div>
 
             {/* Location */}
-            <motion.div
-                className="mb-4 border-t pt-4"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
-                <h3 className="font-medium text-sm mb-2">Địa điểm</h3>
-                <Checkbox
-                    options={address}
-                    value={addresses.map(service => service.key)}
-                    onChange={(e, key) => {
-                        handleAddressChange(key);
-                    }}
-                />
-            </motion.div>
+            <Accordion.Item value="address">
+                <Accordion.Header>
+                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
+                        Địa điểm
+                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
+                    </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content>
+                    <Checkbox
+                        options={address}
+                        value={addresses.map(service => service.key)}
+                        onChange={(e, key) => handleAddressChange(key)}
+                    />
+                </Accordion.Content>
+            </Accordion.Item>
 
             {/* Rating */}
-            <motion.div
-                className="mb-4 border-t pt-4"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-            >
+            <div className="mb-4 border-t pt-4">
                 <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
                 <RadioButtonGroup
                     options={[
@@ -239,17 +218,17 @@ export default function Left() {
                         { label: <StarRating stars={1} />, value: '1' },
                     ]}
                     value={rating.toString()}
-                    onChange={(value) => {
-                        setRating(Number(value));
-                        // updateQueryParam("rating", value);
-                    }}
+                    onChange={(value) => setRating(Number(value))}
                     name="rating"
                 />
-            </motion.div>
+            </div>
 
-            <Button className="w-full" onClick={handleApplyFilter}>
-                Áp dụng bộ lọc
-            </Button>
-        </motion.div>
+            {/* Nút áp dụng bộ lọc */}
+            <div className="mt-4">
+                <button className="w-full bg-primary text-white py-2 rounded cursor-pointer" onClick={handleApplyFilter}>
+                    Áp dụng bộ lọc
+                </button>
+            </div>
+        </Accordion.Root>
     )
 }
