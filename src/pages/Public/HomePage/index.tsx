@@ -10,6 +10,7 @@ import { motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
 import { IVendor } from "@models/vendor/common.model"
+import BackToTop from "@components/Atoms/BackToTop"
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
@@ -168,6 +169,7 @@ const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
         <div>
             {/* Hero section */}
             <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
+                <BackToTop />
                 <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                     <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
                 </div>

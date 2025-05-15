@@ -58,8 +58,20 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                 <p className="text-sm text-gray-500">Tìm thấy {resultCount} kết quả</p>
             </motion.div>
 
-            <div className="flex items-center justify-end mb-4">
-                {/* <div className="flex items-center rounded-lg">
+            {vendors?.data.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                    <Image
+                        src="/not-found.svg"
+                        alt="Không tìm thấy kết quả"
+                        width={200}
+                        height={200}
+                    />
+                    <p className="mt-4 text-gray-500">Không tìm thấy kết quả phù hợp</p>
+                </div>
+            ) : (
+                <>
+                    <div className="flex items-center justify-end mb-4">
+                        {/* <div className="flex items-center rounded-lg">
                     <Button
                         className={`p-3 rounded-lg rounded-tr-none rounded-br-none ${viewMode === "grid" ? "text-light" : "text-dark bg-white"}`}
                         onClick={() => setViewMode("grid")}
@@ -74,25 +86,25 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                     </Button>
                 </div> */}
 
-                {/* <div className="flex items-center">
+                        {/* <div className="flex items-center">
                     <Select options={[{ value: "Phù hợp nhất" }, { value: "Giá thấp đến cao" }, { value: "Giá cao đến thấp" }, { value: "Đánh giá cao nhất" }]} className="cursor-pointer" value={sortBy} onValueChange={(e) => setSortBy(e)} />
                 </div> */}
-            </div>
+                    </div>
 
-            <div
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
-            >
-                {vendors?.data.map((service) => (
-                    <motion.div
-                        key={service.id}
-                        className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer"
-                        variants={cardVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    <div
+                        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
                     >
-                        {/* <div className="absolute top-2 right-2 z-10">
+                        {vendors?.data.map((service) => (
+                            <motion.div
+                                key={service.id}
+                                className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer"
+                                variants={cardVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                            >
+                                {/* <div className="absolute top-2 right-2 z-10">
                             <Button className="shadow-none hover:bg-none flex items-center justify-center">
                                 <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "black"} />
                             </Button>
@@ -106,34 +118,51 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                             </div>
                         )} */}
 
-                        <div className="relative bg-yellow-300">
-                            {!service.status && (
-                                <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
-                                    <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
-                                        {service.status}
-                                    </span>
+                                <div className="relative bg-yellow-300">
+                                    {!service.status && (
+                                        <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
+                                            <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
+                                                {service.status}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className="relative h-60">
+                                        <Image
+                                            src={service.logo || "data:image/svg+xml;base64," + btoa(`
+                                                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <defs>
+                                                        <linearGradient id="placeholderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" stopColor="#F8F8F8" />
+                                                            <stop offset="100%" stopColor="#E0E0E0" />
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <rect width="100" height="100" fill="url(#placeholderGradient)"/>
+                                                    <circle cx="50" cy="40" r="15" fill="#D0D0D0"/>
+                                                    <rect x="30" y="60" width="40" height="20" rx="5" fill="#D0D0D0"/>
+                                                </svg>
+                                            `)}
+                                            fill
+                                            style={{
+                                                objectFit: 'cover',
+                                            }}
+                                            loading="lazy"
+                                            alt={service.name}
+                                        />
+                                    </div>
                                 </div>
-                            )}
-                            <div className="relative h-60">
-                                <Image src={service.logo || "/placeholder.svg"} fill style={{
-                                    objectFit: 'cover',
-                                }}
-                                    loading="lazy" alt={service.name} />
-                            </div>
-                        </div>
 
-                        <div className="p-3">
+                                <div className="p-3">
 
-                            <div className="flex items-center justify-between">
-                                <div className="flex flex-col items-start text-dark">
-                                    <h3 className="text-dark font-medium text-lg">{service.name}</h3>
-                                    <span className="text-dark text-xs flex">
-                                        <LucideIcon name="MapPin" iconSize={14} />
-                                        {service.locations[0]?.address}, {service.locations[0]?.city}
-                                    </span>
-                                </div>
-                                <div className=" shadow-md flex items-center text-dark text-xs rounded-full border px-2 py-1">
-                                    {/* {service.type.map((type, i) => (
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-col items-start text-dark">
+                                            <h3 className="text-dark font-medium text-lg">{service.name}</h3>
+                                            <span className="text-dark text-xs flex">
+                                                <LucideIcon name="MapPin" iconSize={14} />
+                                                {service.locations[0]?.address}, {service.locations[0]?.city}
+                                            </span>
+                                        </div>
+                                        <div className=" shadow-md flex items-center text-dark text-xs rounded-full border px-2 py-1">
+                                            {/* {service.type.map((type, i) => (
                                         <span key={i} className="flex items-center justify-center">
                                             {i > 0 && <span className="mx-1">•</span>}
                                             {type === "Studio" && (
@@ -148,49 +177,51 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             {type}
                                         </span>
                                     ))} */}
-                                </div>
+                                        </div>
 
-                            </div>
+                                    </div>
 
-                            <div className="flex items-center mb-2">
+                                    <div className="flex items-center mb-2">
 
-                                <div className="flex text-yellow-400">
-                                    <LucideIcon name="Star" iconSize={14} fill="yellow" />
-                                </div>
-                                <span className="text-sm font-medium ml-1">
+                                        <div className="flex text-yellow-400">
+                                            <LucideIcon name="Star" iconSize={14} fill="yellow" />
+                                        </div>
+                                        <span className="text-sm font-medium ml-1">
 
-                                    {/* {service.rating} */}
-                                </span>
-                                <span className="text-xs text-gray-500 ml-1">({service.reviews.length} đánh giá)</span>
-                            </div>
+                                            {/* {service.rating} */}
+                                        </span>
+                                        <span className="text-xs text-gray-500 ml-1">({service.reviews.length} đánh giá)</span>
+                                    </div>
 
-                            <div className="flex flex-wrap gap-1 mb-2">
-                                {/* {service.categories.map((category, i) => (
+                                    <div className="flex flex-wrap gap-1 mb-2">
+                                        {/* {service.categories.map((category, i) => (
                                     <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                                         {category}
                                     </span>
                                 ))} */}
-                            </div>
+                                    </div>
 
-                            <div className="flex justify-between items-center">
-                                <div className="text-sm">
-                                    <span className="font-medium">
-                                        {/* {service.priceRange[0].toLocaleString()}đ - {service.priceRange[1].toLocaleString()}đ */}
-                                    </span>
+                                    <div className="flex justify-between items-center">
+                                        <div className="text-sm">
+                                            <span className="font-medium">
+                                                {/* {service.priceRange[0].toLocaleString()}đ - {service.priceRange[1].toLocaleString()}đ */}
+                                            </span>
+                                        </div>
+                                        <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL}?vendorId=${service.id}`} >
+                                            <Button width={80} disabled={!service.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
+                                                Đặt lịch
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 </div>
-                                <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL}?vendorId=${service.id}`} >
-                                    <Button width={80} disabled={!service.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
-                                        Đặt lịch
-                                    </Button>
-                                </Link>
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-            <div className="flex justify-center my-4">
-                <Pagination current={currentPage} total={totalPages} onChange={handlePageChange} />
-            </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                    <div className="flex justify-center my-4">
+                        <Pagination current={currentPage} total={totalPages} onChange={handlePageChange} />
+                    </div>
+                </>
+            )}
         </div>
     )
 }

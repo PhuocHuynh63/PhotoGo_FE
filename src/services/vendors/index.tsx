@@ -11,7 +11,15 @@ const vendorService = {
         return await http.get(`/vendors`, {
             next: { revalidate: 10 }
         })
-    }
+    },
+    getVendorBySlug: async (slug: string) => {
+        const res = await http.get(`/vendors/slug/${slug}`, {
+            next: { revalidate: 10 }
+        })
+        console.log("VendorService", res);
+
+        return res
+    },
 }
 
 export default vendorService
