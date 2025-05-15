@@ -161,7 +161,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
 
                                     {/* {service.rating} */}
                                 </span>
-                                <span className="text-xs text-gray-500 ml-1">({service.reviews.length} đánh giá)</span>
+                                {/* <span className="text-xs text-gray-500 ml-1">({service?.reviews?.length} đánh giá)</span> */}
                             </div>
 
                             <div className="flex flex-wrap gap-1 mb-2">

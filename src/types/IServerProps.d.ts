@@ -4,8 +4,8 @@ declare namespace SERVERS {
     }
 
     interface VendorOverviewPageProps {
-        params: {
+        params: Promise<{
             slug: string;
-        }
+        }>
     }
 }
