@@ -87,7 +87,7 @@ export default function NotFound() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8, duration: 0.5 }}
                 >
-                    Bạn đang đi lạc vào nơi mà ảnh sáng và màu sắc không còn hòa hợp.
+                    Bạn đang đi lạc vào nơi mà ánh sáng và màu sắc không còn hòa hợp.
                 </motion.p>
 
                 <motion.div
