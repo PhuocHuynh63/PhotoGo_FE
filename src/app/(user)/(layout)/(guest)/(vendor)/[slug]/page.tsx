@@ -10,8 +10,12 @@ async function getVendorBySlug(slug: string) {
     }
 }
 
-export default async function VendorOverview({ params }: { params: { slug: string } }) {
-    const vendor = await getVendorBySlug(params?.slug) as any;
+export default async function VendorOverview({ params }: SERVERS.VendorOverviewPageProps) {
+    const { slug } = await params;
+    const vendor = await getVendorBySlug(slug) as any;
+    console.log(vendor);
+
+
     if (!vendor) {
         return notFound();
     }
