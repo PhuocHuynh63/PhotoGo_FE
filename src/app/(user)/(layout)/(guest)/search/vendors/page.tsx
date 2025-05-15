@@ -3,11 +3,9 @@ import { IVendorsResponse } from "@models/vendor/response.model";
 import vendorService from "@services/vendors";
 import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
-interface PageProps {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
 
-async function getVendors({ searchParams }: PageProps) {
+
+async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     const resolvedParams = await searchParams;
 
     const queryParams = new URLSearchParams();
@@ -31,7 +29,7 @@ async function getCategories() {
     const response = await categoryService.getCategories() as ICategoriesResponse;
     return response;
 }
-export default async function SearchVendorsPage({ searchParams }: PageProps) {
+export default async function SearchVendorsPage({ searchParams }: SERVERS.SearchVendorPageProps) {
     const vendors = await getVendors({ searchParams });
     const categories = await getCategories();
     return (

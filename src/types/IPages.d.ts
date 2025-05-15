@@ -55,5 +55,5 @@ declare namespace PAGES {
         userFavorites: IFavorite[];
         userPromotions: Promotion[];
     }
-
+  
 }
