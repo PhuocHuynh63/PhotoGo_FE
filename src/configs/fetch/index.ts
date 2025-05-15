@@ -34,7 +34,6 @@ const request = async <Response>(
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
-  if (!res.ok) throw new Error(`HTTP error ${res.status}`);
   return await res.json() as Response;
 };
 
