@@ -82,13 +82,13 @@ export default function RewardsContent({ user }: any) {
             {/* Membership Levels */}
             <h1 className="text-2xl font-bold mb-6">Mức Rank</h1>
             <div className="flex justify-center">
-                <div className="w-3/4">
+                <div className="w-full">
                     <Carousel setApi={setCarouselApi}>
                         <div className="absolute z-10 top-0 right-0 w-6 h-full rounded-l-md" style={{ background: 'linear-gradient(to left, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0))' }}>
                         </div>
                         <div className="absolute z-10 top-0 left-0 w-6 h-full rounded-r-md" style={{ background: 'linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0))' }}>
                         </div>
-                        <CarouselPrevious />
+                        {/* <CarouselPrevious /> */}
                         <CarouselContent className="my-4">
                             {mockData.map((level, index) => (
                                 <CarouselItem
@@ -107,7 +107,7 @@ export default function RewardsContent({ user }: any) {
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-                        <CarouselNext />
+                        {/* <CarouselNext /> */}
                     </Carousel>
                 </div>
             </div>
