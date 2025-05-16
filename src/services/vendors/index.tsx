@@ -13,12 +13,9 @@ const vendorService = {
         })
     },
     getVendorBySlug: async (slug: string) => {
-        const res = await http.get(`/vendors/slug/${slug}`, {
+        return await http.get(`/vendors/slug/${slug}`, {
             next: { revalidate: 10 }
         })
-        console.log("VendorService", res);
-
-        return res
     },
 }
 
