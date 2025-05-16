@@ -1,10 +1,24 @@
 import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
 import { VendorContextProvider } from "@lib/vendorContext";
+import { IVendorResponse } from "@models/vendor/response.model";
+import vendorService from "@services/vendors";
+import { notFound } from "next/navigation";
 
-export default function VendorDetailLayout({ children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+async function getVendorBySlug(slug: string) {
+    return await vendorService.getVendorBySlug(slug);
+}
+
+export default async function VendorDetailLayout({
+    children,
+    params
+}: SERVERS.VendorDetailPageProps
+) {
+    const { slug } = await params;
+    const vendor = await getVendorBySlug(slug) as IVendorResponse;
+
+    if (vendor.statusCode !== 200 || !vendor.data) {
+        return notFound();
+    }
 
     const studioData = {
         id: 1,
@@ -303,7 +317,9 @@ export default function VendorDetailLayout({ children,
     return (
         <>
             <VendorContextProvider value={studioData}>
-                <VendorDetailLayoutPage>
+                <VendorDetailLayoutPage
+                    vendor={vendor.data}
+                >
                     {children}
                 </VendorDetailLayoutPage>
             </VendorContextProvider>

@@ -3,9 +3,10 @@ declare namespace SERVERS {
         searchParams: Promise<{ [key: string]: string | string[] | undefined }>
     }
 
-    interface VendorOverviewPageProps {
+    interface VendorDetailPageProps {
+        children: React.ReactNode;
         params: Promise<{
             slug: string;
-        }>
+        }>;
     }
 }

@@ -1,16 +1,18 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { useVendor } from '@lib/vendorContext'
+
 import { Badge, Heart, MapPin, Share2, Star } from 'lucide-react'
 import React from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'
 import { ROUTES } from '@routes'
+import { useVendor } from '@stores/vendor/selectors'
+import { IVendor } from '@models/vendor/common.model'
 
 const VendorCover = () => {
 
-    const vendorData = useVendor() as any
+    const vendorData = useVendor() as IVendor
     const router = useRouter()
     const params = useParams()
     const slug = params?.slug as string
@@ -20,7 +22,7 @@ const VendorCover = () => {
         <section className="relative">
             <div className="h-[300px] md:h-[400px] w-full relative">
                 <img
-                    src={vendorData?.coverImage || "/placeholder.svg"}
+                    src={vendorData?.banner || "/placeholder.svg"}
                     alt={vendorData?.name}
                     className="max-h-full w-full object-cover rounded-lg shadow-md"
                 />
@@ -48,17 +50,17 @@ const VendorCover = () => {
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex items-center">
                                         <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                                        <span className="ml-1 font-medium">{vendorData?.rating}</span>
-                                        <span className="text-muted-foreground ml-1">({vendorData?.reviewCount} đánh giá)</span>
+                                        {/* <span className="ml-1 font-medium">{vendorData?.rating}</span>
+                                        <span className="text-muted-foreground ml-1">({vendorData?.reviewCount} đánh giá)</span> */}
                                     </div>
                                     <span className="text-muted-foreground">•</span>
                                     <div className="flex items-center text-muted-foreground">
                                         <MapPin className="h-4 w-4 mr-1" />
-                                        <span className="text-sm truncate max-w-[240px]">{vendorData?.location.address}</span>
+                                        {/* <span className="text-sm truncate max-w-[240px]">{vendorData?.location.address}</span> */}
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-3">
-                                    {vendorData?.tags?.slice(0, 5).map((tag: any, index: number) => (
+                                    {/* {vendorData?.tags?.slice(0, 5).map((tag: any, index: number) => (
                                         <Badge key={index} className="text-xs">
                                             {tag}
                                         </Badge>
@@ -67,7 +69,7 @@ const VendorCover = () => {
                                         <Badge className="text-xs">
                                             +{vendorData?.tags.length - 5}
                                         </Badge>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                             <div className="flex gap-2">

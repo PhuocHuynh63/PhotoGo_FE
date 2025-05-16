@@ -1,3 +1,4 @@
+import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { VendorModel } from "./common.model";
 import { z } from "zod";
 
@@ -19,13 +20,8 @@ export type IVendorsData = z.infer<typeof VendorsDataModel>;
 //----------------------End----------------------//
 
 /**
- * Model of VendorsResponse
+ * Model of VendorResponse
  */
-export const VendorsResponseModel = z.object({
-    statusCode: z.number(),
-    message: z.string(),
-    data: VendorsDataModel
-});
-
-export type IVendorsResponse = z.infer<typeof VendorsResponseModel>;
+export const VendorResponseModel = BackendResponseModel(VendorModel);
+export type IVendorResponse = z.infer<typeof VendorResponseModel>;
 //----------------------End----------------------//

@@ -55,5 +55,9 @@ declare namespace PAGES {
         userFavorites: IFavorite[];
         userPromotions: Promotion[];
     }
-  
+
+    interface IVendorDetailPageProps {
+        children: React.ReactNode;
+        vendor: IVendor;
+    }
 }
