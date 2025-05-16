@@ -13,7 +13,7 @@ declare namespace PAGES {
     }
 
     interface IHomePage {
-        data: IVendor[];
+        data: IVendor;
     }
     interface Promotion {
         id: number;
@@ -55,5 +55,9 @@ declare namespace PAGES {
         userFavorites: IFavorite[];
         userPromotions: Promotion[];
     }
-  
+
+    interface IVendorDetailPageProps {
+        children: React.ReactNode;
+        vendor: IVendor;
+    }
 }

@@ -2,16 +2,25 @@
 
 import VendorCover from '@pages/Public/VendorDetail/components/VendorCover'
 import VendorNavigation from '@pages/Public/VendorDetail/components/VendorNavigation'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from "framer-motion";
 import VendorContactInformation from '@pages/Public/VendorDetail/Right/ContactInformation';
 import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
+import { PAGES } from '../../../types/IPages';
+import { useSetVendor } from '@stores/vendor/selectors';
 
-const VendorDetailLayoutPage = ({ children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) => {
+const VendorDetailLayoutPage = ({
+    children,
+    vendor
+}: PAGES.IVendorDetailPageProps) => {
+
+    const setVendor = useSetVendor();
+
+    useEffect(() => {
+        setVendor(vendor);
+    }, [vendor, setVendor]);
+
     return (
         <div className="flex min-h-screen flex-col">
             <motion.div

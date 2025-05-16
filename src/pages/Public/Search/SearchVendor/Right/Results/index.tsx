@@ -187,10 +187,10 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             <LucideIcon name="Star" iconSize={14} fill="yellow" />
                                         </div>
                                         <span className="text-sm font-medium ml-1">
-                                    {/* {service.rating} */}
-                                </span>
-                                {/* <span className="text-xs text-gray-500 ml-1">({service?.reviews?.length} đánh giá)</span> */}
-                            </div>
+                                            {/* {service.rating} */}
+                                        </span>
+                                        <span className="text-xs text-gray-500 ml-1">({service?.reviews?.length} đánh giá)</span>
+                                    </div>
 
 
                                     <div className="flex flex-wrap gap-1 mb-2">

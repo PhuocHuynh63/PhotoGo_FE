@@ -1,5 +1,4 @@
-import { IVendor } from "@models/vendor/common.model";
-import { IVendorsResponse } from "@models/vendor/response.model";
+import { IVendorResponse } from "@models/vendor/response.model";
 import HomePage from "@pages/Public/HomePage";
 import vendorService from "@services/vendors";
 
@@ -8,11 +7,13 @@ async function getVendors() {
 }
 
 export default async function Home() {
-  const vendors = await getVendors() as IVendorsResponse;
-  const vendorsData = vendors?.data?.data as IVendor[];
+  const vendors = await getVendors() as IVendorResponse;
+  if (!vendors.data) {
+    return null;
+  }
   return (
     <>
-      <HomePage vendors={vendorsData} />
+      <HomePage data={vendors.data} />
     </>
   );
 }

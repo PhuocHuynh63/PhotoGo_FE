@@ -16,4 +16,9 @@ declare module ZUSTAND {
         setSelectedMethod: (method: string | null) => void
         resetSelectedMethod: () => void
     }
+
+    export interface IVendorState {
+        vendor: IVendor;
+        setVendor: (vendor: IVendor) => void
+    }
 }

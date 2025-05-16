@@ -1,4 +1,7 @@
+import { CategoryModel } from "@models/category/common.model";
 import { LocationModel } from "@models/location/common.model";
+import { ReviewModel } from "@models/review/common.model";
+import { ServicePackageModel } from "@models/servicePackages/common.model";
 import { z } from "zod";
 
 /**
@@ -12,15 +15,13 @@ export const VendorModel = z.object({
     logo: z.string().nullable(),
     banner: z.string().nullable(),
     status: z.string(),
+    category: CategoryModel.optional(),
+    locations: z.array(LocationModel),
+    servicePackages: z.array(ServicePackageModel),
+    reviews: z.array(ReviewModel),
     created_at: z.string(),
     updated_at: z.string(),
-    locations: z.array(LocationModel),
-    // servicePackages: z.array(ServicePackageModel),
-    // reviews: z.array(ReviewModel)
 });
 
-export type IVendor = z.infer<typeof VendorModel>;
-export type ILocation = z.infer<typeof LocationModel>;
-// export type IServicePackage = z.infer<typeof ServicePackageModel>;
-// export type IReview = z.infer<typeof ReviewModel>;
+export type IVendor = z.TypeOf<typeof VendorModel>;
 //----------------------End----------------------//

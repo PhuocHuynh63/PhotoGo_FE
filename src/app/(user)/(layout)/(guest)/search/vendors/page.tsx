@@ -1,5 +1,5 @@
 import SearchVendorPage from "@pages/Public/Search/SearchVendor";
-import { IVendorsResponse } from "@models/vendor/response.model";
+
 import vendorService from "@services/vendors";
 import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
@@ -20,7 +20,7 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
     if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
 
-    const response = await vendorService.getVendorsWithFilter(queryParams) as IVendorsResponse;
+    const response = await vendorService.getVendorsWithFilter(queryParams) as any;
     return response;
 }
 
