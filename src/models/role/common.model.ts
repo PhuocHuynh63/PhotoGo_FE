@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Model of User
+ * Model of Role
  */
 export const RoleModel = z.object({
         id: z.string(),
