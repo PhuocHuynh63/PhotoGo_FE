@@ -35,12 +35,9 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
                     <Card className="w-full bg-white text-gray-800 rounded-lg">
                         <CardContent className="flex items-center justify-center flex-col">
                             <div className="w-28 h-7 my-2 inline-flex items-stretch border border-[#49C4D2] rounded-full overflow-hidden">
-                                <div className="relative bg-[#49C4D2] text-white px-4 py-1 text-sm font-bold border-r-0">
-                                    Lv.1
-                                    <div className="absolute top-0 right-[-1px] h-full w-2 bg-white"
-                                        style={{ clipPath: 'polygon(0% 0, 100% 0, 100% 100%)' }} />
+                                <div className="relative text-white mx-auto my-auto text-sm font-bold border-r-0">
+                                    <div className="text-[#49C4D2] text-sm font-bold">Bạc</div>
                                 </div>
-                                <div className="text-[#49C4D2] px-4 py-1 text-sm font-bold bg-white">Bạc</div>
                             </div>
 
                             <Button
