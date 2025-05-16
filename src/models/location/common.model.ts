@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Model of User
+ * Model of Location
  */
 export const LocationModel = z.object({
     id: z.string(),
