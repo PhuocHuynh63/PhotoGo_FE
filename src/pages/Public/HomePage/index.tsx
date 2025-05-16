@@ -11,6 +11,7 @@ import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
 import { IVendor } from "@models/vendor/common.model"
 import BackToTop from "@components/Atoms/BackToTop"
+import { PAGES } from '../../../types/IPages';
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
@@ -114,7 +115,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
+const HomePage = ({ data }: PAGES.IHomePage) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -122,10 +123,10 @@ const HomePage = ({ vendors }: { vendors: IVendor[] }) => {
     const [howItWorksAnimation, setHowItWorksAnimation] = useState(false)
     const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
     const [ctaAnimation, setCtaAnimation] = useState(false)
-    const [vendorData, setVendorData] = useState<IVendor[]>([])
+    const [vendorData, setVendorData] = useState<IVendor | null>(null)
     useEffect(() => {
-        console.log(vendors)
-        setVendorData(vendors)
+        console.log(data)
+        setVendorData(data)
 
         console.log(vendorData)
         const handleScroll = () => {

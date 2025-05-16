@@ -13,7 +13,7 @@ declare namespace PAGES {
     }
 
     interface IHomePage {
-        data: IVendor[];
+        data: IVendor;
     }
     interface Promotion {
         id: number;

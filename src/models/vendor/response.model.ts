@@ -16,6 +16,7 @@ export const VendorsDataModel = z.object({
     })
 });
 
+export const VendorsResponseModel = BackendResponseModel(VendorsDataModel);
 export type IVendorsData = z.infer<typeof VendorsDataModel>;
 //----------------------End----------------------//
 
