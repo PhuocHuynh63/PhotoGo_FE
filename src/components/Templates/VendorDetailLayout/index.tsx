@@ -28,7 +28,7 @@ const VendorDetailLayoutPage = ({
     //---------------------------End---------------------------//
 
     return (
-        <div className="flex min-h-screen flex-col">
+        <div className="">
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -38,14 +38,14 @@ const VendorDetailLayoutPage = ({
                 <VendorNavigation />
             </motion.div>
             {/* Main content */}
-            <div className="mx-14 py-8">
-                <div className="grid grid-cols-12 gap-12">
+            <div className="px-4 md:px-8 lg:mx-14 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     {/* Left Content */}
                     <motion.div
                         initial={{ x: -100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-                        className="col-span-12 lg:col-span-8"
+                        className="col-span-1 lg:col-span-8"
                     >
                         {children}
                     </motion.div>
@@ -55,7 +55,7 @@ const VendorDetailLayoutPage = ({
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
-                        className="hidden lg:block lg:col-span-4 w-sm ml-4"
+                        className="col-span-1 lg:col-span-4 hidden lg:block"
                     >
                         <VendorContactInformation />
                         <GoogleMapVendor />
