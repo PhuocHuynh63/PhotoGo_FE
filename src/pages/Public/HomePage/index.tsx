@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { IVendor } from "@models/vendor/common.model"
 import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
+import { Skeleton } from "@components/Atoms/ui/skeleton"
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {
