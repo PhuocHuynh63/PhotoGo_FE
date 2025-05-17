@@ -41,7 +41,7 @@ export default function DurationRangeSlider({
             >
                 <Slider.Track className="bg-gray-200 relative grow rounded-full h-1">
                     <Slider.Range className="absolute bg-primary rounded-full h-full" />
-                    <div className="flex items-center justify-center mt-2 text-sm font-medium text-gray-700">
+                    <div className="flex items-center justify-center mt-4 text-sm font-medium text-gray-700">
                         {formatDuration(value[0])} - {formatDuration(value[1])}
                     </div>
                 </Slider.Track>
@@ -56,4 +56,4 @@ export default function DurationRangeSlider({
             </Slider.Root>
         </div>
     );
-} 
+}
