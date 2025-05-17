@@ -145,14 +145,14 @@ export default function Header({ user }: PAGES.IHeader) {
                                 Trang chủ
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.STUDIO}>
+                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.SEARCH_VENDORS}>
                             <span className={"text-black"}>
-                                Studio
+                                Nhà cung cấp
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.FREELANCER}>
+                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.SEARCH_PACKAGES}>
                             <span className={"text-black"}>
-                                Freelancer
+                                Gói dịch vụ
                             </span>
                         </NavLink>
                         <NavLink className={`nav-link`} href={ROUTES.PUBLIC.ABOUT}>
