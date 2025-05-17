@@ -1,4 +1,3 @@
-import { IVendor } from "@models/vendor/common.model"
 import { useStore } from "@stores"
 
 export const useVendor = () => useStore((state: ZUSTAND.IVendorState) => state.vendor)

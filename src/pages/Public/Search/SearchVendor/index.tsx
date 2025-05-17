@@ -27,7 +27,7 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
     } else {
       params.delete('name');
     }
-    params.set('current', '1');
+    // params.set('current', '1');
     router.push(`?${params.toString()}`);
   };
 
@@ -94,6 +94,7 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
                 handleSort(value);
               }}
               options={[
+                { value: "Tất cả", icon: "ListFilter" },
                 { value: "Giá thấp đến cao", icon: "ArrowUpNarrowWide" },
                 { value: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
                 { value: "Đánh giá cao nhất", icon: "Stars" }

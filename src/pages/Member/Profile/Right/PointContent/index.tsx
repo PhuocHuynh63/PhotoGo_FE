@@ -266,7 +266,7 @@ export default function PointsPage() {
             </div>
 
             {/* Information section */}
-            <div className="my-8 bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-medium mb-2">Về PhotoGo Point</h3>
                 <ul className="text-sm text-gray-600 space-y-2">
                     <li>• PhotoGo Point là điểm thưởng bạn nhận được khi đặt các dịch vụ trên PhotoGo</li>

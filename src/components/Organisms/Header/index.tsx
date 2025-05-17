@@ -15,7 +15,6 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import { usePathname } from "next/navigation";
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor(

@@ -9,17 +9,15 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
 import { ICategoriesData } from "@models/category/response.model"
-import { ChevronDown } from "lucide-react"
-import * as Accordion from '@radix-ui/react-accordion';
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
 
 export default function Left({ onReset, categories }: { onReset: () => void, categories: ICategoriesData }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
+    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([0, 70000000]);
     const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
-    const [rating, setRating] = useState(5);
+    const [rating, setRating] = useState(0);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -71,9 +69,9 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
     }
 
     function handleResetAll() {
-        setSelectPriceRange([5000000, 70000000]);
+        setSelectPriceRange([0, 70000000]);
         setServiceType([]);
-        setRating(1);
+        setRating(0);
         setAddresses([]);
         setSelectedDate(new Date());
 
@@ -135,7 +133,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
 
 
     return (
-        <Accordion.Root type="multiple" className="w-64 pr-4 border-r p-3">
+        <div className="w-64 pr-4 border-r p-3">
             <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-medium text-md mb-2 flex items-center justify-between">
                     Bộ lọc tìm kiếm
@@ -143,22 +141,31 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                 <Button onClick={handleResetAll}>Xóa tất cả</Button>
             </div>
 
-            {/* Service Type */}
-            <Accordion.Item value="serviceType">
-                <Accordion.Header>
-                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
-                        Loại dịch vụ
-                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
-                    </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                    <Checkbox
-                        options={categories?.data.map(category => ({ key: category.name }))}
-                        value={serviceType.map(service => service.key) as string[]}
-                        onChange={(e, key) => handleServiceTypeChange(key)}
-                    />
-                </Accordion.Content>
-            </Accordion.Item>
+            <Accordion type="single" defaultValue="serviceType" collapsible>
+                {/* Service Type */}
+                <AccordionItem value="serviceType">
+                    <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
+                    <AccordionContent>
+                        <Checkbox
+                            options={categories?.data.map(category => ({ key: category.name }))}
+                            value={serviceType.map(service => service.key) as string[]}
+                            onChange={(e, key) => handleServiceTypeChange(key)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+
+                {/* Location */}
+                <AccordionItem value="address">
+                    <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
+                    <AccordionContent>
+                        <Checkbox
+                            options={address}
+                            value={addresses.map(service => service.key)}
+                            onChange={(e, key) => handleAddressChange(key)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
 
             {/* Date */}
             <div className="mb-4 border-t pt-4">
@@ -170,7 +177,6 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                         onChange={(date) => {
                             if (date) {
                                 setSelectedDate(date)
-                                // updateQueryParam("date", date.toLocaleDateString('vi-VN').replace(/\//g, '-'));
                             }
                         }}
                     />
@@ -178,10 +184,10 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
             </div>
 
             {/* Price Range */}
-            <div className="mb-4 border-t pt-4">
+            <div className="mb-4 border-t py-4">
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
-                    min={500000}
+                    min={0}
                     max={70000000}
                     step={500000}
                     value={selectPriceRange}
@@ -189,33 +195,16 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                 />
             </div>
 
-            {/* Location */}
-            <Accordion.Item value="address">
-                <Accordion.Header>
-                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
-                        Địa điểm
-                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
-                    </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                    <Checkbox
-                        options={address}
-                        value={addresses.map(service => service.key)}
-                        onChange={(e, key) => handleAddressChange(key)}
-                    />
-                </Accordion.Content>
-            </Accordion.Item>
-
             {/* Rating */}
             <div className="mb-4 border-t pt-4">
                 <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
                 <RadioButtonGroup
                     options={[
-                        { label: <StarRating stars={5} />, value: '5' },
-                        { label: <StarRating stars={4} />, value: '4' },
-                        { label: <StarRating stars={3} />, value: '3' },
-                        { label: <StarRating stars={2} />, value: '2' },
-                        { label: <StarRating stars={1} />, value: '1' },
+                        { label: <StarRating stars={5} interactive onClick={() => setRating(5)} />, value: '5' },
+                        { label: <StarRating stars={4} interactive onClick={() => setRating(4)} />, value: '4' },
+                        { label: <StarRating stars={3} interactive onClick={() => setRating(3)} />, value: '3' },
+                        { label: <StarRating stars={2} interactive onClick={() => setRating(2)} />, value: '2' },
+                        { label: <StarRating stars={1} interactive onClick={() => setRating(1)} />, value: '1' },
                     ]}
                     value={rating.toString()}
                     onChange={(value) => setRating(Number(value))}
@@ -224,11 +213,11 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
             </div>
 
             {/* Nút áp dụng bộ lọc */}
-            <div className="mt-4">
-                <button className="w-full bg-primary text-white py-2 rounded cursor-pointer" onClick={handleApplyFilter}>
+            <div className="mt-10">
+                <button className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors cursor-pointer" onClick={handleApplyFilter}>
                     Áp dụng bộ lọc
                 </button>
             </div>
-        </Accordion.Root>
+        </div>
     )
 }
