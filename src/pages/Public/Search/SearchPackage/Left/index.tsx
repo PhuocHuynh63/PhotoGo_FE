@@ -223,9 +223,9 @@ export default function Left({ onReset }: { onReset: () => void }) {
                 </div>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-10">
                 <button
-                    className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors"
+                    className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors cursor-pointer"
                     onClick={applyFilters}
                 >
                     Áp dụng bộ lọc
