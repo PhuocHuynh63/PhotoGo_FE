@@ -15,7 +15,6 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import { usePathname } from "next/navigation";
 
 const timeAgo = (date: string) => {
     const seconds = Math.floor(
@@ -145,14 +144,14 @@ export default function Header({ user }: PAGES.IHeader) {
                                 Trang chủ
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.STUDIO}>
+                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.SEARCH_VENDORS}>
                             <span className={"text-black"}>
-                                Studio
+                                Nhà cung cấp
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.FREELANCER}>
+                        <NavLink className={`nav-link`} href={ROUTES.PUBLIC.SEARCH_PACKAGES}>
                             <span className={"text-black"}>
-                                Freelancer
+                                Gói dịch vụ
                             </span>
                         </NavLink>
                         <NavLink className={`nav-link`} href={ROUTES.PUBLIC.ABOUT}>

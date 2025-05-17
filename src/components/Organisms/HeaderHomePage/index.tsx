@@ -170,12 +170,12 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                 Trang chủ
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.STUDIO}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.SEARCH_VENDORS}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Studio
                             </span>
                         </NavLink>
-                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.FREELANCER}>
+                        <NavLink className={`nav-link ${isScrolled ? "scrolled" : ""}`} href={ROUTES.PUBLIC.SEARCH_PACKAGES}>
                             <span className={isScrolled ? "text-black" : "text-white"}>
                                 Freelancer
                             </span>
