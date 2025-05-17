@@ -175,7 +175,7 @@ const HomePage = ({ data }: PAGES.IHomePage) => {
                 <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                     <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
                 </div>
-                <div className="relative container mx-auto px-4 py-40">
+                <div className="relative container mx-auto px-4 py-40 h-full">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -192,7 +192,7 @@ const HomePage = ({ data }: PAGES.IHomePage) => {
                                 <Link href="/booking" passHref>
                                     <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
                                 </Link>
-                                <Link href="/services" passHref>
+                                <Link href="/search/vendors" passHref>
                                     <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre w-full">Khám phá dịch vụ</ClearButton>
                                 </Link>
                             </div>

@@ -32,7 +32,7 @@ const UserProfileLayout = ({
                             initial={{ x: -100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
-                            className="lg:col-span-4 col-span-12"
+                            className="lg:col-span-3 col-span-12"
                         >
                             <ProfileLeft
                                 user={user}
@@ -45,7 +45,7 @@ const UserProfileLayout = ({
                             initial={{ x: 100, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
-                            className="lg:col-span-8 col-span-12"
+                            className="lg:col-span-9 col-span-12 pb-10"
                         >
                             <ProfileRight
                                 user={user}

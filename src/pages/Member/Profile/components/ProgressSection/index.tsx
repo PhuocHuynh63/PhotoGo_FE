@@ -5,7 +5,7 @@ const ProgressSection = ({ spent = 0, required = 1 }: { spent?: number; required
     const percent = Math.min((spent / required) * 100, 100);
     return (
         <motion.div
-            className="w-full bg-gray-100 rounded-lg p-2"
+            className="w-full bg-gray-100 rounded-lg p-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}

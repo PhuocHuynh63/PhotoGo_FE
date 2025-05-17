@@ -9,9 +9,7 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
 import { ICategoriesData } from "@models/category/response.model"
-import { ChevronDown } from "lucide-react"
-import * as Accordion from '@radix-ui/react-accordion';
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
 
 export default function Left({ onReset, categories }: { onReset: () => void, categories: ICategoriesData }) {
     const router = useRouter();
@@ -135,7 +133,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
 
 
     return (
-        <Accordion.Root type="multiple" className="w-64 pr-4 border-r p-3">
+        <div className="w-64 pr-4 border-r p-3">
             <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-medium text-md mb-2 flex items-center justify-between">
                     Bộ lọc tìm kiếm
@@ -143,22 +141,31 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                 <Button onClick={handleResetAll}>Xóa tất cả</Button>
             </div>
 
-            {/* Service Type */}
-            <Accordion.Item value="serviceType">
-                <Accordion.Header>
-                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
-                        Loại dịch vụ
-                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
-                    </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                    <Checkbox
-                        options={categories?.data.map(category => ({ key: category.name }))}
-                        value={serviceType.map(service => service.key) as string[]}
-                        onChange={(e, key) => handleServiceTypeChange(key)}
-                    />
-                </Accordion.Content>
-            </Accordion.Item>
+            <Accordion type="single" defaultValue="serviceType" collapsible>
+                {/* Service Type */}
+                <AccordionItem value="serviceType">
+                    <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
+                    <AccordionContent>
+                        <Checkbox
+                            options={categories?.data.map(category => ({ key: category.name }))}
+                            value={serviceType.map(service => service.key) as string[]}
+                            onChange={(e, key) => handleServiceTypeChange(key)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+
+                {/* Location */}
+                <AccordionItem value="address">
+                    <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
+                    <AccordionContent>
+                        <Checkbox
+                            options={address}
+                            value={addresses.map(service => service.key)}
+                            onChange={(e, key) => handleAddressChange(key)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
 
             {/* Date */}
             <div className="mb-4 border-t pt-4">
@@ -170,7 +177,6 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                         onChange={(date) => {
                             if (date) {
                                 setSelectedDate(date)
-                                // updateQueryParam("date", date.toLocaleDateString('vi-VN').replace(/\//g, '-'));
                             }
                         }}
                     />
@@ -178,7 +184,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
             </div>
 
             {/* Price Range */}
-            <div className="mb-4 border-t pt-4">
+            <div className="mb-4 border-t py-4">
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
                     min={500000}
@@ -188,23 +194,6 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                     onValueChange={setSelectPriceRange}
                 />
             </div>
-
-            {/* Location */}
-            <Accordion.Item value="address">
-                <Accordion.Header>
-                    <Accordion.Trigger className="flex w-full items-center justify-between py-2 font-medium text-sm cursor-pointer">
-                        Địa điểm
-                        <ChevronDown className="ml-2 transition-transform data-[state=open]:rotate-180" size={18} />
-                    </Accordion.Trigger>
-                </Accordion.Header>
-                <Accordion.Content>
-                    <Checkbox
-                        options={address}
-                        value={addresses.map(service => service.key)}
-                        onChange={(e, key) => handleAddressChange(key)}
-                    />
-                </Accordion.Content>
-            </Accordion.Item>
 
             {/* Rating */}
             <div className="mb-4 border-t pt-4">
@@ -229,6 +218,6 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                     Áp dụng bộ lọc
                 </button>
             </div>
-        </Accordion.Root>
+        </div>
     )
 }

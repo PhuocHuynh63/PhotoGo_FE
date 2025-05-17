@@ -25,7 +25,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const totalPages = vendors?.pagination.totalPage
-
+    console.log(
+        vendors
+    )
     useEffect(() => {
         const current = searchParams?.get('current');
         if (current) {
@@ -54,8 +56,8 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
             >
-                <h2 className="text-3xl font-medium">Kết quả tìm kiếm</h2>
-                <p className="text-sm text-gray-500">Tìm thấy {resultCount} kết quả</p>
+                <h2 className="text-3xl font-medium pb-2">Kết quả tìm kiếm</h2>
+                <p className="text-sm text-gray-500">Tìm thấy <span className="font-medium">{resultCount}</span> kết quả</p>
             </motion.div>
 
             {vendors?.data.length === 0 ? (
@@ -94,9 +96,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                     <div
                         className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
                     >
-                        {vendors?.data.map((service) => (
+                        {vendors?.data.map((vendor) => (
                             <motion.div
-                                key={service.id}
+                                key={vendor.id}
                                 className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer"
                                 variants={cardVariants}
                                 initial="hidden"
@@ -106,11 +108,11 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                             >
                                 {/* <div className="absolute top-2 right-2 z-10">
                             <Button className="shadow-none hover:bg-none flex items-center justify-center">
-                                <LucideIcon name="Heart" iconSize={18} fill={service.featured ? "red" : "none"} iconColor={service.featured ? "red" : "black"} />
+                                <LucideIcon name="Heart" iconSize={18} fill={vendor.featured ? "red" : "none"} iconColor={vendor.featured ? "red" : "black"} />
                             </Button>
                         </div>
 
-                        {service.featured && (
+                        {vendor.featured && (
                             <div className="absolute top-2 left-2 z-10">
                                 <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
                                     Nổi bật
@@ -119,16 +121,16 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                         )} */}
 
                                 <div className="relative bg-yellow-300">
-                                    {!service.status && (
+                                    {!vendor.status && (
                                         <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
                                             <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
-                                                {service.status}
+                                                {vendor.status}
                                             </span>
                                         </div>
                                     )}
                                     <div className="relative h-60">
                                         <Image
-                                            src={service.logo || "data:image/svg+xml;base64," + btoa(`
+                                            src={vendor.logo || "data:image/svg+xml;base64," + btoa(`
                                                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <defs>
                                                         <linearGradient id="placeholderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -146,7 +148,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                                 objectFit: 'cover',
                                             }}
                                             loading="lazy"
-                                            alt={service.name}
+                                            alt={vendor.name}
                                         />
                                     </div>
                                 </div>
@@ -155,28 +157,29 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex flex-col items-start text-dark">
-                                            <h3 className="text-dark font-medium text-lg">{service.name}</h3>
+                                            <h3 className="text-dark font-medium text-lg">{vendor.name}</h3>
                                             <span className="text-dark text-xs flex">
                                                 <LucideIcon name="MapPin" iconSize={14} />
-                                                {service.locations[0]?.address}, {service.locations[0]?.city}
+                                                {vendor.locations[0]?.address}, {vendor.locations[0]?.city}
                                             </span>
                                         </div>
-                                        <div className=" shadow-md flex items-center text-dark text-xs rounded-full border px-2 py-1">
-                                            {/* {service.type.map((type, i) => (
-                                        <span key={i} className="flex items-center justify-center">
-                                            {i > 0 && <span className="mx-1">•</span>}
-                                            {type === "Studio" && (
-                                                <LucideIcon iconSize={16} className="mr-1" name="Camera" />
+                                        <div className="rounded-full border px-2 py-1 flex items-center justify-center">
+                                            {vendor.category && (
+                                                <span className="flex items-center justify-center w-full">
+                                                    {vendor.category.id === "C001" && (
+                                                        <LucideIcon iconSize={16} name="MapPinHouse" />
+                                                    )}
+                                                    {vendor.category.id === "C003" && (
+                                                        <LucideIcon iconSize={16} name="User" />
+                                                    )}
+                                                    {vendor.category.id === "C002" && (
+                                                        <LucideIcon iconSize={16} name="Paintbrush" />
+                                                    )}
+                                                    {vendor.category.id === "CAT002" && (
+                                                        <LucideIcon iconSize={16} name="PartyPopper" />
+                                                    )}
+                                                </span>
                                             )}
-                                            {type === "Nhiếp ảnh gia" && (
-                                                <LucideIcon iconSize={16} className="mr-1" name="User" />
-                                            )}
-                                            {type === "Makeup Artist" && (
-                                                <LucideIcon iconSize={16} className="mr-1" name="Paintbrush" />
-                                            )}
-                                            {type}
-                                        </span>
-                                    ))} */}
                                         </div>
 
                                     </div>
@@ -187,14 +190,14 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             <LucideIcon name="Star" iconSize={14} fill="yellow" />
                                         </div>
                                         <span className="text-sm font-medium ml-1">
-                                            {/* {service.rating} */}
+                                            {/* {vendor.rating} */}
                                         </span>
-                                        <span className="text-xs text-gray-500 ml-1">({service?.reviews?.length} đánh giá)</span>
+                                        <span className="text-xs text-gray-500 ml-1">({vendor?.reviews?.length} đánh giá)</span>
                                     </div>
 
 
                                     <div className="flex flex-wrap gap-1 mb-2">
-                                        {/* {service.categories.map((category, i) => (
+                                        {/* {vendor.categories.map((category, i) => (
                                     <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                                         {category}
                                     </span>
@@ -204,11 +207,11 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                     <div className="flex justify-between items-center">
                                         <div className="text-sm">
                                             <span className="font-medium">
-                                                {/* {service.priceRange[0].toLocaleString()}đ - {service.priceRange[1].toLocaleString()}đ */}
+                                                {/* {vendor.priceRange[0].toLocaleString()}đ - {vendor.priceRange[1].toLocaleString()}đ */}
                                             </span>
                                         </div>
-                                        <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL}?vendorId=${service.id}`} >
-                                            <Button width={80} disabled={!service.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
+                                        <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`} >
+                                            <Button width={80} disabled={!vendor.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
                                                 Đặt lịch
                                             </Button>
                                         </Link>
