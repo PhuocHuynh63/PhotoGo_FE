@@ -168,6 +168,7 @@ declare namespace ICOMPONENTS {
 
     export interface NavigationButtonProps extends React.ComponentProps<"a"> {
         className?: string;
+        disabled?: boolean;
     }
     interface TransitionWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
         children: React.ReactNode;

@@ -69,11 +69,17 @@ const Pagination = ({ className, total, current, onChange }: ICOMPONENTS.Paginat
         >
             <ul className="flex flex-row items-center gap-1">
                 <PaginationItem>
-                    <PaginationPrevious onClick={() => handlePageChange(Math.max(1, current - 1))} />
+                    <PaginationPrevious
+                        onClick={() => handlePageChange(Math.max(1, current - 1))}
+                        disabled={current === 1}
+                    />
                 </PaginationItem>
                 {renderPageNumbers()}
                 <PaginationItem>
-                    <PaginationNext onClick={() => handlePageChange(Math.min(total, current + 1))} />
+                    <PaginationNext
+                        onClick={() => handlePageChange(Math.min(total, current + 1))}
+                        disabled={current === total}
+                    />
                 </PaginationItem>
             </ul>
         </nav>
