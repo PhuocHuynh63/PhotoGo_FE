@@ -210,7 +210,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                                 {/* {vendor.priceRange[0].toLocaleString()}đ - {vendor.priceRange[1].toLocaleString()}đ */}
                                             </span>
                                         </div>
-                                        <Link href={`${vendor.slug}`} >
+                                        <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`} >
                                             <Button width={80} disabled={!vendor.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
                                                 Đặt lịch
                                             </Button>
