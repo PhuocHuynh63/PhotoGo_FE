@@ -6,9 +6,10 @@ import Button from "@components/Atoms/Button"
 import Checkbox from "@components/Atoms/Checkbox"
 import RadioButtonGroup from "@components/Atoms/RadioButton"
 import StarRating from "@components/Molecules/StarRating"
-import { motion } from "framer-motion"
 import PriceRangeSlider from "@components/Atoms/2WaySlider/2WaySlider"
 import DurationRangeSlider from "@components/Atoms/DurationRangeSlider/DurationRangeSlider"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
+
 export default function Left({ onReset }: { onReset: () => void }) {
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -141,117 +142,88 @@ export default function Left({ onReset }: { onReset: () => void }) {
                 </h3>
             </div>
 
-            {/* Service Type */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
-                    Loại dịch vụ
-
-                </h3>
-                <div className="space-y-2">
-                    <Checkbox
-                        options={services}
-                        // value={String(serviceType.map(service => service.key))}
-                        onChange={(e, key) => {
-                            handleServiceTypeChange(key);
-                        }}
-                    />
-                </div>
-
-                {/* Rating */}
-                <motion.div
-                    className="mb-4 border-t pt-4"
-                    initial={{ x: -100, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
-                    <RadioButtonGroup
-                        options={[
-                            { label: <StarRating stars={5} />, value: '5' },
-                            { label: <StarRating stars={4} />, value: '4' },
-                            { label: <StarRating stars={3} />, value: '3' },
-                            { label: <StarRating stars={2} />, value: '2' },
-                            { label: <StarRating stars={1} />, value: '1' },
-                        ]}
-                        value={rating.toString()}
-                        onChange={(value) => {
-                            setRating(Number(value));
-                            // updateQueryParam("rating", value);
-                        }}
-                        name="rating"
-                    />
-                </motion.div>
-
-                {/* Price Range */}
-                <div className="mb-4 border-t pt-4">
-                    <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
-                        Khoảng giá
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="lucide lucide-chevron-up"
-                        >
-                            <path d="m18 15-6-6-6 6" />
-                        </svg>
-                    </h3>
-                    <div className="px-1 py-4">
-                        <PriceRangeSlider
-                            min={300000}
-                            max={70000000}
-                            step={500000}
-                            value={selectPriceRange}
-                            onValueChange={(val) => {
-                                setSelectPriceRange(val);
-                                // updateQueryParam("price", val);
-                            }}
-                        />
-                    </div>
-                </div>
-
-                {/* Duration Range */}
-                <div className="mb-4 border-t pt-4">
-                    <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
-                        Thời lượng
-
-                    </h3>
-                    <div className="px-1 py-4">
-                        <DurationRangeSlider
-                            min={60}
-                            max={360}
-                            step={30}
-                            value={selectDurationRange}
-                            onValueChange={(val) => {
-                                setSelectDurationRange(val);
-                                // updateQueryParam("duration", val);
-                            }}
-                        />
-                    </div>
-                </div>
+            <Accordion type="single" defaultValue="serviceType" collapsible>
+                {/* Service Type */}
+                <AccordionItem value="serviceType">
+                    <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
+                    <AccordionContent>
+                        <div className="space-y-2">
+                            <Checkbox
+                                options={services}
+                                onChange={(e, key) => {
+                                    handleServiceTypeChange(key);
+                                }}
+                            />
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
 
                 {/* Vendors */}
-                <motion.div
-                    className="mb-4 border-t pt-4"
-                    initial={{ x: -100, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <h3 className="font-medium text-sm mb-2">Địa điểm</h3>
-                    <Checkbox
-                        options={providers}
-                        // value={String(vendor.map(vendor => vendor.key))}
-                        onChange={(e, key) => {
-                            handleVendorChange(key);
+                <AccordionItem value="vendors">
+                    <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
+                    <AccordionContent>
+                        <Checkbox
+                            options={providers}
+                            onChange={(e, key) => {
+                                handleVendorChange(key);
+                            }}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+
+            {/* Rating */}
+            <div className="mb-4 border-t pt-4">
+                <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
+                <RadioButtonGroup
+                    options={[
+                        { label: <StarRating stars={5} />, value: '5' },
+                        { label: <StarRating stars={4} />, value: '4' },
+                        { label: <StarRating stars={3} />, value: '3' },
+                        { label: <StarRating stars={2} />, value: '2' },
+                        { label: <StarRating stars={1} />, value: '1' },
+                    ]}
+                    value={rating.toString()}
+                    onChange={(value) => {
+                        setRating(Number(value));
+                    }}
+                    name="rating"
+                />
+            </div>
+
+            {/* Price Range */}
+            <div className="mb-4 border-t pt-4">
+                <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
+                <div className="px-1 py-4">
+                    <PriceRangeSlider
+                        min={300000}
+                        max={70000000}
+                        step={500000}
+                        value={selectPriceRange}
+                        onValueChange={(val) => {
+                            setSelectPriceRange(val);
                         }}
                     />
-                </motion.div>
+                </div>
+            </div>
 
+            {/* Duration Range */}
+            <div className="mb-4 border-t pt-4">
+                <h3 className="font-medium text-sm mb-2">Thời lượng</h3>
+                <div className="px-1 py-4">
+                    <DurationRangeSlider
+                        min={60}
+                        max={360}
+                        step={30}
+                        value={selectDurationRange}
+                        onValueChange={(val) => {
+                            setSelectDurationRange(val);
+                        }}
+                    />
+                </div>
+            </div>
+
+            <div className="mt-4">
                 <button
                     className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors"
                     onClick={applyFilters}

@@ -40,7 +40,7 @@ export default function FavoritesContent() {
     };
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-screen-xl mx-auto">
+        <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
             <h1 className="text-2xl font-bold mb-6 text-center sm:text-left">
                 Danh sách yêu thích
             </h1>
@@ -101,7 +101,7 @@ export default function FavoritesContent() {
                                             </p>
                                         </div>
 
-                                        <Button className="w-full mt-4 text-sm font-medium">
+                                        <Button className="w-full mt-4 text-sm font-medium text-white">
                                             Xem chi tiết
                                         </Button>
                                     </div>

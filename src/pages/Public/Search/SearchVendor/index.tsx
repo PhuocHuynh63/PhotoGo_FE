@@ -27,7 +27,7 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
     } else {
       params.delete('name');
     }
-    params.set('current', '1');
+    // params.set('current', '1');
     router.push(`?${params.toString()}`);
   };
 
