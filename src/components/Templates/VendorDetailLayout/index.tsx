@@ -15,11 +15,17 @@ const VendorDetailLayoutPage = ({
     vendor
 }: PAGES.IVendorDetailPageProps) => {
 
+    /**
+     * * Set the vendor in the global state
+     * @param vendor
+     * @returns {void}
+     */
     const setVendor = useSetVendor();
 
     useEffect(() => {
         setVendor(vendor);
     }, [vendor, setVendor]);
+    //---------------------------End---------------------------//
 
     return (
         <div className="flex min-h-screen flex-col">
