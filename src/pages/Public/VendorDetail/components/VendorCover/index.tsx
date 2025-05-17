@@ -28,15 +28,13 @@ const VendorCover = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
             </div>
 
-            <div className="m-14 bg-light rounded-lg relative -mt-24 z-10">
+            <div className="my-14 mx-8 md:m-14 bg-light rounded-lg relative -mt-24 z-10">
                 <div className="bg-background rounded-lg shadow-lg p-6 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    <div className="shrink-0">
+                    <div className="flex justify-center w-full sm:w-fit -mt-12 md:mt-0">
                         <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border-4 border-background shadow-md">
                             <img
                                 src={vendorData?.logo || "/placeholder.svg"}
                                 alt={`${vendorData?.name} logo`}
-                                width={128}
-                                height={128}
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -44,7 +42,7 @@ const VendorCover = () => {
 
                     <div className="flex-grow">
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                            <div>
+                            <div className='flex flex-col justify-center items-center'>
                                 <h1 className="text-2xl md:text-3xl font-bold">{vendorData?.name}</h1>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex items-center">
