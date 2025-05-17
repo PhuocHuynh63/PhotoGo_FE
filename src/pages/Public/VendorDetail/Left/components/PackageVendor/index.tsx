@@ -18,6 +18,7 @@ type PackageVendorProps = {
 const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     const vendorData = useVendor() as IVendor
 
+    //TODO: remove this when we have real data
     const firstPackage = vendorData?.servicePackages?.[0]
 
     //#region View Concept
@@ -46,15 +47,16 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     //#endregion
 
     //#region Render Package Content
+    //#region Render Package Content
     const renderPackageContent = (pkg: IServicePackage) => (
-        <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3">
+        <div className="flex flex-col md:flex-row gap-4">
+            <div className="md:w-1/3 w-full">
                 {renderImage(pkg.image, pkg.name)}
             </div>
-            <div className="flex-1 p-6 space-y-3">
-                <div className="flex justify-between items-start">
+            <div className="flex-1 px-4 py-3 md:p-6 space-y-3">
+                <div className="flex justify-between items-start flex-wrap gap-2">
                     {pkg.name ? (
-                        <h3 className="font-bold text-xl">{pkg.name}</h3>
+                        <h3 className="font-bold text-lg md:text-xl">{pkg.name}</h3>
                     ) : (
                         <Skeleton className="h-6 w-40 rounded bg-grey" />
                     )}
@@ -62,20 +64,20 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                 </div>
 
                 {pkg.description ? (
-                    <p className="text-muted-foreground">{pkg.description}</p>
+                    <p className="text-sm md:text-base text-muted-foreground">{pkg.description}</p>
                 ) : (
-                    <Skeleton className="h-4 w-full round bg-greyed" />
+                    <Skeleton className="h-4 w-full rounded bg-greyed" />
                 )}
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 text-sm md:text-base">
                     {pkg.price ? (
-                        <div className="text-lg font-bold text-primary">{pkg.price.toLocaleString()}</div>
+                        <div className="font-bold text-primary">{pkg.price.toLocaleString()}</div>
                     ) : (
                         <Skeleton className="h-6 w-24 rounded bg-grey" />
                     )}
 
                     {pkg.duration ? (
-                        <div className="text-sm text-muted-foreground flex items-center gap-1">
+                        <div className="flex items-center gap-1 text-muted-foreground">
                             <Clock className="h-4 w-4" />
                             {pkg.duration}
                         </div>
@@ -87,16 +89,18 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                 <div className="flex items-center gap-4">
                     <ButtonNoBackgroundVendorDetail
                         variant="outline"
-                        className="flex items-center"
+                        className="flex items-center text-sm"
                         onClick={() => handleViewConcept(pkg.id)}
                     >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4 mr-1" />
                         Xem concept
                     </ButtonNoBackgroundVendorDetail>
                 </div>
             </div>
         </div>
     )
+    //#endregion
+
     //#endregion
 
     return isOverview ? (
