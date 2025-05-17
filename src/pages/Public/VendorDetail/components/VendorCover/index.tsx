@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-
 import { Badge, Heart, MapPin, Share2, Star } from 'lucide-react'
 import React from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'

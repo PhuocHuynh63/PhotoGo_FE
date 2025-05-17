@@ -12,9 +12,9 @@ const AUTH = {
 const PUBLIC = {
     HOME: '/',
     CONTACT: '/contact',
-    STUDIO: '/studio',
+    SEARCH_VENDORS: '/search/vendors',
+    SEARCH_PACKAGES: '/search/packages',
     VENDOR_DETAIL: '/:slug/:page',
-    FREELANCER: '/freelancer',
     ABOUT: '/about',
 };
 
