@@ -15,9 +15,9 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
+    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([0, 70000000]);
     const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
-    const [rating, setRating] = useState(5);
+    const [rating, setRating] = useState(1);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -69,7 +69,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
     }
 
     function handleResetAll() {
-        setSelectPriceRange([5000000, 70000000]);
+        setSelectPriceRange([0, 0]);
         setServiceType([]);
         setRating(1);
         setAddresses([]);
