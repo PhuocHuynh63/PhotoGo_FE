@@ -26,7 +26,6 @@ const LoginPage = () => {
     useRemoveLocalStorage("email")
     useRemoveLocalStorage("otp")
     const router = useRouter()
-    const setToken = useSetToken();
     //#endregion
 
 
@@ -56,12 +55,6 @@ const LoginPage = () => {
             //#region Handle success
             if (status === 200) {
                 router.push(ROUTES.PUBLIC.HOME);
-                //#region set access token
-                const sessionRes = await fetch('/api/auth/session');
-                const session = await sessionRes.json();
-                const token = session?.accessToken;
-                setToken(token);
-                //#region 
                 router.refresh();
                 return;
             }
