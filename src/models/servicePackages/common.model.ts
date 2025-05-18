@@ -7,6 +7,7 @@ export const ServicePackageModel = z.object({
     id: z.string(),
     vendorId: z.string(),
     name: z.string(),
+    image: z.string(),
     description: z.string(),
     price: z.string(),
     duration: z.number(),
