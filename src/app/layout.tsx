@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description: "Bắt trọn khoảnh khắc, tạo nên kỷ niệm",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

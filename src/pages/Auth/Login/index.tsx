@@ -19,12 +19,14 @@ import { signIn } from "next-auth/react"
 import authService from "@services/auth"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { AuthError } from "@constants/errors"
+import { useSetToken } from "@stores/user/selectors"
 
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
     useRemoveLocalStorage("otp")
     const router = useRouter()
+    const setToken = useSetToken();
     //#endregion
 
 
@@ -54,6 +56,12 @@ const LoginPage = () => {
             //#region Handle success
             if (status === 200) {
                 router.push(ROUTES.PUBLIC.HOME);
+                //#region set access token
+                const sessionRes = await fetch('/api/auth/session');
+                const session = await sessionRes.json();
+                const token = session?.accessToken;
+                setToken(token);
+                //#region 
                 router.refresh();
                 return;
             }
