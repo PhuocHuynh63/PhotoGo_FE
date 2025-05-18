@@ -1,4 +1,4 @@
-import { ChatPage } from "@pages/Member/Chat";
+import ChatPage from "@pages/Member/Chat";
 
 export default function Chat() {
 
