@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SidebarChat } from './Left/Sidebar';
-import { ContentChat } from './Right/Content';
+import SidebarChat from './Left/Sidebar';
+import ContentChat from './Right/Content';
 import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';
 import chatService from '@services/chat';

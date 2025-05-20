@@ -18,12 +18,12 @@ interface Appointment {
 }
 
 interface RecentAppointmentsProps {
-    appointments: Appointment[]
+    appointments?: Appointment[]
 }
 
-export function RecentAppointments({ appointments }: RecentAppointmentsProps) {
+export default function RecentAppointments({ appointments = [] }: RecentAppointmentsProps) {
     // Lấy 3 lịch hẹn gần nhất
-    const recentAppointments = [...appointments]
+    const recentAppointments = [...(appointments || [])]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 3)
 

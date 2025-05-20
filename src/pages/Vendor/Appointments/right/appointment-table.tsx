@@ -26,11 +26,11 @@ interface AppointmentTableProps {
     appointments: Appointment[]
 }
 
-export function AppointmentTable({ appointments }: AppointmentTableProps) {
+export default function AppointmentTable({ appointments }: AppointmentTableProps) {
     const [filter, setFilter] = useState<string>("all")
 
     // Lọc lịch hẹn theo trạng thái
-    const filteredAppointments = appointments.filter((appointment) => {
+    const filteredAppointments = appointments?.filter((appointment) => {
         if (filter === "all") return true
         if (filter === "pending") return appointment.status === "pending"
         if (filter === "confirmed") return appointment.status === "confirmed"
@@ -174,7 +174,7 @@ export function AppointmentTable({ appointments }: AppointmentTableProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredAppointments.map((appointment) => (
+                            {filteredAppointments?.map((appointment) => (
                                 <tr key={appointment.id} className="border-b border-gray-200 hover:bg-gray-50">
                                     <td className="whitespace-nowrap px-4 py-3 font-medium">{appointment.id}</td>
                                     <td className="px-4 py-3">

@@ -22,7 +22,7 @@ interface AppointmentStatsProps {
     appointments: Appointment[]
 }
 
-export function AppointmentStats({ appointments }: AppointmentStatsProps) {
+export default function AppointmentStats({ appointments }: AppointmentStatsProps) {
     const currentYear = new Date().getFullYear()
     const [selectedYear, setSelectedYear] = useState(currentYear)
 
@@ -30,16 +30,16 @@ export function AppointmentStats({ appointments }: AppointmentStatsProps) {
     const years = Array.from({ length: currentYear - 2019 }, (_, i) => currentYear - i)
 
     // Lọc lịch hẹn theo năm được chọn
-    const filteredAppointments = appointments.filter((appointment) => {
+    const filteredAppointments = appointments?.filter((appointment) => {
         const appointmentYear = new Date(appointment.date).getFullYear()
         return appointmentYear === selectedYear
     })
 
     // Đếm số lượng lịch hẹn theo trạng thái
-    const pendingCount = filteredAppointments.filter((appointment) => appointment.status === "pending").length
-    const confirmedCount = filteredAppointments.filter((appointment) => appointment.status === "confirmed").length
-    const cancelledCount = filteredAppointments.filter((appointment) => appointment.status === "cancelled").length
-    const totalCount = filteredAppointments.length
+    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === "pending").length
+    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === "confirmed").length
+    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === "cancelled").length
+    const totalCount = filteredAppointments?.length
 
     return (
         <Card>

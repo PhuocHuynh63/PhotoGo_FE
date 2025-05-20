@@ -26,11 +26,11 @@ export default function StatisticsCharts({ data }: StatisticsChartsProps) {
     // Lọc dữ liệu theo năm được chọn
     const filteredData = {
         ...data,
-        bookingsByMonth: data.bookingsByMonth.filter((item) => {
+        bookingsByMonth: data?.bookingsByMonth?.filter((item) => {
             const year = item.month.split(" ")[2]
             return parseInt(year) === selectedYear
         }),
-        revenueByMonth: data.revenueByMonth.filter((item) => {
+        revenueByMonth: data?.revenueByMonth?.filter((item) => {
             const year = item.month.split(" ")[2]
             return parseInt(year) === selectedYear
         })
@@ -60,7 +60,7 @@ export default function StatisticsCharts({ data }: StatisticsChartsProps) {
         { month: "Tháng 12", count: 0 },
     ]
 
-    const chartData = filteredData.bookingsByMonth.length > 0 ? filteredData.bookingsByMonth : sampleData
+    const chartData = filteredData?.bookingsByMonth?.length > 0 ? filteredData?.bookingsByMonth : sampleData
 
     return (
         <Tabs defaultValue="bookings" className="space-y-4">
