@@ -15,9 +15,9 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([5000000, 70000000]);
+    const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([0, 70000000]);
     const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
-    const [rating, setRating] = useState(5);
+    const [rating, setRating] = useState(0);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -69,9 +69,9 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
     }
 
     function handleResetAll() {
-        setSelectPriceRange([5000000, 70000000]);
+        setSelectPriceRange([0, 70000000]);
         setServiceType([]);
-        setRating(1);
+        setRating(0);
         setAddresses([]);
         setSelectedDate(new Date());
 
@@ -187,7 +187,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
             <div className="mb-4 border-t py-4">
                 <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
                 <PriceRangeSlider
-                    min={500000}
+                    min={0}
                     max={70000000}
                     step={500000}
                     value={selectPriceRange}
@@ -200,11 +200,11 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
                 <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
                 <RadioButtonGroup
                     options={[
-                        { label: <StarRating stars={5} />, value: '5' },
-                        { label: <StarRating stars={4} />, value: '4' },
-                        { label: <StarRating stars={3} />, value: '3' },
-                        { label: <StarRating stars={2} />, value: '2' },
-                        { label: <StarRating stars={1} />, value: '1' },
+                        { label: <StarRating stars={5} interactive onClick={() => setRating(5)} />, value: '5' },
+                        { label: <StarRating stars={4} interactive onClick={() => setRating(4)} />, value: '4' },
+                        { label: <StarRating stars={3} interactive onClick={() => setRating(3)} />, value: '3' },
+                        { label: <StarRating stars={2} interactive onClick={() => setRating(2)} />, value: '2' },
+                        { label: <StarRating stars={1} interactive onClick={() => setRating(1)} />, value: '1' },
                     ]}
                     value={rating.toString()}
                     onChange={(value) => setRating(Number(value))}
@@ -213,8 +213,8 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
             </div>
 
             {/* Nút áp dụng bộ lọc */}
-            <div className="mt-4">
-                <button className="w-full bg-primary text-white py-2 rounded cursor-pointer" onClick={handleApplyFilter}>
+            <div className="mt-10">
+                <button className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors cursor-pointer" onClick={handleApplyFilter}>
                     Áp dụng bộ lọc
                 </button>
             </div>

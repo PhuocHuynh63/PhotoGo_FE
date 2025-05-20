@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Button from "@components/Atoms/Button"
-import Link from "next/link"
 import { ROUTES } from "@routes"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
@@ -105,20 +104,21 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                 animate="visible"
                                 exit="exit"
                                 transition={{ duration: 0.5, ease: "easeOut" }}
+                                onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`)}
                             >
                                 {/* <div className="absolute top-2 right-2 z-10">
-                            <Button className="shadow-none hover:bg-none flex items-center justify-center">
-                                <LucideIcon name="Heart" iconSize={18} fill={vendor.featured ? "red" : "none"} iconColor={vendor.featured ? "red" : "black"} />
-                            </Button>
-                        </div>
+                                    <Button className="shadow-none hover:bg-none flex items-center justify-center">
+                                        <LucideIcon name="Heart" iconSize={18} fill={vendor.featured ? "red" : "none"} iconColor={vendor.featured ? "red" : "black"} />
+                                    </Button>
+                                </div>
 
-                        {vendor.featured && (
-                            <div className="absolute top-2 left-2 z-10">
-                                <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
-                                    Nổi bật
-                                </span>
-                            </div>
-                        )} */}
+                                {vendor.featured && (
+                                    <div className="absolute top-2 left-2 z-10">
+                                        <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
+                                            Nổi bật
+                                        </span>
+                                    </div>
+                                )} */}
 
                                 <div className="relative bg-yellow-300">
                                     {!vendor.status && (
@@ -197,11 +197,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
 
 
                                     <div className="flex flex-wrap gap-1 mb-2">
-                                        {/* {vendor.categories.map((category, i) => (
-                                    <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                                        {category}
-                                    </span>
-                                ))} */}
+                                        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                                            {vendor?.category?.name}
+                                        </span>
                                     </div>
 
                                     <div className="flex justify-between items-center">
@@ -210,11 +208,17 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                                 {/* {vendor.priceRange[0].toLocaleString()}đ - {vendor.priceRange[1].toLocaleString()}đ */}
                                             </span>
                                         </div>
-                                        <Link href={`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`} >
-                                            <Button width={80} disabled={!vendor.status} className="bg-primary text-white text-sm px-3 py-1 rounded-md">
-                                                Đặt lịch
-                                            </Button>
-                                        </Link>
+                                        <Button
+                                            width={80}
+                                            disabled={!vendor.status}
+                                            className="z-10 bg-primary text-white text-sm px-3 py-1 rounded-md"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                router.push(`/book/${vendor.id}`);
+                                            }}
+                                        >
+                                            Đặt lịch
+                                        </Button>
                                     </div>
                                 </div>
                             </motion.div>

@@ -12,7 +12,13 @@ import { Skeleton } from '@components/Atoms/ui/skeleton'
 
 const VendorCover = () => {
 
-    const vendorData = useVendor() as IVendor
+    /**
+     * Call vendor store to get vendor data
+     */
+    const vendor = useVendor()
+    const vendorData = vendor?.data as IVendor
+    //-----------------------------End---------------------------------//
+
     const router = useRouter()
     const params = useParams()
     const slug = params?.slug as string
@@ -60,8 +66,8 @@ const VendorCover = () => {
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex items-center">
                                         <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                                        {/* <span className="ml-1 font-medium">{vendorData?.rating}</span>
-                                        <span className="text-muted-foreground ml-1">({vendorData?.reviewCount} đánh giá)</span> */}
+                                        <span className="ml-1 font-medium">{vendorData?.averageRating}</span>
+                                        <span className="text-muted-foreground ml-1">({/*{vendorData?.reviewCount}*/}0 đánh giá)</span>
                                     </div>
                                     <span className="text-muted-foreground">•</span>
                                     <div className="flex items-center text-muted-foreground">
