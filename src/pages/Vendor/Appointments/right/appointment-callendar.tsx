@@ -1,119 +1,169 @@
 "use client"
 
-import { Badge } from "@components/Atoms/ui/badge"
-import { Calendar } from "@components/Atoms/ui/calendar"
-import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { useState } from "react"
-import "react-day-picker/dist/style.css"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
+import { Button } from "@components/Atoms/ui/button"
 
 interface Appointment {
     id: string
     customerName: string
     customerPhone: string
     date: string
-    time: string
-    duration: number
+    startTime: string
+    endTime: string
     service: string
-    status: "confirmed" | "pending" | "cancelled"
+    location: string
+    status: "pending" | "confirmed" | "completed" | "cancelled"
     notes: string
 }
-
-export type { Appointment }
 
 interface AppointmentCalendarProps {
     appointments: Appointment[]
 }
 
-export default function AppointmentCalendar({ appointments = [] }: AppointmentCalendarProps) {
-    const [date, setDate] = useState<Date | undefined>(new Date())
+export default function AppointmentCalendar({ appointments }: AppointmentCalendarProps) {
+    const [currentDate, setCurrentDate] = useState(new Date())
 
-    // Tạo một map các ngày có lịch hẹn
-    const appointmentDates = appointments.reduce(
-        (acc, appointment) => {
-            const dateStr = appointment.date
-            if (!acc[dateStr]) {
-                acc[dateStr] = []
-            }
-            acc[dateStr].push(appointment)
-            return acc
-        },
-        {} as Record<string, Appointment[]>,
-    )
+    // Lấy tháng và năm hiện tại
+    const currentMonth = currentDate.getMonth()
+    const currentYear = currentDate.getFullYear()
 
-    // Tạo danh sách lịch hẹn cho ngày đã chọn
-    const selectedDateStr = date ? date.toISOString().split("T")[0] : ""
-    const selectedDateAppointments = appointmentDates[selectedDateStr] || []
+    // Lấy ngày đầu tiên của tháng
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1)
 
-    // Hàm để hiển thị thời gian
-    const formatTime = (timeStr: string) => {
-        return timeStr
+    // Lấy ngày cuối cùng của tháng
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0)
+
+    // Lấy số ngày trong tháng
+    const daysInMonth = lastDayOfMonth.getDate()
+
+    // Lấy thứ của ngày đầu tiên (0 = Chủ Nhật, 1 = Thứ 2, ...)
+    const firstDayOfWeek = firstDayOfMonth.getDay()
+
+    // Tạo mảng các ngày trong tháng
+    const days = Array.from({ length: daysInMonth }, (_, i) => i + 1)
+
+    // Tạo mảng các ngày trống trước ngày đầu tiên
+    const emptyDays = Array.from({ length: firstDayOfWeek }, (_, i) => null)
+
+    // Kết hợp các ngày trống và các ngày trong tháng
+    const allDays = [...emptyDays, ...days]
+
+    // Tạo mảng các tuần
+    const weeks = []
+    for (let i = 0; i < allDays.length; i += 7) {
+        weeks.push(allDays.slice(i, i + 7))
     }
 
-    // Hàm để hiển thị trạng thái
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "confirmed":
-                return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Đã xác nhận</Badge>
-            case "pending":
-                return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Đang chờ</Badge>
-            case "cancelled":
-                return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Đã hủy</Badge>
-            default:
-                return null
+    // Hàm để kiểm tra xem ngày có lịch hẹn không
+    const hasAppointment = (day: number) => {
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+        return appointments.some((appointment) => appointment.date === dateStr)
+    }
+
+    // Hàm để lấy trạng thái của lịch hẹn trong ngày
+    const getAppointmentStatus = (day: number) => {
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+        const appointmentsOnDay = appointments.filter((appointment) => appointment.date === dateStr)
+
+        if (appointmentsOnDay.length === 0) return null
+
+        if (appointmentsOnDay.some((appointment) => appointment.status === "pending")) {
+            return "pending"
         }
+        if (appointmentsOnDay.some((appointment) => appointment.status === "confirmed")) {
+            return "confirmed"
+        }
+        if (appointmentsOnDay.some((appointment) => appointment.status === "completed")) {
+            return "completed"
+        }
+        if (appointmentsOnDay.some((appointment) => appointment.status === "cancelled")) {
+            return "cancelled"
+        }
+
+        return null
+    }
+
+    // Hàm để lấy màu chấm dựa trên trạng thái
+    const getDotColor = (status: string | null) => {
+        switch (status) {
+            case "pending":
+                return "bg-yellow-400"
+            case "confirmed":
+                return "bg-blue-400"
+            case "completed":
+                return "bg-green-400"
+            case "cancelled":
+                return "bg-red-400"
+            default:
+                return ""
+        }
+    }
+
+    // Hàm để chuyển đến tháng trước
+    const prevMonth = () => {
+        setCurrentDate(new Date(currentYear, currentMonth - 1, 1))
+    }
+
+    // Hàm để chuyển đến tháng sau
+    const nextMonth = () => {
+        setCurrentDate(new Date(currentYear, currentMonth + 1, 1))
+    }
+
+    // Hàm để hiển thị tên tháng
+    const getMonthName = () => {
+        return `tháng ${currentMonth + 1} ${currentYear}`
     }
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Lịch hẹn</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg font-medium">Lịch đặt</CardTitle>
+                <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" onClick={prevMonth} className="h-8 w-8">
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={nextMonth} className="h-8 w-8">
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            className="rounded-md border"
-                            modifiers={{
-                                booked: Object.keys(appointmentDates || {}).map((dateStr) => new Date(dateStr)),
-                            }}
-                            modifiersClassNames={{
-                                booked: "font-bold bg-orange-100 text-orange-500 hover:bg-orange-200"
-                            }}
-                        />
-                    </div>
-
-                    <div>
-                        <h3 className="font-medium mb-4">
-                            {date
-                                ? date.toLocaleDateString("vi-VN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
-                                : ""}
-                        </h3>
-
-                        {selectedDateAppointments.length > 0 ? (
-                            <div className="space-y-4">
-                                {selectedDateAppointments.map((appointment) => (
-                                    <div key={appointment.id} className="p-3 border rounded-md">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div>
-                                                <p className="font-medium">{formatTime(appointment.time)}</p>
-                                                <p className="text-sm text-gray-500">{appointment.duration} phút</p>
-                                            </div>
-                                            {getStatusBadge(appointment.status)}
-                                        </div>
-                                        <p className="font-medium">{appointment.customerName}</p>
-                                        <p className="text-sm text-gray-500">{appointment.service}</p>
-                                        {appointment.notes && <p className="text-sm mt-2 italic">{appointment.notes}</p>}
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-gray-500">Không có lịch hẹn nào vào ngày này</p>
-                        )}
-                    </div>
+                <div className="text-sm text-center mb-4">{getMonthName()}</div>
+                <div className="grid grid-cols-7 gap-1 text-center text-xs mb-2">
+                    <div className="text-gray-500">CN</div>
+                    <div className="text-gray-500">T2</div>
+                    <div className="text-gray-500">T3</div>
+                    <div className="text-gray-500">T4</div>
+                    <div className="text-gray-500">T5</div>
+                    <div className="text-gray-500">T6</div>
+                    <div className="text-gray-500">T7</div>
                 </div>
+                {weeks.map((week, weekIndex) => (
+                    <div key={weekIndex} className="grid grid-cols-7 gap-1 mb-1">
+                        {week.map((day, dayIndex) => {
+                            if (day === null) {
+                                return <div key={dayIndex} className="h-8 w-full"></div>
+                            }
+
+                            const status = getAppointmentStatus(day)
+                            const dotColor = getDotColor(status)
+
+                            return (
+                                <div
+                                    key={dayIndex}
+                                    className="h-8 w-full flex flex-col items-center justify-center rounded-md hover:bg-gray-100 cursor-pointer relative"
+                                >
+                                    <span className="text-sm">{day}</span>
+                                    {hasAppointment(day) && (
+                                        <span className={`absolute bottom-1 w-1.5 h-1.5 rounded-full ${dotColor}`}></span>
+                                    )}
+                                </div>
+                            )
+                        })}
+                    </div>
+                ))}
             </CardContent>
         </Card>
     )

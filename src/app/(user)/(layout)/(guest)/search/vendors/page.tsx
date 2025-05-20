@@ -3,6 +3,7 @@ import SearchVendorPage from "@pages/Public/Search/SearchVendor";
 import vendorService from "@services/vendors";
 import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
+import { IVendorResponse, IVendorsData } from "@models/vendor/response.model";
 
 
 async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
@@ -30,11 +31,12 @@ async function getCategories() {
     return response;
 }
 export default async function SearchVendorsPage({ searchParams }: SERVERS.SearchVendorPageProps) {
-    const vendors = await getVendors({ searchParams });
+    const response = await getVendors({ searchParams })
+    const vendorsData = response.data as IVendorsData;
     const categories = await getCategories();
     return (
         <>
-            <SearchVendorPage vendors={vendors.data} categories={categories.data} />
+            <SearchVendorPage vendors={vendorsData} categories={categories.data} />
         </>
     );
 }

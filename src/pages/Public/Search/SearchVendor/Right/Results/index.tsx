@@ -9,6 +9,7 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { IVendorsData } from "@models/vendor/response.model"
 import { useRouter, useSearchParams } from "next/navigation";
+import { Skeleton } from "@components/Atoms/ui/skeleton"
 
 
 const cardVariants = {
@@ -60,6 +61,23 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
             </motion.div>
 
             {vendors?.data.length === 0 ? (
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
+                    {[...Array(6)].map((_, index) => (
+                        <div key={index} className="border-3 rounded-lg overflow-hidden">
+                            <Skeleton className="h-60 w-full" />
+                            <div className="p-3">
+                                <Skeleton className="h-6 w-3/4 mb-2" />
+                                <Skeleton className="h-4 w-1/2 mb-4" />
+                                <Skeleton className="h-4 w-1/4 mb-2" />
+                                <div className="flex justify-between items-center">
+                                    <Skeleton className="h-4 w-1/3" />
+                                    <Skeleton className="h-8 w-20" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : vendors?.data.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">
                     <Image
                         src="/not-found.svg"
@@ -95,9 +113,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                     <div
                         className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}
                     >
-                        {vendors?.data.map((vendor) => (
+                        {vendors?.data.map((vendor, index) => (
                             <motion.div
-                                key={vendor.id}
+                                key={index}
                                 className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer"
                                 variants={cardVariants}
                                 initial="hidden"
@@ -120,7 +138,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                     </div>
                                 )} */}
 
-                                <div className="relative bg-yellow-300">
+                                <div className="relative">
                                     {!vendor.status && (
                                         <div className="absolute z-10 bg-black/60 w-full h-full flex items-center justify-center">
                                             <span className="bg-red-500 text-white text-sm px-2 py-1 rounded-full">
@@ -129,8 +147,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                         </div>
                                     )}
                                     <div className="relative h-60">
-                                        <Image
-                                            src={vendor.logo || "data:image/svg+xml;base64," + btoa(`
+                                        {vendor.logo ? (
+                                            <Image
+                                                src={vendor.logo || "data:image/svg+xml;base64," + btoa(`
                                                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <defs>
                                                         <linearGradient id="placeholderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -143,13 +162,16 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                                     <rect x="30" y="60" width="40" height="20" rx="5" fill="#D0D0D0"/>
                                                 </svg>
                                             `)}
-                                            fill
-                                            style={{
-                                                objectFit: 'cover',
-                                            }}
-                                            loading="lazy"
-                                            alt={vendor.name}
-                                        />
+                                                fill
+                                                style={{
+                                                    objectFit: 'cover',
+                                                }}
+                                                loading="lazy"
+                                                alt={vendor.name}
+                                            />
+                                        ) : (
+                                            <Skeleton className="w-full h-full object-cover bg-gray-200" />
+                                        )}
                                     </div>
                                 </div>
 
