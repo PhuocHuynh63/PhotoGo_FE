@@ -60,4 +60,8 @@ declare namespace PAGES {
         children: React.ReactNode;
         vendor: IVendor;
     }
+
+    interface IChatProps {
+        session: METADATA.ISession;
+    }
 }

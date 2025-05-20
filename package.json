@@ -43,6 +43,7 @@
     "react-hot-toast": "^2.5.2",
     "recharts": "^2.15.2",
     "sass": "^1.86.0",
+    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.2.0",
     "tw-animate-css": "^1.2.5",
     "yup": "^1.6.1",
