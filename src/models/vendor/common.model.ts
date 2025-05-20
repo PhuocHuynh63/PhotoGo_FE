@@ -1,6 +1,5 @@
 import { CategoryModel } from "@models/category/common.model";
 import { LocationModel } from "@models/location/common.model";
-import { ReviewModel } from "@models/review/common.model";
 import { ServicePackageModel } from "@models/servicePackages/common.model";
 import { z } from "zod";
 
@@ -18,7 +17,7 @@ export const VendorModel = z.object({
     category: CategoryModel.optional(),
     locations: z.array(LocationModel),
     servicePackages: z.array(ServicePackageModel),
-    reviews: z.array(ReviewModel),
+    averageRating: z.number(),
     created_at: z.string(),
     updated_at: z.string(),
 });

@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react'
 import ButtonNoBackgroundVendorDetail from '../ButtonNoBackGroundVendorDetail'
-import { Clock, Eye } from 'lucide-react'
+import { Eye } from 'lucide-react'
 import { Card } from '@components/Atoms/Card'
-
 import ViewConcept from '@pages/Public/VendorDetail/components/ViewConcept'
 import { IVendor } from '@models/vendor/common.model'
 import { useVendor } from '@stores/vendor/selectors'
@@ -16,7 +15,11 @@ type PackageVendorProps = {
 }
 
 const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
+    /**
+     * Call vendor store to get vendor data
+     */
     const vendorData = useVendor() as IVendor
+    //-----------------------------End---------------------------------//
 
     //TODO: remove this when we have real data
     const firstPackage = vendorData?.servicePackages?.[0]
@@ -24,6 +27,8 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     //#region View Concept
     const [isOpen, setIsOpen] = useState(false)
     const [selectedPackage, setSelectedPackage] = useState<any>(null)
+    const servicePackage = vendorData?.servicePackages?.find((pkg) => pkg.id === selectedPackage) as IServicePackage
+
     const handleViewConcept = (id: string) => {
         setSelectedPackage(id)
         setIsOpen(!isOpen)
@@ -47,7 +52,6 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     //#endregion
 
     //#region Render Package Content
-    //#region Render Package Content
     const renderPackageContent = (pkg: IServicePackage) => (
         <div className="flex flex-col md:flex-row gap-4">
             <div className="md:w-1/3 w-full">
@@ -69,7 +73,8 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                     <Skeleton className="h-4 w-full rounded bg-greyed" />
                 )}
 
-                <div className="flex flex-wrap items-center gap-3 text-sm md:text-base">
+                {/* Duration + Price */}
+                {/* <div className="flex flex-wrap items-center gap-3 text-sm md:text-base">
                     {pkg.price ? (
                         <div className="font-bold text-primary">{pkg.price.toLocaleString()}</div>
                     ) : (
@@ -84,7 +89,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                     ) : (
                         <Skeleton className="h-6 w-20 rounded bg-grey" />
                     )}
-                </div>
+                </div> */}
 
                 <div className="flex items-center gap-4">
                     <ButtonNoBackgroundVendorDetail
@@ -101,16 +106,21 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     )
     //#endregion
 
-    //#endregion
-
     return isOverview ? (
-        <div className="space-y-6">
-            {firstPackage && (
-                <Card key={firstPackage.id} className="overflow-hidden border-grey">
-                    {renderPackageContent(firstPackage)}
-                </Card>
-            )}
-        </div>
+        <>
+            <div className="space-y-6">
+                {firstPackage && (
+                    <Card key={firstPackage.id} className="overflow-hidden border-grey">
+                        {renderPackageContent(firstPackage)}
+                    </Card>
+                )}
+            </div>
+            <ViewConcept
+                isOpen={isOpen}
+                onOpenChange={() => handleViewConcept(selectedPackage)}
+                servicePackage={servicePackage}
+            />
+        </>
     ) : (
         <>
             <div className="space-y-4">
@@ -124,6 +134,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
             <ViewConcept
                 isOpen={isOpen}
                 onOpenChange={() => handleViewConcept(selectedPackage)}
+                servicePackage={servicePackage}
             />
         </>
     )
