@@ -59,26 +59,26 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
     // Hàm để kiểm tra xem ngày có lịch hẹn không
     const hasAppointment = (day: number) => {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-        return appointments.some((appointment) => appointment.date === dateStr)
+        return appointments?.some((appointment) => appointment.date === dateStr)
     }
 
     // Hàm để lấy trạng thái của lịch hẹn trong ngày
     const getAppointmentStatus = (day: number) => {
         const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-        const appointmentsOnDay = appointments.filter((appointment) => appointment.date === dateStr)
+        const appointmentsOnDay = appointments?.filter((appointment) => appointment.date === dateStr)
 
-        if (appointmentsOnDay.length === 0) return null
+        if (appointmentsOnDay?.length === 0) return null
 
-        if (appointmentsOnDay.some((appointment) => appointment.status === "pending")) {
+        if (appointmentsOnDay?.some((appointment) => appointment.status === "pending")) {
             return "pending"
         }
-        if (appointmentsOnDay.some((appointment) => appointment.status === "confirmed")) {
+        if (appointmentsOnDay?.some((appointment) => appointment.status === "confirmed")) {
             return "confirmed"
         }
-        if (appointmentsOnDay.some((appointment) => appointment.status === "completed")) {
+        if (appointmentsOnDay?.some((appointment) => appointment.status === "completed")) {
             return "completed"
         }
-        if (appointmentsOnDay.some((appointment) => appointment.status === "cancelled")) {
+        if (appointmentsOnDay?.some((appointment) => appointment.status === "cancelled")) {
             return "cancelled"
         }
 

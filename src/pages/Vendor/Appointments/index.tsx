@@ -2,9 +2,9 @@
 
 import AppointmentCalendar from "./right/appointment-callendar"
 import type { Appointment } from "./right/appointment-table"
-import { AppointmentStats } from "./right/appointment-stats"
-import { AppointmentTable } from "./right/appointment-table"
-import { RecentAppointments } from "./right/recent-appoinment"
+import AppointmentStats from "./right/appointment-stats"
+import AppointmentTable from "./right/appointment-table"
+import RecentAppointments from "./right/recent-appoinment"
 
 export default function AppointmentsPage() {
     // Lấy dữ liệu lịch hẹn từ server
