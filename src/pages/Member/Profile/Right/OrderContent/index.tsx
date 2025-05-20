@@ -3,7 +3,7 @@
 import Button from "@components/Atoms/Button";
 import { Card, CardContent } from "@components/Atoms/Card";
 // import { PAGES } from "../../../../../types/IPages";
-import { Badge, Calendar, Clock, Filter, MapPin, MoreHorizontal, Star, X } from "lucide-react";
+import { Badge, Calendar, Clock, MapPin, MoreHorizontal, Star } from "lucide-react";
 import Input from "@components/Atoms/Input";
 import { Tabs, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { useState } from "react";
@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from "@components/Atoms/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/Atoms/ui/dropdown-menu";
 import StarRating from "@components/Molecules/StarRating";
+import Link from "next/link";
 
 const bookings = [
     {
@@ -111,12 +112,12 @@ const OrdersContent = (/*{ userOrders }: any*/) => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <h1 className="text-2xl font-bold mb-4 md:mb-0">Quản lý đơn hàng chụp ảnh</h1>
                 <div className="flex items-center gap-2 w-full md:w-auto">
-                        <Input
-                            icon="Search"
-                            placeholder="Tìm kiếm đơn hàng..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
+                    <Input
+                        icon="Search"
+                        placeholder="Tìm kiếm đơn hàng theo tên, ID..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -172,7 +173,6 @@ function BookingCard({ booking }: { booking: Booking }) {
     const [showReportDialog, setShowReportDialog] = useState(false)
     const [showReviewDialog, setShowReviewDialog] = useState(false)
     const [rating, setRating] = useState(5)
-    const [dialogOpen, setDialogOpen] = useState(false)
 
     // Format price to VND
     const formatPrice = (price: number) => {
@@ -257,7 +257,7 @@ function BookingCard({ booking }: { booking: Booking }) {
                     <Separator className="my-4" />
 
                     <div className="flex flex-wrap gap-2 justify-end">
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button variant="outline">Xem chi tiết</Button>
                             </DialogTrigger>
@@ -307,7 +307,10 @@ function BookingCard({ booking }: { booking: Booking }) {
                                     <Button onClick={() => setDialogOpen(false)}>Đóng</Button>
                                 </DialogFooter>
                             </DialogContent>
-                        </Dialog>
+                        </Dialog> */}
+                        <Link href={`/order/${booking.id}`}>
+                            <Button >Xem chi tiết</Button>
+                        </Link>
 
                         {booking.status === "upcoming" && (
                             <>
@@ -426,5 +429,4 @@ function BookingCard({ booking }: { booking: Booking }) {
             </div>
         </Card>
     )
-}
-export default OrdersContent
+}export default OrdersContent

@@ -19,7 +19,7 @@ interface UpdateUserForm {
 
 export default function ProfileContent({ user }: { user: IUser }) {
     const [isEditing, setIsEditing] = useState(false)
-
+    console.log(user)
     const {
         register,
         handleSubmit,
@@ -55,6 +55,51 @@ export default function ProfileContent({ user }: { user: IUser }) {
         setIsEditing(false)
     }
 
+    const getRankInfo = (rank: string | undefined) => {
+        switch (rank?.toLowerCase()) {
+            case 'đồng':
+                return {
+                    level: 0,
+                    gradient: 'from-amber-600 to-amber-800',
+                    nextRank: 'Bạc',
+                    spentGoal: 1000,
+                    orderGoal: 5
+                };
+            case 'bạc':
+                return {
+                    level: 1,
+                    gradient: 'from-gray-300 to-gray-500',
+                    nextRank: 'Vàng',
+                    spentGoal: 2000,
+                    orderGoal: 10
+                };
+            case 'vàng':
+                return {
+                    level: 2,
+                    gradient: 'from-yellow-300 to-yellow-500',
+                    nextRank: 'Kim Cương',
+                    spentGoal: 4000,
+                    orderGoal: 20
+                };
+            case 'kim cương':
+                return {
+                    level: 3,
+                    gradient: 'from-blue-300 to-blue-500',
+                    nextRank: null,
+                    spentGoal: 0,
+                    orderGoal: 0
+                };
+            default:
+                return {
+                    level: 0,
+                    gradient: 'from-amber-600 to-amber-800',
+                    nextRank: 'Bạc',
+                    spentGoal: 1000,
+                    orderGoal: 5
+                };
+        }
+    };
+
     return (
         <div className="container mx-auto">
             <div className="flex items-center justify-between mb-6">
@@ -82,6 +127,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                     id="fullName"
                                     {...register("fullName", { required: "Vui lòng nhập họ tên" })}
                                     disabled={!isEditing}
+                                    defaultValue={user?.fullName}
                                     className={`${!isEditing ? "opacity-60 cursor-default" : "opacity-100 hover:opacity-100 focus:opacity-100"} transition-opacity duration-300`}
                                 />
                                 {errors?.fullName && <p className="text-red-500 text-sm">{errors?.fullName.message}</p>}
@@ -99,6 +145,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                     })}
                                     disabled={!isEditing}
                                     className={`${!isEditing ? "opacity-60 cursor-default" : "opacity-100 hover:opacity-100 focus:opacity-100"} transition-opacity duration-300`}
+                                    defaultValue={user?.phoneNumber}
                                 />
                                 {errors?.phoneNumber && <p className="text-red-500 text-sm">{errors?.phoneNumber.message}</p>}
                             </div>
@@ -107,18 +154,18 @@ export default function ProfileContent({ user }: { user: IUser }) {
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="email">Email</Label>
-                                <Input id="email" defaultValue={user?.email} disabled />
+                                <Input id="email" value={user?.email} disabled />
                             </div>
                             <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="rank">Hạng thành viên</Label>
-                                <Input id="rank" defaultValue={user?.rank} disabled />
+                                <Input id="rank" value={user?.rank} disabled />
                             </div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4 p-3">
                             <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="status">Ngày tham gia</Label>
-                                <Input id="status" defaultValue={new Date(user?.createdAt).toLocaleDateString("vi-VN")} disabled />
+                                <Input id="status" value={new Date(user?.createdAt).toLocaleDateString("vi-VN")} disabled />
                             </div>
                         </div>
                     </form>
@@ -126,12 +173,12 @@ export default function ProfileContent({ user }: { user: IUser }) {
             </Card>
             <div className="mt-8">
                 <div className="flex-1 rounded-lg overflow-hidden w-full">
-                    <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 text-white">
+                    <div className={`bg-gradient-to-r ${getRankInfo(user?.rank).gradient} p-4 text-white`}>
                         <div className="flex items-center">
-                            <div className="bg-white/20 rounded-md px-2 py-1 text-xs">Lv. 1</div>
+                            <div className="bg-white/20 rounded-md px-2 py-1 text-xs">Lv. {getRankInfo(user?.rank).level}</div>
                             <div className="ml-2 text-sm">Hạng hiện tại</div>
                         </div>
-                        <h3 className="text-2xl font-bold mt-4">Bạc</h3>
+                        <h3 className="text-2xl font-bold mt-4">{user?.rank || 'Đồng'}</h3>
                         <div className="mt-4 flex items-center">
                             <div className="bg-white/20 rounded-full p-2">
                                 <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -143,10 +190,14 @@ export default function ProfileContent({ user }: { user: IUser }) {
                             </div>
                         </div>
                         <div className="mt-4 text-sm">
-                            <p>
-                                Chi tiêu US$ 380.00 (khoảng 9832639.33đ) hoặc hoàn thành tham gia 5 đơn hàng trước 2026-04-18 để lên
-                                hạng Vàng
-                            </p>
+                            {getRankInfo(user?.rank).nextRank ? (
+                                <p>
+                                    Chi tiêu US$ {getRankInfo(user?.rank).spentGoal.toLocaleString()} (khoảng {(getRankInfo(user?.rank).spentGoal * 25875.37).toLocaleString('vi-VN')}đ) hoặc hoàn thành tham gia {getRankInfo(user?.rank).orderGoal} đơn hàng để lên
+                                    hạng {getRankInfo(user?.rank).nextRank}
+                                </p>
+                            ) : (
+                                <p>Bạn đã đạt hạng cao nhất!</p>
+                            )}
                             <div className="flex items-center mt-1">
                                 <Button
                                     className="shadow-none hover:text-white hover:bg-white/10"
