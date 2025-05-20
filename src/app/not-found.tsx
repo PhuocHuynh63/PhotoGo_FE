@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowRight, Camera, Search } from "lucide-react"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
+import { ROUTES } from "@routes"
 
 export default function NotFound() {
     const [isLoaded, setIsLoaded] = useState(false)
@@ -128,7 +129,7 @@ export default function NotFound() {
                 >
                     <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                         <Link
-                            href="/"
+                            href={ROUTES.PUBLIC.HOME}
                             className="inline-flex w-full items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-gray-800 hover:shadow-lg"
                         >
                             Đưa tôi về nhà
@@ -147,7 +148,7 @@ export default function NotFound() {
                 >
                     <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                         <Link
-                            href="/services"
+                            href={ROUTES.PUBLIC.SEARCH_PACKAGES}
                             className="inline-flex w-full bg[#8FAABF] items-center justify-center rounded-full border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:shadow-md"
                         >
                             Xem những dịch vụ của chúng tôi
