@@ -1,20 +1,23 @@
 "use client";
 
 import Button from "@components/Atoms/Button";
-import ButtonNoBackground from "@components/Atoms/ButtonNoBackground";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
 import { Calendar } from "lucide-react";
 import { useState } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
 import Booking from "../Booking";
+import { IServicePackage } from "@models/servicePackages/common.model";
 
 type ConceptProps = {
     isOpen: boolean;
     onOpenChange?: (open: boolean) => void;
+    servicePackage: IServicePackage;
 };
 
-export default function ConceptViewerPage({ isOpen, onOpenChange }: ConceptProps) {
+export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage }: ConceptProps) {
     const [activeTab, setActiveTab] = useState("Hình ảnh");
+    console.log(servicePackage);
+
 
     const selectConcept = [
         {
