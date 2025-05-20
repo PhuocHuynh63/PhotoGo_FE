@@ -17,8 +17,7 @@ const VendorOverviewPage = () => {
   /**
     * Call vendor store to get vendor data
     */
-  const vendor = useVendor()
-  const vendorData = vendor?.data as IVendor
+  const vendorData = useVendor() as IVendor
   //-----------------------------End---------------------------------//
 
   const router = useRouter()

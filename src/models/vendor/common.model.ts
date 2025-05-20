@@ -1,6 +1,5 @@
 import { CategoryModel } from "@models/category/common.model";
 import { LocationModel } from "@models/location/common.model";
-import { ReviewModel } from "@models/review/common.model";
 import { ServicePackageModel } from "@models/servicePackages/common.model";
 import { z } from "zod";
 

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import ButtonNoBackgroundVendorDetail from '../ButtonNoBackGroundVendorDetail'
-import { Clock, Eye } from 'lucide-react'
+import { Eye } from 'lucide-react'
 import { Card } from '@components/Atoms/Card'
 import ViewConcept from '@pages/Public/VendorDetail/components/ViewConcept'
 import { IVendor } from '@models/vendor/common.model'
@@ -18,8 +18,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     /**
      * Call vendor store to get vendor data
      */
-    const vendor = useVendor()
-    const vendorData = vendor?.data as IVendor
+    const vendorData = useVendor() as IVendor
     //-----------------------------End---------------------------------//
 
     //TODO: remove this when we have real data
@@ -28,6 +27,8 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     //#region View Concept
     const [isOpen, setIsOpen] = useState(false)
     const [selectedPackage, setSelectedPackage] = useState<any>(null)
+    const servicePackage = vendorData?.servicePackages?.find((pkg) => pkg.id === selectedPackage) as IServicePackage
+
     const handleViewConcept = (id: string) => {
         setSelectedPackage(id)
         setIsOpen(!isOpen)
@@ -117,6 +118,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
             <ViewConcept
                 isOpen={isOpen}
                 onOpenChange={() => handleViewConcept(selectedPackage)}
+                servicePackage={servicePackage}
             />
         </>
     ) : (
@@ -132,6 +134,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
             <ViewConcept
                 isOpen={isOpen}
                 onOpenChange={() => handleViewConcept(selectedPackage)}
+                servicePackage={servicePackage}
             />
         </>
     )
