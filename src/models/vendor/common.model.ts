@@ -18,7 +18,7 @@ export const VendorModel = z.object({
     category: CategoryModel.optional(),
     locations: z.array(LocationModel),
     servicePackages: z.array(ServicePackageModel),
-    reviews: z.array(ReviewModel),
+    averageRating: z.number(),
     created_at: z.string(),
     updated_at: z.string(),
 });

@@ -1,6 +1,6 @@
 'use client'
 
-import { useVendor } from '@lib/vendorContext'
+import { useVendor } from '@stores/vendor/selectors'
 import { ChevronRight } from 'lucide-react'
 import React from 'react'
 import { ROUTES } from '@routes'
@@ -9,14 +9,19 @@ import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVend
 import PackageVendor from '../components/PackageVendor'
 import ReviewVendor from '../components/ReviewVendor'
 import PortfolioVendor from '../components/PortfolioVendor'
+import { IVendor } from '@models/vendor/common.model'
 
 
 const VendorOverviewPage = () => {
 
-  const vendorData = useVendor() as any
-  const params = useParams()
-  const router = useRouter()
+  /**
+    * Call vendor store to get vendor data
+    */
+  const vendor = useVendor()
+  const vendorData = vendor?.data as IVendor
+  //-----------------------------End---------------------------------//
 
+  const router = useRouter()
 
   return (
     <>
