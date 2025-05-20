@@ -192,7 +192,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                         <span className="text-sm font-medium ml-1">
                                             {/* {vendor.rating} */}
                                         </span>
-                                        <span className="text-xs text-gray-500 ml-1">({vendor?.reviews?.length} đánh giá)</span>
+                                        <span className="text-xs text-gray-500 ml-1">({/*{vendor?.reviews?.length}*/} đánh giá)</span>
                                     </div>
 
 
