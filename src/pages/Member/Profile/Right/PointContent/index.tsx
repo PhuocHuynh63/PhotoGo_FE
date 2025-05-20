@@ -6,6 +6,7 @@ import { HelpCircle } from "lucide-react"
 import Button from "@components/Atoms/Button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs"
 import { motion } from 'framer-motion'
+import Pagination from "@components/Organisms/Pagination/Pagination"
 // Define the type for a transaction
 type Transaction = {
     id: number;
@@ -20,6 +21,8 @@ export default function PointsPage() {
     const [activeTab, setActiveTab] = useState("all")
     const [points, setPoints] = useState(100)
     const [animatedPoints, setAnimatedPoints] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 6
 
     useEffect(() => {
         let start: number | null = null
@@ -115,9 +118,14 @@ export default function PointsPage() {
             )
         }
 
+        // Calculate pagination
+        const totalPages = Math.ceil(transactions.length / itemsPerPage)
+        const startIndex = (currentPage - 1) * itemsPerPage
+        const paginatedTransactions = transactions.slice(startIndex, startIndex + itemsPerPage)
+
         return (
             <div className="space-y-4">
-                {transactions.map((transaction) => (
+                {paginatedTransactions.map((transaction) => (
                     <motion.div
                         key={transaction.id}
                         initial={{ opacity: 0, y: 10 }}
@@ -141,6 +149,16 @@ export default function PointsPage() {
                         </div>
                     </motion.div>
                 ))}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <Pagination
+                        className="mt-6"
+                        total={totalPages}
+                        current={currentPage}
+                        onChange={setCurrentPage}
+                    />
+                )}
             </div>
         )
     }

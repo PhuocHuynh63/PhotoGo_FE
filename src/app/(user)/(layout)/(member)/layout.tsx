@@ -1,17 +1,20 @@
-import UserProfileLayout from "@components/Templates/UserProfileLayout";
+import UserProfileLayoutClient from "@components/Templates/UserProfileLayout"
 import { authOptions } from "@lib/authOptions";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import userService from "@services/user";
 import { getServerSession } from "next-auth";
-
+import { redirect } from "next/navigation";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
 }
 
-export default async function Profile() {
-
+export default async function UserProfileLayout({
+    children,
+}: Readonly<{
+    children: React.ReactNode
+}>) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     let userData: IUser | undefined;
     const userOrders: any[] = [];
@@ -26,14 +29,15 @@ export default async function Profile() {
         // userFavorites = await getUserFavorites(session.user.id);
         // userPromotions = await getUserPromotions(session.user.id);
     }
-    return (
-        <>
-            <UserProfileLayout user={userData}
-                userOrders={userOrders}
-                userFavorites={userFavorites}
-                userPromotions={userPromotions}>
 
-            </UserProfileLayout>
-        </>
-    );
+    if (!userData) {
+        redirect('/login');
+    }
+
+    return (
+        <UserProfileLayoutClient user={userData} userOrders={userOrders} userFavorites={userFavorites} userPromotions={userPromotions}>
+            {children}
+        </UserProfileLayoutClient>
+    )
 }
+

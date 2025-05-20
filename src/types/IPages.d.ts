@@ -54,6 +54,7 @@ declare namespace PAGES {
         userOrders: IOrder[];
         userFavorites: IFavorite[];
         userPromotions: Promotion[];
+        children: React.ReactNode;
     }
 
     interface IVendorDetailPageProps {

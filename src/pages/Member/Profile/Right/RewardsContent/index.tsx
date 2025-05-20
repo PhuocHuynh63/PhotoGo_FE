@@ -1,3 +1,5 @@
+"use client"
+
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from "@/components/Atoms/ui/carousel";
 import RankCard from "../../components/RankCard";
 import ProgressSection from "../../components/ProgressSection";
@@ -6,6 +8,18 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const mockData = [{
+    level: 0,
+    name: "Đồng",
+    gradient: "from-amber-600 to-amber-800",
+    current: false,
+    spentGoal: 0,
+    spentVND: "0",
+    orderGoal: 0,
+    deadline: "31/12/2023",
+    reward: "0",
+    description: "Bắt đầu hành trình với PhotoGo Rewards",
+},
+{
     level: 1,
     name: "Bạc",
     gradient: "from-gray-300 to-gray-500",
@@ -21,7 +35,7 @@ const mockData = [{
     level: 2,
     name: "Vàng",
     gradient: "from-yellow-300 to-yellow-500",
-    current: true,
+    current: false,
     spentGoal: 2000,
     spentVND: "20,000,000",
     orderGoal: 10,
@@ -32,7 +46,7 @@ const mockData = [{
 {
     level: 3,
     name: "Kim Cương",
-    gradient: "from-gray-300 to-gray-500",
+    gradient: "from-blue-300 to-blue-500",
     current: false,
     spentGoal: 4000,
     spentVND: "40,000,000",
@@ -41,24 +55,33 @@ const mockData = [{
     reward: "400000",
     description: "Đặt 20 đơn hàng hoặc chi tiêu 4000 USD trong tháng này",
     btnText: "Nâng hạng"
-}
-]
+}]
 
-export default function RewardsContent({ user }: any) {
+interface User {
+    rank?: string;
+}
+
+export default function RewardsContent({ user }: { user: User }) {
     const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+    const userRank = user?.rank?.toLowerCase() || 'đồng'; // Default to 'đồng' if no rank
+
+    // Update current rank based on user's rank
+    const updatedMockData = mockData.map(rank => ({
+        ...rank,
+        current: rank.name.toLowerCase() === userRank
+    }));
 
     useEffect(() => {
         if (carouselApi) {
-            const currentIndex = mockData.findIndex((item) => item.current);
+            const currentIndex = updatedMockData.findIndex((item) => item.current);
             if (currentIndex !== -1) {
                 const timer = setTimeout(() => {
                     carouselApi.scrollTo(currentIndex, false);
-                }, 500); // giảm từ 1000ms xuống 500ms
+                }, 500);
                 return () => clearTimeout(timer);
             }
         }
-    }, [carouselApi]);
-
+    }, [carouselApi, updatedMockData]);
 
     return (
         <div className="">
@@ -90,7 +113,7 @@ export default function RewardsContent({ user }: any) {
                         </div>
                         {/* <CarouselPrevious /> */}
                         <CarouselContent className="my-4">
-                            {mockData.map((level, index) => (
+                            {updatedMockData.map((level, index) => (
                                 <CarouselItem
                                     key={index}
                                     className={`transition-all duration-300 ${level.current ? "opacity-100" : "opacity-40"

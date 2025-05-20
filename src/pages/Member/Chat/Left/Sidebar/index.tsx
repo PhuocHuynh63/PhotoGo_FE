@@ -16,7 +16,7 @@ interface SidebarChatProps {
     isMobile: boolean;
 }
 
-export function SidebarChat({
+export default function SidebarChat({
     conversations,
     activeConversation,
     onSelectConversation,
@@ -27,7 +27,7 @@ export function SidebarChat({
 
     console.log('conversations', conversations);
 
-    const filteredConversations = conversations.filter((conv) =>
+    const filteredConversations = conversations?.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
 
@@ -69,7 +69,7 @@ export function SidebarChat({
                         </div>
                     </div>
                     <ScrollArea className="flex-1">
-                        {filteredConversations.map((conversation) => (
+                        {filteredConversations?.map((conversation) => (
                             <div
                                 key={conversation.id}
                                 className={cn(

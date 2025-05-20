@@ -1,3 +1,4 @@
+import { ServiceConceptModel } from "@models/serviceConcepts/common.model";
 import { z } from "zod";
 
 /**
@@ -5,13 +6,14 @@ import { z } from "zod";
  */
 export const ServicePackageModel = z.object({
     id: z.string(),
-    vendorId: z.string(),
     name: z.string(),
-    image: z.string(),
     description: z.string(),
+    image: z.string(),
+    status: z.string(),
+    vendorId: z.string(),
+    serviceConcepts: z.array(ServiceConceptModel),
     price: z.string(),
     duration: z.number(),
-    status: z.string(),
     created_at: z.string(),
     updated_at: z.string()
 });

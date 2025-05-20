@@ -15,8 +15,7 @@ const VendorCover = () => {
     /**
      * Call vendor store to get vendor data
      */
-    const vendor = useVendor()
-    const vendorData = vendor?.data as IVendor
+    const vendorData = useVendor() as IVendor
     //-----------------------------End---------------------------------//
 
     const router = useRouter()
@@ -29,7 +28,7 @@ const VendorCover = () => {
             <div className="h-[300px] md:h-[400px] w-full relative">
                 {vendorData?.banner ?
                     <img
-                        src={vendorData?.banner || "/placeholder.svg"}
+                        src={vendorData?.banner}
                         alt={vendorData?.name}
                         className="max-h-full w-full object-cover rounded-lg shadow-md"
                     />
@@ -45,7 +44,7 @@ const VendorCover = () => {
                         <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border-4 border-background shadow-md">
                             {vendorData?.logo ?
                                 <img
-                                    src={vendorData?.logo || "/placeholder.svg"}
+                                    src={vendorData?.logo}
                                     alt={`${vendorData?.name} logo`}
                                     className="w-full h-full object-cover"
                                 />
