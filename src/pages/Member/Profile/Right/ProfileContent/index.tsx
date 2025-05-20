@@ -1,3 +1,5 @@
+"use client"
+
 import Button from "@components/Atoms/Button"
 import { Card, CardContent } from "@components/Atoms/Card"
 import Input from "@components/Atoms/Input"

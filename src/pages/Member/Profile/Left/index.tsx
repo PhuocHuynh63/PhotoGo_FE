@@ -9,6 +9,7 @@ import {
 import { PAGES } from '../../../../types/IPages'
 import Button from "@components/Atoms/Button"
 import { motion } from "framer-motion"
+import { usePathname, useRouter } from "next/navigation"
 
 const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
@@ -20,7 +21,11 @@ const menuItems = [
     { tab: "change-password", label: "Thay đổi mật khẩu", icon: KeyRound },
 ];
 
-const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setActiveTab }) => {
+const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
+    const router = useRouter();
+    const pathname = usePathname();
+    const currentTab = pathname?.split('/').pop() || 'profile';
+
     return (
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile */}
@@ -28,7 +33,10 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
                 <div className="flex flex-col items-center justify-center">
                     <Avatar className="w-2 rounded-full" src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'} alt={user?.fullName || 'User'} size={100} />
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
-                    <Button className={`my-2 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none ${activeTab === "profile" ? "text-dark bg-white p-1" : ""}`} onClick={() => setActiveTab("profile")}>
+                    <Button
+                        className={`my-2 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none ${currentTab === "profile" ? "text-dark bg-white p-1" : ""}`}
+                        onClick={() => router.push('/profile')}
+                    >
                         Cập nhật thông tin cá nhân <ChevronRight size={16} />
                     </Button>
 
@@ -42,7 +50,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
 
                             <Button
                                 className="text-blue-400 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none"
-                                onClick={() => setActiveTab("rewards")}
+                                onClick={() => router.push('/profile/rewards')}
                             >
                                 Xem ưu đãi thành viên <ChevronRight size={14} />
                             </Button>
@@ -75,8 +83,8 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user, activeTab, setAct
                             className={["orders", "reviews", "favorites", "change-password"].includes(tab) && tab === "orders" ? "pt-3 border-t" : ""}
                         >
                             <Button
-                                onClick={() => setActiveTab(tab)}
-                                className={`{bg-none shadow-none hover:bg-none ${activeTab === tab
+                                onClick={() => router.push(`/profile/${tab}`)}
+                                className={`{bg-none shadow-none hover:bg-none ${currentTab === tab
                                     ? "text-primary font-medium"
                                     : "text-gray-700 hover:text-primary"}`}
                             >

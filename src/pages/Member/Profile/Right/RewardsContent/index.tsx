@@ -1,3 +1,5 @@
+"use client"
+
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselApi } from "@/components/Atoms/ui/carousel";
 import RankCard from "../../components/RankCard";
 import ProgressSection from "../../components/ProgressSection";
