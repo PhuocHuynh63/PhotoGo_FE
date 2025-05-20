@@ -7,7 +7,6 @@ import { Camera, Building, Gift, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@helpers/CN";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
-import { QRCodeCanvas } from "qrcode.react";
 import { motion, AnimatePresence } from "framer-motion"; // thêm dòng này
 
 const promotions = [
@@ -33,28 +32,24 @@ const promotions = [
     },
     {
         id: 3,
-        code: "OLDVOUCHER",
-        title: "Ưu đãi đã hết hạn",
-        description: "Mã này đã hết hạn từ năm ngoái",
+        code: "SKIBIDI",
+        title: "Trải nghiệm trọn bộ",
+        description: "Giảm 20% khi đặt trải nghiệm trọn bộ",
         discount: 20,
-        expiry: "2023-05-20",
+        expiry: "2025-12-30",
         isUsed: false,
         icon: <XCircle className="w-5 h-5 text-red-300 absolute top-2 right-2 opacity-30" />,
     },
 ];
 
-function isExpired(date: string) {
-    return new Date(date) < new Date();
-}
 
 export default function PromotionsPage() {
     const [tab, setTab] = useState("active");
 
     const filterPromos = (type: string) => {
         return promotions.filter((p) => {
-            if (type === "active") return !isExpired(p.expiry) && !p.isUsed;
+            if (type === "active") return !p.isUsed;
             if (type === "used") return p.isUsed;
-            if (type === "expired") return isExpired(p.expiry) && !p.isUsed;
         });
     };
 
@@ -66,15 +61,14 @@ export default function PromotionsPage() {
                 <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
                     <TabsTrigger value="active">Đang hoạt động</TabsTrigger>
                     <TabsTrigger value="used">Đã sử dụng</TabsTrigger>
-                    <TabsTrigger value="expired">Hết hạn</TabsTrigger>
                 </TabsList>
 
-                {["active", "used", "expired"].map((status) => (
+                {["active", "used"].map((status) => (
                     <TabsContent value={status} key={status}>
                         <AnimatePresence mode="wait">
                             {filterPromos(status).map((promo) => (
                                 <motion.div
-                                    className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2"
                                     key={promo.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -109,19 +103,7 @@ export default function PromotionsPage() {
                                             {/* Button or Status */}
                                             {status === "active" && (
                                                 <div className="flex flex-col justify-center items-center mt-3">
-                                                    <motion.div
-                                                        initial={{ scale: 0.9 }}
-                                                        animate={{ scale: 1 }}
-                                                        transition={{ type: "spring", stiffness: 300 }}
-                                                    >
-                                                        <QRCodeCanvas
-                                                            value={promo.code}
-                                                            size={72}
-                                                            bgColor="#ffffff"
-                                                            fgColor="#f97316"
-                                                            level="H"
-                                                        />
-                                                    </motion.div>
+
                                                     <Button className="mt-3 text-orange-500 border-orange-300 hover:bg-orange-100 w-full">
                                                         Sử dụng ngay
                                                     </Button>
@@ -137,16 +119,6 @@ export default function PromotionsPage() {
                                                     transition={{ delay: 0.1 }}
                                                 >
                                                     Đã sử dụng
-                                                </motion.span>
-                                            )}
-                                            {status === "expired" && (
-                                                <motion.span
-                                                    className="text-xs text-red-400 mt-3 italic"
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ delay: 0.1 }}
-                                                >
-                                                    Hết hạn
                                                 </motion.span>
                                             )}
                                         </div>

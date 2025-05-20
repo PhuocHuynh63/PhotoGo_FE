@@ -1,7 +1,9 @@
+"use client"
+
 import Button from "@components/Atoms/Button";
 import { Card, CardContent } from "@components/Atoms/Card";
 // import { PAGES } from "../../../../../types/IPages";
-import { Badge, Calendar, Clock, Filter, MapPin, MoreHorizontal, Star, X } from "lucide-react";
+import { Badge, Calendar, Clock, MapPin, MoreHorizontal, Star } from "lucide-react";
 import Input from "@components/Atoms/Input";
 import { Tabs, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { useState } from "react";
@@ -10,8 +12,8 @@ import { Separator } from "@components/Atoms/Seperator/Seperator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/Molecules/Dialog";
 import { Textarea } from "@components/Atoms/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/Atoms/ui/dropdown-menu";
-import CustomDatePicker from "@components/Atoms/DatePicker";
 import StarRating from "@components/Molecules/StarRating";
+import Link from "next/link";
 
 const bookings = [
     {
@@ -89,7 +91,6 @@ const bookings = [
 const OrdersContent = (/*{ userOrders }: any*/) => {
     const [activeTab, setActiveTab] = useState("all")
     const [searchQuery, setSearchQuery] = useState("")
-    const [showFilters, setShowFilters] = useState(false)
 
     // Filter bookings based on active tab and search query
     const filteredBookings = bookings.filter((booking) => {
@@ -111,56 +112,15 @@ const OrdersContent = (/*{ userOrders }: any*/) => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <h1 className="text-2xl font-bold mb-4 md:mb-0">Quản lý đơn hàng chụp ảnh</h1>
                 <div className="flex items-center gap-2 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
-                        <Input
-                            icon="Search"
-                            placeholder="Tìm kiếm đơn hàng..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <Button
-                        onClick={() => setShowFilters(!showFilters)}
-                    >
-                        <Filter className="h-4 w-4" />
-                    </Button>
+                    <Input
+                        icon="Search"
+                        placeholder="Tìm kiếm đơn hàng theo tên, ID..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
             </div>
 
-            {showFilters && (
-                <div className="bg-muted p-4 rounded-lg mb-6 border">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-medium">Bộ lọc</h3>
-                        <Button variant="ghost" onClick={() => setShowFilters(false)}>
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="text-sm font-medium mb-1 block">Khoảng giá</label>
-                            <div className="flex items-center gap-2">
-                                <Input placeholder="Từ" type="number" className="w-full" />
-                                <span>-</span>
-                                <Input placeholder="Đến" type="number" className="w-full" />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium mb-1 block">Thời gian</label>
-                            <CustomDatePicker value={new Date()} onChange={() => { }} />
-                        </div>
-                        <div>
-                            <label className="text-sm font-medium mb-1 block">Studio</label>
-                            <Input placeholder="Tên studio" className="w-full" />
-                        </div>
-                    </div>
-                    <div className="flex justify-end mt-4">
-                        <Button variant="outline" className="mr-2">
-                            Đặt lại
-                        </Button>
-                        <Button>Áp dụng</Button>
-                    </div>
-                </div>
-            )}
 
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
@@ -213,7 +173,6 @@ function BookingCard({ booking }: { booking: Booking }) {
     const [showReportDialog, setShowReportDialog] = useState(false)
     const [showReviewDialog, setShowReviewDialog] = useState(false)
     const [rating, setRating] = useState(5)
-    const [dialogOpen, setDialogOpen] = useState(false)
 
     // Format price to VND
     const formatPrice = (price: number) => {
@@ -298,7 +257,7 @@ function BookingCard({ booking }: { booking: Booking }) {
                     <Separator className="my-4" />
 
                     <div className="flex flex-wrap gap-2 justify-end">
-                        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                        {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                             <DialogTrigger asChild>
                                 <Button variant="outline">Xem chi tiết</Button>
                             </DialogTrigger>
@@ -348,7 +307,10 @@ function BookingCard({ booking }: { booking: Booking }) {
                                     <Button onClick={() => setDialogOpen(false)}>Đóng</Button>
                                 </DialogFooter>
                             </DialogContent>
-                        </Dialog>
+                        </Dialog> */}
+                        <Link href={`/order/${booking.id}`}>
+                            <Button >Xem chi tiết</Button>
+                        </Link>
 
                         {booking.status === "upcoming" && (
                             <>
@@ -467,5 +429,4 @@ function BookingCard({ booking }: { booking: Booking }) {
             </div>
         </Card>
     )
-}
-export default OrdersContent
+}export default OrdersContent
