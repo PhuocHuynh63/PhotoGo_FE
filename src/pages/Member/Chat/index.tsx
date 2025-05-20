@@ -7,16 +7,23 @@ import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';
 import chatService from '@services/chat';
 import userService from '@services/user';
+import { PAGES } from '../../../types/IPages';
 
-export default function ChatPage() {
+export default function ChatPage(
+    session: PAGES.IChatProps
+) {
+    console.log('session', session.session.user.id);
+
+
+    const userId = session.session.user.id;
+    const token = session.session.accessToken;
+
     const [isMobile, setIsMobile] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [conversations, setConversations] = useState<any[]>([]);
     const [activeConversation, setActiveConversation] = useState<any | null>(null);
     const [showSidebar, setShowSidebar] = useState(true);
 
-    const userId = '13acb33d-c1d1-4f32-92e5-4ddf416b9c48';
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN0dWRpbzk5QGV4YW1wbGUuY29tIiwic3ViIjoiMTNhY2IzM2QtYzFkMS00ZjMyLTkyZTUtNGRkZjQxNmI5YzQ4Iiwicm9sZSI6eyJpZCI6IlIwMDQiLCJuYW1lIjoic3R1ZGlvIiwiZGVzY3JpcHRpb24iOiLEkOG7i2EgxJFp4buDbSBjaG8gdGh1w6ogxJHhu4MgY2jhu6VwIOG6o25oIn0sImlhdCI6MTc0NzUzOTIxMiwiZXhwIjoxNzQ3NjI1NjEyfQ.8VHk-ZeCuhmZcXW9hHgoPWC27QXYcDTOeu5RHgnc1es';
 
     useEffect(() => {
         // Responsive check
