@@ -20,7 +20,13 @@ const VendorOverviewPage = () => {
   const vendorData = useVendor() as IVendor
   //-----------------------------End---------------------------------//
 
+  /**
+   * Get slug from URL
+   */
   const router = useRouter()
+  const params = useParams()
+  const slug = params?.slug as string
+  //-----------------------------End---------------------------------//
 
   return (
     <>
@@ -37,7 +43,7 @@ const VendorOverviewPage = () => {
           <PortfolioVendor />
 
           <div className="flex justify-center mt-4 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
               Xem tất cả tác phẩm
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -50,7 +56,7 @@ const VendorOverviewPage = () => {
           <h2 className="text-2xl font-bold mb-4">Gói dịch vụ phổ biến</h2>
           <PackageVendor isOverview={true} />
           <div className="mt-6 text-center">
-            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'packges')}`)} className="gap-1 mt-4">
+            <ButtonNoBackgroundVendorDetail onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)} className="gap-1 mt-4">
               Xem tất cả gói dịch vụ
               <ChevronRight className="h-4 w-4" />
             </ButtonNoBackgroundVendorDetail>
@@ -64,7 +70,7 @@ const VendorOverviewPage = () => {
         </section>
 
         <div className="flex justify-center mt-4">
-          <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':page', 'reviews'))} className="gap-1">
+          <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'reviews'))} className="gap-1">
             Xem tất cả đánh giá
             <ChevronRight className="h-4 w-4" />
           </ButtonNoBackgroundVendorDetail>
