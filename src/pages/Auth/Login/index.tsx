@@ -19,6 +19,7 @@ import { signIn } from "next-auth/react"
 import authService from "@services/auth"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { AuthError } from "@constants/errors"
+import { useSetToken } from "@stores/user/selectors"
 
 const LoginPage = () => {
     //#region define variables

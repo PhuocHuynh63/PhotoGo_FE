@@ -21,4 +21,9 @@ declare module ZUSTAND {
         vendor: IVendor;
         setVendor: (vendor: IVendor) => void
     }
+
+    export interface ITokenState {
+        token: string | null;
+        setToken: (token: string | null) => void;
+    }
 }
