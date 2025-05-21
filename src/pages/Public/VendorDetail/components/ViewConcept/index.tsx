@@ -19,48 +19,48 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     console.log(servicePackage);
 
 
-    const selectConcept = [
-        {
-            id: 1,
-            name: "ALBUM STUDIO HÀN QUỐC CAO CẤP",
-            description: "Studio & Biệt thự cổ điển",
-            price: "10.000.000đ",
-            duration: "2 giờ",
-            images: ["https://tonywedding.vn/wp-content/uploads/2023/02/3115e9feb64b094cb2e0049bc7e86fee-scaled.jpg", "https://tonywedding.vn/wp-content/uploads/2024/12/462142930_960299022805312_2040105690201559005_n.jpg", "https://file.hstatic.net/200000054678/file/kinh-nghiem-chup-anh-cuoi-trong-studio-1_fdd65cab8f084f669456507cd26b240b.jpg", "https://tonywedding.vn/wp-content/uploads/2023/06/IMG_3506-scaled.jpg"],
-            detailedDescription: "Concept chụp ảnh cưới với phong cách cổ điển sang trọng, tông màu ấm áp. Ảnh sẽ được thực hiện trong không gian sang trọng với ánh sáng tự nhiên và sự tinh tế.",
-        },
-        {
-            id: 2,
-            name: "Ngoại cảnh Đà Lạt",
-            description: "Bãi biển Vũng Tàu",
-            price: "15.000.000đ",
-            duration: "3 giờ",
-            images: ["https://tonywedding.vn/wp-content/uploads/2023/11/z4856859455985_215fe12df0744aa03fd35e5139964219.jpg", "https://tonywedding.vn/wp-content/uploads/2024/07/7-1.png"],
-            detailedDescription: "Concept chụp ảnh cưới tại bãi biển Vũng Tàu, với phong cách lãng mạn và tự nhiên. Tông màu xanh biển và ánh nắng tự nhiên sẽ làm nổi bật tình yêu của bạn.",
-        },
-        {
-            id: 3,
-            name: "Ngoại cảnh Sài Gòn",
-            description: "Trung tâm TP. Hồ Chí Minh",
-            price: "20.000.000đ",
-            duration: "4 giờ",
-            images: ["https://tonywedding.vn/wp-content/uploads/2024/10/467776601_997349659100248_2231391539684830285_n.jpg"],
-            detailedDescription: "Concept chụp ảnh cưới hiện đại tại trung tâm TP. Hồ Chí Minh, với phong cách năng động và thời thượng. Ảnh sẽ được chụp tại các địa điểm nổi bật trong thành phố.",
-        },
-    ];
+    // const selectConcept = [
+    //     {
+    //         id: 1,
+    //         name: "ALBUM STUDIO HÀN QUỐC CAO CẤP",
+    //         description: "Studio & Biệt thự cổ điển",
+    //         price: "10.000.000đ",
+    //         duration: "2 giờ",
+    //         images: ["https://tonywedding.vn/wp-content/uploads/2023/02/3115e9feb64b094cb2e0049bc7e86fee-scaled.jpg", "https://tonywedding.vn/wp-content/uploads/2024/12/462142930_960299022805312_2040105690201559005_n.jpg", "https://file.hstatic.net/200000054678/file/kinh-nghiem-chup-anh-cuoi-trong-studio-1_fdd65cab8f084f669456507cd26b240b.jpg", "https://tonywedding.vn/wp-content/uploads/2023/06/IMG_3506-scaled.jpg"],
+    //         detailedDescription: "Concept chụp ảnh cưới với phong cách cổ điển sang trọng, tông màu ấm áp. Ảnh sẽ được thực hiện trong không gian sang trọng với ánh sáng tự nhiên và sự tinh tế.",
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "Ngoại cảnh Đà Lạt",
+    //         description: "Bãi biển Vũng Tàu",
+    //         price: "15.000.000đ",
+    //         duration: "3 giờ",
+    //         images: ["https://tonywedding.vn/wp-content/uploads/2023/11/z4856859455985_215fe12df0744aa03fd35e5139964219.jpg", "https://tonywedding.vn/wp-content/uploads/2024/07/7-1.png"],
+    //         detailedDescription: "Concept chụp ảnh cưới tại bãi biển Vũng Tàu, với phong cách lãng mạn và tự nhiên. Tông màu xanh biển và ánh nắng tự nhiên sẽ làm nổi bật tình yêu của bạn.",
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "Ngoại cảnh Sài Gòn",
+    //         description: "Trung tâm TP. Hồ Chí Minh",
+    //         price: "20.000.000đ",
+    //         duration: "4 giờ",
+    //         images: ["https://tonywedding.vn/wp-content/uploads/2024/10/467776601_997349659100248_2231391539684830285_n.jpg"],
+    //         detailedDescription: "Concept chụp ảnh cưới hiện đại tại trung tâm TP. Hồ Chí Minh, với phong cách năng động và thời thượng. Ảnh sẽ được chụp tại các địa điểm nổi bật trong thành phố.",
+    //     },
+    // ];
 
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedConcept, setSelectedConcept] = useState(0);
     const handlePrevImage = () => {
         setCurrentImageIndex((prev) =>
-            prev === 0 ? selectConcept[selectedConcept].images.length - 1 : prev - 1
+            prev === 0 ? servicePackage.serviceConcepts[selectedConcept].image.length - 1 : prev - 1
         );
     };
 
     const handleNextImage = () => {
         setCurrentImageIndex((prev) =>
-            prev === selectConcept[selectedConcept].images.length - 1 ? 0 : prev + 1
+            prev === servicePackage.serviceConcepts[selectedConcept].image.length - 1 ? 0 : prev + 1
         );
     };
     //#endregion
@@ -77,7 +77,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
             <DialogTitle />
             <DialogContent className="xl:max-w-[1200px] max-h-[100vh] overflow-hidden">
                 <DialogHeader className="font-bold text-xl border-b border-gray-200 pb-4 flex flex-row justify-between items-center">
-                    <span>Xem Concept - Tony Wedding</span>
+                    <span>Xem Concept - {servicePackage?.name}</span>
                     <div className="flex space-x-2">
                         <button className="cursor-pointer p-2 rounded-full hover:bg-gray-100">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,9 +101,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                     <div className="lg:col-span-1 overflow-y-hidden hover:overflow-y-auto">
                         <h3 className="font-semibold text-lg mb-4 sticky top-0 bg-white z-10 pb-4 border-b-2">Chọn Concept</h3>
                         <div className="pr-2">
-                            {selectConcept.map((concept, index) => (
+                            {servicePackage?.serviceConcepts.map((concept, index) => (
                                 <div
-                                    key={concept.id}
+                                    key={index}
                                     onClick={() => {
                                         setSelectedConcept(index);
                                         setCurrentImageIndex(0);
@@ -112,9 +112,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                         }`}
                                 >
                                     <div className="w-12 h-12 bg-gray-200 rounded-md mr-3">
-                                        {concept.images.length > 0 && (
+                                        {concept.image?.length > 0 && (
                                             <img
-                                                src={concept.images[0]}
+                                                src={concept.image[0]}
                                                 alt="Concept thumbnail"
                                                 className="w-12 h-12 object-cover rounded-md"
                                             />
@@ -153,9 +153,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                             <div className="relative">
                                 {/* Khu vực hình ảnh */}
                                 <div className="bg-gray-100 h-96 flex items-center justify-center rounded-lg relative">
-                                    {selectConcept[selectedConcept].images.length > 0 ? (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.length > 0 ? (
                                         <img
-                                            src={selectConcept[selectedConcept].images[currentImageIndex]}
+                                            src={servicePackage?.serviceConcepts[selectedConcept]?.image[currentImageIndex]}
                                             alt="Concept image"
                                             className="max-h-full max-w-full object-contain"
                                         />
@@ -170,7 +170,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                         </svg>
                                     )}
                                     {/* Nút điều hướng */}
-                                    {selectConcept[selectedConcept].images.length > 1 && (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.length > 1 && (
                                         <>
                                             <button
                                                 onClick={handlePrevImage}
@@ -189,7 +189,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                                 </svg>
                                             </button>
                                             <div className="absolute bottom-4 right-4 bg-gray-700 text-white text-sm px-2 py-1 rounded-full">
-                                                {currentImageIndex + 1}/{selectConcept[selectedConcept].images.length}
+                                                {currentImageIndex + 1}/{servicePackage?.serviceConcepts[selectedConcept]?.image?.length}
                                             </div>
                                         </>
                                     )}
@@ -197,7 +197,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
 
                                 {/* Hình ảnh thu nhỏ */}
                                 <div className="flex space-x-2 mt-4">
-                                    {selectConcept[selectedConcept].images.map((image, index) => (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.map((image: string, index: number) => (
                                         <div
                                             key={index}
                                             onClick={() => setCurrentImageIndex(index)}
@@ -219,26 +219,26 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                             <div className="text-gray-700">
                                 {/* Thông tin concept */}
                                 <div className="mt-6">
-                                    <h3 className="text-xl font-bold uppercase">{selectConcept[selectedConcept].name}</h3>
-                                    <p>{selectConcept[selectedConcept].detailedDescription}</p>
+                                    <h3 className="text-xl font-bold uppercase">{servicePackage?.serviceConcepts[selectedConcept]?.name}</h3>
+                                    <p>{servicePackage?.serviceConcepts[selectedConcept]?.description}</p>
                                     <div className="flex items-center space-x-4 mt-2">
                                         <div className="flex items-center">
                                             <svg className="w-5 h-5 text-primary mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <span className="text-sm">{selectConcept[selectedConcept].description}</span>
+                                            <span className="text-sm">{servicePackage?.serviceConcepts[selectedConcept]?.description}</span>
                                         </div>
                                         <div className="flex items-center">
                                             <svg className="w-5 h-5 text-primary mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <span className="text-sm">{selectConcept[selectedConcept].duration}</span>
+                                            <span className="text-sm">{servicePackage?.serviceConcepts[selectedConcept]?.duration}</span>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center mt-4">
-                                        <span className="text-lg font-bold text-primary">{selectConcept[selectedConcept].price}</span>
+                                        <span className="text-lg font-bold text-primary">{servicePackage?.serviceConcepts[selectedConcept]?.price}</span>
                                         <span className="text-sm text-gray-500 ml-4">Đặt cọc 50%</span>
                                     </div>
                                     <p className="text-sm text-gray-500 mt-2">Đặt lịch trước 1 tuần để đảm bảo có thời gian chuẩn bị tốt nhất.</p>

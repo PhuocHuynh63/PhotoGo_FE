@@ -7,7 +7,6 @@ export function getSocket(token: string): Socket {
     socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL as string, {
       query: { token },
       transports: ['websocket'],
-      path: '/socket.io/',
     });
   }
   return socket;
