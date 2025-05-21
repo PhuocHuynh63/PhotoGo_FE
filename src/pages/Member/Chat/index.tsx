@@ -71,35 +71,35 @@ export default function ChatPage(session: PAGES.IChatProps) {
         });
 
         //TODO
-        // socketInstance.on('newMessage', ({sender_id, text}) => {
-        //     setConversations(prev =>
-        //         prev.map(conv => {
-        //             if (conv.id === message.chatId) {
-        //                 const isActive = activeConversationRef.current?.id === conv.id;
-        //                 return {
-        //                     ...conv,
-        //                     messages: [...conv.messages, { ...message, read: isActive }],
-        //                     lastMessage: { ...message, read: isActive },
-        //                     unreadCount: isActive ? 0 : conv.unreadCount + 1,
-        //                 };
-        //             }
-        //             return conv;
-        //         })
-        //     );
+        socketInstance.on('newMessage', (message) => {
+            setConversations(prev =>
+                prev.map(conv => {
+                    if (conv.id === message.chatId) {
+                        const isActive = activeConversationRef.current?.id === conv.id;
+                        return {
+                            ...conv,
+                            messages: [...conv.messages, { ...message, read: isActive }],
+                            lastMessage: { ...message, read: isActive },
+                            unreadCount: isActive ? 0 : conv.unreadCount + 1,
+                        };
+                    }
+                    return conv;
+                })
+            );
 
-        //     if (activeConversationRef.current?.id === message.chatId) {
-        //         setActiveConversation((prev: any) =>
-        //             prev
-        //                 ? {
-        //                     ...prev,
-        //                     messages: [...prev.messages, { ...message, read: true }],
-        //                     lastMessage: { ...message, read: true },
-        //                     unreadCount: 0,
-        //                 }
-        //                 : prev
-        //         );
-        //     }
-        // });
+            if (activeConversationRef.current?.id === message.chatId) {
+                setActiveConversation((prev: any) =>
+                    prev
+                        ? {
+                            ...prev,
+                            messages: [...prev.messages, { ...message, read: true }],
+                            lastMessage: { ...message, read: true },
+                            unreadCount: 0,
+                        }
+                        : prev
+                );
+            }
+        });
 
         socketInstance.on('chatNotification', ({ chatId, newMessage }) => {
             setConversations(prev =>
