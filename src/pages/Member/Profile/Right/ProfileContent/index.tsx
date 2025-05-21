@@ -60,7 +60,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             case 'đồng':
                 return {
                     level: 0,
-                    gradient: 'from-amber-600 to-amber-800',
+                    gradient: 'from-[#b87333] via-[#d49a6a] to-[#8c6239]',
                     nextRank: 'Bạc',
                     spentGoal: 1000,
                     orderGoal: 5
@@ -68,7 +68,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             case 'bạc':
                 return {
                     level: 1,
-                    gradient: 'from-gray-300 to-gray-500',
+                    gradient: 'from-[#b0b0b0] via-[#e0e0e0] to-[#8c8c8c]',
                     nextRank: 'Vàng',
                     spentGoal: 2000,
                     orderGoal: 10
@@ -76,7 +76,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             case 'vàng':
                 return {
                     level: 2,
-                    gradient: 'from-yellow-300 to-yellow-500',
+                    gradient: 'from-[#d4af37] via-[#f7e27e] to-[#b8860b]',
                     nextRank: 'Kim Cương',
                     spentGoal: 4000,
                     orderGoal: 20
@@ -84,7 +84,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             case 'kim cương':
                 return {
                     level: 3,
-                    gradient: 'from-blue-300 to-blue-500',
+                    gradient: 'from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]',
                     nextRank: null,
                     spentGoal: 0,
                     orderGoal: 0
@@ -92,7 +92,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             default:
                 return {
                     level: 0,
-                    gradient: 'from-amber-600 to-amber-800',
+                    gradient: 'from-[#b87333] via-[#d49a6a] to-[#8c6239]',
                     nextRank: 'Bạc',
                     spentGoal: 1000,
                     orderGoal: 5
@@ -173,7 +173,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             </Card>
             <div className="mt-8">
                 <div className="flex-1 rounded-lg overflow-hidden w-full">
-                    <div className={`bg-gradient-to-r ${getRankInfo(user?.rank).gradient} p-4 text-white`}>
+                    <div className={`bg-gradient-to-tl ${getRankInfo(user?.rank).gradient} p-4 text-white`}>
                         <div className="flex items-center">
                             <div className="bg-white/20 rounded-md px-2 py-1 text-xs">Lv. {getRankInfo(user?.rank).level}</div>
                             <div className="ml-2 text-sm">Hạng hiện tại</div>

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 const mockData = [{
     level: 0,
     name: "Đồng",
-    gradient: "from-amber-600 to-amber-800",
+    gradient: "from-[#b87333] via-[#d49a6a] to-[#8c6239]",
     current: false,
     spentGoal: 0,
     spentVND: "0",
@@ -22,7 +22,7 @@ const mockData = [{
 {
     level: 1,
     name: "Bạc",
-    gradient: "from-gray-300 to-gray-500",
+    gradient: "from-[#b0b0b0] via-[#e0e0e0] to-[#8c8c8c]",
     current: false,
     spentGoal: 1000,
     spentVND: "10,000,000",
@@ -34,7 +34,7 @@ const mockData = [{
 {
     level: 2,
     name: "Vàng",
-    gradient: "from-yellow-300 to-yellow-500",
+    gradient: "from-[#d4af37] via-[#f7e27e] to-[#b8860b]",
     current: false,
     spentGoal: 2000,
     spentVND: "20,000,000",
@@ -46,7 +46,7 @@ const mockData = [{
 {
     level: 3,
     name: "Kim Cương",
-    gradient: "from-blue-300 to-blue-500",
+    gradient: "from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]",
     current: false,
     spentGoal: 4000,
     spentVND: "40,000,000",
