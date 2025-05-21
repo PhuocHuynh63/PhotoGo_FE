@@ -46,7 +46,7 @@ const mockData = [{
 {
     level: 3,
     name: "Kim Cương",
-    gradient: "from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]",
+    gradient: "from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]",
     current: false,
     spentGoal: 4000,
     spentVND: "40,000,000",
