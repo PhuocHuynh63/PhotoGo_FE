@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
 import { cn } from '@utils/helpers/CN';
-import { Avatar } from '@components/Atoms/ui/avatar';
+import { Avatar } from '@components/Molecules/Avatar';
 
 
 interface SidebarChatProps {
@@ -26,6 +26,7 @@ export default function SidebarChat({
     const [searchValue, setSearchValue] = useState('');
 
     console.log('conversations', conversations);
+
 
     const filteredConversations = conversations?.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
@@ -79,18 +80,17 @@ export default function SidebarChat({
                                 onClick={() => onSelectConversation(conversation)}
                             >
                                 <div className="relative">
-                                    <Avatar className="h-12 w-12 mr-3">
-                                        <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
-                                            {conversation.user.avatar}
-                                        </div>
-                                    </Avatar>
+                                    <Avatar className="h-12 w-12 mr-3"
+                                        src={conversation.user.data.avatarUrl}
+                                        alt={conversation.user.data.fullName}
+                                    />
                                     {conversation.user.status === 'online' && (
                                         <span className="absolute bottom-0 right-3 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold truncate">{conversation.user.name}</h3>
+                                        <h3 className="font-semibold truncate">{conversation.user.data.fullName}</h3>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <p

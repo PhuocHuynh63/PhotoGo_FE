@@ -1,4 +1,3 @@
-
 import { ServiceTypeModel } from "@models/serviceTypes/common.model";
 import { z } from "zod";
 

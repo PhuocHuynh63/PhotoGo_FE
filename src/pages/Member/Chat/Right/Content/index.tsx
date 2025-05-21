@@ -5,8 +5,8 @@ import { Send, Info, MoreVertical } from 'lucide-react';
 import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
 import { cn } from '@utils/helpers/CN';
-import { Avatar } from '@components/Atoms/ui/avatar';
 import { Button } from '@components/Atoms/ui/button';
+import { Avatar } from '@components/Molecules/Avatar';
 
 interface ContentsChatProps {
     activeConversation: any | null;
@@ -14,6 +14,8 @@ interface ContentsChatProps {
     onLeaveChat: () => void;
     toggleSidebar: () => void;
     isMobile: boolean;
+    userId?: string;
+    joinedRoom: boolean;
 }
 
 export default function ContentChat({
@@ -22,9 +24,10 @@ export default function ContentChat({
     onLeaveChat,
     toggleSidebar,
     isMobile,
+    userId,
+    joinedRoom
 }: ContentsChatProps) {
     const [inputValue, setInputValue] = useState('');
-    const userId = '13acb33d-c1d1-4f32-92e5-4ddf416b9c48'; // Thay bằng auth context
 
     const handleSendMessage = () => {
         if (!inputValue.trim() || !activeConversation) return;
@@ -66,18 +69,17 @@ export default function ContentChat({
                                     <MoreVertical className="h-5 w-5" />
                                 </Button>
                             )}
-                            <Avatar className="h-10 w-10 mr-3">
-                                <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
-                                    {activeConversation.user.avatar}
-                                </div>
-                            </Avatar>
+                            <Avatar className="h-12 w-12 mr-3"
+                                src={activeConversation.user.data.avatarUrl}
+                                alt={activeConversation.user.data.fullName}
+                            />
                             <div>
-                                <h2 className="font-semibold">{activeConversation.user.name}</h2>
+                                <h2 className="font-semibold">{activeConversation.user.data.fullName}</h2>
                                 <p className="text-xs text-gray-500">
-                                    {activeConversation.user.status === 'online'
+                                    {activeConversation.user.data.status === 'online'
                                         ? 'Đang hoạt động'
-                                        : activeConversation.user.lastSeen
-                                            ? `Hoạt động ${formatTime(activeConversation.user.lastSeen)}`
+                                        : activeConversation.user.data.lastSeen
+                                            ? `Hoạt động ${formatTime(activeConversation.user.data.lastSeen)}`
                                             : 'Không hoạt động'}
                                 </p>
                             </div>
@@ -97,11 +99,10 @@ export default function ContentChat({
                                     className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
                                 >
                                     {message.sender_id !== userId && (
-                                        <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
-                                            <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
-                                                {activeConversation.user.avatar}
-                                            </div>
-                                        </Avatar>
+                                        <Avatar className="h-12 w-12 mr-3"
+                                            src={activeConversation.user.data.avatarUrl}
+                                            alt={activeConversation.user.data.fullName}
+                                        />
                                     )}
                                     <div
                                         className={cn(
@@ -142,7 +143,7 @@ export default function ContentChat({
                         <Button
                             onClick={handleSendMessage}
                             size="icon"
-                            className="rounded-full"
+                            className="rounded-full cursor-pointer"
                             style={{ backgroundColor: '#F6AC69' }}
                         >
                             <Send className="h-5 w-5" />
@@ -156,7 +157,8 @@ export default function ContentChat({
                         <p className="text-gray-500">Chọn một người bạn từ danh sách để bắt đầu trò chuyện</p>
                     </div>
                 </div>
-            )}
+            )
+            }
         </>
     );
 }
