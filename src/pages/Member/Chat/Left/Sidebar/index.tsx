@@ -16,7 +16,7 @@ interface SidebarChatProps {
     isMobile: boolean;
 }
 
-export function SidebarChat({
+export default function SidebarChat({
     conversations,
     activeConversation,
     onSelectConversation,
@@ -25,7 +25,7 @@ export function SidebarChat({
 }: SidebarChatProps) {
     const [searchValue, setSearchValue] = useState('');
 
-    const filteredConversations = conversations.filter((conv) =>
+    const filteredConversations = conversations?.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
 

@@ -1,4 +1,4 @@
-import { ServiceTypeModel } from "@models/servicePackages/common.model";
+import { ServiceTypeModel } from "@models/serviceTypes/common.model";
 import { z } from "zod";
 
 /**

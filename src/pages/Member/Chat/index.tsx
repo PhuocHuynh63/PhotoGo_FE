@@ -1,17 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { SidebarChat } from './Left/Sidebar';
-import { ContentChat } from './Right/Content';
 import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';
 import chatService from '@services/chat';
 import userService from '@services/user';
 import { PAGES } from '../../../types/IPages';
+import SidebarChat from './Left/Sidebar';
+import ContentChat from './Right/Content';
 
 export default function ChatPage(session: PAGES.IChatProps) {
-    const userId = session.session.user.id;
-    const token = session.session.accessToken;
+    const userId = session.session?.user?.id;
+    const token = session.session?.accessToken;
 
     const [isMobile, setIsMobile] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
