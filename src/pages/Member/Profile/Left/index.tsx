@@ -30,7 +30,8 @@ const getRankGradient = (rank: string) => {
         case 'vàng':
             return 'from-[#d4af37] via-[#f7e27e] to-[#b8860b]'; // Vàng đậm
         case 'kim cương':
-            return 'from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]'; // Kim cương xanh đậm
+            return 'from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]';
+        // Kim cương xanh đậm
         default:
             return 'from-gray-300 via-gray-200 to-gray-400'; // Default
     }
@@ -64,6 +65,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile */}
             <div className={`relative bg-gradient-to-br ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110`}>
+                <div className="absolute inset-0 bg-white/20 opacity-20 animate-[shine_2s_linear_infinite] bg-gradient-to-r from-transparent via-white to-transparent bg-[length:200%_100%]"></div>
                 <svg
                     className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"
                     viewBox="0 0 1440 320"
@@ -75,7 +77,27 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                     />
                 </svg>
                 <div className="flex flex-col items-center justify-center">
-                    <Avatar className="w-2 rounded-full" src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'} alt={user?.fullName || 'User'} size={100} />
+                    {userRank.toLowerCase() === 'kim cương' && (
+                        <>
+                            {/* <div className="absolute top-0 right-0 z-0 animate-pulse">
+                                <div className="text-white text-5xl drop-shadow-lg">⋆✴︎˚｡⋆</div>
+                            </div> */}
+                            {/* <div className="absolute top-8 left-8 z-50 animate-pulse" style={{ animationDelay: '0.5s' }}>
+                                <div className="text-white text-4xl drop-shadow-lg">✦</div>
+                            </div>
+                            <div className="absolute bottom-8 right-8 z-50 animate-pulse" style={{ animationDelay: '1s' }}>
+                                <div className="text-white text-3xl drop-shadow-lg">✦</div>
+                            </div> */}
+                        </>
+                    )}
+                    <div className={`relative ${userRank.toLowerCase() === 'kim cương' ? 'p-1 rounded-full bg-gradient-to-tr from-white/80 via-white/40 to-transparent animate-pulse duration-3000' : ''}`}>
+                        <Avatar
+                            className={`w-2 rounded-full ${userRank.toLowerCase() === 'kim cương' ? 'ring-4 ring-white/30' : ''}`}
+                            src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
+                            alt={user?.fullName || 'User'}
+                            size={100}
+                        />
+                    </div>
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
                     <Button
                         className={`my-2 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none ${currentTab === "profile" ? "text-dark bg-white p-1" : ""}`}

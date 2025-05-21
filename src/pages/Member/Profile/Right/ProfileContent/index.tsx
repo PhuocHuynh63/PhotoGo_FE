@@ -84,7 +84,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
             case 'kim cương':
                 return {
                     level: 3,
-                    gradient: 'from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]',
+                    gradient: 'from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]',
                     nextRank: null,
                     spentGoal: 0,
                     orderGoal: 0

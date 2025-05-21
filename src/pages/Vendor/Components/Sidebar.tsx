@@ -2,8 +2,11 @@
 
 import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export default function Sidebar() {
+    const pathname = usePathname()
+
     const menuItems = [
         { icon: User, label: "Hồ sơ", href: "/vendor/profile" },
         { icon: BarChart, label: "Thống kê", href: "/vendor/statistics" },
@@ -31,7 +34,10 @@ export default function Sidebar() {
             <div className="space-y-4">
                 {menuItems.map((item, index) => (
                     <Link key={index} href={item.href}>
-                        <div className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer">
+                        <div className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${pathname === item.href
+                                ? "bg-orange-50 text-orange-600"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}>
                             <item.icon className="w-5 h-5" />
                             <span>{item.label}</span>
                         </div>
