@@ -37,7 +37,7 @@ export default function ChatPage(session: PAGES.IChatProps) {
             try {
                 const chats = await chatService.getChatList(userId) as { data: any[] };
                 const convs: any[] = await Promise.all(
-                    chats.data.map(async (chat: any) => {
+                    chats?.data?.map(async (chat: any) => {
                         const partnerId = chat.members.find((m: string) => m !== userId)!;
                         const user = await userService.getAUser(partnerId);
                         const unreadCount = chat.messages.filter((m: any) => m.sender_id !== userId && !m.read).length;

@@ -93,7 +93,7 @@ export default function ContentChat({
 
                     <ScrollArea className="flex-1 p-4">
                         <div className="space-y-3">
-                            {activeConversation.messages.map((message: any) => (
+                            {activeConversation?.messages?.map((message: any) => (
                                 <div
                                     key={message.sender_id + message.timestamp}
                                     className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
