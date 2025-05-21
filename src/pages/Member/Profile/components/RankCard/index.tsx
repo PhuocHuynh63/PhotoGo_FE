@@ -1,6 +1,8 @@
 // components/Rewards/RankCard.tsx
 import Button from "@components/Atoms/Button";
 import React from "react";
+import Skeleton from "@components/Atoms/Skeleton";
+
 
 interface RankCardProps {
     level: {
@@ -20,11 +22,11 @@ interface RankCardProps {
 
 const RankCard: React.FC<{ level: RankCardProps["level"] }> = ({ level }) => {
     if (!level) {
-        return <div>Loading...</div>; // or handle the error as needed
+        return <Skeleton className="w-full h-full" />;
     }
     return (
         <div className={`flex flex-col rounded-lg overflow-hidden bg-white shadow-lg ${level.current ? "border-2 border-primary" : ""}`}>
-            <div className={`bg-gradient-to-r ${level.gradient} p-4 text-white`}>
+            <div className={`bg-gradient-to-tl ${level.gradient} p-4 text-white shadow-inner backdrop-brightness-105`}>
                 <div className="flex items-center">
                     <div className="bg-white/20 rounded-md px-2 py-1 text-xs">Lv. {level.level}</div>
                     {level.current && <div className="ml-2 text-sm">Hạng hiện tại</div>}

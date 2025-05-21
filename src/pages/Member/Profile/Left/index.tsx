@@ -24,17 +24,19 @@ const menuItems = [
 const getRankGradient = (rank: string) => {
     switch (rank.toLowerCase()) {
         case 'đồng':
-            return 'from-amber-600 to-amber-800';
+            return 'from-[#b87333] via-[#d49a6a] to-[#8c6239]';  // Đồng đậm
         case 'bạc':
-            return 'from-gray-300 to-gray-500';
+            return 'from-[#b0b0b0] via-[#e0e0e0] to-[#8c8c8c]'; // Bạc đậm
         case 'vàng':
-            return 'from-yellow-300 to-yellow-500';
+            return 'from-[#d4af37] via-[#f7e27e] to-[#b8860b]'; // Vàng đậm
         case 'kim cương':
-            return 'from-blue-300 to-blue-500';
+            return 'from-[#89cff0] via-[#d0f0ff] to-[#3a8dbc]'; // Kim cương xanh đậm
         default:
-            return 'from-gray-100 to-gray-200'; // Default gradient for users with no rank
+            return 'from-gray-300 via-gray-200 to-gray-400'; // Default
     }
 };
+
+
 
 const getRankColor = (rank: string) => {
     switch (rank.toLowerCase()) {
@@ -61,7 +63,17 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     return (
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile */}
-            <div className={`bg-gradient-to-b ${gradientClass} p-5 rounded-lg`}>
+            <div className={`relative bg-gradient-to-br ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110`}>
+                <svg
+                    className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"
+                    viewBox="0 0 1440 320"
+                    preserveAspectRatio="none"
+                >
+                    <path
+                        fill="white"
+                        d="M0,64L48,74.7C96,85,192,107,288,112C384,117,480,107,576,122.7C672,139,768,181,864,192C960,203,1056,181,1152,176C1248,171,1344,181,1392,186.7L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+                    />
+                </svg>
                 <div className="flex flex-col items-center justify-center">
                     <Avatar className="w-2 rounded-full" src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'} alt={user?.fullName || 'User'} size={100} />
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
