@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
 import { cn } from '@utils/helpers/CN';
-import { Avatar } from '@components/Atoms/ui/avatar';
+import { Avatar } from '@components/Molecules/Avatar';
 
 
 interface SidebarChatProps {
@@ -80,13 +80,10 @@ export default function SidebarChat({
                                 onClick={() => onSelectConversation(conversation)}
                             >
                                 <div className="relative">
-                                    <Avatar className="h-12 w-12 mr-3">
-                                        <img
-                                            src={conversation.user.data.avatarUrl}
-                                            alt={conversation.user.data.fullName}
-                                            className="h-12 w-12 rounded-full object-cover"
-                                        />
-                                    </Avatar>
+                                    <Avatar className="h-12 w-12 mr-3"
+                                        src={conversation.user.data.avatarUrl}
+                                        alt={conversation.user.data.fullName}
+                                    />
                                     {conversation.user.status === 'online' && (
                                         <span className="absolute bottom-0 right-3 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
                                     )}

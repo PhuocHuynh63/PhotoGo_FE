@@ -5,8 +5,8 @@ import { Send, Info, MoreVertical } from 'lucide-react';
 import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
 import { cn } from '@utils/helpers/CN';
-import { Avatar } from '@components/Atoms/ui/avatar';
 import { Button } from '@components/Atoms/ui/button';
+import { Avatar } from '@components/Molecules/Avatar';
 
 interface ContentsChatProps {
     activeConversation: any | null;
@@ -69,13 +69,10 @@ export default function ContentChat({
                                     <MoreVertical className="h-5 w-5" />
                                 </Button>
                             )}
-                            <Avatar className="h-12 w-12 mr-3">
-                                <img
-                                    src={activeConversation.user.data.avatarUrl}
-                                    alt={activeConversation.user.data.fullName}
-                                    className="h-12 w-12 rounded-full object-cover"
-                                />
-                            </Avatar>
+                            <Avatar className="h-12 w-12 mr-3"
+                                src={activeConversation.user.data.avatarUrl}
+                                alt={activeConversation.user.data.fullName}
+                            />
                             <div>
                                 <h2 className="font-semibold">{activeConversation.user.data.fullName}</h2>
                                 <p className="text-xs text-gray-500">
@@ -102,13 +99,10 @@ export default function ContentChat({
                                     className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
                                 >
                                     {message.sender_id !== userId && (
-                                        <Avatar className="h-12 w-12 mr-3">
-                                            <img
-                                                src={activeConversation.user.data.avatarUrl}
-                                                alt={activeConversation.user.data.fullName}
-                                                className="h-12 w-12 rounded-full object-cover"
-                                            />
-                                        </Avatar>
+                                        <Avatar className="h-12 w-12 mr-3"
+                                            src={activeConversation.user.data.avatarUrl}
+                                            alt={activeConversation.user.data.fullName}
+                                        />
                                     )}
                                     <div
                                         className={cn(
