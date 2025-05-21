@@ -12,11 +12,10 @@ import { PAGES } from '../../../types/IPages';
 export default function ChatPage(
     session: PAGES.IChatProps
 ) {
-    console.log('session', session.session.user.id);
 
 
-    const userId = session.session.user.id;
-    const token = session.session.accessToken;
+    const userId = session.session?.user.id;
+    const token = session.session?.accessToken;
 
     const [isMobile, setIsMobile] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -155,7 +154,7 @@ export default function ChatPage(
 
     const handleSelectConversation = (conversation: any) => {
         if (socket) {
-            socket.emit('joinChat', { memberId: conversation.user.id });
+            socket.emit('joinChat', { memberId: conversation?.user.id });
         }
         setActiveConversation({
             ...conversation,
