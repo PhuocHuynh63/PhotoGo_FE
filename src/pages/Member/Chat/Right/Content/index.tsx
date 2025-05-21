@@ -18,7 +18,7 @@ interface ContentsChatProps {
     joinedRoom: boolean;
 }
 
-export function ContentChat({
+export default function ContentChat({
     activeConversation,
     onSendMessage,
     onLeaveChat,

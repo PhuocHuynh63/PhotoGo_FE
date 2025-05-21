@@ -16,7 +16,7 @@ interface SidebarChatProps {
     isMobile: boolean;
 }
 
-export function SidebarChat({
+export default function SidebarChat({
     conversations,
     activeConversation,
     onSelectConversation,

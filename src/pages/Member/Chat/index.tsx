@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { SidebarChat } from './Left/Sidebar';
 import { ContentChat } from './Right/Content';
+import { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';
 import chatService from '@services/chat';
