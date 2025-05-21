@@ -3,18 +3,20 @@
 import React, { useState } from 'react'
 import { motion } from "framer-motion";
 import ProfileLeft from '@pages/Member/Profile/Left';
-import ProfileRight from '@pages/Member/Profile/Right';
+import { IUser } from '@models/user/common.model';
 
-const UserProfileLayout = ({
+const UserProfileLayoutClient = ({
     user,
     userOrders,
     userFavorites,
     userPromotions,
+    children
 }: Readonly<{
-    user: any;
+    user: IUser;
     userOrders: any;
     userFavorites: any;
     userPromotions: any;
+    children: React.ReactNode;
 }>) => {
     const [activeTab, setActiveTab] = useState("rewards");
 
@@ -47,14 +49,7 @@ const UserProfileLayout = ({
                             transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
                             className="lg:col-span-9 col-span-12 pb-10"
                         >
-                            <ProfileRight
-                                user={user}
-                                activeTab={activeTab}
-                                userOrders={userOrders}
-                                userFavorites={userFavorites}
-                                userPromotions={userPromotions}
-                                userToken={user?.token || ''}
-                            />
+                            {children}
                         </motion.div>
                     </div>
                 </div>
@@ -63,4 +58,4 @@ const UserProfileLayout = ({
     );
 };
 
-export default UserProfileLayout;
+export default UserProfileLayoutClient;

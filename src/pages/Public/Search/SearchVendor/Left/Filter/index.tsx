@@ -214,7 +214,7 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
 
             {/* Nút áp dụng bộ lọc */}
             <div className="mt-10">
-                <button className="w-full bg-orange-500 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-600 transition-colors cursor-pointer" onClick={handleApplyFilter}>
+                <button className="w-full bg-orange-300 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-400 transition-colors cursor-pointer" onClick={handleApplyFilter}>
                     Áp dụng bộ lọc
                 </button>
             </div>
