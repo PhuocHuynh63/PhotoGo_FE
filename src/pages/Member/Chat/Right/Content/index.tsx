@@ -14,6 +14,8 @@ interface ContentsChatProps {
     onLeaveChat: () => void;
     toggleSidebar: () => void;
     isMobile: boolean;
+    userId?: string;
+    joinedRoom: boolean;
 }
 
 export function ContentChat({
@@ -22,9 +24,10 @@ export function ContentChat({
     onLeaveChat,
     toggleSidebar,
     isMobile,
+    userId,
+    joinedRoom
 }: ContentsChatProps) {
     const [inputValue, setInputValue] = useState('');
-    const userId = '13acb33d-c1d1-4f32-92e5-4ddf416b9c48'; // Thay bằng auth context
 
     const handleSendMessage = () => {
         if (!inputValue.trim() || !activeConversation) return;
@@ -54,108 +57,114 @@ export function ContentChat({
 
     return (
         <>
-            {activeConversation ? (
-                <>
-                    <div
-                        className="flex items-center justify-between p-3 border-b"
-                        style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
-                    >
-                        <div className="flex items-center">
-                            {isMobile && (
-                                <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2">
-                                    <MoreVertical className="h-5 w-5" />
-                                </Button>
-                            )}
-                            <Avatar className="h-10 w-10 mr-3">
-                                <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
-                                    {activeConversation.user.avatar}
+            {joinedRoom ? (
+                <div className="absolute top-0 left-0 w-full h-full bg-gray-500 opacity-50 z-10 flex items-center justify-center">
+                    <p className="text-white">Đang tải...</p>
+                </div>
+            ) : (
+                activeConversation ? (
+                    <>
+                        <div
+                            className="flex items-center justify-between p-3 border-b"
+                            style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
+                        >
+                            <div className="flex items-center">
+                                {isMobile && (
+                                    <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2">
+                                        <MoreVertical className="h-5 w-5" />
+                                    </Button>
+                                )}
+                                <Avatar className="h-10 w-10 mr-3">
+                                    <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
+                                        {activeConversation.user.avatar}
+                                    </div>
+                                </Avatar>
+                                <div>
+                                    <h2 className="font-semibold">{activeConversation.user.name}</h2>
+                                    <p className="text-xs text-gray-500">
+                                        {activeConversation.user.status === 'online'
+                                            ? 'Đang hoạt động'
+                                            : activeConversation.user.lastSeen
+                                                ? `Hoạt động ${formatTime(activeConversation.user.lastSeen)}`
+                                                : 'Không hoạt động'}
+                                    </p>
                                 </div>
-                            </Avatar>
-                            <div>
-                                <h2 className="font-semibold">{activeConversation.user.name}</h2>
-                                <p className="text-xs text-gray-500">
-                                    {activeConversation.user.status === 'online'
-                                        ? 'Đang hoạt động'
-                                        : activeConversation.user.lastSeen
-                                            ? `Hoạt động ${formatTime(activeConversation.user.lastSeen)}`
-                                            : 'Không hoạt động'}
-                                </p>
+                            </div>
+                            <div className="flex space-x-2">
+                                <Button variant="ghost" size="icon" onClick={onLeaveChat}>
+                                    <Info className="h-5 w-5" />
+                                </Button>
                             </div>
                         </div>
-                        <div className="flex space-x-2">
-                            <Button variant="ghost" size="icon" onClick={onLeaveChat}>
-                                <Info className="h-5 w-5" />
-                            </Button>
-                        </div>
-                    </div>
 
-                    <ScrollArea className="flex-1 p-4">
-                        <div className="space-y-3">
-                            {activeConversation.messages.map((message: any) => (
-                                <div
-                                    key={message.sender_id + message.timestamp}
-                                    className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
-                                >
-                                    {message.sender_id !== userId && (
-                                        <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
-                                            <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
-                                                {activeConversation.user.avatar}
-                                            </div>
-                                        </Avatar>
-                                    )}
+                        <ScrollArea className="flex-1 p-4">
+                            <div className="space-y-3">
+                                {activeConversation.messages.map((message: any) => (
                                     <div
-                                        className={cn(
-                                            'max-w-[70%] rounded-2xl p-3',
-                                            message.sender_id === userId
-                                                ? 'bg-blue-500 text-white rounded-tr-none'
-                                                : 'bg-gray-200 rounded-tl-none'
-                                        )}
+                                        key={message.sender_id + message.timestamp}
+                                        className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
                                     >
-                                        <p>{message.text}</p>
-                                        <div className=" makeover flex items-center justify-end mt-1">
-                                            <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
-                                            {message.sender_id === userId && (
-                                                <span className="ml-1 text-xs">{message.read ? '✓✓' : '✓'}</span>
+                                        {message.sender_id !== userId && (
+                                            <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
+                                                <div className="bg-orange-300 h-full w-full flex items-center justify-center text-white font-semibold">
+                                                    {activeConversation.user.avatar}
+                                                </div>
+                                            </Avatar>
+                                        )}
+                                        <div
+                                            className={cn(
+                                                'max-w-[70%] rounded-2xl p-3',
+                                                message.sender_id === userId
+                                                    ? 'bg-blue-500 text-white rounded-tr-none'
+                                                    : 'bg-gray-200 rounded-tl-none'
                                             )}
+                                        >
+                                            <p>{message.text}</p>
+                                            <div className=" makeover flex items-center justify-end mt-1">
+                                                <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
+                                                {message.sender_id === userId && (
+                                                    <span className="ml-1 text-xs">{message.read ? '✓✓' : '✓'}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                                ))}
+                            </div>
+                        </ScrollArea>
 
-                    <div
-                        className="p-3 border-t flex items-center"
-                        style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
-                    >
-                        <Input
-                            value={inputValue}
-                            onChange={(e: any) => setInputValue(e.target.value)}
-                            placeholder="Aa"
-                            className="flex-1 mr-2 rounded-full"
-                            onKeyDown={(e: any) => {
-                                if (e.key === 'Enter') {
-                                    handleSendMessage();
-                                }
-                            }}
-                        />
-                        <Button
-                            onClick={handleSendMessage}
-                            size="icon"
-                            className="rounded-full"
-                            style={{ backgroundColor: '#F6AC69' }}
+                        <div
+                            className="p-3 border-t flex items-center"
+                            style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
                         >
-                            <Send className="h-5 w-5" />
-                        </Button>
+                            <Input
+                                value={inputValue}
+                                onChange={(e: any) => setInputValue(e.target.value)}
+                                placeholder="Aa"
+                                className="flex-1 mr-2 rounded-full"
+                                onKeyDown={(e: any) => {
+                                    if (e.key === 'Enter') {
+                                        handleSendMessage();
+                                    }
+                                }}
+                            />
+                            <Button
+                                onClick={handleSendMessage}
+                                size="icon"
+                                className="rounded-full"
+                                style={{ backgroundColor: '#F6AC69' }}
+                            >
+                                <Send className="h-5 w-5" />
+                            </Button>
+                        </div>
+                    </>
+                ) : (
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="text-center">
+                            <h2 className="text-xl font-semibold mb-2">Chọn một cuộc trò chuyện</h2>
+                            <p className="text-gray-500">Chọn một người bạn từ danh sách để bắt đầu trò chuyện</p>
+                        </div>
                     </div>
-                </>
-            ) : (
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                        <h2 className="text-xl font-semibold mb-2">Chọn một cuộc trò chuyện</h2>
-                        <p className="text-gray-500">Chọn một người bạn từ danh sách để bắt đầu trò chuyện</p>
-                    </div>
-                </div>
+                )
             )}
         </>
     );

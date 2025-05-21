@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SidebarChat } from './Left/Sidebar';
 import { ContentChat } from './Right/Content';
 import { Socket } from 'socket.io-client';
@@ -9,12 +9,7 @@ import chatService from '@services/chat';
 import userService from '@services/user';
 import { PAGES } from '../../../types/IPages';
 
-export default function ChatPage(
-    session: PAGES.IChatProps
-) {
-    console.log('session', session.session.user.id);
-
-
+export default function ChatPage(session: PAGES.IChatProps) {
     const userId = session.session.user.id;
     const token = session.session.accessToken;
 
@@ -23,33 +18,33 @@ export default function ChatPage(
     const [conversations, setConversations] = useState<any[]>([]);
     const [activeConversation, setActiveConversation] = useState<any | null>(null);
     const [showSidebar, setShowSidebar] = useState(true);
+    const [joinedRoom, setJoinedRoom] = useState(false);
 
+    const activeConversationRef = useRef(activeConversation);
+    useEffect(() => {
+        activeConversationRef.current = activeConversation;
+    }, [activeConversation]);
 
     useEffect(() => {
-        // Responsive check
-        const checkIsMobile = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
+        const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
         checkIsMobile();
         window.addEventListener('resize', checkIsMobile);
 
-        // Khởi tạo socket
         const socketInstance = getSocket(token);
         setSocket(socketInstance);
 
-        // Lấy danh sách chats
         const fetchChats = async () => {
             try {
                 const chats = await chatService.getChatList(userId) as { data: any[] };
-                console.log('chats', chats);
                 const convs: any[] = await Promise.all(
                     chats.data.map(async (chat: any) => {
-                        const partnerId = chat.members.find((m: any) => m !== userId)!;
+                        const partnerId = chat.members.find((m: string) => m !== userId)!;
                         const user = await userService.getAUser(partnerId);
                         const unreadCount = chat.messages.filter((m: any) => m.sender_id !== userId && !m.read).length;
                         return {
                             id: chat.id,
                             user,
+                            member: partnerId,
                             messages: chat.messages,
                             unreadCount,
                             lastMessage: chat.messages[chat.messages.length - 1],
@@ -63,59 +58,64 @@ export default function ChatPage(
         };
         fetchChats();
 
-        // WebSocket events
-        socketInstance.on('joinedRoom', ({ chatId, messages }: { chatId: string; messages: any[] }) => {
-            setConversations((prev) =>
-                prev.map((conv) =>
+        socketInstance.on('joinChat', ({ chatId, messages }) => {
+            setJoinedRoom(true);
+            setConversations(prev =>
+                prev.map(conv =>
                     conv.id === chatId ? { ...conv, messages, unreadCount: 0 } : conv
                 )
             );
-            if (activeConversation?.id === chatId) {
+            if (activeConversationRef.current?.id === chatId) {
                 setActiveConversation((prev: any) => (prev ? { ...prev, messages, unreadCount: 0 } : prev));
             }
         });
 
-        socketInstance.on('newMessage', (message: any) => {
-            setConversations((prev) =>
-                prev.map((conv) =>
-                    conv.id === activeConversation?.id
-                        ? {
-                            ...conv,
-                            messages: [...conv.messages, { ...message, read: true }],
-                            lastMessage: { ...message, read: true },
-                            unreadCount: 0,
-                        }
-                        : conv
-                )
-            );
-            if (activeConversation?.id === activeConversation.id) {
-                setActiveConversation((prev: any) =>
-                    prev
-                        ? {
-                            ...prev,
-                            messages: [...prev.messages, { ...message, read: true }],
-                            lastMessage: { ...message, read: true },
-                            unreadCount: 0,
-                        }
-                        : prev
-                );
-            }
-        });
+        //TODO
+        // socketInstance.on('newMessage', ({sender_id, text}) => {
+        //     setConversations(prev =>
+        //         prev.map(conv => {
+        //             if (conv.id === message.chatId) {
+        //                 const isActive = activeConversationRef.current?.id === conv.id;
+        //                 return {
+        //                     ...conv,
+        //                     messages: [...conv.messages, { ...message, read: isActive }],
+        //                     lastMessage: { ...message, read: isActive },
+        //                     unreadCount: isActive ? 0 : conv.unreadCount + 1,
+        //                 };
+        //             }
+        //             return conv;
+        //         })
+        //     );
 
-        socketInstance.on('chatNotification', ({ chatId, newMessage }: { chatId: string; newMessage: any }) => {
-            setConversations((prev) =>
-                prev.map((conv) =>
+        //     if (activeConversationRef.current?.id === message.chatId) {
+        //         setActiveConversation((prev: any) =>
+        //             prev
+        //                 ? {
+        //                     ...prev,
+        //                     messages: [...prev.messages, { ...message, read: true }],
+        //                     lastMessage: { ...message, read: true },
+        //                     unreadCount: 0,
+        //                 }
+        //                 : prev
+        //         );
+        //     }
+        // });
+
+        socketInstance.on('chatNotification', ({ chatId, newMessage }) => {
+            setConversations(prev =>
+                prev.map(conv =>
                     conv.id === chatId
                         ? {
                             ...conv,
                             messages: [...conv.messages, newMessage],
                             lastMessage: newMessage,
-                            unreadCount: conv.id === activeConversation?.id ? 0 : conv.unreadCount + 1,
+                            unreadCount: conv.id === activeConversationRef.current?.id ? 0 : conv.unreadCount + 1,
                         }
                         : conv
                 )
             );
-            if (activeConversation?.id === chatId) {
+
+            if (activeConversationRef.current?.id === chatId) {
                 setActiveConversation((prev: any) =>
                     prev
                         ? {
@@ -129,46 +129,44 @@ export default function ChatPage(
             }
         });
 
-        socketInstance.on('joinChatError', ({ message }: { message: string }) => {
-            alert(`Lỗi tham gia chat: ${message}`);
-        });
-
-        socketInstance.on('sendMessageError', ({ message }: { message: string }) => {
-            alert(`Lỗi gửi tin nhắn: ${message}`);
-        });
-
-        socketInstance.on('leaveChatError', ({ message }: { message: string }) => {
-            alert(`Lỗi rời chat: ${message}`);
-        });
-
-        socketInstance.on('leftRoom', ({ chatId }: { chatId: string }) => {
-            if (activeConversation?.id === chatId) {
+        socketInstance.on('leftRoom', ({ chatId }) => {
+            if (activeConversationRef.current?.id === chatId) {
                 setActiveConversation(null);
             }
         });
+
+        socketInstance.on('joinChatError', ({ message }) => alert(`Lỗi tham gia chat: ${message}`));
+        socketInstance.on('sendMessageError', ({ message }) => alert(`Lỗi gửi tin nhắn: ${message}`));
+        socketInstance.on('leaveChatError', ({ message }) => alert(`Lỗi rời chat: ${message}`));
 
         return () => {
             window.removeEventListener('resize', checkIsMobile);
             disconnectSocket();
         };
-    }, [activeConversation, userId, token]);
+    }, [token, userId]);
 
     const handleSelectConversation = (conversation: any) => {
         if (socket) {
-            socket.emit('joinChat', { memberId: conversation.user.id });
+            socket.emit('joinChat', { memberId: conversation.member });
         }
         setActiveConversation({
             ...conversation,
             messages: conversation.messages.map((m: any) => ({ ...m, read: true })),
             unreadCount: 0,
         });
-        setConversations((prev) =>
-            prev.map((conv) =>
+
+        setConversations(prev =>
+            prev.map(conv =>
                 conv.id === conversation.id
-                    ? { ...conv, messages: conv.messages.map((m: any) => ({ ...m, read: true })), unreadCount: 0 }
+                    ? {
+                        ...conv,
+                        messages: conv.messages.map((m: any) => ({ ...m, read: true })),
+                        unreadCount: 0,
+                    }
                     : conv
             )
         );
+
         if (isMobile) {
             setShowSidebar(false);
         }
@@ -190,9 +188,7 @@ export default function ChatPage(
         }
     };
 
-    const toggleSidebar = () => {
-        setShowSidebar((prev) => !prev);
-    };
+    const toggleSidebar = () => setShowSidebar(prev => !prev);
 
     return (
         <div className="flex w-full h-screen">
@@ -210,6 +206,8 @@ export default function ChatPage(
                     onLeaveChat={handleLeaveChat}
                     toggleSidebar={toggleSidebar}
                     isMobile={isMobile}
+                    userId={userId}
+                    joinedRoom={joinedRoom}
                 />
             </div>
         </div>

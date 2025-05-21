@@ -25,8 +25,6 @@ export function SidebarChat({
 }: SidebarChatProps) {
     const [searchValue, setSearchValue] = useState('');
 
-    console.log('conversations', conversations);
-
     const filteredConversations = conversations.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
@@ -69,7 +67,7 @@ export function SidebarChat({
                         </div>
                     </div>
                     <ScrollArea className="flex-1">
-                        {filteredConversations.map((conversation) => (
+                        {filteredConversations?.map((conversation) => (
                             <div
                                 key={conversation.id}
                                 className={cn(
