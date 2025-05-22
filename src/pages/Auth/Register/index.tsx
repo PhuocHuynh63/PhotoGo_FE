@@ -171,6 +171,7 @@ const RegisterPage = () => {
                                 placeholder="********"
                                 {...register("passwordHash")}
                                 className={errors.passwordHash ? 'input-error' : ''}
+                                togglePassword={true}
                             />
                             {errors.passwordHash && <span className="text-red-500 text-sm">{errors.passwordHash?.message}</span>}
                         </div>
