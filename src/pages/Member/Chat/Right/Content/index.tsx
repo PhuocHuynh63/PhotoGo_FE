@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Send, Info, MoreVertical } from 'lucide-react';
 import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
@@ -15,7 +15,6 @@ interface ContentsChatProps {
     toggleSidebar: () => void;
     isMobile: boolean;
     userId?: string;
-    joinedRoom: boolean;
 }
 
 export default function ContentChat({
@@ -25,8 +24,10 @@ export default function ContentChat({
     toggleSidebar,
     isMobile,
     userId,
-    joinedRoom
 }: ContentsChatProps) {
+    /**
+     * Handle input value
+     */
     const [inputValue, setInputValue] = useState('');
 
     const handleSendMessage = () => {
@@ -34,7 +35,14 @@ export default function ContentChat({
         onSendMessage(inputValue);
         setInputValue('');
     };
+    //---------------------End---------------------//
 
+
+    /**
+     * Format time
+     * @param date 
+     * @returns 
+     */
     const formatTime = (date: string) => {
         const d = new Date(date);
         const now = new Date();
@@ -54,6 +62,19 @@ export default function ContentChat({
         }
         return `${d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     };
+    //---------------------End---------------------//
+
+    /**
+     * Scroll to bottom
+     */
+    const scrollRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [activeConversation?.messages]);
+    //---------------------End---------------------//
 
     return (
         <>
@@ -122,6 +143,7 @@ export default function ContentChat({
                                     </div>
                                 </div>
                             ))}
+                            <div ref={scrollRef} />
                         </div>
                     </ScrollArea>
 
@@ -135,7 +157,8 @@ export default function ContentChat({
                             placeholder="Aa"
                             className="flex-1 mr-2 rounded-full"
                             onKeyDown={(e: any) => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
                                     handleSendMessage();
                                 }
                             }}
@@ -143,8 +166,7 @@ export default function ContentChat({
                         <Button
                             onClick={handleSendMessage}
                             size="icon"
-                            className="rounded-full cursor-pointer"
-                            style={{ backgroundColor: '#F6AC69' }}
+                            className="rounded-full cursor-pointer bg-primary"
                         >
                             <Send className="h-5 w-5" />
                         </Button>
