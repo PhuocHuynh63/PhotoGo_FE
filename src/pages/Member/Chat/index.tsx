@@ -20,6 +20,24 @@ export default function ChatPage(session: PAGES.IChatProps) {
     const [showSidebar, setShowSidebar] = useState(true);
     const [joinedRoom, setJoinedRoom] = useState(false);
 
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('connect', () => {
+            console.log('✅ Socket connected:', socket.id);
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('❌ Socket connect error:', err.message);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('connect_error');
+        };
+    }, [socket]);
+
+
     const activeConversationRef = useRef(activeConversation);
     useEffect(() => {
         activeConversationRef.current = activeConversation;
