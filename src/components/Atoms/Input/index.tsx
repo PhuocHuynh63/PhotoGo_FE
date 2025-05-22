@@ -24,7 +24,7 @@ export default function Input(props: ICOMPONENTS.InputProps) {
 
     const inputType = useMemo(() => {
         if (togglePassword && isPasswordType) {
-            return showPassword ? 'text' : 'password';
+            return showPassword ? 'password' : 'text';
         }
         return rest.type;
     }, [togglePassword, isPasswordType, showPassword, rest.type]);
