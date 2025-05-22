@@ -31,6 +31,7 @@ jobs:
         run: |
           docker build --platform linux/amd64 \
             --build-arg NEXT_PUBLIC_API_URL=https://api.photogo.id.vn/api/v1 \
+            --build-arg NEXT_PUBLIC_WEBSOCKET_URL=wss://api.photogo.id.vn/ \
             -t photogo-nextjs:latest .
           docker tag photogo-nextjs:latest photogo/photogo-nextjs:latest
           docker push photogo/photogo-nextjs:latest
