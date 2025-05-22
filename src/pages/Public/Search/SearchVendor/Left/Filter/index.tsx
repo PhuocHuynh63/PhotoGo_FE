@@ -11,7 +11,11 @@ import CustomDatePicker from "@components/Atoms/DatePicker"
 import { ICategoriesData } from "@models/category/response.model"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
 
-export default function Left({ onReset, categories }: { onReset: () => void, categories: ICategoriesData }) {
+export default function Left({ onReset, categories, onApply }: {
+    onReset: () => void,
+    categories: ICategoriesData,
+    onApply: () => void
+}) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -133,91 +137,192 @@ export default function Left({ onReset, categories }: { onReset: () => void, cat
 
 
     return (
-        <div className="w-64 pr-4 border-r p-3">
-            <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-medium text-md mb-2 flex items-center justify-between">
-                    Bộ lọc tìm kiếm
-                </h3>
-                <Button onClick={handleResetAll}>Xóa tất cả</Button>
-            </div>
+        <>
+            {/* Desktop Filter UI */}
+            <div className="hidden md:block w-64 pr-4 border-r p-3">
+                <div className="mb-4 flex items-center justify-between">
+                    <h3 className="font-medium text-md mb-2 flex items-center justify-between">
+                        Bộ lọc tìm kiếm
+                    </h3>
+                    <Button onClick={handleResetAll}>Xóa tất cả</Button>
+                </div>
 
-            <Accordion type="single" defaultValue="serviceType" collapsible>
                 {/* Service Type */}
-                <AccordionItem value="serviceType">
-                    <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
-                    <AccordionContent>
-                        <Checkbox
-                            options={categories?.data.map(category => ({ key: category.name }))}
-                            value={serviceType.map(service => service.key) as string[]}
-                            onChange={(e, key) => handleServiceTypeChange(key)}
-                        />
-                    </AccordionContent>
-                </AccordionItem>
+                <div className="mb-4">
+                    <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
+                    <Checkbox
+                        options={categories?.data.map(category => ({ key: category.name }))}
+                        value={serviceType.map(service => service.key) as string[]}
+                        onChange={(e, key) => handleServiceTypeChange(key)}
+                    />
+                </div>
 
                 {/* Location */}
-                <AccordionItem value="address">
-                    <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
-                    <AccordionContent>
-                        <Checkbox
-                            options={address}
-                            value={addresses.map(service => service.key)}
-                            onChange={(e, key) => handleAddressChange(key)}
-                        />
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-
-            {/* Date */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2">Ngày Đặt lịch</h3>
-                <div className="flex items-center">
-                    <CustomDatePicker
-                        placeholder="Select date"
-                        value={selectedDate}
-                        onChange={(date) => {
-                            if (date) {
-                                setSelectedDate(date)
-                            }
-                        }}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Địa điểm</h3>
+                    <Checkbox
+                        options={address}
+                        value={addresses.map(service => service.key)}
+                        onChange={(e, key) => handleAddressChange(key)}
                     />
+                </div>
+
+                {/* Date */}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Ngày Đặt lịch</h3>
+                    <div className="flex items-center">
+                        <CustomDatePicker
+                            placeholder="Select date"
+                            value={selectedDate}
+                            onChange={(date) => {
+                                if (date) {
+                                    setSelectedDate(date)
+                                }
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {/* Price Range */}
+                <div className="mb-4 border-t py-4">
+                    <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
+                    <PriceRangeSlider
+                        min={0}
+                        max={70000000}
+                        step={500000}
+                        value={selectPriceRange}
+                        onValueChange={setSelectPriceRange}
+                    />
+                </div>
+
+                {/* Rating */}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
+                    <RadioButtonGroup
+                        options={[
+                            { label: <StarRating stars={5} interactive onClick={() => setRating(5)} />, value: '5' },
+                            { label: <StarRating stars={4} interactive onClick={() => setRating(4)} />, value: '4' },
+                            { label: <StarRating stars={3} interactive onClick={() => setRating(3)} />, value: '3' },
+                            { label: <StarRating stars={2} interactive onClick={() => setRating(2)} />, value: '2' },
+                            { label: <StarRating stars={1} interactive onClick={() => setRating(1)} />, value: '1' },
+                        ]}
+                        value={rating.toString()}
+                        onChange={(value) => setRating(Number(value))}
+                        name="rating"
+                    />
+                </div>
+
+                {/* Apply Button */}
+                <div className="mt-10">
+                    <button className="w-full bg-orange-300 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-400 transition-colors cursor-pointer" onClick={handleApplyFilter}>
+                        Áp dụng bộ lọc
+                    </button>
                 </div>
             </div>
 
-            {/* Price Range */}
-            <div className="mb-4 border-t py-4">
-                <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
-                <PriceRangeSlider
-                    min={0}
-                    max={70000000}
-                    step={500000}
-                    value={selectPriceRange}
-                    onValueChange={setSelectPriceRange}
-                />
-            </div>
+            {/* Mobile Filter UI */}
+            <div className="md:hidden w-full">
+                <Accordion type="single" defaultValue="serviceType" collapsible className="space-y-2">
+                    {/* Service Type */}
+                    <AccordionItem value="serviceType" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <Checkbox
+                                options={categories?.data.map(category => ({ key: category.name }))}
+                                value={serviceType.map(service => service.key) as string[]}
+                                onChange={(e, key) => handleServiceTypeChange(key)}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
 
-            {/* Rating */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
-                <RadioButtonGroup
-                    options={[
-                        { label: <StarRating stars={5} interactive onClick={() => setRating(5)} />, value: '5' },
-                        { label: <StarRating stars={4} interactive onClick={() => setRating(4)} />, value: '4' },
-                        { label: <StarRating stars={3} interactive onClick={() => setRating(3)} />, value: '3' },
-                        { label: <StarRating stars={2} interactive onClick={() => setRating(2)} />, value: '2' },
-                        { label: <StarRating stars={1} interactive onClick={() => setRating(1)} />, value: '1' },
-                    ]}
-                    value={rating.toString()}
-                    onChange={(value) => setRating(Number(value))}
-                    name="rating"
-                />
-            </div>
+                    {/* Location */}
+                    <AccordionItem value="address" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Địa điểm</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <Checkbox
+                                options={address}
+                                value={addresses.map(service => service.key)}
+                                onChange={(e, key) => handleAddressChange(key)}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
 
-            {/* Nút áp dụng bộ lọc */}
-            <div className="mt-10">
-                <button className="w-full bg-orange-300 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-400 transition-colors cursor-pointer" onClick={handleApplyFilter}>
-                    Áp dụng bộ lọc
-                </button>
+                    {/* Date */}
+                    <AccordionItem value="date" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Ngày Đặt lịch</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <div className="flex items-center">
+                                <CustomDatePicker
+                                    placeholder="Select date"
+                                    value={selectedDate}
+                                    onChange={(date) => {
+                                        if (date) {
+                                            setSelectedDate(date)
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Price Range */}
+                    <AccordionItem value="price" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Khoảng giá</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <PriceRangeSlider
+                                min={0}
+                                max={70000000}
+                                step={500000}
+                                value={selectPriceRange}
+                                onValueChange={setSelectPriceRange}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    {/* Rating */}
+                    <AccordionItem value="rating" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Đánh giá</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <RadioButtonGroup
+                                options={[
+                                    { label: <StarRating stars={5} interactive onClick={() => setRating(5)} />, value: '5' },
+                                    { label: <StarRating stars={4} interactive onClick={() => setRating(4)} />, value: '4' },
+                                    { label: <StarRating stars={3} interactive onClick={() => setRating(3)} />, value: '3' },
+                                    { label: <StarRating stars={2} interactive onClick={() => setRating(2)} />, value: '2' },
+                                    { label: <StarRating stars={1} interactive onClick={() => setRating(1)} />, value: '1' },
+                                ]}
+                                value={rating.toString()}
+                                onChange={(value) => setRating(Number(value))}
+                                name="rating"
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+
+                {/* Mobile Action Buttons */}
+                <div className="sticky -bottom-4 p-2 border-t bg-white mt-4">
+                    <div className="flex gap-2">
+                        <Button
+                            className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            onClick={() => {
+                                handleResetAll();
+                                onReset();
+                            }}
+                        >
+                            Đặt lại
+                        </Button>
+                        <Button
+                            className="flex-1 bg-primary text-white"
+                            onClick={() => {
+                                handleApplyFilter();
+                                onApply();
+                            }}
+                        >
+                            Áp dụng
+                        </Button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
