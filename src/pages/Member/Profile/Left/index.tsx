@@ -64,8 +64,9 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     return (
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile */}
-            <div className={`relative bg-gradient-to-br ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110`}>
+            <div className={`relative bg-gradient-to-br ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110 ${userRank.toLowerCase() === 'kim cương' ? 'light-sweep' : ''}`}>
                 <div className="absolute inset-0 bg-white/20 opacity-20 animate-[shine_2s_linear_infinite] bg-gradient-to-r from-transparent via-white to-transparent bg-[length:200%_100%]"></div>
+
                 <svg
                     className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none"
                     viewBox="0 0 1440 320"
@@ -76,29 +77,16 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         d="M0,64L48,74.7C96,85,192,107,288,112C384,117,480,107,576,122.7C672,139,768,181,864,192C960,203,1056,181,1152,176C1248,171,1344,181,1392,186.7L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
                     />
                 </svg>
-                <div className="flex flex-col items-center justify-center">
-                    {userRank.toLowerCase() === 'kim cương' && (
-                        <>
-                            {/* <div className="absolute top-0 right-0 z-0 animate-pulse">
-                                <div className="text-white text-5xl drop-shadow-lg">⋆✴︎˚｡⋆</div>
-                            </div> */}
-                            {/* <div className="absolute top-8 left-8 z-50 animate-pulse" style={{ animationDelay: '0.5s' }}>
-                                <div className="text-white text-4xl drop-shadow-lg">✦</div>
-                            </div>
-                            <div className="absolute bottom-8 right-8 z-50 animate-pulse" style={{ animationDelay: '1s' }}>
-                                <div className="text-white text-3xl drop-shadow-lg">✦</div>
-                            </div> */}
-                        </>
-                    )}
-                    <div className={`relative ${userRank.toLowerCase() === 'kim cương' ? 'p-1 rounded-full bg-gradient-to-tr from-white/80 via-white/40 to-transparent animate-pulse duration-3000' : ''}`}>
-                        <Avatar
-                            className={`w-2 rounded-full ${userRank.toLowerCase() === 'kim cương' ? 'ring-4 ring-white/30' : ''}`}
-                            src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
-                            alt={user?.fullName || 'User'}
-                            size={100}
-                        />
-                    </div>
+
+                <div className="flex flex-col items-center justify-center relative z-10">
+                    <Avatar
+                        className={`w-2 rounded-full ${userRank.toLowerCase() === 'kim cương' ? 'ring-4 ring-white/30' : ''}`}
+                        src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
+                        alt={user?.fullName || 'User'}
+                        size={100}
+                    />
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
+
                     <Button
                         className={`my-2 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none ${currentTab === "profile" ? "text-dark bg-white p-1" : ""}`}
                         onClick={() => router.push('/profile')}
@@ -124,6 +112,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                     </Card>
                 </div>
             </div>
+
 
             {/* Navigation Menu */}
             <nav className="p-4">
