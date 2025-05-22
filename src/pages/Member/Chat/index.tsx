@@ -20,24 +20,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
     const [showSidebar, setShowSidebar] = useState(true);
     const [joinedRoom, setJoinedRoom] = useState(false);
 
-    useEffect(() => {
-        if (!socket) return;
-
-        socket.on('connect', () => {
-            console.log('✅ Socket connected:', socket.id);
-        });
-
-        socket.on('connect_error', (err) => {
-            console.error('❌ Socket connect error:', err.message);
-        });
-
-        return () => {
-            socket.off('connect');
-            socket.off('connect_error');
-        };
-    }, [socket]);
-
-
     const activeConversationRef = useRef(activeConversation);
     useEffect(() => {
         activeConversationRef.current = activeConversation;
@@ -112,34 +94,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
                             ...prev,
                             messages: [...prev.messages, { ...message, read: true }],
                             lastMessage: { ...message, read: true },
-                            unreadCount: 0,
-                        }
-                        : prev
-                );
-            }
-        });
-
-        socketInstance.on('chatNotification', ({ chatId, newMessage }) => {
-            setConversations(prev =>
-                prev.map(conv =>
-                    conv.id === chatId
-                        ? {
-                            ...conv,
-                            messages: [...conv.messages, newMessage],
-                            lastMessage: newMessage,
-                            unreadCount: conv.id === activeConversationRef.current?.id ? 0 : conv.unreadCount + 1,
-                        }
-                        : conv
-                )
-            );
-
-            if (activeConversationRef.current?.id === chatId) {
-                setActiveConversation((prev: any) =>
-                    prev
-                        ? {
-                            ...prev,
-                            messages: [...prev.messages, { ...newMessage, read: true }],
-                            lastMessage: { ...newMessage, read: true },
                             unreadCount: 0,
                         }
                         : prev
@@ -225,7 +179,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
                     toggleSidebar={toggleSidebar}
                     isMobile={isMobile}
                     userId={userId}
-                    joinedRoom={joinedRoom}
                 />
             </div>
         </div>
