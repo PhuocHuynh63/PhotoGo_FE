@@ -10,7 +10,7 @@ import PriceRangeSlider from "@components/Atoms/2WaySlider/2WaySlider"
 import DurationRangeSlider from "@components/Atoms/DurationRangeSlider/DurationRangeSlider"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
 
-export default function Left({ onReset }: { onReset: () => void }) {
+export default function Left({ onReset, onApply }: { onReset: () => void, onApply: () => void }) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [serviceType, setServiceType] = useState<ICOMPONENTS.ServiceType[]>([]);
@@ -130,107 +130,180 @@ export default function Left({ onReset }: { onReset: () => void }) {
     }, [searchParams])
 
     return (
-        <div className="w-64 pr-4 border-r p-3">
-            <div className="mb-4">
-                <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
-                    Bộ lọc tìm kiếm
-                    <Button
-                        onClick={handleResetAll}
+        <>
+            {/* Desktop Filter UI */}
+            <div className="hidden md:block w-64 pr-4 border-r p-3">
+                <div className="mb-4">
+                    <h3 className="font-medium text-sm mb-2 flex items-center justify-between">
+                        Bộ lọc tìm kiếm
+                        <Button onClick={handleResetAll}>Xóa tất cả</Button>
+                    </h3>
+                </div>
+                <Accordion type="single" defaultValue="serviceType" collapsible>
+                    {/* Service Type */}
+                    <AccordionItem value="serviceType">
+                        <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
+                        <AccordionContent>
+                            <div className="space-y-2">
+                                <Checkbox
+                                    options={services}
+                                    onChange={(e, key) => handleServiceTypeChange(key)}
+                                />
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                    {/* Vendors */}
+                    <AccordionItem value="vendors">
+                        <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
+                        <AccordionContent>
+                            <Checkbox
+                                options={providers}
+                                onChange={(e, key) => handleVendorChange(key)}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+                {/* Rating */}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
+                    <RadioButtonGroup
+                        options={[
+                            { label: <StarRating stars={5} />, value: '5' },
+                            { label: <StarRating stars={4} />, value: '4' },
+                            { label: <StarRating stars={3} />, value: '3' },
+                            { label: <StarRating stars={2} />, value: '2' },
+                            { label: <StarRating stars={1} />, value: '1' },
+                        ]}
+                        value={rating.toString()}
+                        onChange={(value) => setRating(Number(value))}
+                        name="rating"
+                    />
+                </div>
+                {/* Price Range */}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
+                    <div className="px-1 py-4">
+                        <PriceRangeSlider
+                            min={300000}
+                            max={70000000}
+                            step={500000}
+                            value={selectPriceRange}
+                            onValueChange={setSelectPriceRange}
+                        />
+                    </div>
+                </div>
+                {/* Duration Range */}
+                <div className="mb-4 border-t pt-4">
+                    <h3 className="font-medium text-sm mb-2">Thời lượng</h3>
+                    <div className="px-1 py-4">
+                        <DurationRangeSlider
+                            min={60}
+                            max={360}
+                            step={30}
+                            value={selectDurationRange}
+                            onValueChange={setSelectDurationRange}
+                        />
+                    </div>
+                </div>
+                <div className="mt-10">
+                    <button
+                        className="w-full bg-orange-300 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-400 transition-colors cursor-pointer"
+                        onClick={applyFilters}
                     >
-                        Xóa tất cả
-                    </Button>
-                </h3>
+                        Áp dụng bộ lọc
+                    </button>
+                </div>
             </div>
 
-            <Accordion type="single" defaultValue="serviceType" collapsible>
-                {/* Service Type */}
-                <AccordionItem value="serviceType">
-                    <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
-                    <AccordionContent>
-                        <div className="space-y-2">
+            {/* Mobile Filter UI */}
+            <div className="md:hidden w-full">
+                <Accordion type="single" defaultValue="serviceType" collapsible className="space-y-2">
+                    {/* Service Type */}
+                    <AccordionItem value="serviceType" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
                             <Checkbox
                                 options={services}
-                                onChange={(e, key) => {
-                                    handleServiceTypeChange(key);
-                                }}
+                                onChange={(e, key) => handleServiceTypeChange(key)}
                             />
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-
-                {/* Vendors */}
-                <AccordionItem value="vendors">
-                    <AccordionTrigger className="py-2 cursor-pointer">Địa điểm</AccordionTrigger>
-                    <AccordionContent>
-                        <Checkbox
-                            options={providers}
-                            onChange={(e, key) => {
-                                handleVendorChange(key);
+                        </AccordionContent>
+                    </AccordionItem>
+                    {/* Vendors */}
+                    <AccordionItem value="vendors" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Địa điểm</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <Checkbox
+                                options={providers}
+                                onChange={(e, key) => handleVendorChange(key)}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                    {/* Rating */}
+                    <AccordionItem value="rating" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Đánh giá</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <RadioButtonGroup
+                                options={[
+                                    { label: <StarRating stars={5} />, value: '5' },
+                                    { label: <StarRating stars={4} />, value: '4' },
+                                    { label: <StarRating stars={3} />, value: '3' },
+                                    { label: <StarRating stars={2} />, value: '2' },
+                                    { label: <StarRating stars={1} />, value: '1' },
+                                ]}
+                                value={rating.toString()}
+                                onChange={(value) => setRating(Number(value))}
+                                name="rating"
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                    {/* Price Range */}
+                    <AccordionItem value="price" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Khoảng giá</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <PriceRangeSlider
+                                min={300000}
+                                max={70000000}
+                                step={500000}
+                                value={selectPriceRange}
+                                onValueChange={setSelectPriceRange}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                    {/* Duration Range */}
+                    <AccordionItem value="duration" className="border rounded-lg px-3">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Thời lượng</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
+                            <DurationRangeSlider
+                                min={60}
+                                max={360}
+                                step={30}
+                                value={selectDurationRange}
+                                onValueChange={setSelectDurationRange}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+                {/* Mobile Action Buttons */}
+                <div className="sticky -bottom-4 p-2 border-t bg-white mt-4">
+                    <div className="flex gap-2">
+                        <Button
+                            className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            onClick={handleResetAll}
+                        >
+                            Đặt lại
+                        </Button>
+                        <Button
+                            className="flex-1 bg-primary text-white"
+                            onClick={() => {
+                                applyFilters();
+                                onApply();
                             }}
-                        />
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
-
-            {/* Rating */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2">Đánh giá</h3>
-                <RadioButtonGroup
-                    options={[
-                        { label: <StarRating stars={5} />, value: '5' },
-                        { label: <StarRating stars={4} />, value: '4' },
-                        { label: <StarRating stars={3} />, value: '3' },
-                        { label: <StarRating stars={2} />, value: '2' },
-                        { label: <StarRating stars={1} />, value: '1' },
-                    ]}
-                    value={rating.toString()}
-                    onChange={(value) => {
-                        setRating(Number(value));
-                    }}
-                    name="rating"
-                />
-            </div>
-
-            {/* Price Range */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
-                <div className="px-1 py-4">
-                    <PriceRangeSlider
-                        min={300000}
-                        max={70000000}
-                        step={500000}
-                        value={selectPriceRange}
-                        onValueChange={(val) => {
-                            setSelectPriceRange(val);
-                        }}
-                    />
+                        >
+                            Áp dụng
+                        </Button>
+                    </div>
                 </div>
-            </div>
-
-            {/* Duration Range */}
-            <div className="mb-4 border-t pt-4">
-                <h3 className="font-medium text-sm mb-2">Thời lượng</h3>
-                <div className="px-1 py-4">
-                    <DurationRangeSlider
-                        min={60}
-                        max={360}
-                        step={30}
-                        value={selectDurationRange}
-                        onValueChange={(val) => {
-                            setSelectDurationRange(val);
-                        }}
-                    />
-                </div>
-            </div>
-
-            <div className="mt-10">
-                <button
-                    className="w-full bg-orange-300 text-white py-2 rounded-md text-sm font-medium hover:bg-orange-400 transition-colors cursor-pointer"
-                    onClick={applyFilters}
-                >
-                    Áp dụng bộ lọc
-                </button>
-            </div>
-        </div>
+            </div >
+        </>
     )
 }
