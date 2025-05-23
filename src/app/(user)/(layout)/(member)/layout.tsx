@@ -2,6 +2,7 @@ import UserProfileLayoutClient from "@components/Templates/UserProfileLayout"
 import { authOptions } from "@lib/authOptions";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
+import { ROUTES } from "@routes";
 import userService from "@services/user";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -31,7 +32,7 @@ export default async function UserProfileLayout({
     }
 
     if (!userData) {
-        redirect('/login');
+        redirect(ROUTES.AUTH.LOGIN);
     }
 
     return (
