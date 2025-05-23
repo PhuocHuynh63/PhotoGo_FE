@@ -314,7 +314,7 @@ export default function Header({ user }: PAGES.IHeader) {
                             <span>Cài đặt</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={''}>
+                    <Link href={'/chat'}>
                         <DropdownMenuItem icon="MessageSquare">
                             <span>Tin nhắn</span>
                         </DropdownMenuItem>

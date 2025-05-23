@@ -1,10 +1,10 @@
 "use client"
 
-import AppointmentCalendar from "./right/appointment-callendar"
-import type { Appointment } from "./right/appointment-table"
-import AppointmentStats from "./right/appointment-stats"
-import AppointmentTable from "./right/appointment-table"
-import RecentAppointments from "./right/recent-appoinment"
+import AppointmentCalendar from "@pages/Vendor/Appointments/AppointmentCallendar"
+import type { Appointment } from "@pages/Vendor/Appointments/AppointmentTable"
+import AppointmentStats from "@pages/Vendor/Appointments/AppointmentStats"
+import AppointmentTable from "@pages/Vendor/Appointments/AppointmentTable"
+import RecentAppointments from "@pages/Vendor/Appointments/RecentAppointments"
 
 export default function AppointmentsPage() {
     // Lấy dữ liệu lịch hẹn từ server

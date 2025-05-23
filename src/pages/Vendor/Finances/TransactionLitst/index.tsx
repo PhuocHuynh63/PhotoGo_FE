@@ -137,7 +137,7 @@ export default function TransactionList({ transactions }: TransactionListProps) 
                     </TableHeader>
                     <TableBody>
                         {filteredTransactions?.length > 0 ? (
-                            filteredTransactions.map((transaction) => (
+                            filteredTransactions?.map((transaction) => (
                                 <TableRow key={transaction.id}>
                                     <TableCell className="font-medium">{transaction.id}</TableCell>
                                     <TableCell>{formatDate(transaction.date)}</TableCell>

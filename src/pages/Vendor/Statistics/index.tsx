@@ -1,6 +1,6 @@
 "use client"
-import StatisticsCharts from "./Right/statistics-charts"
-import StatisticsOverview from "./Right/statistics-overview"
+import StatisticsCharts from "@pages/Vendor/Statistics/StatisticsChart"
+import StatisticsOverview from "@pages/Vendor/Statistics/StatisticsOverview"
 
 
 export default function StatisticsPage() {
