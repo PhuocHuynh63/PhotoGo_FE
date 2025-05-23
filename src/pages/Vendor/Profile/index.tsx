@@ -1,5 +1,5 @@
-import ProfileDocuments from "./Right/profile-document"
-import ProfileInfo from "./Right/profile-info"
+import ProfileDocuments from "@pages/Vendor/Profile/ProfileDocument"
+import ProfileInfo from "@pages/Vendor/Profile/ProfileInfo"
 
 const profileData = {
     name: "Studio Anh Dương",
