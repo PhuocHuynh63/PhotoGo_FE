@@ -20,17 +20,16 @@ const Footer = () => {
                         />
                         <span className='font-bold text-xl'>PHOTOGO</span>
                     </h3>
-                    <p className="text-gray-400 leading-6 pr-36">
+                    <p className="text-gray-400 leading-6 pr-32">
                         Nền tảng duy nhất của bạn để đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm.
                     </p>
-                    <div className="flex gap-4 mt-3">
+                    <div className="flex gap-3 mt-3">
                         <a href="https://www.facebook.com/photogoagency" target="_blank" rel="noopener noreferrer">
                             <Facebook width={23} />
                         </a>
-                        <a href='https://www.tiktok.com/@photogo.id.vn' target="_blank" rel="noopener noreferrer">
-                            <img src='https://res.cloudinary.com/dodtzdovx/image/upload/v1748055904/Tiktok_zxdxyg.png' style={{ width: '23px' }} />
+                        <a href='https://www.tiktok.com/@photogo.id.vn' target="_blank" rel="noopener noreferrer" className='flex items-center'>
+                            <img src='https://res.cloudinary.com/dodtzdovx/image/upload/v1748056629/Tiktok_zxdxyg.png' style={{ width: '17px' }} />
                         </a>
-
                     </div>
                 </div>
 
