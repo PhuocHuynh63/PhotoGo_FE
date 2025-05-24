@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { ShoppingBag, Clock, Calendar } from "lucide-react"
+import { ShoppingBag, Clock, Calendar, Trash2 } from "lucide-react"
 import Button from "@components/Atoms/Button"
 import { Separator } from "@components/Atoms/Seperator/Seperator"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
@@ -11,8 +11,12 @@ import SingleCheckbox from "@components/Atoms/Checkbox/SingleCheckBox"
 export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS.ShoppingCartModalProps) {
     const [selectedItems, setSelectedItems] = useState<number[]>([])
     const [selectedVendor, setSelectedVendor] = useState<number | null>(null)
+    const [cartItems, setCartItems] = useState<ICOMPONENTS.CartItem[]>(cart)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [itemToDelete, setItemToDelete] = useState<number | null>(null)
+    const [isBulkDelete, setIsBulkDelete] = useState(false)
 
-    const vendorGroups: ICOMPONENTS.VendorGroup[] = cart.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
+    const vendorGroups: ICOMPONENTS.VendorGroup[] = cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
         const existingGroup = groups.find((group) => group.vendor_id === item.vendor_id)
         if (existingGroup) {
             existingGroup.items.push(item)
@@ -29,13 +33,17 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
         }
     }, [isOpen])
 
+    useEffect(() => {
+        setCartItems(cart)
+    }, [cart])
+
     if (!isOpen) return null
 
     const handleItemSelect = (itemId: number, vendorId: number) => {
         if (selectedItems.includes(itemId)) {
             setSelectedItems(selectedItems.filter((id) => id !== itemId))
 
-            const vendorItemsStillSelected = cart
+            const vendorItemsStillSelected = cartItems
                 .filter((item) => item.vendor_id === vendorId && selectedItems.includes(item.id))
                 .filter((item) => item.id !== itemId)
 
@@ -67,6 +75,38 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
         }
     }
 
+    const handleDeleteItem = (itemId: number) => {
+        setItemToDelete(itemId)
+        setIsBulkDelete(false)
+        setShowDeleteConfirm(true)
+    }
+
+    const handleDeleteSelected = () => {
+        setItemToDelete(null)
+        setIsBulkDelete(true)
+        setShowDeleteConfirm(true)
+    }
+
+    const confirmDelete = () => {
+        if (isBulkDelete) {
+            setCartItems(cartItems.filter(item => !selectedItems.includes(item.id)))
+            setSelectedItems([])
+            setSelectedVendor(null)
+        } else if (itemToDelete) {
+            setCartItems(cartItems.filter(item => item.id !== itemToDelete))
+            setSelectedItems(selectedItems.filter(id => id !== itemToDelete))
+        }
+        setShowDeleteConfirm(false)
+        setItemToDelete(null)
+        setIsBulkDelete(false)
+    }
+
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false)
+        setItemToDelete(null)
+        setIsBulkDelete(false)
+    }
+
     const isVendorSelectable = (vendorId: number) => {
         return selectedVendor === null || selectedVendor === vendorId
     }
@@ -76,11 +116,11 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
     }
 
     const calculateTotal = () => {
-        return cart.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + item.price, 0)
+        return cartItems.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + item.price, 0)
     }
 
     const calculateTotalDuration = () => {
-        return cart.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + item.duration, 0)
+        return cartItems.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + item.duration, 0)
     }
 
     const renderItemDetails = (item: ICOMPONENTS.CartItem) => (
@@ -102,11 +142,26 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
             <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between border-b p-4">
                     <h2 className="text-xl font-semibold">Giỏ hàng của bạn</h2>
-                    <Button icon="CircleX" onClick={onClose}><span className="sr-only">Đóng</span></Button>
+
+                    <div className="flex items-center gap-2">
+                        {selectedItems.length > 0 && (
+                            <div className="flex justify-end">
+                                <Button
+                                    variant="outline"
+                                    className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-600"
+                                    onClick={handleDeleteSelected}
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Xóa đã chọn ({selectedItems.length})
+                                </Button>
+                            </div>
+                        )}
+                        <Button icon="CircleX" onClick={onClose}><span className="sr-only">Đóng</span></Button>
+                    </div>
                 </div>
 
                 <div className="overflow-y-auto p-4 max-h-[60vh]">
-                    {cart.length === 0 ? (
+                    {cartItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-8">
                             <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-lg font-medium">Giỏ hàng của bạn đang trống</p>
@@ -147,16 +202,25 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                                                         <div className="relative h-20 w-20 overflow-hidden rounded-md border">
                                                             <Image src={item.img || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
                                                         </div>
-                                                        <div className="flex flex-1 flex-col justify-between">
+                                                        <div className="flex flex-1 flex-col justify-between text-lg">
                                                             <div className="flex justify-between">
                                                                 <div>
                                                                     <h3 className="font-medium">{item.name}</h3>
                                                                     {renderItemDetails(item)}
                                                                 </div>
-                                                                <div className="text-right">
+                                                                <div className="flex items-center gap-2 justify-center">
                                                                     <div className="font-medium">{formatPrice(item.price)}</div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <Button
+                                                                variant="ghost"
+                                                                className="text-red-500 hover:text-red-600 hover:bg-red-50 shadow-none"
+                                                                onClick={() => handleDeleteItem(item.id)}
+                                                            >
+                                                                <Trash2 className="h-5 w-5" />
+                                                            </Button>
                                                         </div>
                                                     </div>
                                                 )
@@ -169,7 +233,7 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                     )}
                 </div>
 
-                {cart.length > 0 && (
+                {cartItems.length > 0 && (
                     <>
                         <Separator />
                         <div className="p-4 space-y-4">
@@ -185,24 +249,58 @@ export default function ShoppingCartModal({ isOpen, onClose, cart }: ICOMPONENTS
                             </div>
                             <div className="flex flex-col gap-2 sm:flex-row">
                                 <Button
-                                    className="flex-1 bg-[#D2B48C] hover:bg-[#C19A6B] text-white"
+                                    className="flex-1 bg-none text-black hover:text-white"
+                                    onClick={onClose}
+                                >
+                                    Tiếp tục mua sắm
+                                </Button>
+                                <Button
+                                    className="flex-1 bg-primary text-white"
                                     onClick={() => console.log("Checkout", selectedItems)}
                                     disabled={selectedItems.length === 0}
                                 >
                                     Thanh toán
                                 </Button>
-                                <Button
-                                    variant="outline"
-                                    className="flex-1 border-[#D2B48C] text-[#D2B48C] hover:bg-[#F5F5DC] hover:text-[#C19A6B]"
-                                    onClick={onClose}
-                                >
-                                    Tiếp tục mua sắm
-                                </Button>
+
                             </div>
                         </div>
                     </>
                 )}
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={cancelDelete}>
+                    <div
+                        className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-lg font-semibold mb-2">
+                            {isBulkDelete ? 'Xóa các mục đã chọn?' : 'Xóa mục này?'}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                            {isBulkDelete
+                                ? `Bạn có chắc chắn muốn xóa ${selectedItems.length} mục đã chọn?`
+                                : 'Bạn có chắc chắn muốn xóa mục này khỏi giỏ hàng?'}
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="outline"
+                                onClick={cancelDelete}
+                                className="text-black border-gray-300 hover:bg-gray-50"
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                onClick={confirmDelete}
+                                className="bg-red-500 hover:bg-red-600 text-white"
+                            >
+                                Xóa
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
