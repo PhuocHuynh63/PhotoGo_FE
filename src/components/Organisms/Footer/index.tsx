@@ -24,11 +24,11 @@ const Footer = () => {
                         Nền tảng duy nhất của bạn để đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm.
                     </p>
                     <div className="flex gap-4 mt-3">
-                        <a href="https://www.facebook.com/gnuh.23" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.facebook.com/photogoagency" target="_blank" rel="noopener noreferrer">
                             <Facebook width={23} />
                         </a>
-                        <a href='https://www.instagram.com/phuoc.huynh63/' target="_blank" rel="noopener noreferrer">
-                            <InstagramIcon width={23} />
+                        <a href='https://www.tiktok.com/@photogo.id.vn' target="_blank" rel="noopener noreferrer">
+                            <img src='https://res.cloudinary.com/dodtzdovx/image/upload/v1748055904/Tiktok_zxdxyg.png' style={{ width: '23px' }} />
                         </a>
 
                     </div>
