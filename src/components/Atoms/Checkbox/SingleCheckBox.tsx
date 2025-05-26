@@ -1,3 +1,5 @@
+'use client';
+
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { FC } from "react";
 import { cn } from "@helpers/CN";

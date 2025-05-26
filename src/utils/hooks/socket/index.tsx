@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useCallback } from 'react';
 import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';

@@ -1,3 +1,5 @@
+'use client';
+
 import ProfileDocuments from "@pages/Vendor/Profile/ProfileDocument"
 import ProfileInfo from "@pages/Vendor/Profile/ProfileInfo"
 
