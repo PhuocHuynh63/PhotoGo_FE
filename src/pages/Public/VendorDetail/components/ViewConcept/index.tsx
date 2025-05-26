@@ -196,23 +196,24 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                 </div>
 
                                 {/* Hình ảnh thu nhỏ */}
-                                <div className="flex space-x-2 mt-4">
-                                    {servicePackage?.serviceConcepts[selectedConcept]?.images?.map((image: string, index: number) => (
-                                        <div
-                                            key={index}
-                                            onClick={() => setCurrentImageIndex(index)}
-                                            className={`w-16 h-16 bg-gray-200 rounded-md cursor-pointer ${currentImageIndex === index ? "border-2 border-primary" : ""
-                                                }`}
-                                        >
-                                            {image && (
-                                                <img
-                                                    src={image}
-                                                    alt={`Concept thumbnail ${index + 1}`}
-                                                    className="w-full h-full object-cover rounded-md"
-                                                />
-                                            )}
-                                        </div>
-                                    ))}
+                                <div className="overflow-x-auto mt-4">
+                                    <div className="flex space-x-2 min-w-max pb-2">
+                                        {servicePackage?.serviceConcepts[selectedConcept]?.images?.map((image: string, index: number) => (
+                                            <div
+                                                key={index}
+                                                onClick={() => setCurrentImageIndex(index)}
+                                                className={`w-20 h-20 bg-gray-200 rounded-md cursor-pointer flex-shrink-0 ${currentImageIndex === index ? "border-2 border-primary" : ""}`}
+                                            >
+                                                {image && (
+                                                    <img
+                                                        src={image}
+                                                        alt={`Concept thumbnail ${index + 1}`}
+                                                        className="w-full h-full object-cover rounded-md"
+                                                    />
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         ) : (
@@ -238,7 +239,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                     </div>
 
                                     <div className="flex items-center mt-4">
-                                        <span className="text-lg font-bold text-primary">{servicePackage?.serviceConcepts[selectedConcept]?.price}</span>
+                                        <span className="text-lg font-bold text-primary">
+                                            {Number(servicePackage?.serviceConcepts[selectedConcept]?.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                        </span>
                                         <span className="text-sm text-gray-500 ml-4">Đặt cọc 50%</span>
                                     </div>
                                     <p className="text-sm text-gray-500 mt-2">Đặt lịch trước 1 tuần để đảm bảo có thời gian chuẩn bị tốt nhất.</p>
