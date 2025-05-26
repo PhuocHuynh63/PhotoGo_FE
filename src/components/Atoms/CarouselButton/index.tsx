@@ -1,3 +1,4 @@
+'use client'
 interface CarouselButtonProps {
     direction: 'prev' | 'next';
     onClick: () => void;

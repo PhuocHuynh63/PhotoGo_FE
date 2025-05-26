@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import LucideIcon from '@components/Atoms/LucideIcon';
 

@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { IVendor } from "@models/vendor/common.model"
 import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
-import { useToken } from "@stores/user/selectors"
+
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
     {

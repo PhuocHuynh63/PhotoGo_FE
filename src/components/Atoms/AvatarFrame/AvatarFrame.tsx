@@ -1,3 +1,4 @@
+'use client'
 import { cn } from "@helpers/CN"
 // import Image from "next/image"
 import { Camera } from "lucide-react"

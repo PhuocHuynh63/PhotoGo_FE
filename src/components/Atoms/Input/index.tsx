@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import styles from './index.module.scss';
 import LucideIcon from '@/components/Atoms/LucideIcon';
