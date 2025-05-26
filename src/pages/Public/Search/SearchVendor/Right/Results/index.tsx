@@ -124,19 +124,19 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                 transition={{ duration: 0.5, ease: "easeOut" }}
                                 onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`)}
                             >
-                                {/* <div className="absolute top-2 right-2 z-10">
+                                <div className="absolute top-2 right-2 z-10">
                                     <Button className="shadow-none hover:bg-none flex items-center justify-center">
-                                        <LucideIcon name="Heart" iconSize={18} fill={vendor.featured ? "red" : "none"} iconColor={vendor.featured ? "red" : "black"} />
+                                        <LucideIcon name="Heart" iconSize={18} fill={vendor?.isRemarkable ? "red" : "none"} iconColor={vendor?.isRemarkable ? "red" : "black"} />
                                     </Button>
                                 </div>
 
-                                {vendor.featured && (
+                                {vendor?.isRemarkable && (
                                     <div className="absolute top-2 left-2 z-10">
                                         <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
                                             Nổi bật
                                         </span>
                                     </div>
-                                )} */}
+                                )}
 
                                 <div className="relative">
                                     {!vendor.status && (
@@ -212,9 +212,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             <LucideIcon name="Star" iconSize={14} fill="yellow" />
                                         </div>
                                         <span className="text-sm font-medium ml-1">
-                                            {/* {vendor.rating} */}
+                                            {vendor?.averageRating}
                                         </span>
-                                        <span className="text-xs text-gray-500 ml-1">({/*{vendor?.reviews?.length}*/} đánh giá)</span>
+                                        <span className="text-xs text-gray-500 ml-1">({vendor?.reviews?.length} đánh giá)</span>
                                     </div>
 
 

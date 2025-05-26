@@ -27,7 +27,9 @@ const mockVendorData = {
   servicePackages: [],
   averageRating: 4.5,
   created_at: "2024-01-01",
-  updated_at: "2024-01-01"
+  updated_at: "2024-01-01",
+  reviews: [],
+  isRemarkable: false
 };
 
 export default function Home() {
