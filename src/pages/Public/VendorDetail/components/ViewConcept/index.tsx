@@ -54,13 +54,13 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     const [selectedConcept, setSelectedConcept] = useState(0);
     const handlePrevImage = () => {
         setCurrentImageIndex((prev) =>
-            prev === 0 ? servicePackage.serviceConcepts[selectedConcept].image.length - 1 : prev - 1
+            prev === 0 ? servicePackage.serviceConcepts[selectedConcept].images.length - 1 : prev - 1
         );
     };
 
     const handleNextImage = () => {
         setCurrentImageIndex((prev) =>
-            prev === servicePackage.serviceConcepts[selectedConcept].image.length - 1 ? 0 : prev + 1
+            prev === servicePackage.serviceConcepts[selectedConcept].images.length - 1 ? 0 : prev + 1
         );
     };
     //#endregion
@@ -101,7 +101,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                     <div className="lg:col-span-1 overflow-y-hidden hover:overflow-y-auto">
                         <h3 className="font-semibold text-lg mb-4 sticky top-0 bg-white z-10 pb-4 border-b-2">Chọn Concept</h3>
                         <div className="pr-2">
-                            {servicePackage?.serviceConcepts.map((concept, index) => (
+                            {servicePackage?.serviceConcepts?.map((concept, index) => (
                                 <div
                                     key={index}
                                     onClick={() => {
@@ -112,9 +112,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                         }`}
                                 >
                                     <div className="w-12 h-12 bg-gray-200 rounded-md mr-3">
-                                        {concept.image?.length > 0 && (
+                                        {concept.images?.length > 0 && (
                                             <img
-                                                src={concept.image[0]}
+                                                src={concept.images[0]}
                                                 alt="Concept thumbnail"
                                                 className="w-12 h-12 object-cover rounded-md"
                                             />
@@ -153,9 +153,9 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                             <div className="relative">
                                 {/* Khu vực hình ảnh */}
                                 <div className="bg-gray-100 h-96 flex items-center justify-center rounded-lg relative">
-                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.length > 0 ? (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.images?.length > 0 ? (
                                         <img
-                                            src={servicePackage?.serviceConcepts[selectedConcept]?.image[currentImageIndex]}
+                                            src={servicePackage?.serviceConcepts[selectedConcept]?.images[currentImageIndex]}
                                             alt="Concept image"
                                             className="max-h-full max-w-full object-contain"
                                         />
@@ -170,7 +170,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                         </svg>
                                     )}
                                     {/* Nút điều hướng */}
-                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.length > 1 && (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.images?.length > 1 && (
                                         <>
                                             <button
                                                 onClick={handlePrevImage}
@@ -189,7 +189,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                                 </svg>
                                             </button>
                                             <div className="absolute bottom-4 right-4 bg-gray-700 text-white text-sm px-2 py-1 rounded-full">
-                                                {currentImageIndex + 1}/{servicePackage?.serviceConcepts[selectedConcept]?.image?.length}
+                                                {currentImageIndex + 1}/{servicePackage?.serviceConcepts[selectedConcept]?.images?.length}
                                             </div>
                                         </>
                                     )}
@@ -197,7 +197,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
 
                                 {/* Hình ảnh thu nhỏ */}
                                 <div className="flex space-x-2 mt-4">
-                                    {servicePackage?.serviceConcepts[selectedConcept]?.image?.map((image: string, index: number) => (
+                                    {servicePackage?.serviceConcepts[selectedConcept]?.images?.map((image: string, index: number) => (
                                         <div
                                             key={index}
                                             onClick={() => setCurrentImageIndex(index)}
