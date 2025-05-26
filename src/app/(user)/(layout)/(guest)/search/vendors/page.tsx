@@ -16,7 +16,7 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     if (resolvedParams.minPrice) queryParams.append('minPrice', resolvedParams.minPrice as string);
     if (resolvedParams.maxPrice) queryParams.append('maxPrice', resolvedParams.maxPrice as string);
     if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
-    if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
+    // if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
     if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
     if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
     if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
