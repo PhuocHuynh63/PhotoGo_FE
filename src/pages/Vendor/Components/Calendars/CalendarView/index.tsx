@@ -64,8 +64,8 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
     // Tạo khung giờ làm việc
     const generateTimeSlots = () => {
         const slots = []
-        const start = Number.parseInt(workingHours.start.split(":")[0])
-        const end = Number.parseInt(workingHours.end.split(":")[0])
+        const start = Number.parseInt(workingHours?.start?.split(":")[0] || "00")
+        const end = Number.parseInt(workingHours?.end?.split(":")[0] || "00")
 
         for (let hour = start; hour <= end; hour++) {
             slots.push(`${hour.toString().padStart(2, "0")}:00`)
@@ -79,17 +79,17 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
     // Lấy lịch hẹn cho ngày cụ thể
     const getAppointmentsForDate = (date: Date) => {
         const dateStr = date.toISOString().split("T")[0]
-        return appointments.filter((apt) => apt.date === dateStr)
+        return appointments?.filter((apt) => apt?.date === dateStr)
     }
 
     // Tính toán vị trí của appointment trong lưới
     const getAppointmentPosition = (appointment: Appointment) => {
-        const startHour = Number.parseInt(appointment.startTime.split(":")[0])
-        const startMinute = Number.parseInt(appointment.startTime.split(":")[1])
-        const endHour = Number.parseInt(appointment.endTime.split(":")[0])
-        const endMinute = Number.parseInt(appointment.endTime.split(":")[1])
+        const startHour = Number.parseInt(appointment?.startTime?.split(":")[0] || "00")
+        const startMinute = Number.parseInt(appointment?.startTime?.split(":")[1] || "00")
+        const endHour = Number.parseInt(appointment?.endTime?.split(":")[0] || "00")
+        const endMinute = Number.parseInt(appointment?.endTime?.split(":")[1] || "00")
 
-        const workStart = Number.parseInt(workingHours.start.split(":")[0])
+        const workStart = Number.parseInt(workingHours?.start?.split(":")[0] || "00")
         const top = (((startHour - workStart) * 60 + startMinute) / 60) * 60 // 60px per hour
         const duration = ((endHour - startHour) * 60 + (endMinute - startMinute)) / 60
         const height = duration * 60 - 2 // -2px for gap
@@ -220,7 +220,7 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                             {/* Header với các ngày trong tuần */}
                             <div className="grid grid-cols-8 border-b">
                                 <div className="p-3 text-sm font-medium text-gray-500 border-r">Giờ</div>
-                                {weekDays.map((day, index) => (
+                                {weekDays?.map((day, index) => (
                                     <div key={index} className="p-3 text-center border-r last:border-r-0">
                                         <div className="text-sm font-medium">{day.toLocaleDateString("vi-VN", { weekday: "short" })}</div>
                                         <div
@@ -238,7 +238,7 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                 <div className="grid grid-cols-8">
                                     {/* Cột thời gian */}
                                     <div className="border-r">
-                                        {timeSlots.map((time) => (
+                                        {timeSlots?.map((time) => (
                                             <div key={time} className="h-16 p-2 text-xs text-gray-500 border-b">
                                                 {time}
                                             </div>
@@ -246,12 +246,12 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                     </div>
 
                                     {/* Các cột ngày */}
-                                    {weekDays.map((day, dayIndex) => (
+                                    {weekDays?.map((day, dayIndex) => (
                                         <div key={dayIndex} className="relative border-r last:border-r-0">
-                                            {timeSlots.map((time) => (
+                                            {timeSlots?.map((time) => (
                                                 <div key={time} className="h-16 border-b border-gray-100 hover:bg-gray-50">
                                                     {/* Hiển thị giờ nghỉ trưa */}
-                                                    {time === workingHours.breakStart && (
+                                                    {time === workingHours?.breakStart && (
                                                         <div className="absolute inset-0 bg-gray-100 opacity-50 z-10 flex items-center justify-center">
                                                             <span className="text-xs text-gray-500">Nghỉ trưa</span>
                                                         </div>
@@ -260,7 +260,7 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                             ))}
 
                                             {/* Hiển thị appointments */}
-                                            {getAppointmentsForDate(day).map((appointment) => {
+                                            {getAppointmentsForDate(day)?.map((appointment) => {
                                                 const position = getAppointmentPosition(appointment)
                                                 return (
                                                     <div
@@ -291,7 +291,7 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                     <div className="p-4">
                         <div className="space-y-2">
                             {getAppointmentsForDate(currentDate).length > 0 ? (
-                                getAppointmentsForDate(currentDate).map((appointment) => (
+                                getAppointmentsForDate(currentDate)?.map((appointment) => (
                                     <div
                                         key={appointment.id}
                                         className={`p-4 rounded-lg border-l-4 cursor-pointer ${getStatusColor(appointment.status, appointment.color)}`}

@@ -77,7 +77,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                             <Calendar className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold">{stats.totalThisWeek}</p>
+                            <p className="text-2xl font-bold">{stats?.totalThisWeek}</p>
                             <p className="text-xs text-gray-500">Tổng lịch hẹn</p>
                         </div>
                     </div>
@@ -87,7 +87,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                             <Users className="h-5 w-5 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold">{stats.confirmedThisWeek}</p>
+                            <p className="text-2xl font-bold">{stats?.confirmedThisWeek}</p>
                             <p className="text-xs text-gray-500">Đã xác nhận</p>
                         </div>
                     </div>
@@ -97,7 +97,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                             <Clock className="h-5 w-5 text-yellow-600" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold">{stats.pendingThisWeek}</p>
+                            <p className="text-2xl font-bold">{stats?.pendingThisWeek}</p>
                             <p className="text-xs text-gray-500">Chờ xác nhận</p>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                             <DollarSign className="h-5 w-5 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-lg font-bold">{formatCurrency(stats.revenueThisWeek)}</p>
+                            <p className="text-lg font-bold">{formatCurrency(stats?.revenueThisWeek || 0)}</p>
                             <p className="text-xs text-gray-500">Doanh thu dự kiến</p>
                         </div>
                     </div>
@@ -118,22 +118,22 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
             <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg font-medium">Hôm nay</CardTitle>
-                    <p className="text-sm text-gray-500">{todayAppointments.length} lịch hẹn</p>
+                    <p className="text-sm text-gray-500">{todayAppointments?.length} lịch hẹn</p>
                 </CardHeader>
                 <CardContent>
-                    {todayAppointments.length > 0 ? (
+                    {todayAppointments?.length > 0 ? (
                         <div className="space-y-3">
-                            {todayAppointments.map((appointment) => (
-                                <div key={appointment.id} className="p-3 bg-gray-50 rounded-lg">
+                            {todayAppointments?.map((appointment) => (
+                                <div key={appointment?.id} className="p-3 bg-gray-50 rounded-lg">
                                     <div className="flex items-start gap-3">
                                         <Avatar className="h-8 w-8">
-                                            <AvatarImage src="/placeholder.svg" alt={appointment.customerName} />
-                                            <AvatarFallback>{appointment.customerName.charAt(0)}</AvatarFallback>
+                                            <AvatarImage src="/placeholder.svg" alt={appointment?.customerName} />
+                                            <AvatarFallback>{appointment?.customerName.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-sm">{appointment.customerName}</p>
-                                            <p className="text-xs text-gray-500 truncate">{appointment.service}</p>
-                                            <p className="text-xs text-blue-600 font-medium">{appointment.time}</p>
+                                            <p className="font-medium text-sm">{appointment?.customerName}</p>
+                                            <p className="text-xs text-gray-500 truncate">{appointment?.service}</p>
+                                            <p className="text-xs text-blue-600 font-medium">{appointment?.time}</p>
                                         </div>
                                     </div>
                                     <div className="mt-2 flex gap-1">
@@ -161,24 +161,24 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                     <CardTitle className="text-lg font-medium">Sắp tới</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {upcomingAppointments.length > 0 ? (
+                    {upcomingAppointments?.length > 0 ? (
                         <div className="space-y-3">
-                            {upcomingAppointments.map((appointment) => (
-                                <div key={appointment.id} className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg">
+                            {upcomingAppointments?.map((appointment) => (
+                                <div key={appointment?.id} className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg">
                                     <Avatar className="h-8 w-8">
-                                        <AvatarImage src="/placeholder.svg" alt={appointment.customerName} />
-                                        <AvatarFallback>{appointment.customerName.charAt(0)}</AvatarFallback>
+                                        <AvatarImage src="/placeholder.svg" alt={appointment?.customerName} />
+                                        <AvatarFallback>{appointment?.customerName.charAt(0)}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <p className="font-medium text-sm">{appointment.customerName}</p>
-                                                <p className="text-xs text-gray-500 truncate">{appointment.service}</p>
+                                                <p className="font-medium text-sm">{appointment?.customerName}</p>
+                                                <p className="text-xs text-gray-500 truncate">{appointment?.service}</p>
                                                 <p className="text-xs text-blue-600">
-                                                    {appointment.date} • {appointment.time}
+                                                    {appointment?.date} • {appointment?.time}
                                                 </p>
                                             </div>
-                                            {getStatusBadge(appointment.status)}
+                                            {getStatusBadge(appointment?.status || "")}
                                         </div>
                                     </div>
                                 </div>
