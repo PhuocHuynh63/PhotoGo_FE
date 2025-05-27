@@ -327,7 +327,10 @@ export default function Header({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })}
+                        onClick={() => {
+                            console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
+                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false })
+                        }}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -502,6 +505,7 @@ export default function Header({ user }: PAGES.IHeader) {
                                         </Link>
                                         <div
                                             onClick={() => {
+                                                console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
                                                 signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
                                                 setIsMobileMenuOpen(false);
                                             }}
