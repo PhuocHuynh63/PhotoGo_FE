@@ -1,10 +1,11 @@
 "use client"
 
-import AppointmentCalendar from "@pages/Vendor/Appointments/AppointmentCallendar"
-import type { Appointment } from "@pages/Vendor/Appointments/AppointmentTable"
-import AppointmentStats from "@pages/Vendor/Appointments/AppointmentStats"
-import AppointmentTable from "@pages/Vendor/Appointments/AppointmentTable"
-import RecentAppointments from "@pages/Vendor/Appointments/RecentAppointments"
+import AppointmentCalendar from "@pages/Vendor/Components/Appointment/AppointmentCallendar"
+import type { Appointment } from "@pages/Vendor/Components/Appointment/AppointmentTable"
+import AppointmentStats from "@pages/Vendor/Components/Appointment/AppointmentStats"
+import AppointmentTable from "@pages/Vendor/Components/Appointment/AppointmentTable"
+import RecentAppointments from "@pages/Vendor/Components/Appointment/RecentAppointments"
+import { Tabs, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
 
 export default function AppointmentsPage() {
     // Lấy dữ liệu lịch hẹn từ server
@@ -110,10 +111,45 @@ export default function AppointmentsPage() {
     }
 
     return (
-        <div className="mt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold">Quản lý đơn đặt lịch</h2>
             <p className="text-sm text-gray-500">Quản lý các đơn đặt lịch của khách hàng</p>
-
+            {/* <div className="border-b border-gray-200">
+                <Tabs defaultValue="all">
+                    <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+                        <TabsTrigger
+                            value="all"
+                            className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                        >
+                            Tất cả
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="pending"
+                            className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                        >
+                            Chờ xác nhận
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="confirmed"
+                            className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                        >
+                            Đã xác nhận
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="completed"
+                            className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                        >
+                            Hoàn thành
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="cancelled"
+                            className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                        >
+                            Đã hủy
+                        </TabsTrigger>
+                    </TabsList>
+                </Tabs>
+            </div> */}
             <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                     <AppointmentTable appointments={appointmentsData.appointments} />

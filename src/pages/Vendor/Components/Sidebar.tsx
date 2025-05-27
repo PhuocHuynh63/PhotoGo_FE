@@ -1,18 +1,47 @@
 "use client"
 
-import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Calendar1 } from "lucide-react"
+import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Calendar1, Building2, Store, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/Atoms/ui/collapsible"
+import { LucideIcon } from "lucide-react"
+import { signOut } from "next-auth/react"
+
+type MenuItem = {
+    icon: LucideIcon
+    label: string
+    href: string
+}
+
+type CollapsibleMenuItem = {
+    type: "collapsible"
+    icon: LucideIcon
+    label: string
+    items: MenuItem[]
+}
+
+type SidebarItem = MenuItem | CollapsibleMenuItem
+
+const isMenuItem = (item: SidebarItem): item is MenuItem => {
+    return !('type' in item)
+}
 
 export default function Sidebar() {
     const pathname = usePathname()
 
-    const menuItems = [
+    const menuItems: SidebarItem[] = [
         { icon: User, label: "Hồ sơ", href: "/vendor/profile" },
         { icon: BarChart, label: "Thống kê", href: "/vendor/statistics" },
         { icon: Calendar, label: "Lịch hẹn", href: "/vendor/appointments" },
         { icon: Calendar1, label: "Lịch làm việc", href: "/vendor/calendar" },
         { icon: Wallet, label: "Tài chính", href: "/vendor/finance" },
+        {
+            type: "collapsible", icon: Store, label: "Quản lý dịch vụ", items: [
+                { icon: Store, label: "Dịch vụ", href: "/vendor/services" },
+                { icon: Building2, label: "Chi nhánh", href: "/vendor/branches" },
+                { icon: BarChart, label: "Thống kê", href: "/vendor/service-statistics" },
+            ]
+        },
         { icon: MessageSquare, label: "Tin nhắn", href: "/vendor/messages" },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
         { icon: Settings, label: "Cài đặt", href: "/vendor/settings" },
@@ -33,22 +62,57 @@ export default function Sidebar() {
             </div>
 
             <div className="flex-1 space-y-4 p-4">
-                {menuItems.map((item, index) => (
-                    <Link key={index} href={item.href}>
-                        <div className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${
-                            pathname === item.href
-                                ? "bg-orange-50 text-orange-600"
-                                : "text-gray-700 hover:bg-gray-100"
-                        }`}>
-                            <item.icon className="w-5 h-5" />
-                            <span>{item.label}</span>
-                        </div>
-                    </Link>
-                ))}
+                {menuItems.map((item, index) => {
+                    if ('type' in item && item.type === "collapsible") {
+                        return (
+                            <Collapsible key={index} className="mb-0">
+                                <CollapsibleTrigger className="group flex items-center justify-between w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                        <item.icon className="w-5 h-5" />
+                                        <span>{item.label}</span>
+                                    </div>
+                                    <ChevronDown className="w-5 h-5 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                                </CollapsibleTrigger>
+
+                                <CollapsibleContent className="ml-4 mt-2 space-y-2">
+                                    {item.items.map((subItem, subIndex) => (
+                                        <Link key={subIndex} href={subItem.href}>
+                                            <div className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${pathname === subItem.href
+                                                ? "bg-orange-50 text-orange-600"
+                                                : "text-gray-700 hover:bg-gray-100"
+                                                }`}>
+                                                <subItem.icon className="w-5 h-5" />
+                                                <span>{subItem.label}</span>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </CollapsibleContent>
+                            </Collapsible>
+                        )
+                    }
+
+                    if (isMenuItem(item)) {
+                        return (
+                            <Link key={index} href={item.href}>
+                                <div className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${pathname === item.href
+                                    ? "bg-orange-50 text-orange-600"
+                                    : "text-gray-700 hover:bg-gray-100"
+                                    }`}>
+                                    <item.icon className="w-5 h-5" />
+                                    <span>{item.label}</span>
+                                </div>
+                            </Link>
+                        )
+                    }
+
+                    return null
+                })}
             </div>
 
             <div className="p-4 border-t border-gray-200">
-                <button className="flex items-center gap-2 p-2 text-red-500 hover:bg-red-50 rounded-md w-full">
+                <button className="flex items-center gap-2 p-2 text-red-500 hover:bg-red-50 rounded-md w-full justify-center cursor-pointer" onClick={() => {
+                    signOut()
+                }}>
                     <LogOut className="w-5 h-5" />
                     <span>Đăng xuất</span>
                 </button>

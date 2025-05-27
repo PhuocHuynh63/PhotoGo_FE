@@ -1,11 +1,11 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
-import SupportFAQ from "@pages/Vendor/Support/SupportFAQ"
-import SupportContact from "@pages/Vendor/Support/SupportContact"
-import SupportTickets from "@pages/Vendor/Support/SupportTickets"
-import UserGuides from "@pages/Vendor/Support/UserGuides"
-import Announcements from "@pages/Vendor/Support/Announcements"
+import SupportFAQ from "@pages/Vendor/Components/Support/SupportFAQ"
+import SupportContact from "@pages/Vendor/Components/Support/SupportContact"
+import SupportTickets from "@pages/Vendor/Components/Support/SupportTickets"
+import UserGuides from "@pages/Vendor/Components/Support/UserGuides"
+import Announcements from "@pages/Vendor/Components/Support/Announcements"
 
 
 
@@ -133,7 +133,7 @@ export default function SupportPage() {
 
     return (
 
-        <div className="mt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold">Trung tâm hỗ trợ</h2>
             <p className="text-sm text-gray-500">Trung tâm hỗ trợ và câu hỏi thường gặp</p>
 

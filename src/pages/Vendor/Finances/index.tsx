@@ -2,16 +2,16 @@
 
 import { TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
 import { Tabs } from "@components/Atoms/ui/tabs"
-import FinanceOverview from "@pages/Vendor/Finances/FinanceOverview"
-import RevenueReports from "@pages/Vendor/Finances/RevenueReport"
-import InvoiceList from "@pages/Vendor/Finances/InvoiceList"
-import TaxReports from "@pages/Vendor/Finances/TaxReport"
-import TransactionHistory from "@pages/Vendor/Finances/TransactionHistory"
-import UnpaidInvoices from "@pages/Vendor/Finances/UnpaidInvoice"
-import BankAccounts from "@pages/Vendor/Finances/BankAccount"
-import MonthlyRevenue from "@pages/Vendor/Finances/MonthlyRevenue"
-import FinancialSummary from "@pages/Vendor/Finances/FinancialSummary"
-import RecentTransactions from "@pages/Vendor/Finances/RecentTransactions"
+import FinanceOverview from "@pages/Vendor/Components/Finances/FinanceOverview"
+import RevenueReports from "@pages/Vendor/Components/Finances/RevenueReport"
+import InvoiceList from "@pages/Vendor/Components/Finances/InvoiceList"
+import TaxReports from "@pages/Vendor/Components/Finances/TaxReport"
+import TransactionHistory from "@pages/Vendor/Components/Finances/TransactionHistory"
+import UnpaidInvoices from "@pages/Vendor/Components/Finances/UnpaidInvoice"
+import BankAccounts from "@pages/Vendor/Components/Finances/BankAccount"
+import MonthlyRevenue from "@pages/Vendor/Components/Finances/MonthlyRevenue"
+import FinancialSummary from "@pages/Vendor/Components/Finances/FinancialSummary"
+import RecentTransactions from "@pages/Vendor/Components/Finances/RecentTransactions"
 
 export default function FinancePage() {
     // Lấy dữ liệu tài chính từ server
@@ -314,7 +314,7 @@ export default function FinancePage() {
 
     return (
 
-        <div className="mt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold">Tài chính</h2>
             <p className="text-sm text-gray-500">Quản lý tài chính và giao dịch của bạn</p>
 
