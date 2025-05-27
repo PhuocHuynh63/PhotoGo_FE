@@ -1,6 +1,6 @@
 "use client"
-import StatisticsCharts from "@pages/Vendor/Statistics/StatisticsChart"
-import StatisticsOverview from "@pages/Vendor/Statistics/StatisticsOverview"
+import StatisticsCharts from "@pages/Vendor/Components/Statistics/StatisticsChart"
+import StatisticsOverview from "@pages/Vendor/Components/Statistics/StatisticsOverview"
 
 
 export default function StatisticsPage() {
@@ -78,11 +78,11 @@ export default function StatisticsPage() {
     return (
 
 
-        <div className="mt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold">Thống kê</h2>
             <p className="text-sm text-gray-500">Xem thống kê hoạt động của bạn</p>
 
-            <div className="mt-4">
+            <div>
                 <StatisticsOverview data={statisticsData.overview} />
                 <StatisticsCharts data={statisticsData.charts} />
             </div>

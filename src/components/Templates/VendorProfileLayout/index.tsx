@@ -15,7 +15,9 @@ export default function VendorProfileLayoutClient({
             <Sidebar />
             <div className="flex-1 p-6">
                 <Header />
-                {children}
+                <div className="mt-10">
+                    {children}
+                </div>
             </div>
         </main>
     )

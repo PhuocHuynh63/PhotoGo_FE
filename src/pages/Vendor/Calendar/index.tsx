@@ -364,7 +364,7 @@ export default function CalendarPage() {
 
     return (
 
-        <div className="mt-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold">Lịch làm việc</h2>
             <p className="text-sm text-gray-500">Theo dõi lịch hẹn và quản lý thời gian làm việc</p>
 
