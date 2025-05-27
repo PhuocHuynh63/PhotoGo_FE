@@ -338,7 +338,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => signOut()}
+                        onClick={() => signOut({ callbackUrl: process.env.NEXTAUTH_URL })}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -499,7 +499,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                         </Link>
                                         <div
                                             onClick={() => {
-                                                signOut();
+                                                signOut({ callbackUrl: process.env.NEXTAUTH_URL });
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
