@@ -338,7 +338,10 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })}
+                        onClick={() => {
+                            console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
+                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false })
+                        }}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -499,7 +502,8 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                         </Link>
                                         <div
                                             onClick={() => {
-                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
+                                                console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
+                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false });
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
