@@ -104,12 +104,14 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
               ]}
               className="flex items-center gap-1 px-3 py-2 border rounded-md bg-white text-dark shadow-lg cursor-pointer"
             />
-            <Button
-              className={`md:hidden px-3 py-2   border rounded-md shadow-lg text-dark hover:bg-gray-100 ${isFilterOpen ? "bg-primary" : ""}`}
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-            >
-              <LucideIcon name="SlidersHorizontal" iconSize={20} />
-            </Button>
+            <div className="md:hidden">
+              <Button
+                className={`px-3 py-2 border rounded-md shadow-lg text-dark hover:bg-gray-100 ${isFilterOpen ? "bg-primary" : ""}`}
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+              >
+                <LucideIcon name="SlidersHorizontal" iconSize={20} />
+              </Button>
+            </div>
           </div>
         </div>
 
