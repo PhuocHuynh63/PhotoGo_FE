@@ -338,10 +338,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => {
-                            console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
-                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })
-                        }}
+                        onClick={() => handleLogout()}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -501,11 +498,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                             </div>
                                         </Link>
                                         <div
-                                            onClick={() => {
-                                                console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
-                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
-                                                setIsMobileMenuOpen(false);
-                                            }}
+                                            onClick={() => handleLogout()}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
                                         >
                                             <LucideIcon name="LogOut" iconSize={20} />
@@ -520,6 +513,13 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
             )}
         </AnimatePresence>
     );
+    //#endregion
+
+    //#region Handle logout
+    const handleLogout = () => {
+        signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false });
+        window.location.href = '/'
+    };
     //#endregion
 
     return (
