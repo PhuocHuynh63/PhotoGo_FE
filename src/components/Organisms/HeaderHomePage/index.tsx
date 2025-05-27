@@ -340,7 +340,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                         icon="LogOut"
                         onClick={() => {
                             console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
-                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })
+                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false })
                         }}
                     >
                         <span>Đăng xuất</span>
@@ -503,7 +503,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                         <div
                                             onClick={() => {
                                                 console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
-                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
+                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false });
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
