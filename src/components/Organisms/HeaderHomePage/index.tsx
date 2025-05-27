@@ -517,8 +517,11 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
 
     //#region Handle logout
     const handleLogout = () => {
-        signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false });
-        window.location.href = '/'
+        const baseUrl =
+            typeof window !== "undefined"
+                ? window.location.origin
+                : process.env.NEXT_PUBLIC_BASE_URL || "/";
+        signOut({ callbackUrl: baseUrl });
     };
     //#endregion
 
