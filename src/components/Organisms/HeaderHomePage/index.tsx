@@ -338,7 +338,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => signOut({ callbackUrl: process.env.NEXTAUTH_URL })}
+                        onClick={() => handleLogout()}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -498,10 +498,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                             </div>
                                         </Link>
                                         <div
-                                            onClick={() => {
-                                                signOut({ callbackUrl: process.env.NEXTAUTH_URL });
-                                                setIsMobileMenuOpen(false);
-                                            }}
+                                            onClick={() => handleLogout()}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
                                         >
                                             <LucideIcon name="LogOut" iconSize={20} />
@@ -516,6 +513,13 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
             )}
         </AnimatePresence>
     );
+    //#endregion
+
+    //#region Handle logout
+    const handleLogout = () => {
+        console.log(">>>>>>>>>>>>>>", process.env.NEXTAUTH_URL);
+        signOut({ callbackUrl: process.env.NEXTAUTH_URL });
+    };
     //#endregion
 
     return (
