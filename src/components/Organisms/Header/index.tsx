@@ -327,7 +327,7 @@ export default function Header({ user }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"
-                        onClick={() => signOut({ callbackUrl: "https://photogo.id.vn" })}
+                        onClick={() => signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })}
                     >
                         <span>Đăng xuất</span>
                     </DropdownMenuItem>
@@ -502,7 +502,7 @@ export default function Header({ user }: PAGES.IHeader) {
                                         </Link>
                                         <div
                                             onClick={() => {
-                                                signOut({ callbackUrl: "https://photogo.id.vn" });
+                                                signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL });
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
