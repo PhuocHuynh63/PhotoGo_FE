@@ -329,7 +329,7 @@ export default function Header({ user }: PAGES.IHeader) {
                         icon="LogOut"
                         onClick={() => {
                             console.log('>>>>>>>>>>>>>>>>', process.env.NEXT_PUBLIC_BASE_URL);
-                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL, redirect: false })
+                            signOut({ callbackUrl: process.env.NEXT_PUBLIC_BASE_URL })
                         }}
                     >
                         <span>Đăng xuất</span>
