@@ -1,6 +1,7 @@
 import envConfig from "@configs/env";
 import { getSession } from "next-auth/react";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../lib/authOptions";
 type CustomOptions = RequestInit & {
   baseUrl?: string;
 };
@@ -12,10 +13,16 @@ const request = async <Response>(
 ) => {
   let accessToken: string | undefined;
 
-  // Chỉ gọi getSession nếu đang chạy ở client
-  if (typeof window !== "undefined") {
-    const session = await getSession();
-    accessToken = (session as any)?.accessToken;
+  try {
+    if (typeof window !== "undefined") {
+      const session = await getSession();
+      accessToken = (session as any)?.accessToken;
+    } else {
+      const session = await getServerSession(authOptions);
+      accessToken = (session as any)?.accessToken;
+    }
+  } catch (error) {
+    console.error("Error getting session:", error);
   }
 
   const headers = {
