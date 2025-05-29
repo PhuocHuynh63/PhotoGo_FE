@@ -14,7 +14,15 @@ const packageService = {
     },
 
     createPackage: async (data: FormData) => {
-        return await http.post("/service-packages", data)
+        return await http.post("/service-packages", data, {
+            cache: 'no-store'
+        })
+    },
+
+    createServiceConcept: async (data: FormData) => {
+        return await http.post("/service-packages/service-concept", data, {
+            cache: 'no-store'
+        })
     }
 }
 

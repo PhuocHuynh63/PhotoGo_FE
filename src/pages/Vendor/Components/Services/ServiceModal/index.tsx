@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useSession } from "@components/Templates/VendorProfileLayout"
 import {
     Dialog,
     DialogContent,
@@ -27,14 +28,16 @@ interface CreateServiceModalProps {
     onClose: () => void
     onSuccess: () => void
     serviceTypes: IServiceType[]
-    vendorId: string
+    vendor: any
+    mode: "create" | "edit" | "view"
 }
 
 interface ServiceFormData {
     name: string
     description: string
-    status: "ACTIVE" | "INACTIVE"
+    status: "hoạt động" | "không hoạt động"
     image?: File
+    vendorId: string
 }
 
 interface ConceptFormData {
@@ -43,23 +46,25 @@ interface ConceptFormData {
     price: number
     duration: number
     serviceTypeIds: string[]
-    status: "ACTIVE" | "INACTIVE"
+    status: "hoạt động" | "không hoạt động"
     images: File[]
 }
 
 
-export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes, vendorId }: CreateServiceModalProps) {
+export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes, vendor, mode }: CreateServiceModalProps) {
     const [step, setStep] = useState<"service" | "concept">("service")
     const [isLoading, setIsLoading] = useState(false)
     const [createdServiceId, setCreatedServiceId] = useState<string>("")
-
+    // console.log(session)
     // Service form data
+    // console.log(serviceTypes)
     const [serviceData, setServiceData] = useState<ServiceFormData>({
         name: "",
         description: "",
-        status: "ACTIVE",
+        image: undefined,
+        vendorId: vendor?.id,
+        status: "hoạt động",
     })
-
     // Concept form data
     const [conceptData, setConceptData] = useState<ConceptFormData>({
         name: "",
@@ -67,10 +72,22 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
         price: 0,
         duration: 60,
         serviceTypeIds: [],
-        status: "ACTIVE",
+        status: "hoạt động",
         images: [],
     })
-
+    // useEffect(() => {
+    //     if (mode === "edit") {
+    //       setServiceData(vendor.servicesPage)
+    //     } else if (mode === "create") {
+    //       setServiceData({
+    //         name: "",
+    //         description: "",
+    //         image: undefined,
+    //         vendorId: vendor.id,
+    //         status: "hoạt động",
+    //       })
+    //     }
+    //   }, [vendor, mode])
     const [serviceImagePreview, setServiceImagePreview] = useState<string>("")
     const [conceptImagePreviews, setConceptImagePreviews] = useState<string[]>([])
 
@@ -122,7 +139,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
         }))
     }
 
-    // Cập nhật handleCreateService để sử dụng Server Action
+    // Cập nhật handleCreateService để sử dụng accessToken
     const handleCreateService = async () => {
         if (!serviceData.name || !serviceData.description) {
             toast.error("Vui lòng điền đầy đủ thông tin dịch vụ")
@@ -131,24 +148,22 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
 
         setIsLoading(true)
         try {
-            // Tạo FormData để gửi lên server
             const formData = new FormData()
             formData.append("name", serviceData.name)
             formData.append("description", serviceData.description)
-            formData.append("vendorId", vendorId)
+            formData.append("vendorId", serviceData.vendorId)
             formData.append("status", serviceData.status)
-
             if (serviceData.image) {
                 formData.append("image", serviceData.image)
             }
 
-            // Gọi Server Action
             const response = await packageService.createPackage(formData) as IBackendResponse<any>
-            console.log(response)
-            if (response.statusCode === 200) {
-                setCreatedServiceId(response.data.id)
+            if (response.statusCode === 201) {
+                setCreatedServiceId(response?.data?.id)
                 setStep("concept")
                 toast.success("Tạo dịch vụ thành công! Tiếp tục tạo gói dịch vụ.")
+                // Trigger data refresh
+                onSuccess()
             } else {
                 toast.error(response.error || "Có lỗi xảy ra khi tạo dịch vụ")
             }
@@ -174,32 +189,29 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
 
         setIsLoading(true)
         try {
-            // Tạo FormData để gửi lên server
             const formData = new FormData()
             formData.append("name", conceptData.name)
             formData.append("description", conceptData.description)
             formData.append("price", conceptData.price.toString())
             formData.append("duration", conceptData.duration.toString())
             formData.append("servicePackageId", createdServiceId)
-            formData.append("serviceTypeIds", JSON.stringify(conceptData.serviceTypeIds))
+            formData.append("serviceTypeIds", conceptData.serviceTypeIds.join(", "))
             formData.append("status", conceptData.status)
 
-            // Thêm images (tối đa 10)
             conceptData.images.forEach((image, index) => {
                 if (index < 10) {
                     formData.append("images", image)
                 }
             })
 
-            // Gọi Server Action
-            // const result = await createServiceConceptAction(formData)
-            const result = { success: true, data: { id: "1" }, error: null }
-            if (result.success) {
+            const response = await packageService.createServiceConcept(formData) as IBackendResponse<any>
+            if (response.statusCode === 201) {
                 toast.success("Tạo gói dịch vụ thành công!")
+                // Trigger data refresh
                 onSuccess()
                 handleClose()
             } else {
-                toast.error(result.error || "Có lỗi xảy ra khi tạo gói dịch vụ")
+                toast.error(response.error || "Có lỗi xảy ra khi tạo gói dịch vụ")
             }
         } catch (error) {
             toast.error("Có lỗi xảy ra khi tạo gói dịch vụ")
@@ -211,14 +223,14 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
 
     const handleClose = () => {
         setStep("service")
-        setServiceData({ name: "", description: "", status: "ACTIVE" })
+        setServiceData({ name: "", description: "", status: "hoạt động", vendorId: vendor?.id })
         setConceptData({
             name: "",
             description: "",
             price: 0,
             duration: 60,
             serviceTypeIds: [],
-            status: "ACTIVE",
+            status: "hoạt động",
             images: [],
         })
         setServiceImagePreview("")
@@ -292,7 +304,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                 <Label htmlFor="service-status">Trạng thái</Label>
                                 <Select
                                     value={serviceData.status}
-                                    onValueChange={(value: "ACTIVE" | "INACTIVE") =>
+                                    onValueChange={(value: "hoạt động" | "không hoạt động") =>
                                         setServiceData((prev) => ({ ...prev, status: value }))
                                     }
                                 >
@@ -300,8 +312,8 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="ACTIVE">Hoạt động</SelectItem>
-                                        <SelectItem value="INACTIVE">Tạm dừng</SelectItem>
+                                        <SelectItem value="hoạt động">Hoạt động</SelectItem>
+                                        <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -407,12 +419,12 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                 <div className="grid grid-cols-2 gap-2">
                                     {serviceTypes.map((type) => (
                                         <Card
-                                            key={type.id}
-                                            className={`cursor-pointer transition-colors ${conceptData.serviceTypeIds.includes(type.id)
+                                            key={type?.id}
+                                            className={`cursor-pointer transition-colors ${conceptData.serviceTypeIds.includes(type?.id)
                                                 ? "border-blue-500 bg-blue-50"
                                                 : "hover:border-gray-300"
                                                 }`}
-                                            onClick={() => handleServiceTypeToggle(type.id)}
+                                            onClick={() => handleServiceTypeToggle(type?.id)}
                                         >
                                             <CardContent className="p-3">
                                                 <div className="flex items-center justify-between">
@@ -420,7 +432,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                                         <p className="font-medium text-sm">{type.name}</p>
                                                         <p className="text-xs text-gray-500">{type.description}</p>
                                                     </div>
-                                                    {conceptData.serviceTypeIds.includes(type.id) && (
+                                                    {conceptData.serviceTypeIds.includes(type?.id) && (
                                                         <Badge className="bg-blue-100 text-blue-800">✓</Badge>
                                                     )}
                                                 </div>
@@ -435,7 +447,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                 <Label htmlFor="concept-status">Trạng thái</Label>
                                 <Select
                                     value={conceptData.status}
-                                    onValueChange={(value: "ACTIVE" | "INACTIVE") =>
+                                    onValueChange={(value: "hoạt động" | "không hoạt động") =>
                                         setConceptData((prev) => ({ ...prev, status: value }))
                                     }
                                 >
@@ -443,8 +455,8 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="ACTIVE">Hoạt động</SelectItem>
-                                        <SelectItem value="INACTIVE">Tạm dừng</SelectItem>
+                                        <SelectItem value="hoạt động">Hoạt động</SelectItem>
+                                        <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

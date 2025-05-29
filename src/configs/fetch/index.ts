@@ -25,8 +25,10 @@ const request = async <Response>(
     console.error("Error getting session:", error);
   }
 
+  const isFormData = options.body instanceof FormData;
+
   const headers = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
     ...options.headers,
   };
@@ -38,8 +40,9 @@ const request = async <Response>(
     ...options,
     method,
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: isFormData ? options.body : options.body ? JSON.stringify(options.body) : undefined,
   });
+
 
   return await res.json() as Response;
 };
