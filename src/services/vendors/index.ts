@@ -17,6 +17,17 @@ const vendorService = {
             next: { revalidate: 10 }
         })
     },
+    getVendorByUserId: async (userId: string) => {
+        return await http.get(`/vendors/user/${userId}`, {
+            next: { revalidate: 10 }
+        })
+    },
+
+    getVendorById: async (id: string) => {
+        return await http.get(`/vendors/${id}`, {
+            next: { revalidate: 10 }
+        })
+    }
 }
 
 export default vendorService

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
+import { useSession } from "@components/Templates/VendorProfileLayout"
 import {
     Dialog,
     DialogContent,
@@ -14,108 +15,229 @@ import { Input } from "@/components/Atoms/ui/input"
 import { Label } from "@/components/Atoms/ui/label"
 import { Textarea } from "@/components/Atoms/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
-import { Switch } from "@/components/Atoms/ui/switch"
 import { Badge } from "@/components/Atoms/ui/badge"
-import { Separator } from "@/components/Atoms/ui/separator"
-import { Checkbox } from "@/components/Atoms/ui/checkbox"
-import { Plus, Trash2, Package, MapPin, Clock, DollarSign } from "lucide-react"
+import { Card, CardContent } from "@components/Atoms/ui/card"
+import { ArrowRight, X, ImageIcon, Upload } from "lucide-react"
+import toast from "react-hot-toast"
+import { IServiceType } from "@models/serviceTypes/common.model"
+import packageService from "@services/package-services"
+import { IBackendResponse } from "@models/backend/backendResponse.model"
 
-interface Service {
-    id: string
-    name: string
-    description: string
-    category: string
-    isActive: boolean
-    basePrice: number
-    duration: number
-    packages: ServicePackage[]
-    availableBranches: string[]
-}
-
-interface ServicePackage {
-    id: string
-    name: string
-    price: number
-    description: string
-    features: string[]
-    isActive: boolean
-}
-
-interface Branch {
-    id: string
-    name: string
-    address: string
-    phone: string
-    email: string
-    manager: string
-    isActive: boolean
-    openingHours: {
-        weekdays: string
-        weekend: string
-    }
-    facilities: string[]
-    services: string[]
-    monthlyRevenue: number
-    totalBookings: number
-}
-
-interface Category {
-    id: string
-    name: string
-    color: string
-}
-
-interface ServiceModalProps {
-    service: Service | null
-    branches: Branch[]
-    categories: Category[]
-    mode: "view" | "edit" | "create"
+interface CreateServiceModalProps {
     isOpen: boolean
     onClose: () => void
-    onSave: (service: Service) => void
+    onSuccess: () => void
+    serviceTypes: IServiceType[]
+    vendor: any
+    mode: "create" | "edit" | "view"
 }
 
-export default function ServiceModal({ service, branches, categories, mode, isOpen, onClose, onSave }: ServiceModalProps) {
-    const [formData, setFormData] = useState<Service>({
-        id: "",
+interface ServiceFormData {
+    name: string
+    description: string
+    status: "hoạt động" | "không hoạt động"
+    image?: File
+    vendorId: string
+}
+
+interface ConceptFormData {
+    name: string
+    description: string
+    price: number
+    duration: number
+    serviceTypeIds: string[]
+    status: "hoạt động" | "không hoạt động"
+    images: File[]
+}
+
+
+export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes, vendor, mode }: CreateServiceModalProps) {
+    const [step, setStep] = useState<"service" | "concept">("service")
+    const [isLoading, setIsLoading] = useState(false)
+    const [createdServiceId, setCreatedServiceId] = useState<string>("")
+    // console.log(session)
+    // Service form data
+    // console.log(serviceTypes)
+    const [serviceData, setServiceData] = useState<ServiceFormData>({
         name: "",
         description: "",
-        category: "",
-        isActive: true,
-        basePrice: 0,
-        duration: 60,
-        packages: [],
-        availableBranches: [],
+        image: undefined,
+        vendorId: vendor?.id,
+        status: "hoạt động",
     })
-
-    const [newPackage, setNewPackage] = useState<ServicePackage>({
-        id: "",
+    // Concept form data
+    const [conceptData, setConceptData] = useState<ConceptFormData>({
         name: "",
+        description: "",
         price: 0,
-        description: "",
-        features: [""],
-        isActive: true,
+        duration: 60,
+        serviceTypeIds: [],
+        status: "hoạt động",
+        images: [],
     })
+    // useEffect(() => {
+    //     if (mode === "edit") {
+    //       setServiceData(vendor.servicesPage)
+    //     } else if (mode === "create") {
+    //       setServiceData({
+    //         name: "",
+    //         description: "",
+    //         image: undefined,
+    //         vendorId: vendor.id,
+    //         status: "hoạt động",
+    //       })
+    //     }
+    //   }, [vendor, mode])
+    const [serviceImagePreview, setServiceImagePreview] = useState<string>("")
+    const [conceptImagePreviews, setConceptImagePreviews] = useState<string[]>([])
 
-    const [isAddingPackage, setIsAddingPackage] = useState(false)
-
-    useEffect(() => {
-        if (service && (mode === "view" || mode === "edit")) {
-            setFormData(service)
-        } else if (mode === "create") {
-            setFormData({
-                id: "",
-                name: "",
-                description: "",
-                category: "",
-                isActive: true,
-                basePrice: 0,
-                duration: 60,
-                packages: [],
-                availableBranches: [],
-            })
+    const handleServiceImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) {
+            setServiceData((prev) => ({ ...prev, image: file }))
+            const reader = new FileReader()
+            reader.onload = () => setServiceImagePreview(reader.result as string)
+            reader.readAsDataURL(file)
         }
-    }, [service, mode])
+    }
+
+    const handleConceptImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || [])
+        const remainingSlots = 10 - conceptData.images.length
+        const filesToAdd = files.slice(0, remainingSlots)
+
+        if (files.length > remainingSlots) {
+            toast.error(`Chỉ có thể thêm ${remainingSlots} ảnh nữa (tối đa 10 ảnh)`)
+        }
+
+        const newImages = [...conceptData.images, ...filesToAdd]
+        setConceptData((prev) => ({ ...prev, images: newImages }))
+
+        // Create previews
+        filesToAdd.forEach((file) => {
+            const reader = new FileReader()
+            reader.onload = () => {
+                setConceptImagePreviews((prev) => [...prev, reader.result as string])
+            }
+            reader.readAsDataURL(file)
+        })
+    }
+
+    const removeConceptImage = (index: number) => {
+        const newImages = conceptData.images.filter((_, i) => i !== index)
+        const newPreviews = conceptImagePreviews.filter((_, i) => i !== index)
+        setConceptData((prev) => ({ ...prev, images: newImages }))
+        setConceptImagePreviews(newPreviews)
+    }
+
+    const handleServiceTypeToggle = (typeId: string) => {
+        setConceptData((prev) => ({
+            ...prev,
+            serviceTypeIds: prev.serviceTypeIds.includes(typeId)
+                ? prev.serviceTypeIds.filter((id) => id !== typeId)
+                : [...prev.serviceTypeIds, typeId],
+        }))
+    }
+
+    // Cập nhật handleCreateService để sử dụng accessToken
+    const handleCreateService = async () => {
+        if (!serviceData.name || !serviceData.description) {
+            toast.error("Vui lòng điền đầy đủ thông tin dịch vụ")
+            return
+        }
+
+        setIsLoading(true)
+        try {
+            const formData = new FormData()
+            formData.append("name", serviceData.name)
+            formData.append("description", serviceData.description)
+            formData.append("vendorId", serviceData.vendorId)
+            formData.append("status", serviceData.status)
+            if (serviceData.image) {
+                formData.append("image", serviceData.image)
+            }
+
+            const response = await packageService.createPackage(formData) as IBackendResponse<any>
+            if (response.statusCode === 201) {
+                setCreatedServiceId(response?.data?.id)
+                setStep("concept")
+                toast.success("Tạo dịch vụ thành công! Tiếp tục tạo gói dịch vụ.")
+                // Trigger data refresh
+                onSuccess()
+            } else {
+                toast.error(response.error || "Có lỗi xảy ra khi tạo dịch vụ")
+            }
+        } catch (error) {
+            toast.error("Có lỗi xảy ra khi tạo dịch vụ")
+            console.error("Error creating service:", error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    // Cập nhật handleCreateConcept để sử dụng Server Action
+    const handleCreateConcept = async () => {
+        if (
+            !conceptData.name ||
+            !conceptData.description ||
+            conceptData.price <= 0 ||
+            conceptData.serviceTypeIds.length === 0
+        ) {
+            toast.error("Vui lòng điền đầy đủ thông tin gói dịch vụ")
+            return
+        }
+
+        setIsLoading(true)
+        try {
+            const formData = new FormData()
+            formData.append("name", conceptData.name)
+            formData.append("description", conceptData.description)
+            formData.append("price", conceptData.price.toString())
+            formData.append("duration", conceptData.duration.toString())
+            formData.append("servicePackageId", createdServiceId)
+            formData.append("serviceTypeIds", conceptData.serviceTypeIds.join(", "))
+            formData.append("status", conceptData.status)
+
+            conceptData.images.forEach((image, index) => {
+                if (index < 10) {
+                    formData.append("images", image)
+                }
+            })
+
+            const response = await packageService.createServiceConcept(formData) as IBackendResponse<any>
+            if (response.statusCode === 201) {
+                toast.success("Tạo gói dịch vụ thành công!")
+                // Trigger data refresh
+                onSuccess()
+                handleClose()
+            } else {
+                toast.error(response.error || "Có lỗi xảy ra khi tạo gói dịch vụ")
+            }
+        } catch (error) {
+            toast.error("Có lỗi xảy ra khi tạo gói dịch vụ")
+            console.error("Error creating service concept:", error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleClose = () => {
+        setStep("service")
+        setServiceData({ name: "", description: "", status: "hoạt động", vendorId: vendor?.id })
+        setConceptData({
+            name: "",
+            description: "",
+            price: 0,
+            duration: 60,
+            serviceTypeIds: [],
+            status: "hoạt động",
+            images: [],
+        })
+        setServiceImagePreview("")
+        setConceptImagePreviews([])
+        setCreatedServiceId("")
+        onClose()
+    }
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("vi-VN", {
@@ -125,351 +247,289 @@ export default function ServiceModal({ service, branches, categories, mode, isOp
         }).format(amount)
     }
 
-    const formatDuration = (minutes: number) => {
-        const hours = Math.floor(minutes / 60)
-        const mins = minutes % 60
-        if (hours > 0) {
-            return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
-        }
-        return `${mins}m`
-    }
-
-    const handleInputChange = (field: keyof Service, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
-
-    const handleBranchToggle = (branchId: string) => {
-        const updatedBranches = formData.availableBranches.includes(branchId)
-            ? formData.availableBranches.filter((id) => id !== branchId)
-            : [...formData.availableBranches, branchId]
-
-        handleInputChange("availableBranches", updatedBranches)
-    }
-
-    const handleAddPackage = () => {
-        if (newPackage.name && newPackage.price > 0) {
-            const packageToAdd = {
-                ...newPackage,
-                id: `pkg${Date.now()}`,
-                features: newPackage.features.filter((f) => f.trim() !== ""),
-            }
-
-            handleInputChange("packages", [...formData.packages, packageToAdd])
-            setNewPackage({
-                id: "",
-                name: "",
-                price: 0,
-                description: "",
-                features: [""],
-                isActive: true,
-            })
-            setIsAddingPackage(false)
-        }
-    }
-
-    const handleRemovePackage = (packageId: string) => {
-        const updatedPackages = formData.packages.filter((pkg) => pkg.id !== packageId)
-        handleInputChange("packages", updatedPackages)
-    }
-
-    const handlePackageFeatureChange = (index: number, value: string) => {
-        const updatedFeatures = [...newPackage.features]
-        updatedFeatures[index] = value
-        setNewPackage((prev) => ({ ...prev, features: updatedFeatures }))
-    }
-
-    const addPackageFeature = () => {
-        setNewPackage((prev) => ({ ...prev, features: [...prev.features, ""] }))
-    }
-
-    const removePackageFeature = (index: number) => {
-        const updatedFeatures = newPackage.features.filter((_, i) => i !== index)
-        setNewPackage((prev) => ({ ...prev, features: updatedFeatures }))
-    }
-
-    const handleSave = () => {
-        onSave(formData)
-    }
-
-    const isReadOnly = mode === "view"
-
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+        <Dialog open={isOpen} onOpenChange={handleClose}>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>
-                        {mode === "create" ? "Thêm dịch vụ mới" : mode === "edit" ? "Chỉnh sửa dịch vụ" : "Chi tiết dịch vụ"}
+                    <DialogTitle className="flex items-center gap-2">
+                        {step === "service" ? (
+                            <>
+                                <span className="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded-full text-sm font-medium">
+                                    1
+                                </span>
+                                Tạo dịch vụ mới
+                            </>
+                        ) : (
+                            <>
+                                <span className="flex items-center justify-center w-6 h-6 bg-green-100 text-green-600 rounded-full text-sm font-medium">
+                                    2
+                                </span>
+                                Tạo gói dịch vụ
+                            </>
+                        )}
                     </DialogTitle>
                     <DialogDescription>
-                        {mode === "create"
-                            ? "Tạo dịch vụ mới cho studio của bạn"
-                            : mode === "edit"
-                                ? "Cập nhật thông tin dịch vụ"
-                                : "Xem chi tiết thông tin dịch vụ"}
+                        {step === "service"
+                            ? "Tạo dịch vụ cơ bản trước, sau đó sẽ tạo các gói dịch vụ chi tiết"
+                            : "Tạo gói dịch vụ với giá cả và chi tiết cụ thể"}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-6">
-                    {/* Thông tin cơ bản */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-medium">Thông tin cơ bản</h3>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {step === "service" ? (
+                    // Step 1: Create Service
+                    <div className="space-y-6">
+                        <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Tên dịch vụ</Label>
+                                <Label htmlFor="service-name">Tên dịch vụ *</Label>
                                 <Input
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={(e) => handleInputChange("name", e.target.value)}
-                                    disabled={isReadOnly}
-                                    placeholder="Nhập tên dịch vụ"
+                                    id="service-name"
+                                    value={serviceData.name}
+                                    onChange={(e) => setServiceData((prev) => ({ ...prev, name: e.target.value }))}
+                                    placeholder="Ví dụ: Chụp ảnh cưới"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Danh mục</Label>
+                                <Label htmlFor="service-description">Mô tả dịch vụ *</Label>
+                                <Textarea
+                                    id="service-description"
+                                    value={serviceData.description}
+                                    onChange={(e) => setServiceData((prev) => ({ ...prev, description: e.target.value }))}
+                                    placeholder="Mô tả chi tiết về dịch vụ của bạn"
+                                    rows={3}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="service-status">Trạng thái</Label>
                                 <Select
-                                    value={formData.category}
-                                    onValueChange={(value) => handleInputChange("category", value)}
-                                    disabled={isReadOnly}
+                                    value={serviceData.status}
+                                    onValueChange={(value: "hoạt động" | "không hoạt động") =>
+                                        setServiceData((prev) => ({ ...prev, status: value }))
+                                    }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Chọn danh mục" />
+                                        <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {categories?.map((category) => (
-                                            <SelectItem key={category.id} value={category.name}>
-                                                {category.name}
-                                            </SelectItem>
-                                        ))}
+                                        <SelectItem value="hoạt động">Hoạt động</SelectItem>
+                                        <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="basePrice">Giá cơ bản</Label>
+                                <Label>Ảnh đại diện dịch vụ</Label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                                    {serviceImagePreview ? (
+                                        <div className="relative">
+                                            <img
+                                                src={serviceImagePreview || "/placeholder.svg"}
+                                                alt="Preview"
+                                                className="w-full h-48 object-cover rounded-lg"
+                                            />
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                className="absolute top-2 right-2"
+                                                onClick={() => {
+                                                    setServiceData((prev) => ({ ...prev, image: undefined }))
+                                                    setServiceImagePreview("")
+                                                }}
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center">
+                                            <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                                            <div className="mt-4">
+                                                <label htmlFor="service-image" className="cursor-pointer">
+                                                    <span className="mt-2 block text-sm font-medium text-gray-900">Tải lên ảnh đại diện</span>
+                                                    <span className="mt-1 block text-sm text-gray-500">PNG, JPG, GIF tối đa 10MB</span>
+                                                </label>
+                                                <input
+                                                    id="service-image"
+                                                    type="file"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    onChange={handleServiceImageChange}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    // Step 2: Create Concept
+                    <div className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
                                 <Input
-                                    id="basePrice"
-                                    type="number"
-                                    value={formData.basePrice}
-                                    onChange={(e) => handleInputChange("basePrice", Number(e.target.value))}
-                                    disabled={isReadOnly}
-                                    placeholder="0"
+                                    id="concept-name"
+                                    value={conceptData.name}
+                                    onChange={(e) => setConceptData((prev) => ({ ...prev, name: e.target.value }))}
+                                    placeholder="Ví dụ: Gói Cưới Cơ Bản"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="duration">Thời gian (phút)</Label>
-                                <Input
-                                    id="duration"
-                                    type="number"
-                                    value={formData.duration}
-                                    onChange={(e) => handleInputChange("duration", Number(e.target.value))}
-                                    disabled={isReadOnly}
-                                    placeholder="60"
+                                <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
+                                <Textarea
+                                    id="concept-description"
+                                    value={conceptData.description}
+                                    onChange={(e) => setConceptData((prev) => ({ ...prev, description: e.target.value }))}
+                                    placeholder="Mô tả chi tiết về gói dịch vụ này"
+                                    rows={3}
                                 />
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Mô tả</Label>
-                            <Textarea
-                                id="description"
-                                value={formData.description}
-                                onChange={(e) => handleInputChange("description", e.target.value)}
-                                disabled={isReadOnly}
-                                placeholder="Mô tả chi tiết về dịch vụ"
-                                rows={3}
-                            />
-                        </div>
-
-                        {!isReadOnly && (
-                            <div className="flex items-center space-x-2">
-                                <Switch
-                                    id="isActive"
-                                    checked={formData.isActive}
-                                    onCheckedChange={(checked) => handleInputChange("isActive", checked)}
-                                />
-                                <Label htmlFor="isActive">Kích hoạt dịch vụ</Label>
-                            </div>
-                        )}
-
-                        {isReadOnly && (
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2">
-                                    <DollarSign className="h-4 w-4 text-gray-500" />
-                                    <span>{formatCurrency(formData.basePrice)}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Clock className="h-4 w-4 text-gray-500" />
-                                    <span>{formatDuration(formData.duration)}</span>
-                                </div>
-                                <Badge className={formData.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
-                                    {formData.isActive ? "Đang hoạt động" : "Tạm dừng"}
-                                </Badge>
-                            </div>
-                        )}
-                    </div>
-
-                    <Separator />
-
-                    {/* Chi nhánh */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-medium flex items-center gap-2">
-                            <MapPin className="h-5 w-5" />
-                            Chi nhánh cung cấp
-                        </h3>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            {branches?.map((branch) => (
-                                <div key={branch.id} className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={branch.id}
-                                        checked={formData.availableBranches.includes(branch.id)}
-                                        onCheckedChange={() => handleBranchToggle(branch.id)}
-                                        disabled={isReadOnly}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                                    <Input
+                                        id="concept-price"
+                                        type="number"
+                                        value={conceptData.price}
+                                        onChange={(e) => setConceptData((prev) => ({ ...prev, price: Number(e.target.value) }))}
+                                        placeholder="0"
                                     />
-                                    <Label htmlFor={branch.id} className="text-sm">
-                                        {branch.name}
-                                    </Label>
+                                    {conceptData.price > 0 && (
+                                        <p className="text-sm text-gray-500">{formatCurrency(conceptData.price)}</p>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
 
-                    <Separator />
+                                <div className="space-y-2">
+                                    <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
+                                    <Input
+                                        id="concept-duration"
+                                        type="number"
+                                        value={conceptData.duration}
+                                        onChange={(e) => setConceptData((prev) => ({ ...prev, duration: Number(e.target.value) }))}
+                                        placeholder="60"
+                                    />
+                                </div>
+                            </div>
 
-                    {/* Gói dịch vụ */}
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-medium flex items-center gap-2">
-                                <Package className="h-5 w-5" />
-                                Gói dịch vụ ({formData?.packages?.length})
-                            </h3>
-                            {!isReadOnly && (
-                                <Button variant="outline" size="sm" onClick={() => setIsAddingPackage(true)} className="gap-1">
-                                    <Plus className="h-4 w-4" />
-                                    Thêm gói
-                                </Button>
-                            )}
-                        </div>
+                            <div className="space-y-2">
+                                <Label>Loại dịch vụ *</Label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {serviceTypes.map((type) => (
+                                        <Card
+                                            key={type?.id}
+                                            className={`cursor-pointer transition-colors ${conceptData.serviceTypeIds.includes(type?.id)
+                                                ? "border-blue-500 bg-blue-50"
+                                                : "hover:border-gray-300"
+                                                }`}
+                                            onClick={() => handleServiceTypeToggle(type?.id)}
+                                        >
+                                            <CardContent className="p-3">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <p className="font-medium text-sm">{type.name}</p>
+                                                        <p className="text-xs text-gray-500">{type.description}</p>
+                                                    </div>
+                                                    {conceptData.serviceTypeIds.includes(type?.id) && (
+                                                        <Badge className="bg-blue-100 text-blue-800">✓</Badge>
+                                                    )}
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                                <p className="text-sm text-gray-500">Đã chọn: {conceptData.serviceTypeIds.length} loại dịch vụ</p>
+                            </div>
 
-                        {/* Existing packages */}
-                        <div className="space-y-3">
-                            {formData.packages?.map((pkg) => (
-                                <div key={pkg.id} className="p-4 border rounded-lg">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <div>
-                                            <h4 className="font-medium">{pkg.name}</h4>
-                                            <p className="text-sm text-gray-600">{pkg.description}</p>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">{formatCurrency(pkg.price)}</span>
-                                            {!isReadOnly && (
+                            <div className="space-y-2">
+                                <Label htmlFor="concept-status">Trạng thái</Label>
+                                <Select
+                                    value={conceptData.status}
+                                    onValueChange={(value: "hoạt động" | "không hoạt động") =>
+                                        setConceptData((prev) => ({ ...prev, status: value }))
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="hoạt động">Hoạt động</SelectItem>
+                                        <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
+
+                                {/* Image previews */}
+                                {conceptImagePreviews.length > 0 && (
+                                    <div className="grid grid-cols-3 gap-2 mb-4">
+                                        {conceptImagePreviews.map((preview, index) => (
+                                            <div key={index} className="relative">
+                                                <img
+                                                    src={preview || "/placeholder.svg"}
+                                                    alt={`Preview ${index + 1}`}
+                                                    className="w-full h-24 object-cover rounded-lg"
+                                                />
                                                 <Button
-                                                    variant="ghost"
+                                                    variant="destructive"
                                                     size="sm"
-                                                    onClick={() => handleRemovePackage(pkg.id)}
-                                                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                                                    className="absolute top-1 right-1 h-6 w-6 p-0"
+                                                    onClick={() => removeConceptImage(index)}
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <X className="h-3 w-3" />
                                                 </Button>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        {pkg.features?.map((feature, index) => (
-                                            <div key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                                                {feature}
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                )}
 
-                        {/* Add new package form */}
-                        {isAddingPackage && (
-                            <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg space-y-4">
-                                <h4 className="font-medium">Thêm gói dịch vụ mới</h4>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>Tên gói</Label>
-                                        <Input
-                                            value={newPackage.name}
-                                            onChange={(e) => setNewPackage((prev) => ({ ...prev, name: e.target.value }))}
-                                            placeholder="Tên gói dịch vụ"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>Giá</Label>
-                                        <Input
-                                            type="number"
-                                            value={newPackage.price}
-                                            onChange={(e) => setNewPackage((prev) => ({ ...prev, price: Number(e.target.value) }))}
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Mô tả</Label>
-                                    <Textarea
-                                        value={newPackage.description}
-                                        onChange={(e) => setNewPackage((prev) => ({ ...prev, description: e.target.value }))}
-                                        placeholder="Mô tả gói dịch vụ"
-                                        rows={2}
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Tính năng</Label>
-                                    {newPackage.features?.map((feature, index) => (
-                                        <div key={index} className="flex gap-2">
-                                            <Input
-                                                value={feature}
-                                                onChange={(e) => handlePackageFeatureChange(index, e.target.value)}
-                                                placeholder="Nhập tính năng"
-                                            />
-                                            {newPackage.features?.length > 1 && (
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => removePackageFeature(index)}
-                                                    className="px-2"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            )}
+                                {/* Upload area */}
+                                {conceptData.images.length < 10 && (
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                                        <div className="text-center">
+                                            <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                                            <div className="mt-2">
+                                                <label htmlFor="concept-images" className="cursor-pointer">
+                                                    <span className="text-sm font-medium text-gray-900">
+                                                        Thêm ảnh ({conceptData.images.length}/10)
+                                                    </span>
+                                                    <span className="block text-xs text-gray-500">PNG, JPG, GIF tối đa 10MB mỗi ảnh</span>
+                                                </label>
+                                                <input
+                                                    id="concept-images"
+                                                    type="file"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    multiple
+                                                    onChange={handleConceptImagesChange}
+                                                />
+                                            </div>
                                         </div>
-                                    ))}
-                                    <Button variant="outline" size="sm" onClick={addPackageFeature} className="gap-1">
-                                        <Plus className="h-4 w-4" />
-                                        Thêm tính năng
-                                    </Button>
-                                </div>
-
-                                <div className="flex gap-2">
-                                    <Button onClick={handleAddPackage} size="sm">
-                                        Thêm gói
-                                    </Button>
-                                    <Button variant="outline" size="sm" onClick={() => setIsAddingPackage(false)}>
-                                        Hủy
-                                    </Button>
-                                </div>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={onClose}>
-                        {isReadOnly ? "Đóng" : "Hủy"}
+                    <Button variant="outline" onClick={handleClose} disabled={isLoading}>
+                        Hủy
                     </Button>
-                    {!isReadOnly && <Button onClick={handleSave}>{mode === "create" ? "Tạo dịch vụ" : "Lưu thay đổi"}</Button>}
+                    {step === "service" ? (
+                        <Button onClick={handleCreateService} disabled={isLoading} className="gap-2">
+                            {isLoading ? "Đang tạo..." : "Tiếp tục"}
+                            <ArrowRight className="h-4 w-4" />
+                        </Button>
+                    ) : (
+                        <Button onClick={handleCreateConcept} disabled={isLoading}>
+                            {isLoading ? "Đang tạo..." : "Hoàn thành"}
+                        </Button>
+                    )}
                 </DialogFooter>
             </DialogContent>
         </Dialog>

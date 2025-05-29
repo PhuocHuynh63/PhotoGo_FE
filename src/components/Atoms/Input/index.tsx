@@ -20,7 +20,7 @@ export default function Input(props: ICOMPONENTS.InputProps) {
         ...rest
     } = props;
 
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(true);
 
     const isPasswordType = rest.type === 'password';
 
