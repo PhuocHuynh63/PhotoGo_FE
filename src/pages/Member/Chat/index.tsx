@@ -70,7 +70,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
             }
         });
 
-        //TODO
         socketInstance.on('newMessage', (message) => {
             setConversations(prev =>
                 prev.map(conv => {
