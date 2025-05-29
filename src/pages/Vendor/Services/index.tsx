@@ -10,6 +10,8 @@ import { Switch } from "@/components/Atoms/ui/switch"
 import { Plus, Search, Edit, Eye, MoreHorizontal, PackageIcon, MapPin, Clock, DollarSign } from "lucide-react"
 import ServiceModal from "@pages/Vendor/Components/Services/ServiceModal"
 
+import { IServiceType } from "@models/serviceTypes/common.model"
+
 interface Service {
     id: string
     name: string
@@ -49,19 +51,20 @@ interface Branch {
     totalBookings: number
 }
 
-interface Category {
-    id: string
-    name: string
-    color: string
-}
-
 interface ServiceListProps {
     services: Service[]
     branches: Branch[]
-    categories: Category[]
+    serviceTypes: IServiceType[]
 }
 
 const mockData = {
+    serviceTypes: [
+        { id: "srv1", name: "Chụp ảnh cưới", description: "Dịch vụ chụp ảnh cưới chuyên nghiệp với nhiều gói lựa chọn" },
+        { id: "srv2", name: "Chụp ảnh gia đình", description: "Dịch vụ chụp ảnh gia đình chuyên nghiệp với nhiều gói lựa chọn" },
+        { id: "srv3", name: "Chụp ảnh sản phẩm", description: "Dịch vụ chụp ảnh sản phẩm chuyên nghiệp cho thương mại" },
+        { id: "srv4", name: "Chụp ảnh sự kiện", description: "Dịch vụ chụp ảnh sự kiện chuyên nghiệp với nhiều gói lựa chọn" },
+        { id: "srv5", name: "Chụp ảnh thời trang", description: "Dịch vụ chụp ảnh thời trang chuyên nghiệp cho model và brand" },
+    ],
     services: [
         {
             id: "srv1",
@@ -336,16 +339,9 @@ const mockData = {
             totalBookings: 48,
         },
     ],
-    categories: [
-        { id: "cat1", name: "Cưới hỏi", color: "blue" },
-        { id: "cat2", name: "Gia đình", color: "green" },
-        { id: "cat3", name: "Thương mại", color: "purple" },
-        { id: "cat4", name: "Sự kiện", color: "orange" },
-        { id: "cat5", name: "Thời trang", color: "red" },
-    ],
 }
 
-export default function ServiceList({ services, branches, categories }: ServiceListProps) {
+export default function ServiceList({ services, branches, serviceTypes }: ServiceListProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [categoryFilter, setCategoryFilter] = useState("all")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -390,7 +386,7 @@ export default function ServiceList({ services, branches, categories }: ServiceL
     }
 
     const getCategoryBadge = (categoryName: string) => {
-        const category = mockData.categories?.find((cat) => cat.name === categoryName)
+        const category = mockData.serviceTypes?.find((cat) => cat.name === categoryName)
         const colorClasses = {
             blue: "bg-blue-100 text-blue-800",
             green: "bg-green-100 text-green-800",
@@ -442,11 +438,11 @@ export default function ServiceList({ services, branches, categories }: ServiceL
         setIsModalOpen(true)
     }
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false)
-        setSelectedService(null)
-    }
 
+    console.log(serviceTypes)
+    const handleCreateSuccess = () => {
+        console.log("Dịch vụ đã được tạo thành công")
+    }
     return (
         <div className="space-y-4">
             {/* Header và filters */}
@@ -479,9 +475,9 @@ export default function ServiceList({ services, branches, categories }: ServiceL
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">Tất cả danh mục</SelectItem>
-                        {mockData.categories?.map((category) => (
-                            <SelectItem key={category.id} value={category.name}>
-                                {category.name}
+                        {serviceTypes?.map((serviceType) => (
+                            <SelectItem key={serviceType.id} value={serviceType.name}>
+                                {serviceType.name}
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -571,21 +567,11 @@ export default function ServiceList({ services, branches, categories }: ServiceL
             )}
 
             <ServiceModal
-                service={selectedService}
-                branches={mockData.branches}
-                categories={mockData.categories}
-                mode={modalMode}
                 isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onSave={(updatedService) => {
-                    if (modalMode === "create") {
-                        handleServicesChange([...mockData.services, { ...updatedService, id: `srv${Date.now()}` }])
-                    } else {
-                        const updatedServices = mockData.services?.map((s) => (s.id === updatedService.id ? updatedService : s))
-                        handleServicesChange(updatedServices)
-                    }
-                    handleCloseModal()
-                }}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={handleCreateSuccess}
+                serviceTypes={serviceTypes}
+                vendorId="vendor-123" // Thay bằng vendorId thực tế
             />
         </div>
     )

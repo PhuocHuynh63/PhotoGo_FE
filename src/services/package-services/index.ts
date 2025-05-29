@@ -7,6 +7,15 @@ const packageService = {
         })
     },
 
+    getServiceTypes: async () => {
+        return await http.get("/service-packages/service-type", {
+            next: { revalidate: 10 }
+        })
+    },
+
+    createPackage: async (data: FormData) => {
+        return await http.post("/service-packages", data)
+    }
 }
 
 export default packageService
