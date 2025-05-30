@@ -22,8 +22,10 @@ declare module ZUSTAND {
         setVendor: (vendor: IVendor) => void
     }
 
-    export interface ITokenState {
+    export interface IUserState {
         token: string | null;
+        session: METADATA.ISession | null;
         setToken: (token: string | null) => void;
+        setSession: (session: METADATA.ISession | null) => void;
     }
 }

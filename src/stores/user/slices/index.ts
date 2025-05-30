@@ -1,11 +1,19 @@
 export const createUserSlice = (
     set: any
-): ZUSTAND.ITokenState => ({
+): ZUSTAND.IUserState => ({
     token: null,
+    session: null,
     setToken: (token: string | null) => {
-        set((state: ZUSTAND.ITokenState) => ({
+        set((state: ZUSTAND.IUserState) => ({
             ...state,
             token,
+        }))
+    },
+
+    setSession(session: METADATA.ISession | null) {
+        return set((state: ZUSTAND.IUserState) => ({
+            ...state,
+            session,
         }))
     },
 })
