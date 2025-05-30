@@ -41,8 +41,8 @@ const Booking = ({ isOpen, onOpenChange, concept }: ConceptProps) => {
         };
 
         console.log('Booking data before sending:', bookingData);
-        // const res = await checkoutSessionService.createCheckSession(id, userId, bookingData)
-        // console.log('Booking data:', res);
+        const res = await checkoutSessionService.createCheckSession(id, userId, bookingData)
+        console.log('Booking data:', res);
     };
 
     return (
