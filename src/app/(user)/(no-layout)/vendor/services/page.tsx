@@ -26,19 +26,10 @@ async function getVendorByUserId(userId: string) {
     return response;
 }
 
-async function getVendorById(vendorId: string) {
-    const response = await vendorService.getVendorById(vendorId) as IBackendResponse<any>;
-    return response;
-}
 
-export async function refreshVendorData() {
-    'use server'
-    revalidatePath('/vendor/services')
-}
-
-export { getVendorById }
 
 export default async function VendorProfile() {
+
     const session = await getServerSession(authOptions) as METADATA.ISession;
 
     const serviceTypes = await getServiceTypes()
