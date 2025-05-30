@@ -22,8 +22,10 @@ const mockVendorData = {
       longitude: "106.660172",
       created_at: "2024-01-01",
       updated_at: "2024-01-01"
-    }
+    },
   ],
+  minPrice: 100000,
+  maxPrice: 1000000,
   servicePackages: [],
   averageRating: 4.5,
   created_at: "2024-01-01",
