@@ -1,5 +1,5 @@
 import ServicesPage from "@pages/Vendor/Services"
-import packageService from "@services/package-services";
+import packageService from "@services/packageServices";
 import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
 import vendorService from "@services/vendors";
 import { IBackendResponse } from "@models/backend/backendResponse.model";
@@ -26,19 +26,26 @@ async function getVendorByUserId(userId: string) {
     return response;
 }
 
+async function getVendorById(vendorId: string) {
+    const response = await vendorService.getVendorById(vendorId) as IBackendResponse<any>;
+    return response;
+}
 
+export async function refreshVendorData() {
+    'use server'
+    revalidatePath('/vendor/services')
+}
+
+export { getVendorById }
 
 export default async function VendorProfile() {
-
     const session = await getServerSession(authOptions) as METADATA.ISession;
 
-    const branches = await getBranches()
-    const services = await getServices()
     const serviceTypes = await getServiceTypes()
     const vendor = await getVendorByUserId(session.user.id)
     return (
         <>
-            <ServicesPage branches={branches} services={services} serviceTypes={serviceTypes?.data?.data ?? []} vendor={vendor?.data} />
+            <ServicesPage  serviceTypes={serviceTypes?.data?.data ?? []} vendor={vendor?.data} />
         </>
     )
 }

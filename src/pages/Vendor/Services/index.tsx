@@ -13,57 +13,16 @@ import ServiceModal from "@pages/Vendor/Components/Services/ServiceModal"
 import { toast } from "react-hot-toast"
 
 import { IServiceType } from "@models/serviceTypes/common.model"
-import packageService from "@services/package-services"
+import packageService from "@services/packageServices"
 import vendorService from "@services/vendors"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
-
-interface Service {
-    id: string
-    name: string
-    description: string
-    category: string
-    isActive: boolean
-    basePrice: number
-    duration: number
-    packages: PackageType[]
-    availableBranches: string[]
-}
-
-interface PackageType {
-    id: string
-    name: string
-    price: number
-    description: string
-    features: string[]
-    isActive: boolean
-}
-
-interface Branch {
-    id: string
-    name: string
-    address: string
-    phone: string
-    email: string
-    manager: string
-    isActive: boolean
-    openingHours: {
-        weekdays: string
-        weekend: string
-    }
-    facilities: string[]
-    services: string[]
-    monthlyRevenue: number
-    totalBookings: number
-}
-
 interface ServiceConcept {
     id: string
     name: string
     price: number
     duration: number
     description: string
-    features: string[]
-    isActive: boolean
+    images: string[]
     serviceTypes: Array<{
         id: string
         name: string
@@ -87,297 +46,12 @@ interface Vendor {
 }
 
 interface ServiceListProps {
-    services: Service[]
-    branches: Branch[]
     serviceTypes: IServiceType[]
     vendor: Vendor
 }
 
-// const mockData = {
-//     serviceTypes: [
-//         { id: "srv1", name: "Chụp ảnh cưới", description: "Dịch vụ chụp ảnh cưới chuyên nghiệp với nhiều gói lựa chọn" },
-//         { id: "srv2", name: "Chụp ảnh gia đình", description: "Dịch vụ chụp ảnh gia đình chuyên nghiệp với nhiều gói lựa chọn" },
-//         { id: "srv3", name: "Chụp ảnh sản phẩm", description: "Dịch vụ chụp ảnh sản phẩm chuyên nghiệp cho thương mại" },
-//         { id: "srv4", name: "Chụp ảnh sự kiện", description: "Dịch vụ chụp ảnh sự kiện chuyên nghiệp với nhiều gói lựa chọn" },
-//         { id: "srv5", name: "Chụp ảnh thời trang", description: "Dịch vụ chụp ảnh thời trang chuyên nghiệp cho model và brand" },
-//     ],
-//     services: [
-//         {
-//             id: "srv1",
-//             name: "Chụp ảnh cưới",
-//             description: "Dịch vụ chụp ảnh cưới chuyên nghiệp với nhiều gói lựa chọn",
-//             category: "Cưới hỏi",
-//             isActive: true,
-//             basePrice: 5000000,
-//             duration: 180, // phút
-//             packages: [
-//                 {
-//                     id: "pkg1",
-//                     name: "Gói Cơ Bản",
-//                     price: 4500000,
-//                     description: "Chụp trong studio, 2 bộ trang phục, album 20x30cm",
-//                     features: [
-//                         "Chụp trong studio 2-3 tiếng",
-//                         "2 bộ trang phục cô dâu",
-//                         "Trang điểm cơ bản",
-//                         "Album 20x30cm (30 trang)",
-//                         "File ảnh gốc (50 ảnh)",
-//                     ],
-//                     isActive: true,
-//                 },
-//                 {
-//                     id: "pkg2",
-//                     name: "Gói Tiêu Chuẩn",
-//                     price: 7500000,
-//                     description: "Studio + ngoại cảnh, 3 bộ trang phục, album cao cấp",
-//                     features: [
-//                         "Chụp studio + 1 địa điểm ngoại cảnh",
-//                         "3 bộ trang phục cô dâu",
-//                         "Trang điểm chuyên nghiệp",
-//                         "Album 25x35cm (50 trang)",
-//                         "File ảnh gốc (100 ảnh)",
-//                         "Video highlight 2-3 phút",
-//                     ],
-//                     isActive: true,
-//                 },
-//                 {
-//                     id: "pkg3",
-//                     name: "Gói Cao Cấp",
-//                     price: 12000000,
-//                     description: "Trọn gói luxury với nhiều địa điểm và dịch vụ cao cấp",
-//                     features: [
-//                         "Chụp studio + 2 địa điểm ngoại cảnh",
-//                         "5 bộ trang phục cô dâu",
-//                         "Trang điểm + làm tóc chuyên nghiệp",
-//                         "Album 30x40cm (80 trang)",
-//                         "File ảnh gốc (200 ảnh)",
-//                         "Video cinematic 5-7 phút",
-//                         "Xe hoa trang trí",
-//                     ],
-//                     isActive: true,
-//                 },
-//             ],
-//             availableBranches: ["branch1", "branch2", "branch3"],
-//         },
-//         {
-//             id: "srv2",
-//             name: "Chụp ảnh gia đình",
-//             description: "Lưu giữ những khoảnh khắc đẹp của gia đình bạn",
-//             category: "Gia đình",
-//             isActive: true,
-//             basePrice: 2000000,
-//             duration: 120,
-//             packages: [
-//                 {
-//                     id: "pkg4",
-//                     name: "Gói Studio",
-//                     price: 2500000,
-//                     description: "Chụp gia đình trong studio với nhiều concept",
-//                     features: [
-//                         "Chụp trong studio 2 tiếng",
-//                         "3-4 concept khác nhau",
-//                         "Trang điểm nhẹ cho người lớn",
-//                         "Album 20x25cm (30 trang)",
-//                         "File ảnh gốc (40 ảnh)",
-//                     ],
-//                     isActive: true,
-//                 },
-//                 {
-//                     id: "pkg5",
-//                     name: "Gói Ngoại Cảnh",
-//                     price: 3500000,
-//                     description: "Chụp gia đình tại công viên hoặc địa điểm yêu thích",
-//                     features: [
-//                         "Chụp tại 1 địa điểm ngoại cảnh",
-//                         "Thời gian chụp 2-3 tiếng",
-//                         "Trang điểm nhẹ",
-//                         "Album 25x30cm (40 trang)",
-//                         "File ảnh gốc (60 ảnh)",
-//                         "Video ngắn 1-2 phút",
-//                     ],
-//                     isActive: true,
-//                 },
-//             ],
-//             availableBranches: ["branch1", "branch2"],
-//         },
-//         {
-//             id: "srv3",
-//             name: "Chụp ảnh sản phẩm",
-//             description: "Dịch vụ chụp ảnh sản phẩm chuyên nghiệp cho thương mại",
-//             category: "Thương mại",
-//             isActive: true,
-//             basePrice: 100000,
-//             duration: 30,
-//             packages: [
-//                 {
-//                     id: "pkg6",
-//                     name: "Gói Cơ Bản",
-//                     price: 150000,
-//                     description: "Chụp sản phẩm với background trắng cơ bản",
-//                     features: ["Background trắng", "5 góc chụp/sản phẩm", "Chỉnh sửa cơ bản", "File JPG chất lượng cao"],
-//                     isActive: true,
-//                 },
-//                 {
-//                     id: "pkg7",
-//                     name: "Gói Cao Cấp",
-//                     price: 300000,
-//                     description: "Chụp sản phẩm với nhiều background và góc độ",
-//                     features: [
-//                         "3 loại background khác nhau",
-//                         "10 góc chụp/sản phẩm",
-//                         "Chỉnh sửa chuyên nghiệp",
-//                         "File JPG + PNG",
-//                         "Hiệu ứng đặc biệt",
-//                     ],
-//                     isActive: true,
-//                 },
-//             ],
-//             availableBranches: ["branch1", "branch3"],
-//         },
-//         {
-//             id: "srv4",
-//             name: "Chụp ảnh sự kiện",
-//             description: "Ghi lại những khoảnh khắc đáng nhớ trong sự kiện của bạn",
-//             category: "Sự kiện",
-//             isActive: true,
-//             basePrice: 3000000,
-//             duration: 240,
-//             packages: [
-//                 {
-//                     id: "pkg8",
-//                     name: "Gói Nửa Ngày",
-//                     price: 4000000,
-//                     description: "Chụp sự kiện trong 4 tiếng",
-//                     features: [
-//                         "1 photographer chính",
-//                         "Chụp 4 tiếng liên tục",
-//                         "File ảnh gốc (200 ảnh)",
-//                         "Chỉnh sửa cơ bản",
-//                         "Giao file trong 3 ngày",
-//                     ],
-//                     isActive: true,
-//                 },
-//                 {
-//                     id: "pkg9",
-//                     name: "Gói Cả Ngày",
-//                     price: 7000000,
-//                     description: "Chụp sự kiện cả ngày với team photographer",
-//                     features: [
-//                         "2 photographer",
-//                         "Chụp 8 tiếng",
-//                         "File ảnh gốc (500 ảnh)",
-//                         "Chỉnh sửa chuyên nghiệp",
-//                         "Video highlight 3-5 phút",
-//                         "Album kỷ niệm",
-//                         "Giao file trong 5 ngày",
-//                     ],
-//                     isActive: true,
-//                 },
-//             ],
-//             availableBranches: ["branch1", "branch2", "branch3"],
-//         },
-//         {
-//             id: "srv5",
-//             name: "Chụp ảnh thời trang",
-//             description: "Dịch vụ chụp ảnh thời trang chuyên nghiệp cho model và brand",
-//             category: "Thời trang",
-//             isActive: false,
-//             basePrice: 5000000,
-//             duration: 300,
-//             packages: [
-//                 {
-//                     id: "pkg10",
-//                     name: "Gói Lookbook",
-//                     price: 8000000,
-//                     description: "Chụp lookbook cho thương hiệu thời trang",
-//                     features: [
-//                         "1 model chuyên nghiệp",
-//                         "Makeup artist",
-//                         "5 bộ trang phục",
-//                         "Studio + 1 địa điểm ngoại cảnh",
-//                         "File ảnh chất lượng cao (100 ảnh)",
-//                         "Chỉnh sửa chuyên nghiệp",
-//                     ],
-//                     isActive: false,
-//                 },
-//             ],
-//             availableBranches: ["branch1"],
-//         },
-//     ],
-//     branches: [
-//         {
-//             id: "branch1",
-//             name: "Chi nhánh Quận 1",
-//             address: "123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM",
-//             phone: "028 3822 1234",
-//             email: "quan1@anhduongstudio.com",
-//             manager: "Nguyễn Văn A",
-//             isActive: true,
-//             openingHours: {
-//                 weekdays: "08:00 - 18:00",
-//                 weekend: "08:00 - 20:00",
-//             },
-//             facilities: [
-//                 "Studio chụp ảnh cưới 200m²",
-//                 "Phòng trang điểm riêng",
-//                 "Kho trang phục 500+ bộ",
-//                 "Thiết bị chụp ảnh hiện đại",
-//                 "Phòng nghỉ cho khách hàng",
-//             ],
-//             services: ["srv1", "srv2", "srv3", "srv4", "srv5"],
-//             monthlyRevenue: 450000000,
-//             totalBookings: 85,
-//         },
-//         {
-//             id: "branch2",
-//             name: "Chi nhánh Quận 7",
-//             address: "456 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM",
-//             phone: "028 3777 5678",
-//             email: "quan7@anhduongstudio.com",
-//             manager: "Trần Thị B",
-//             isActive: true,
-//             openingHours: {
-//                 weekdays: "08:00 - 18:00",
-//                 weekend: "08:00 - 20:00",
-//             },
-//             facilities: [
-//                 "Studio chụp ảnh gia đình 150m²",
-//                 "Khu vực chụp ảnh trẻ em",
-//                 "Phòng trang điểm",
-//                 "Kho props đa dạng",
-//                 "Bãi đỗ xe rộng rãi",
-//             ],
-//             services: ["srv1", "srv2", "srv4"],
-//             monthlyRevenue: 320000000,
-//             totalBookings: 62,
-//         },
-//         {
-//             id: "branch3",
-//             name: "Chi nhánh Thủ Đức",
-//             address: "789 Võ Văn Ngân, Phường Linh Chiểu, TP. Thủ Đức, TP.HCM",
-//             phone: "028 3896 9012",
-//             email: "thuduc@anhduongstudio.com",
-//             manager: "Lê Văn C",
-//             isActive: true,
-//             openingHours: {
-//                 weekdays: "08:00 - 18:00",
-//                 weekend: "08:00 - 20:00",
-//             },
-//             facilities: [
-//                 "Studio sản phẩm chuyên nghiệp",
-//                 "Phòng chụp ảnh 360°",
-//                 "Kho background đa dạng",
-//                 "Thiết bị ánh sáng cao cấp",
-//                 "Phòng hậu kỳ riêng",
-//             ],
-//             services: ["srv1", "srv3", "srv4"],
-//             monthlyRevenue: 280000000,
-//             totalBookings: 48,
-//         },
-//     ],
-// }
 
-export default function ServiceList({ services, branches, serviceTypes, vendor }: ServiceListProps) {
+export default function ServiceList({ serviceTypes, vendor }: ServiceListProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [categoryFilter, setCategoryFilter] = useState("all")
     const [statusFilter, setStatusFilter] = useState("all")
@@ -389,10 +63,7 @@ export default function ServiceList({ services, branches, serviceTypes, vendor }
         servicePackages: vendor?.servicePackages || []
     })
 
-    const handleServicesChange = (updatedServices: ServicePackage[]) => {
-        // TODO: Implement API call to update services
-        console.log('Services updated:', updatedServices)
-    }
+
 
     // Lọc dịch vụ
     const filteredServices = (vendorData?.servicePackages || []).filter((service: ServicePackage) => {
@@ -426,11 +97,28 @@ export default function ServiceList({ services, branches, serviceTypes, vendor }
         )
     }
 
-    const handleToggleStatus = (serviceId: string) => {
-        const updatedServices = vendorData?.servicePackages?.map((service: ServicePackage) =>
-            service.id === serviceId ? { ...service, status: service.status === "hoạt động" ? "không hoạt động" : "hoạt động" } : service,
-        )
-        handleServicesChange(updatedServices)
+    const handleToggleStatus = async (serviceId: string) => {
+        const service = vendorData?.servicePackages?.find(s => s.id === serviceId)
+        if (!service) return
+        const formData = new FormData()
+        formData.append("status", service.status === "hoạt động" ? "không hoạt động" : "hoạt động")
+        try {
+            await packageService.updatePackage(serviceId, formData)
+
+            // Update local state after successful API call
+            setVendorData(prev => ({
+                ...prev,
+                servicePackages: prev.servicePackages.map((service: ServicePackage) =>
+                    service.id === serviceId
+                        ? { ...service, status: service.status === "hoạt động" ? "không hoạt động" : "hoạt động" }
+                        : service
+                )
+            }))
+            toast.success("Cập nhật trạng thái dịch vụ thành công")
+        } catch (error) {
+            console.error("Error updating service status:", error)
+            toast.error("Có lỗi xảy ra khi cập nhật trạng thái dịch vụ")
+        }
     }
 
     const handleViewService = (service: ServicePackage) => {
@@ -632,6 +320,7 @@ export default function ServiceList({ services, branches, serviceTypes, vendor }
                 serviceTypes={serviceTypes}
                 mode={modalMode}
                 vendor={vendorData}
+                selectedService={selectedService}
             />
         </div>
     )

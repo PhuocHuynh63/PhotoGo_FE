@@ -10,6 +10,7 @@ import { PAGES } from '../../../../types/IPages'
 import Button from "@components/Atoms/Button"
 import { motion } from "framer-motion"
 import { usePathname, useRouter } from "next/navigation"
+import { ROUTES } from "@routes"
 
 const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
@@ -138,7 +139,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                             className={["orders", "reviews", "favorites", "change-password"].includes(tab) && tab === "orders" ? "pt-3 border-t" : ""}
                         >
                             <Button
-                                onClick={() => router.push(`/profile/${tab}`)}
+                                onClick={() => router.push(`${ROUTES.USER.PROFILE}/${tab}`)}
                                 className={`{bg-none shadow-none hover:bg-none ${currentTab === tab
                                     ? "text-primary font-medium"
                                     : "text-gray-700 hover:text-primary"}`}

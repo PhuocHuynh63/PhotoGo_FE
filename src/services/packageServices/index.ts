@@ -23,6 +23,18 @@ const packageService = {
         return await http.post("/service-packages/service-concept", data, {
             cache: 'no-store'
         })
+    },
+
+    updatePackage: async (serviceId: string, data: FormData) => {
+        return await http.patch(`/service-packages/${serviceId}`, data, {
+            cache: 'no-store'
+        })
+    },
+
+    updateServiceConcept: async (serviceId: string, data: FormData) => {
+        return await http.patch(`/service-packages/service-concept/${serviceId}`, data, {
+            cache: 'no-store'
+        })
     }
 }
 
