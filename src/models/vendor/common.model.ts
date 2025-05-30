@@ -23,6 +23,8 @@ export const VendorModel = z.object({
     updated_at: z.string(),
     reviews: z.array(ReviewModel),
     isRemarkable: z.boolean(),
+    minPrice: z.number(),
+    maxPrice: z.number(),
 });
 
 export type IVendor = z.TypeOf<typeof VendorModel>;

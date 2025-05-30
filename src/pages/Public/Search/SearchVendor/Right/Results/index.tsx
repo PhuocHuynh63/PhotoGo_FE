@@ -179,7 +179,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex flex-col items-start text-dark">
-                                            <h3 className="text-dark font-medium text-lg">{vendor.name}</h3>
+                                            <h3 className="text-dark font-medium text-lg h-16">{vendor.name}</h3>
                                             <span className="text-dark text-xs flex">
                                                 <LucideIcon name="MapPin" iconSize={14} />
                                                 {vendor.locations[0]?.address}, {vendor.locations[0]?.city}
@@ -227,7 +227,8 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                     <div className="flex justify-between items-center">
                                         <div className="text-sm">
                                             <span className="font-medium">
-                                                {/* {vendor.priceRange[0].toLocaleString()}đ - {vendor.priceRange[1].toLocaleString()}đ */}
+
+                                                {vendor.minPrice && vendor.maxPrice ? `${vendor.minPrice?.toLocaleString()}đ - ${vendor.maxPrice?.toLocaleString()}đ` : "Vui lòng liên hệ nhà cung cấp"}
                                             </span>
                                         </div>
                                         <Button
