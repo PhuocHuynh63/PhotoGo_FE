@@ -7,6 +7,7 @@ import { useState } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
 import Booking from "../Booking";
 import { IServicePackage } from "@models/servicePackages/common.model";
+import { IServiceConcept } from "@models/serviceConcepts/common.model";
 
 type ConceptProps = {
     isOpen: boolean;
@@ -15,39 +16,7 @@ type ConceptProps = {
 };
 
 export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage }: ConceptProps) {
-    const [activeTab, setActiveTab] = useState("Hình ảnh");
-    console.log(servicePackage);
-
-
-    // const selectConcept = [
-    //     {
-    //         id: 1,
-    //         name: "ALBUM STUDIO HÀN QUỐC CAO CẤP",
-    //         description: "Studio & Biệt thự cổ điển",
-    //         price: "10.000.000đ",
-    //         duration: "2 giờ",
-    //         images: ["https://tonywedding.vn/wp-content/uploads/2023/02/3115e9feb64b094cb2e0049bc7e86fee-scaled.jpg", "https://tonywedding.vn/wp-content/uploads/2024/12/462142930_960299022805312_2040105690201559005_n.jpg", "https://file.hstatic.net/200000054678/file/kinh-nghiem-chup-anh-cuoi-trong-studio-1_fdd65cab8f084f669456507cd26b240b.jpg", "https://tonywedding.vn/wp-content/uploads/2023/06/IMG_3506-scaled.jpg"],
-    //         detailedDescription: "Concept chụp ảnh cưới với phong cách cổ điển sang trọng, tông màu ấm áp. Ảnh sẽ được thực hiện trong không gian sang trọng với ánh sáng tự nhiên và sự tinh tế.",
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "Ngoại cảnh Đà Lạt",
-    //         description: "Bãi biển Vũng Tàu",
-    //         price: "15.000.000đ",
-    //         duration: "3 giờ",
-    //         images: ["https://tonywedding.vn/wp-content/uploads/2023/11/z4856859455985_215fe12df0744aa03fd35e5139964219.jpg", "https://tonywedding.vn/wp-content/uploads/2024/07/7-1.png"],
-    //         detailedDescription: "Concept chụp ảnh cưới tại bãi biển Vũng Tàu, với phong cách lãng mạn và tự nhiên. Tông màu xanh biển và ánh nắng tự nhiên sẽ làm nổi bật tình yêu của bạn.",
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "Ngoại cảnh Sài Gòn",
-    //         description: "Trung tâm TP. Hồ Chí Minh",
-    //         price: "20.000.000đ",
-    //         duration: "4 giờ",
-    //         images: ["https://tonywedding.vn/wp-content/uploads/2024/10/467776601_997349659100248_2231391539684830285_n.jpg"],
-    //         detailedDescription: "Concept chụp ảnh cưới hiện đại tại trung tâm TP. Hồ Chí Minh, với phong cách năng động và thời thượng. Ảnh sẽ được chụp tại các địa điểm nổi bật trong thành phố.",
-    //     },
-    // ];
+    const [activeTab, setActiveTab] = useState<string>("Hình ảnh");
 
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -71,6 +40,12 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     const handleDialogBooking = () => {
         setIsOpenBooking(!isOpenBooking);
     }
+    //#endregion
+
+
+    //#region selectConcept
+    const selectedConceptObject = servicePackage?.serviceConcepts[selectedConcept] as IServiceConcept;
+    //#endregion
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -257,7 +232,8 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                 </div>
 
             </DialogContent>
-            <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} />
+            <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} concept={selectedConceptObject
+            } />
         </Dialog>
     );
 }
