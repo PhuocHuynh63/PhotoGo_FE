@@ -9,4 +9,21 @@ declare namespace SERVERS {
             slug: string;
         }>;
     }
+
+    interface CheckoutLayoutProps {
+        children: React.ReactNode;
+        params: Promise<{
+            id: string;
+        }>;
+    }
+    interface ServiceEditPageProps {
+        params: Promise<{
+            id: string;
+        }>;
+    }
+    interface ServiceViewPageProps {
+        params: Promise<{
+            id: string;
+        }>;
+    }
 }

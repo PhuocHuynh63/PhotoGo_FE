@@ -1,23 +1,51 @@
+import { IBookingFormRequest } from "@models/booking/request.model"
+import { ZUSTAND } from "../../../types/IZustand"
+
 export const createCheckoutSlice = (
     set: any
 ): ZUSTAND.ICheckoutState => ({
     currentStep: 1,
-    selectedMethod: 'payos',
+    selectedCheckoutMethod: 'payos',
     selectedDeposit: 30,
+    formBooking: {
+        userId: "",
+        service_concept_id: "",
+        date: "",
+        time: "",
+        source_type: "web",
+        deposit: 30,
+        method: 'payos',
+        fullName: "",
+        phone: "",
+        email: "",
+        user_note: "",
+    },
+
+    //TODO: Bắt validate cho stepFormBooking
 
     setStep: (step) => {
         return set(() => ({ currentStep: step }))
     },
 
-    selectMethod: (method) => {
+    selectCheckoutMethod: (method) => {
         return set((state: ZUSTAND.ICheckoutState) => ({
-            selectedMethod: state.selectedMethod === method ? null : method,
+            selectedCheckoutMethod: state.selectedCheckoutMethod === method ? null : method,
         }))
     },
 
     selectDeposit: (value) => {
         return set(() => ({ selectedDeposit: value }))
     },
+
+    setFormBooking: (data: IBookingFormRequest) => {
+        return set((state: ZUSTAND.ICheckoutState) => ({
+            formBooking: {
+                ...state.formBooking,
+                ...data
+            }
+        }))
+    },
+
     nextStep: () => {
         return set((state: ZUSTAND.ICheckoutState) => ({
             currentStep: state.currentStep + 1,

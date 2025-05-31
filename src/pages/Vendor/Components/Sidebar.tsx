@@ -111,7 +111,7 @@ export default function Sidebar() {
 
             <div className="p-4 border-t border-gray-200">
                 <button className="flex items-center gap-2 p-2 text-red-500 hover:bg-red-50 rounded-md w-full justify-center cursor-pointer" onClick={() => {
-                    signOut()
+                    signOut({ callbackUrl: "/" })
                 }}>
                     <LogOut className="w-5 h-5" />
                     <span>Đăng xuất</span>

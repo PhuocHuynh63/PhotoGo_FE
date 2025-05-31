@@ -16,8 +16,6 @@ export const UserModel = z.object({
     rank: z.string().optional(),
     createdAt: z.string(),
     lastLoginAt: z.string(),
-    oldPasswordHash: z.string().optional(),
-    passwordHash: z.string(),
     role: RoleModel,
     status: z.string(),
     updatedAt: z.string(),

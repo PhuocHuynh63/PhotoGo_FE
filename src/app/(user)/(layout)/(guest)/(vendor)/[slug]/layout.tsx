@@ -1,7 +1,9 @@
 import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
+import { authOptions } from "@lib/authOptions";
 import { VendorContextProvider } from "@lib/vendorContext";
 import { IVendorResponse } from "@models/vendor/response.model";
 import vendorService from "@services/vendors";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 async function getVendorBySlug(slug: string) {
@@ -15,7 +17,7 @@ export default async function VendorDetailLayout({
 ) {
     const { slug } = await params;
     const vendor = await getVendorBySlug(slug) as IVendorResponse;
-    // const user = await 
+    const session = await getServerSession(authOptions) as METADATA.ISession;
 
     if (vendor.statusCode !== 200 || !vendor.data) {
         return notFound();
@@ -317,13 +319,12 @@ export default async function VendorDetailLayout({
 
     return (
         <>
-            <VendorContextProvider value={studioData}>
-                <VendorDetailLayoutPage
-                    vendor={vendor.data}
-                >
-                    {children}
-                </VendorDetailLayoutPage>
-            </VendorContextProvider>
+            <VendorDetailLayoutPage
+                vendor={vendor.data}
+                session={session}
+            >
+                {children}
+            </VendorDetailLayoutPage>
         </>
     );
 }

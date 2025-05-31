@@ -11,6 +11,11 @@ import { Input } from '@components/Atoms/ui/input';
 import { format } from 'date-fns';
 import { generateUUIDV4 } from '@utils/helpers/GenerateUUID';
 import checkoutSessionService from '@services/checkoutSession';
+import { useSession } from '@stores/user/selectors';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@routes';
+import { ICheckoutSessionResponseModel } from '@models/checkoutSession/repsonse.model';
 
 type ConceptProps = {
     isOpen: boolean;
@@ -20,6 +25,17 @@ type ConceptProps = {
 
 const Booking = ({ isOpen, onOpenChange, concept }: ConceptProps) => {
 
+    /**
+     * Define values
+     */
+    const session = useSession() as METADATA.ISession;
+    const router = useRouter();
+    //---------------------------End---------------------------//
+
+
+    /**
+     * Handle form submission for booking a service concept.
+     */
     const {
         register,
         handleSubmit,
@@ -33,17 +49,25 @@ const Booking = ({ isOpen, onOpenChange, concept }: ConceptProps) => {
         const formattedDate = format(selectedDate, 'dd/MM/yyyy');
         const id = generateUUIDV4();
         const bookingData = {
-            sessionData: {
-                conceptId: data.conceptId,
-                date: formattedDate,
-                time: data.time
-            }
+            conceptId: data.conceptId,
+            date: formattedDate,
+            time: data.time
         };
 
-        console.log('Booking data before sending:', bookingData);
-        // const res = await checkoutSessionService.createCheckSession(id, userId, bookingData)
-        // console.log('Booking data:', res);
+        const userId = session?.user?.id || '';
+        if (!userId) {
+            toast.error('Bạn cần đăng nhập để đặt lịch hẹn');
+            router.replace(ROUTES.AUTH.LOGIN)
+        }
+        const res = await checkoutSessionService.createCheckSession(id, userId, bookingData) as ICheckoutSessionResponseModel;
+        if (res.statusCode !== 201) {
+            toast.error(res.message || 'Đặt lịch không thành công, vui lòng thử lại sau');
+            return;
+        }
+
+        router.push(`${ROUTES.USER.CHECKOUT.replace(':id', id)}`);
     };
+    //----------------------------End---------------------------//
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
