@@ -1,11 +1,29 @@
 'use client'
 
-import { useSelectedMethod, useSelectMethod } from '@stores/checkout/selectors'
-import React from 'react'
+import { useFormBooking, useCheckoutSelectedMethod, useCheckoutSelectMethod, useSetFormBooking } from '@stores/checkout/selectors'
+import React, { useEffect } from 'react'
 
 const PaymentMethod = () => {
-    const selectedMethod = useSelectedMethod()
-    const setSelectMethod = useSelectMethod()
+    /**
+     * Payment Method Selection Component
+     */
+    const selectedMethod = useCheckoutSelectedMethod()
+    const setSelectMethod = useCheckoutSelectMethod()
+    //-----------------------------End-----------------------------//
+
+
+    /**
+     * Set booking form when checkout session is available
+     */
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    useEffect(() => {
+        setBookingForm({
+            ...formBooking,
+            method: (selectedMethod as "payos"),
+        });
+    }, []);
+    //----------------------End----------------------//
 
     return (
         <>

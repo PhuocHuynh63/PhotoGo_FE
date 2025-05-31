@@ -20,9 +20,8 @@ const PUBLIC = {
 
 const USER = {
     DASHBOARD: '/user',
-    PROFILE:
-        '/profile'
-    ,
+    PROFILE: '/profile',
+    CHECKOUT: '/checkout/:id',
     BOOKINGS: {
 
     },
