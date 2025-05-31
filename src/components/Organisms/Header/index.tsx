@@ -520,7 +520,6 @@ export default function Header({ user }: PAGES.IHeader) {
 
     //#region Handle logout
     const handleLogout = () => {
-        console.log(">>>>>>>>>>>>>>>>>", process.env.NEXTAUTH_URL);
         signOut({ callbackUrl: process.env.NEXTAUTH_URL });
     };
     //#endregion

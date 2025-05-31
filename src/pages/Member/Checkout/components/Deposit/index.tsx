@@ -1,12 +1,30 @@
 'use client'
 
-import { useCheckoutDeposit, useSetCheckoutDeposit } from '@stores/checkout/selectors'
-import React from 'react'
+import { useCheckoutDeposit, useFormBooking, useSetCheckoutDeposit, useSetFormBooking } from '@stores/checkout/selectors'
+import React, { useEffect } from 'react'
 
 const Deposit = () => {
+    /**
+     * Deposit Selection Component
+     */
     const depositOptions = [30, 50, 70, 100]
     const selectedDeposit = useCheckoutDeposit()
     const setDeposit = useSetCheckoutDeposit()
+    //-----------------------------End-----------------------------//
+
+    /**
+     * Set booking form when checkout session is available
+     */
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    useEffect(() => {
+        setBookingForm({
+            ...formBooking,
+            deposit: selectedDeposit,
+        });
+    }, []);
+    //----------------------End----------------------//
+
 
     return (
         <>

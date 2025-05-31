@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useSession } from "@components/Templates/VendorProfileLayout"
+import { useState } from "react"
+
 import {
     Dialog,
     DialogContent,

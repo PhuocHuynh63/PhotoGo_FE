@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import LoadingPage from "@components/Organisms/Loading";
+import { ROUTES } from "@routes";
 
 const GoogleCompletePage = () => {
     const router = useRouter();
@@ -14,7 +15,7 @@ const GoogleCompletePage = () => {
         const userRaw = params.get("user");
 
         if (!token || !userRaw) {
-            router.push("/auth/login");
+            router.push(ROUTES.AUTH.LOGIN);
             return;
         }
 
@@ -27,9 +28,9 @@ const GoogleCompletePage = () => {
             accessToken: token,
         }).then((res) => {
             if (res?.ok) {
-                router.push("/");
+                router.push(ROUTES.PUBLIC.HOME);
             } else {
-                router.push("/auth/login");
+                router.push(ROUTES.AUTH.LOGIN);
             }
         });
     }, [router]);

@@ -9,10 +9,14 @@ import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
 import { useSetVendor } from '@stores/vendor/selectors';
+import { useSetSession } from '@stores/user/selectors';
+
+
 
 const VendorDetailLayoutPage = ({
     children,
-    vendor
+    vendor,
+    session
 }: PAGES.IVendorDetailPageProps) => {
 
     /**
@@ -21,10 +25,20 @@ const VendorDetailLayoutPage = ({
      * @returns {void}
      */
     const setVendor = useSetVendor();
+    const setSession = useSetSession();
+    const reset = () => {
+        setVendor(null);
+        setSession(null);
+    }
 
     useEffect(() => {
         setVendor(vendor);
-    }, [vendor, setVendor]);
+        setSession(session);
+
+        return () => {
+            reset();
+        }
+    }, [vendor, session, setVendor]);
     //---------------------------End---------------------------//
 
     return (

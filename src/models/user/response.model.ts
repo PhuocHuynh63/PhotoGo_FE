@@ -17,11 +17,8 @@ export type IUsersResponse = z.TypeOf<typeof Users>
 /**
  * UserModel is a Model for User response
  */
-export const UserModelResponse = z.object({
-    data: UserModel,
-})
-export const User = BackendResponseModel(UserModelResponse);
-export type IUserResponse = z.TypeOf<typeof User>
+export const User = BackendResponseModel(UserModel);
+export type IUserResponse = z.TypeOf<typeof User>;
 //----------------------End----------------------//
 
 
