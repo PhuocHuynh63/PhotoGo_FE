@@ -1,13 +1,17 @@
+import { IBookingFormRequest } from "@models/booking/request.model";
+
 declare module ZUSTAND {
     export interface ICheckoutState {
-        currentStep: number
-        selectedDeposit: number
-        selectedMethod: string | null
-        setStep: (step: number) => void
-        nextStep: () => void
-        prevStep: () => void
-        selectDeposit: (percent: number) => void
-        selectMethod: (method: string | null) => void
+        currentStep: number;
+        selectedDeposit: number;
+        selectedMethod: string | null;
+        formCheckout: IBookingFormRequest;
+        setStep: (step: number) => void;
+        nextStep: () => void;
+        prevStep: () => void;
+        selectDeposit: (percent: number) => void;
+        selectMethod: (method: string | null) => void;
+        setFormCheckout: (data: IBookingFormRequest) => void;
         // reset: () => void
     }
 

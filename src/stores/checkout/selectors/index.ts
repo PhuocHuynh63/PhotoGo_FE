@@ -11,3 +11,6 @@ export const useSelectMethod = () => useStore((state: ZUSTAND.ICheckoutState) =>
 
 export const useSelectedDeposit = () => useStore((state: ZUSTAND.ICheckoutState) => state.selectedDeposit)
 export const useSelectDeposit = () => useStore((state: ZUSTAND.ICheckoutState) => state.selectDeposit)
+
+export const useFormCheckout = () => useStore((state: ZUSTAND.ICheckoutState) => state.formCheckout)
+export const useSetFormCheckout = () => useStore((state: ZUSTAND.ICheckoutState) => state.set)
