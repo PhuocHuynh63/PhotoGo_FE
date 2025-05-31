@@ -58,7 +58,9 @@ const VENDOR = {
         PORTFOLIO: '/vendor/profile/portfolio',
     },
     SERVICE_PACKAGES: {
-        LIST: '/vendor/service-packages/list',
+        LIST: '/vendor/services/',
+        VIEW: '/vendor/services/:id',
+        EDIT: '/vendor/services/:id/edit',
     },
     AVAILABILITY: {
         SCHEDULE: '/vendor/availability/schedule',

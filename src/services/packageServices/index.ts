@@ -35,6 +35,16 @@ const packageService = {
         return await http.patch(`/service-packages/service-concept/${serviceId}`, data, {
             cache: 'no-store'
         })
+    },
+
+    getPackageById: async (id: string) => {
+        return await http.get(`/service-packages/${id}`)
+    },
+
+    deletePackage: async (id: string) => {
+        return await http.delete(`/service-packages/${id}`, {
+            cache: 'no-store'
+        })
     }
 }
 

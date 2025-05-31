@@ -19,7 +19,7 @@ const vendorService = {
     },
     getVendorByUserId: async (userId: string) => {
         return await http.get(`/vendors/user/${userId}`, {
-            next: { revalidate: 10 }
+            cache: 'no-store'
         })
     },
 
