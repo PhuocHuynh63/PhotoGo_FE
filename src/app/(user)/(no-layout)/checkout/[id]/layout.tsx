@@ -1,13 +1,19 @@
 import CheckoutLayoutClient from "@components/Templates/CheckoutLayout";
 import { authOptions } from "@lib/authOptions";
 import { ICheckoutSessionResponseModel } from "@models/checkoutSession/repsonse.model";
+import { IUserResponse } from "@models/user/response.model";
 import { ROUTES } from "@routes";
 import checkoutSessionService from "@services/checkoutSession";
+import userService from "@services/user";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 async function getCheckoutSession(id: string, userId: string) {
     return checkoutSessionService.getCheckoutSession(id, userId)
+}
+
+async function getAUser(id: string) {
+    return userService.getAUser(id);
 }
 
 export default async function CheckoutLayout({
@@ -18,7 +24,6 @@ export default async function CheckoutLayout({
      * Define variables
      */
     const { id } = await params;
-    console.log("Checkout ID:", id);
 
     let errorMessage = "";
     //----------------------End----------------------//
@@ -27,6 +32,7 @@ export default async function CheckoutLayout({
      * Get session
      */
     const session = await getServerSession(authOptions) as METADATA.ISession;
+
     if (!session) {
         redirect(`${ROUTES.AUTH.LOGIN}?error=Bạn cần đăng nhập để thực hiện thao tác này.`);
     }
@@ -38,8 +44,10 @@ export default async function CheckoutLayout({
     }
     //----------------------End----------------------//
 
+    const user = await getAUser(session.user.id) as IUserResponse;
+
     return (
-        <CheckoutLayoutClient checkoutSession={checkoutSession.data}>
+        <CheckoutLayoutClient checkoutSession={checkoutSession} user={user}>
             {children}
         </CheckoutLayoutClient>
     );

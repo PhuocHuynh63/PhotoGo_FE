@@ -1,12 +1,16 @@
+import { ZUSTAND } from "../../../types/IZustand"
+import { IUser } from "@models/user/common.model"
+
 export const createUserSlice = (
     set: any
 ): ZUSTAND.IUserState => ({
-    token: null,
+    user: null,
     session: null,
-    setToken: (token: string | null) => {
-        set((state: ZUSTAND.IUserState) => ({
+
+    setUser(user: IUser | null) {
+        return set((state: ZUSTAND.IUserState) => ({
             ...state,
-            token,
+            user,
         }))
     },
 

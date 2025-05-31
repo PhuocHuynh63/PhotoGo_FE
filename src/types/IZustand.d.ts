@@ -1,17 +1,18 @@
 import { IBookingFormRequest } from "@models/booking/request.model";
+import { IUser } from "@models/user/common.model";
 
 declare module ZUSTAND {
     export interface ICheckoutState {
         currentStep: number;
         selectedDeposit: number;
-        selectedMethod: string | null;
-        formCheckout: IBookingFormRequest;
+        selectedCheckoutMethod: string | null;
+        formBooking: IBookingFormRequest;
         setStep: (step: number) => void;
         nextStep: () => void;
         prevStep: () => void;
         selectDeposit: (percent: number) => void;
-        selectMethod: (method: string | null) => void;
-        setFormCheckout: (data: IBookingFormRequest) => void;
+        selectCheckoutMethod: (method: string | null) => void;
+        setFormBooking: (data: IBookingFormRequest) => void;
         // reset: () => void
     }
 
@@ -27,9 +28,9 @@ declare module ZUSTAND {
     }
 
     export interface IUserState {
-        token: string | null;
         session: METADATA.ISession | null;
-        setToken: (token: string | null) => void;
+        user: IUser | null;
         setSession: (session: METADATA.ISession | null) => void;
+        setUser: (user: IUser | null) => void;
     }
 }

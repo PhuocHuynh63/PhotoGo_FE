@@ -1,23 +1,52 @@
 'use client'
 
+import { ICheckoutSessionResponseModel } from "@models/checkoutSession/repsonse.model";
+import { IUserResponse } from "@models/user/response.model";
 import FooterAction from "@pages/Member/Checkout/components/FooterAction";
 import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { useCheckoutStep } from "@stores/checkout/selectors";
+import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
+import { useSetUser, useUser } from "@stores/user/selectors";
+import { useEffect } from "react";
 
 export default function CheckoutLayoutClient({
     children,
+    user,
     checkoutSession
 }: Readonly<{
     children: React.ReactNode;
-    checkoutSession?: any;
+    user: IUserResponse;
+    checkoutSession?: ICheckoutSessionResponseModel;
 }>) {
     /**
      * Define variables
      */
-    const currentStep = useCheckoutStep()
+    const currentStep = useCheckoutStep();
+    const setUser = useSetUser();
+
+    useEffect(() => {
+        setUser(user.data ?? null);
+    }, [user]);
+    //----------------------End----------------------//
+
+    /**
+     * Set booking form when checkout session is available
+     */
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    useEffect(() => {
+        if (checkoutSession) {
+            setBookingForm({
+                ...formBooking,
+                userId: user.data?.id || "",
+                service_concept_id: checkoutSession.data?.data.conceptId || "",
+                date: checkoutSession.data?.data.date || "",
+                time: checkoutSession.data?.data.time || "",
+            });
+        }
+    }, [checkoutSession]);
     //----------------------End----------------------//
 
     return (

@@ -6,8 +6,8 @@ import { CheckoutSessionModel } from "./common.model";
  * Model of CheckoutSessionData
  */
 export const CheckoutSessionDataModel = z.object({
-    data: z.array(CheckoutSessionModel),
-    checkoutSesionId: z.string(),
+    data: CheckoutSessionModel,
+    checkoutSessionId: z.string(),
 });
 
 export const CheckoutSessionResponseModel = BackendResponseModel(CheckoutSessionDataModel);

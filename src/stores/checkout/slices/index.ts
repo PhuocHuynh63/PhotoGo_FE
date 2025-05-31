@@ -5,12 +5,12 @@ export const createCheckoutSlice = (
     set: any
 ): ZUSTAND.ICheckoutState => ({
     currentStep: 1,
-    selectedMethod: 'payos',
+    selectedCheckoutMethod: 'payos',
     selectedDeposit: 30,
-    formCheckout: {
+    formBooking: {
         userId: "",
         service_concept_id: "",
-        data: "",
+        date: "",
         time: "",
         source_type: "web",
         deposit: 30,
@@ -25,9 +25,9 @@ export const createCheckoutSlice = (
         return set(() => ({ currentStep: step }))
     },
 
-    selectMethod: (method) => {
+    selectCheckoutMethod: (method) => {
         return set((state: ZUSTAND.ICheckoutState) => ({
-            selectedMethod: state.selectedMethod === method ? null : method,
+            selectedCheckoutMethod: state.selectedCheckoutMethod === method ? null : method,
         }))
     },
 
@@ -35,8 +35,13 @@ export const createCheckoutSlice = (
         return set(() => ({ selectedDeposit: value }))
     },
 
-    setFormCheckout: (data: IBookingFormRequest) => {
-        return set(() => ({ formCheckout: data }))
+    setFormBooking: (data: IBookingFormRequest) => {
+        return set((state: ZUSTAND.ICheckoutState) => ({
+            formBooking: {
+                ...state.formBooking,
+                ...data
+            }
+        }))
     },
 
     nextStep: () => {
