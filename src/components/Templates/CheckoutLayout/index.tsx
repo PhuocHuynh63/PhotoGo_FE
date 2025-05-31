@@ -25,18 +25,6 @@ export default function CheckoutLayoutClient({
     const currentStep = useCheckoutStep()
     //----------------------End----------------------//
 
-
-    /**
-     * Display error message if exists
-     */
-    useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage)
-            router.replace(errorMessage.includes("đăng nhập") ? ROUTES.AUTH.LOGIN : ROUTES.PUBLIC.HOME);
-        }
-    }, [errorMessage]);
-    //----------------------End----------------------//
-
     return (
         <div className="bg-gradient-primary" style={{ background: '' }}>
             <div className="container mx-auto py-8 px-4 max-w-7xl">

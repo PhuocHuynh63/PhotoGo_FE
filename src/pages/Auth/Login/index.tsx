@@ -12,21 +12,38 @@ import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { signIn } from "next-auth/react"
 import authService from "@services/auth"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { AuthError } from "@constants/errors"
-import { useSetToken } from "@stores/user/selectors"
 
 const LoginPage = () => {
     //#region define variables
     useRemoveLocalStorage("email")
     useRemoveLocalStorage("otp")
     const router = useRouter()
+    const searchParams = useSearchParams();
+    console.log("searchParams", searchParams);
+
     //#endregion
+
+    /**
+     * Handle error from query params
+     */
+    useEffect(() => {
+        if (!searchParams) return;
+        const error = searchParams.get("error");
+
+        if (!error) return;
+
+        if (error) {
+            toast.error(error)
+        }
+    }, [searchParams])
+    //----------------------End----------------------//
 
 
     //#region Handle form submit

@@ -26,13 +26,13 @@ export default async function CheckoutLayout({
      */
     const session = await getServerSession(authOptions) as METADATA.ISession;
     if (!session) {
-        errorMessage = "Bạn cần đăng nhập để thực hiện thao tác này.";
-    } else {
-        const checkoutSession = await getCheckoutSession(id, session.user.id) as IBackendResponse<any>;
+        redirect(`${ROUTES.AUTH.LOGIN}?error=Bạn cần đăng nhập để thực hiện thao tác này.`);
+    }
+    const checkoutSession = await getCheckoutSession(id, session.user.id) as IBackendResponse<any>;
 
-        if (checkoutSession.statusCode !== 200 && checkoutSession.statusCode !== 201) {
-            errorMessage = checkoutSession.message || "Phát sinh lỗi trong quá trình lấy thông tin của phiên thanh toán.";
-        }
+    if (checkoutSession.statusCode !== 200 && checkoutSession.statusCode !== 201) {
+        errorMessage = checkoutSession.message || "Không tìm thấy thông tin thanh toán.";
+        redirect(`${ROUTES.AUTH.LOGIN}?error=${errorMessage}`);
     }
     //----------------------End----------------------//
 
