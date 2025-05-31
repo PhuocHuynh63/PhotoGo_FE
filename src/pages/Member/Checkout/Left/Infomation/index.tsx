@@ -3,27 +3,29 @@
 import Input from '@components/Atoms/Input'
 import TextArea from '@components/Atoms/TextArea'
 import { useFormBooking, useSetFormBooking } from '@stores/checkout/selectors'
-import React, { useEffect, useState } from 'react'
+import { useUser } from '@stores/user/selectors'
+import React, { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 type FormValues = {
     fullname: string
     email: string
     phone: string
-    notes: string
+    user_note: string
 }
 
 const Infomation = () => {
+    const userStore = useUser();
 
     /**
      * React Hook Form setup
      */
     const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
         defaultValues: {
-            fullname: '',
-            email: '',
-            phone: '',
-            notes: '',
+            fullname: userStore?.fullName || '',
+            email: userStore?.email || '',
+            phone: userStore?.phoneNumber?.toString() || '',
+            user_note: '',
         },
     });
     //-----------------------------End-----------------------------//
@@ -44,8 +46,6 @@ const Infomation = () => {
         return () => subscription.unsubscribe();
     }, [watch, setBookingForm, formBooking]);
     //-----------------------------End-----------------------------//
-
-
 
     return (
         <form className="space-y-6" onSubmit={handleSubmit(() => { })}>
@@ -94,10 +94,10 @@ const Infomation = () => {
                     Ghi chú
                 </label>
                 <Controller
-                    name="notes"
+                    name="user_note"
                     control={control}
                     render={({ field }) => (
-                        <TextArea id="notes" placeholder="Ghi chú thêm (nếu có)" rows={4} {...field} />
+                        <TextArea id="user_note" placeholder="Ghi chú thêm (nếu có)" rows={4} {...field} />
                     )}
                 />
             </div>

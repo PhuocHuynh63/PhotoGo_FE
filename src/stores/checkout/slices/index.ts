@@ -21,6 +21,8 @@ export const createCheckoutSlice = (
         user_note: "",
     },
 
+    //TODO: Bắt validate cho stepFormBooking
+
     setStep: (step) => {
         return set(() => ({ currentStep: step }))
     },
