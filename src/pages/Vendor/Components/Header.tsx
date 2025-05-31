@@ -1,10 +1,22 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@components/Atoms/ui/avatar"
-import { Bell } from "lucide-react"
+import { Bell, User, Settings, LogOut } from "lucide-react"
 import { IUser } from "@models/user/common.model"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@components/Atoms/ui/dropdown-menu"
+import { signOut } from "next-auth/react"
+import { ROUTES } from "@routes"
+import { useRouter } from "next/navigation"
 
 export default function Header({ userData }: { userData: IUser }) {
+    const router = useRouter()
     return (
         <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Quản lý hồ sơ</h1>
@@ -26,16 +38,36 @@ export default function Header({ userData }: { userData: IUser }) {
                     </span>
                 </button>
 
-                <div className="flex items-center gap-2">
-                    <Avatar className="w-8 h-8">
-                        <AvatarImage src={userData?.avatarUrl} alt="Admin" />
-                        <AvatarFallback>{userData?.avatarUrl}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                        <p className="text-sm font-medium">{userData?.fullName}</p>
-                        <p className="text-xs text-gray-500">{userData?.email}</p>
-                    </div>
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center gap-2 cursor-pointer">
+                        <Avatar className="w-8 h-8">
+                            <AvatarImage src={userData?.avatarUrl} alt="Admin" />
+                            <AvatarFallback>{userData?.avatarUrl}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="text-sm font-medium">{userData?.fullName}</p>
+                            <p className="text-xs text-gray-500">{userData?.email}</p>
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem icon="User" onClick={() => {
+                            router.push(ROUTES.USER.PROFILE)
+                        }}>
+                            Hồ sơ
+                        </DropdownMenuItem>
+                        <DropdownMenuItem icon="Settings">
+                            Cài đặt
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem icon="LogOut" className="text-red-600" onClick={() => {
+                            signOut({ callbackUrl: "/" })
+                        }}>
+                            Đăng xuất
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
     )

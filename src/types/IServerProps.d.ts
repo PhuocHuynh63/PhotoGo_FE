@@ -16,4 +16,14 @@ declare namespace SERVERS {
             id: string;
         }>;
     }
+    interface ServiceEditPageProps {
+        params: Promise<{
+            id: string;
+        }>;
+    }
+    interface ServiceViewPageProps {
+        params: Promise<{
+            id: string;
+        }>;
+    }
 }
