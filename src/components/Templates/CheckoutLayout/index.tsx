@@ -9,9 +9,10 @@ import { useCheckoutStep } from "@stores/checkout/selectors";
 
 export default function CheckoutLayoutClient({
     children,
+    checkoutSession
 }: Readonly<{
     children: React.ReactNode;
-    errorMessage?: string;
+    checkoutSession?: any;
 }>) {
     /**
      * Define variables

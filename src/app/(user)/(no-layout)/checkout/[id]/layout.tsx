@@ -1,6 +1,6 @@
 import CheckoutLayoutClient from "@components/Templates/CheckoutLayout";
 import { authOptions } from "@lib/authOptions";
-import { IBackendResponse } from "@models/backend/backendResponse.model";
+import { ICheckoutSessionResponseModel } from "@models/checkoutSession/repsonse.model";
 import { ROUTES } from "@routes";
 import checkoutSessionService from "@services/checkoutSession";
 import { getServerSession } from "next-auth";
@@ -30,7 +30,7 @@ export default async function CheckoutLayout({
     if (!session) {
         redirect(`${ROUTES.AUTH.LOGIN}?error=Bạn cần đăng nhập để thực hiện thao tác này.`);
     }
-    const checkoutSession = await getCheckoutSession(id, session.user.id) as IBackendResponse<any>;
+    const checkoutSession = await getCheckoutSession(id, session.user.id) as ICheckoutSessionResponseModel;
 
     if (checkoutSession.statusCode !== 200 && checkoutSession.statusCode !== 201) {
         errorMessage = checkoutSession.message || "Không tìm thấy thông tin thanh toán.";
@@ -39,7 +39,7 @@ export default async function CheckoutLayout({
     //----------------------End----------------------//
 
     return (
-        <CheckoutLayoutClient errorMessage={errorMessage}>
+        <CheckoutLayoutClient checkoutSession={checkoutSession.data}>
             {children}
         </CheckoutLayoutClient>
     );
