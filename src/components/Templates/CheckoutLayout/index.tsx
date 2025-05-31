@@ -5,15 +5,10 @@ import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { ROUTES } from "@routes";
 import { useCheckoutStep } from "@stores/checkout/selectors";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
 
 export default function CheckoutLayoutClient({
     children,
-    errorMessage
 }: Readonly<{
     children: React.ReactNode;
     errorMessage?: string;
@@ -21,7 +16,6 @@ export default function CheckoutLayoutClient({
     /**
      * Define variables
      */
-    const router = useRouter()
     const currentStep = useCheckoutStep()
     //----------------------End----------------------//
 

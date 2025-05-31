@@ -18,6 +18,8 @@ export default async function CheckoutLayout({
      * Define variables
      */
     const { id } = await params;
+    console.log("Checkout ID:", id);
+
     let errorMessage = "";
     //----------------------End----------------------//
 
