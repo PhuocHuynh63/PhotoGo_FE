@@ -1,3 +1,5 @@
+import { ZUSTAND } from "../../../types/IZustand"
+
 export const createPricingSlice = (
     set: any
 ): ZUSTAND.ISelectedMethodState => ({

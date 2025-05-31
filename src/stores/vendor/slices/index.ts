@@ -1,4 +1,5 @@
 import { IVendor } from "@models/vendor/common.model"
+import { ZUSTAND } from "../../../types/IZustand"
 
 export const createVendorSlice = (
     set: any
