@@ -6,12 +6,13 @@ import Image from "next/image"
 import { useEffect, useState, useRef } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
 import { IVendor } from "@models/vendor/common.model"
 import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
+import AttendanceBoard from "../AttendanceModal"
 
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
@@ -116,7 +117,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = ({ data }: PAGES.IHomePage) => {
+const HomePage = ({ data, user }: PAGES.IHomePage) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -125,11 +126,18 @@ const HomePage = ({ data }: PAGES.IHomePage) => {
     const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
     const [ctaAnimation, setCtaAnimation] = useState(false)
     const [vendorData, setVendorData] = useState<IVendor | null>(null)
-    useEffect(() => {
-        console.log(data)
-        setVendorData(data)
+    const [showModal, setShowModal] = useState(false)
 
-        console.log(vendorData)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowModal(true)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [])
+
+    useEffect(() => {
+        setVendorData(data)
         const handleScroll = () => {
             setScrollY(window.scrollY)
         }
@@ -164,11 +172,53 @@ const HomePage = ({ data }: PAGES.IHomePage) => {
         }
     }, [])
 
-
-
     const zoomLevel = 1 + scrollY / 10000
     return (
         <div>
+
+            <AnimatePresence>
+                {showModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-hidden"
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) {
+                                setShowModal(false)
+                            }
+                        }}
+                    >
+                        {/* Scrollable Container */}
+                        <div className="h-full overflow-y-auto overflow-x-hidden">
+                            <div className="min-h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
+                                <motion.div
+                                    initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                                    exit={{ scale: 0.8, opacity: 0, y: 50 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                    className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg my-4 sm:my-8"
+                                >
+                                    {/* Enhanced Close Button */}
+                                    <motion.button
+                                        onClick={() => setShowModal(false)}
+                                        className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 z-20 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full shadow-2xl flex items-center justify-center hover:from-orange-600 hover:to-orange-700 transition-all duration-300 group border-2 sm:border-4 border-white"
+                                        whileHover={{ scale: 1.1, rotate: 90 }}
+                                        whileTap={{ scale: 0.9 }}
+                                    >
+                                        <LucideIcon name="X" iconSize={24} iconColor={"white"} className="cursor-pointer" />
+                                        {/* <X className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white group-hover:rotate-90 transition-transform duration-300 cursor-pointer" /> */}
+                                    </motion.button>
+
+                                    {/* Attendance Board */}
+                                    <AttendanceBoard isLoggedIn={user ? true : false} userId={user?.id} />
+                                </motion.div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Hero section */}
             <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
                 <BackToTop />

@@ -20,7 +20,7 @@ export default function Left({ onReset, categories, onApply }: {
     const searchParams = useSearchParams();
 
     const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([0, 70000000]);
-    const [serviceType, setServiceType] = useState<{ key: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ key: string }[]>([]);
     const [rating, setRating] = useState(0);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -44,12 +44,12 @@ export default function Left({ onReset, categories, onApply }: {
     //     router.replace(`?${params.toString()}`);
     // }
 
-    function handleServiceTypeChange(key: string) {
-        setServiceType(prev => {
-            const isSelected = prev.some(service => service.key === key);
+    function handleCategoryChange(key: string) {
+        setSelectedCategories(prev => {
+            const isSelected = prev.some(category => category.key === key);
             let updated;
             if (isSelected) {
-                updated = prev.filter(service => service.key !== key);
+                updated = prev.filter(category => category.key !== key);
             } else {
                 updated = [...prev, { key }];
             }
@@ -74,7 +74,7 @@ export default function Left({ onReset, categories, onApply }: {
 
     function handleResetAll() {
         setSelectPriceRange([0, 70000000]);
-        setServiceType([]);
+        setSelectedCategories([]);
         setRating(0);
         setAddresses([]);
         setSelectedDate(new Date());
@@ -96,7 +96,7 @@ export default function Left({ onReset, categories, onApply }: {
             params.set('current', "1");
         }
 
-        if (serviceType.length > 0) params.set("serviceType", serviceType.map(s => s.key).join(","));
+        if (selectedCategories.length > 0) params.set("serviceType", selectedCategories.map(s => s.key).join(","));
         if (rating > 0) params.set("minRating", rating.toString());
         params.set("minPrice", selectPriceRange[0].toString());
         params.set("maxPrice", selectPriceRange[1].toString());
@@ -116,7 +116,7 @@ export default function Left({ onReset, categories, onApply }: {
         }
 
         const servicesFromUrl = params.get("serviceType");
-        setServiceType(categories?.data
+        setSelectedCategories(categories?.data
             ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
             .map(category => ({ key: category.name })));
 
@@ -152,8 +152,8 @@ export default function Left({ onReset, categories, onApply }: {
                     <h3 className="font-medium text-sm mb-2">Loại dịch vụ</h3>
                     <Checkbox
                         options={categories?.data.map(category => ({ key: category.name }))}
-                        value={serviceType.map(service => service.key) as string[]}
-                        onChange={(e, key) => handleServiceTypeChange(key)}
+                        value={selectedCategories.map(category => category.key) as string[]}
+                        onChange={(e, key) => handleCategoryChange(key)}
                     />
                 </div>
 
@@ -229,8 +229,8 @@ export default function Left({ onReset, categories, onApply }: {
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
                                 options={categories?.data.map(category => ({ key: category.name }))}
-                                value={serviceType.map(service => service.key) as string[]}
-                                onChange={(e, key) => handleServiceTypeChange(key)}
+                                value={selectedCategories.map(category => category.key) as string[]}
+                                onChange={(e, key) => handleCategoryChange(key)}
                             />
                         </AccordionContent>
                     </AccordionItem>

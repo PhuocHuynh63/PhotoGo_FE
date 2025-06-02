@@ -14,6 +14,7 @@ declare namespace PAGES {
 
     interface IHomePage {
         data: IVendor;
+        user: IUser | undefined;
     }
     interface Promotion {
         id: number;
