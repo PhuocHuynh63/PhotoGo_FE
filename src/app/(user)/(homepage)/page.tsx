@@ -1,5 +1,10 @@
 // import { IVendorResponse } from "@models/vendor/response.model";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@lib/authOptions";
+import userService from "@services/user";
 import HomePage from "@pages/Public/HomePage";
+import { IUserResponse } from "@models/user/response.model";
+import { IUser } from "@models/user/common.model";
 
 // Mock data cho homepage
 const mockVendorData = {
@@ -34,10 +39,19 @@ const mockVendorData = {
   isRemarkable: false
 };
 
-export default function Home() {
+async function getAUser(id: string) {
+  return await userService.getAUser(id);
+}
+
+export default async function Home() {
+  const session = await getServerSession(authOptions) as METADATA.ISession;
+  let userData: IUser | undefined;
+  if (session?.user?.id) {
+    const user = await getAUser(session.user.id) as IUserResponse;
+    userData = user?.data as IUser | undefined;
+  }
+
   return (
-    <>
-      <HomePage data={mockVendorData} />
-    </>
+    <HomePage user={userData} data={mockVendorData} />
   );
 }
