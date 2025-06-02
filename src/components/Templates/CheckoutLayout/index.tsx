@@ -50,22 +50,22 @@ export default function CheckoutLayoutClient({
             });
         }
 
-        // return () => {
-        //     setBookingForm({
-        //         ...formBooking,
-        //         userId: "",
-        //         serviceConceptId: "",
-        //         date: "",
-        //         time: "",
-        //         sourceType: "trực tiếp",
-        //         depositAmount: 30,
-        //         // method: 'payos',
-        //         fullName: "",
-        //         phone: "",
-        //         email: "",
-        //         userNote: "",
-        //     });
-        // }
+        return () => {
+            setBookingForm({
+                ...formBooking,
+                userId: "",
+                serviceConceptId: "",
+                date: "",
+                time: "",
+                sourceType: "trực tiếp",
+                depositAmount: 30,
+                // method: 'payos',
+                fullName: "",
+                phone: "",
+                email: "",
+                userNote: "",
+            });
+        }
     }, [checkoutSession]);
     //----------------------End----------------------//
 
