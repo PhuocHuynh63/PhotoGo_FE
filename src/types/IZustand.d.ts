@@ -4,7 +4,7 @@ import { IUser } from "@models/user/common.model";
 declare module ZUSTAND {
     export interface ICheckoutState {
         currentStep: number;
-        selectedDeposit: number;
+        selectedDepositAmount: number;
         selectedCheckoutMethod: string | null;
         formBooking: IBookingFormRequest;
         step: number;
@@ -12,7 +12,7 @@ declare module ZUSTAND {
         setStep: (step: number) => void;
         nextStep: () => void;
         prevStep: () => void;
-        selectDeposit: (percent: number) => void;
+        selectDepositAmount: (percent: number) => void;
         selectCheckoutMethod: (method: string | null) => void;
         setFormBooking: (data: IBookingFormRequest) => void;
         setIsValidStep: (step: number, isValid: boolean) => void;

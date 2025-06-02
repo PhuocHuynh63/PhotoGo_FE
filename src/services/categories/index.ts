@@ -6,7 +6,6 @@ const categoryService = {
             next: { revalidate: 10 }
         })
     },
-
 }
 
 export default categoryService

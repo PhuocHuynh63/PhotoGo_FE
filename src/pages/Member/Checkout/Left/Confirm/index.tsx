@@ -8,8 +8,6 @@ const Confirm = () => {
      * Define variables zustand store
      */
     const formBooking = useFormBooking();
-    console.log('formBooking', formBooking);
-
     //-----------------------------End-----------------------------//
 
     return (

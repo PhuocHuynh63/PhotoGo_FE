@@ -6,14 +6,14 @@ export const createCheckoutSlice = (
 ): ZUSTAND.ICheckoutState => ({
     currentStep: 1,
     selectedCheckoutMethod: 'payos',
-    selectedDeposit: 30,
+    selectedDepositAmount: 30,
     formBooking: {
         userId: "",
-        service_concept_id: "",
+        serviceConceptId: "",
         date: "",
         time: "",
-        source_type: "web",
-        deposit: 30,
+        sourceType: "web",
+        depositAmount: 30,
         method: 'payos',
         fullName: "",
         phone: "",
@@ -37,8 +37,8 @@ export const createCheckoutSlice = (
         }))
     },
 
-    selectDeposit: (value) => {
-        return set(() => ({ selectedDeposit: value }))
+    selectDepositAmount: (value) => {
+        return set(() => ({ selectedDepositAmount: value }))
     },
 
     setFormBooking: (data: IBookingFormRequest) => {

@@ -44,7 +44,7 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                service_concept_id: checkoutSession.data?.data.conceptId || "",
+                serviceConceptId: checkoutSession.data?.data.conceptId || "",
                 date: checkoutSession.data?.data.date || "",
                 time: checkoutSession.data?.data.time || "",
             });
@@ -54,11 +54,11 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: "",
-                service_concept_id: "",
+                serviceConceptId: "",
                 date: "",
                 time: "",
-                source_type: "web",
-                deposit: 30,
+                sourceType: "web",
+                depositAmount: 30,
                 method: 'payos',
                 fullName: "",
                 phone: "",
