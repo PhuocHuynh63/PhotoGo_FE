@@ -23,7 +23,7 @@ const PaymentMethod = () => {
     useEffect(() => {
         setBookingForm({
             ...formBooking,
-            method: (selectedMethod as "payos"),
+            // method: (selectedMethod as "payos"),
         });
 
         if (selectedMethod) {

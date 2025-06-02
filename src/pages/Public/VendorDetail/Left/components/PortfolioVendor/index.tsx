@@ -15,9 +15,16 @@ const PortfolioVendor = ({ isOverview = true }: PortfolioVendorProps) => {
 
     const loadingImg = (img: string) => {
         return (
-            img ? img : (
-                <Skeleton className="h-4 w-3/4" />
-            )
+            img ?
+                (
+                    <img
+                        src={img}
+                        alt="Portfolio Image"
+                        className="w-full h-64 object-contain transition-transform group-hover:scale-105"
+                    />
+                ) : (
+                    <Skeleton className="h-4 w-3/4" />
+                )
         );
     }
 
@@ -38,6 +45,12 @@ const PortfolioVendor = ({ isOverview = true }: PortfolioVendorProps) => {
                         </div>
                     ))}
             </div>
+
+            {vendorData.length === 0 && (
+                <div className="text-center text-gray-500 mt-4">
+                    {isOverview ? "No portfolio images available." : "No images found for this service concept."}
+                </div>
+            )}
         </>
     )
 }

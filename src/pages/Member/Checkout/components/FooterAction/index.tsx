@@ -41,14 +41,26 @@ const FooterAction = () => {
         mode: 'onChange',
     })
 
-    const onSubmit = async (data: IBookingFormRequest) => {
-        const { userId, serviceConceptId, ...spread } = data
-        const res = await BookingService.createBooking(
-            userId,
-            serviceConceptId,
-            spread
-        )
-        console.log('Booking response:', res);
+    console.log('FooterAction: formBooking', formBooking);
+
+
+    const onSubmit = async () => {
+        const { userId, serviceConceptId, ...spread } = formBooking
+        try {
+            const res = await BookingService.createBooking(
+                userId,
+                serviceConceptId,
+                {
+                    ...spread,
+                    date: new Date(spread.date).toISOString().slice(0, 10),
+                }
+            )
+            console.log('Booking response:', res);
+
+        } catch (error) {
+            console.error('Error creating booking:', error)
+            return
+        }
     }
     //------------------------------End-----------------------------//
 

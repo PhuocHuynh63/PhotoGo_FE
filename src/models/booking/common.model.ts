@@ -11,7 +11,7 @@ export const BookingModel = z.object({
     date: z.string(),
     time: z.string(),
     status: z.enum(["Chờ xử lý", "Đã xác nhận", "Đã hoàn thành", "Đã hủy"]),
-    sourceType: z.enum(["web", "app", "facebook", "titok"]),
+    sourceType: z.enum(["trực tiếp", "chiến dịch", "giới thiệu", "nổi bật", "khuyến mãi", "khác"]),
     depositAmount: z.number(),
     userNote: z.string().optional(),
     createdAt: z.string().datetime().optional(),
