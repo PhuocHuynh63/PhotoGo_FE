@@ -1,4 +1,5 @@
 import { IBookingFormRequest } from "@models/booking/request.model";
+import { IServiceConceptImage } from "@models/serviceConcepts/common.model";
 import { IUser } from "@models/user/common.model";
 
 declare module ZUSTAND {
@@ -27,7 +28,9 @@ declare module ZUSTAND {
 
     export interface IVendorState {
         vendor: IVendor;
-        setVendor: (vendor: IVendor) => void
+        serviceConceptImages: IServiceConceptImage[];
+        setVendor: (vendor: IVendor) => void;
+        setServiceImages: (serviceConceptImages: IServiceConceptImage[]) => void;
     }
 
     export interface IUserState {

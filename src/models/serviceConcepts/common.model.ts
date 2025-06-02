@@ -16,3 +16,16 @@ export const ServiceConceptModel = z.object({
 
 export type IServiceConcept = z.infer<typeof ServiceConceptModel>;
 //----------------------End----------------------//
+
+
+/**
+ * Model of ServiceConceptImage
+ */
+export const ServiceConceptImageModel = z.object({
+    id: z.string(),
+    image_url: z.string(),
+    service_concept_id: z.string(),
+    created_at: z.string(),
+});
+export type IServiceConceptImageModel = z.infer<typeof ServiceConceptImageModel>;
+//----------------------End----------------------//

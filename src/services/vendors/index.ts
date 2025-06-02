@@ -27,6 +27,12 @@ const vendorService = {
         return await http.get(`/vendors/${id}`, {
             next: { revalidate: 10 }
         })
+    },
+
+    getConceptImgsByVendorId: async (vendorId: string, current: string, pageSize: string) => {
+        return await http.get(`/vendors/concept_image?vendor_id=${vendorId}&current=${current}&pageSize=${pageSize}`, {
+            next: { tags: [`vendor-concept-images-${vendorId}`] }
+        })
     }
 }
 
