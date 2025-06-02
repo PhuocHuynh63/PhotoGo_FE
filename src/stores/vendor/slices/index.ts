@@ -5,6 +5,13 @@ export const createVendorSlice = (
     set: any
 ): ZUSTAND.IVendorState => ({
     vendor: {} as IVendor,
+    serviceConceptImages: [],
+
+    setServiceImages(serviceConceptImages) {
+        return set(() => ({
+            serviceConceptImages: serviceConceptImages,
+        }))
+    },
 
     setVendor(vendor) {
         return set(() => ({

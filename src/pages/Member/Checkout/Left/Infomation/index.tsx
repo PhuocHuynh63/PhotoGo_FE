@@ -2,30 +2,36 @@
 
 import Input from '@components/Atoms/Input'
 import TextArea from '@components/Atoms/TextArea'
-import { useFormBooking, useSetFormBooking } from '@stores/checkout/selectors'
+import { useFormBooking, useSetFormBooking, useSetIsValidStep } from '@stores/checkout/selectors'
 import { useUser } from '@stores/user/selectors'
 import React, { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 type FormValues = {
-    fullname: string
+    fullName: string
     email: string
     phone: string
-    user_note: string
+    userNote: string
 }
 
 const Infomation = () => {
+    /**
+     * Define variables zustand store
+     */
     const userStore = useUser();
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    //-----------------------------End-----------------------------//
 
     /**
      * React Hook Form setup
      */
     const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
         defaultValues: {
-            fullname: userStore?.fullName || '',
-            email: userStore?.email || '',
-            phone: userStore?.phoneNumber?.toString() || '',
-            user_note: '',
+            fullName: formBooking.fullName || userStore?.fullName || '',
+            email: formBooking.email || userStore?.email || '',
+            phone: formBooking.phone || userStore?.phoneNumber?.toString() || '',
+            userNote: formBooking.userNote || '',
         },
     });
     //-----------------------------End-----------------------------//
@@ -33,31 +39,35 @@ const Infomation = () => {
     /**
      * Zustand store for booking form
      */
-    const setBookingForm = useSetFormBooking();
-    const formBooking = useFormBooking();
-
+    const setIsValidStep = useSetIsValidStep();
     useEffect(() => {
-        const subscription = watch((values) => {
+        const subscription = watch((values: Partial<FormValues>) => {
+            const isValid = (values.fullName?.trim() ?? '') !== '' &&
+                (values.email?.trim() ?? '') !== '' &&
+                (values.phone?.trim() ?? '') !== '';
+
+            setIsValidStep(2, isValid);
+
             setBookingForm({
                 ...formBooking,
                 ...values,
             });
         });
-        return () => subscription.unsubscribe();
-    }, [watch, setBookingForm, formBooking]);
+        // return () => subscription.unsubscribe();
+    }, [watch, setIsValidStep]);
     //-----------------------------End-----------------------------//
 
     return (
         <form className="space-y-6" onSubmit={handleSubmit(() => { })}>
             <div>
-                <label htmlFor="fullname" className="block text-sm font-medium mb-2">
+                <label htmlFor="fullName" className="block text-sm font-medium mb-2">
                     Họ và tên
                 </label>
                 <Controller
-                    name="fullname"
+                    name="fullName"
                     control={control}
                     render={({ field }) => (
-                        <Input id="fullname" {...field} />
+                        <Input id="fullName" {...field} />
                     )}
                 />
             </div>
@@ -76,14 +86,14 @@ const Infomation = () => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                    <label htmlFor="phoneNumber" className="block text-sm font-medium mb-2">
                         Số điện thoại
                     </label>
                     <Controller
                         name="phone"
                         control={control}
                         render={({ field }) => (
-                            <Input id="phone" {...field} />
+                            <Input id="phoneNumber" {...field} />
                         )}
                     />
                 </div>
@@ -94,10 +104,10 @@ const Infomation = () => {
                     Ghi chú
                 </label>
                 <Controller
-                    name="user_note"
+                    name="userNote"
                     control={control}
                     render={({ field }) => (
-                        <TextArea id="user_note" placeholder="Ghi chú thêm (nếu có)" rows={4} {...field} />
+                        <TextArea id="userNote" placeholder="Ghi chú thêm (nếu có)" rows={4} {...field} />
                     )}
                 />
             </div>
