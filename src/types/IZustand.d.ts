@@ -1,18 +1,22 @@
 import { IBookingFormRequest } from "@models/booking/request.model";
+import { IServiceConceptImage } from "@models/serviceConcepts/common.model";
 import { IUser } from "@models/user/common.model";
 
 declare module ZUSTAND {
     export interface ICheckoutState {
         currentStep: number;
-        selectedDeposit: number;
+        selectedDepositAmount: number;
         selectedCheckoutMethod: string | null;
         formBooking: IBookingFormRequest;
+        step: number;
+        isValidStep: Record<number, boolean>;
         setStep: (step: number) => void;
         nextStep: () => void;
         prevStep: () => void;
-        selectDeposit: (percent: number) => void;
+        selectDepositAmount: (percent: number) => void;
         selectCheckoutMethod: (method: string | null) => void;
         setFormBooking: (data: IBookingFormRequest) => void;
+        setIsValidStep: (step: number, isValid: boolean) => void;
         // reset: () => void
     }
 
@@ -24,7 +28,9 @@ declare module ZUSTAND {
 
     export interface IVendorState {
         vendor: IVendor;
-        setVendor: (vendor: IVendor) => void
+        serviceConceptImages: IServiceConceptImage[];
+        setVendor: (vendor: IVendor) => void;
+        setServiceImages: (serviceConceptImages: IServiceConceptImage[]) => void;
     }
 
     export interface IUserState {

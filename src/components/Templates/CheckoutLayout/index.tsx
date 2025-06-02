@@ -36,14 +36,34 @@ export default function CheckoutLayoutClient({
      */
     const setBookingForm = useSetFormBooking();
     const formBooking = useFormBooking();
+    console.log("CheckoutLayoutClient: formBooking", formBooking);
+
+
     useEffect(() => {
         if (checkoutSession) {
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                service_concept_id: checkoutSession.data?.data.conceptId || "",
+                serviceConceptId: checkoutSession.data?.data.conceptId || "",
                 date: checkoutSession.data?.data.date || "",
                 time: checkoutSession.data?.data.time || "",
+            });
+        }
+
+        return () => {
+            setBookingForm({
+                ...formBooking,
+                userId: "",
+                serviceConceptId: "",
+                date: "",
+                time: "",
+                sourceType: "trực tiếp",
+                depositAmount: 30,
+                // method: 'payos',
+                fullName: "",
+                phone: "",
+                email: "",
+                userNote: "",
             });
         }
     }, [checkoutSession]);

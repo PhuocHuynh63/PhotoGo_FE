@@ -20,9 +20,9 @@ const Deposit = () => {
     useEffect(() => {
         setBookingForm({
             ...formBooking,
-            deposit: selectedDeposit,
+            depositAmount: selectedDeposit,
         });
-    }, []);
+    }, [selectedDeposit]);
     //----------------------End----------------------//
 
 

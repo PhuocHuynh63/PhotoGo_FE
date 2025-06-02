@@ -1,3 +1,4 @@
+import { IServiceConceptImageModel } from '@models/serviceConcepts/response.model';
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
 declare namespace PAGES {
@@ -62,6 +63,7 @@ declare namespace PAGES {
         children: React.ReactNode;
         vendor: IVendor;
         session: METADATA.ISession | null;
+        concept: IServiceConceptImageModel;
     }
 
     interface IChatProps {
