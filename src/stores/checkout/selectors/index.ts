@@ -15,3 +15,6 @@ export const useSelectDeposit = () => useStore((state: ZUSTAND.ICheckoutState) =
 
 export const useFormBooking = () => useStore((state: ZUSTAND.ICheckoutState) => state.formBooking)
 export const useSetFormBooking = () => useStore((state: ZUSTAND.ICheckoutState) => state.setFormBooking)
+
+export const useIsValidStep = () => useStore((state: ZUSTAND.ICheckoutState) => state.isValidStep)
+export const useSetIsValidStep = () => useStore((state: ZUSTAND.ICheckoutState) => state.setIsValidStep)

@@ -15,6 +15,6 @@ export const BookingFormRequest = z.object({
     fullName: z.string(),
     phone: z.string(),
     email: z.string().email("Invalid email format"),
-    user_note: z.string().optional(),
+    userNote: z.string().optional(),
 })
 export type IBookingFormRequest = z.TypeOf<typeof BookingFormRequest>;

@@ -36,6 +36,9 @@ export default function CheckoutLayoutClient({
      */
     const setBookingForm = useSetFormBooking();
     const formBooking = useFormBooking();
+    console.log("CheckoutLayoutClient: formBooking", formBooking);
+
+
     useEffect(() => {
         if (checkoutSession) {
             setBookingForm({
@@ -44,6 +47,23 @@ export default function CheckoutLayoutClient({
                 service_concept_id: checkoutSession.data?.data.conceptId || "",
                 date: checkoutSession.data?.data.date || "",
                 time: checkoutSession.data?.data.time || "",
+            });
+        }
+
+        return () => {
+            setBookingForm({
+                ...formBooking,
+                userId: "",
+                service_concept_id: "",
+                date: "",
+                time: "",
+                source_type: "web",
+                deposit: 30,
+                method: 'payos',
+                fullName: "",
+                phone: "",
+                email: "",
+                userNote: "",
             });
         }
     }, [checkoutSession]);

@@ -18,10 +18,14 @@ export const createCheckoutSlice = (
         fullName: "",
         phone: "",
         email: "",
-        user_note: "",
+        userNote: "",
     },
-
-    //TODO: Bắt validate cho stepFormBooking
+    step: 1,
+    isValidStep: {
+        1: false,
+        2: false,
+        3: true,
+    },
 
     setStep: (step) => {
         return set(() => ({ currentStep: step }))
@@ -55,6 +59,15 @@ export const createCheckoutSlice = (
     prevStep: () => {
         return set((state: ZUSTAND.ICheckoutState) => ({
             currentStep: state.currentStep > 1 ? state.currentStep - 1 : 1,
+        }));
+    },
+
+    setIsValidStep: (step: number, isValid: boolean) => {
+        return set((state: ZUSTAND.ICheckoutState) => ({
+            isValidStep: {
+                ...state.isValidStep,
+                [step]: isValid,
+            }
         }));
     },
 })

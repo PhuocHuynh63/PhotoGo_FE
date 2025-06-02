@@ -7,12 +7,15 @@ declare module ZUSTAND {
         selectedDeposit: number;
         selectedCheckoutMethod: string | null;
         formBooking: IBookingFormRequest;
+        step: number;
+        isValidStep: Record<number, boolean>;
         setStep: (step: number) => void;
         nextStep: () => void;
         prevStep: () => void;
         selectDeposit: (percent: number) => void;
         selectCheckoutMethod: (method: string | null) => void;
         setFormBooking: (data: IBookingFormRequest) => void;
+        setIsValidStep: (step: number, isValid: boolean) => void;
         // reset: () => void
     }
 

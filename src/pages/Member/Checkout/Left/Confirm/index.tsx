@@ -1,7 +1,17 @@
+import { useFormBooking } from '@stores/checkout/selectors';
 import { Calendar, Clock, Heart, MapPin } from 'lucide-react'
 import React from 'react'
 
 const Confirm = () => {
+
+    /**
+     * Define variables zustand store
+     */
+    const formBooking = useFormBooking();
+    console.log('formBooking', formBooking);
+
+    //-----------------------------End-----------------------------//
+
     return (
         <div className="container mx-auto py-8 px-4 max-w-4xl">
             <div className="space-y-8">
@@ -34,15 +44,15 @@ const Confirm = () => {
                         <div className="mt-6 space-y-3">
                             <div className="flex items-center gap-2">
                                 <Calendar className="h-5 w-5 text-[#f0a06a]" />
-                                <span>12/03/2025</span>
+                                <span>{formBooking.date || NaN}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Clock className="h-5 w-5 text-[#f0a06a]" />
-                                <span>09:00</span>
+                                <span>{formBooking.time || NaN}</span>
                             </div>
                             <div className="flex items-start gap-2">
                                 <MapPin className="h-5 w-5 text-[#f0a06a] mt-0.5" />
-                                <span>123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</span>
+                                <span></span>
                             </div>
                         </div>
                     </div>
@@ -61,17 +71,17 @@ const Confirm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h3 className="text-gray-500 text-sm mb-1">Họ và tên</h3>
-                                <p className="font-medium">Huỳnh Minh Phước</p>
+                                <p className="font-medium">{formBooking.fullName || NaN}</p>
                             </div>
                             <div>
                                 <h3 className="text-gray-500 text-sm mb-1">Số điện thoại</h3>
-                                <p className="font-medium">1900-8686</p>
+                                <p className="font-medium">{formBooking.phone}</p>
                             </div>
                         </div>
 
                         <div className="mt-6">
                             <h3 className="text-gray-500 text-sm mb-1">Email</h3>
-                            <p className="font-medium">phuochmse17830@fpt.edu.vn</p>
+                            <p className="font-medium">{formBooking.email}</p>
                         </div>
                     </div>
                 </div>

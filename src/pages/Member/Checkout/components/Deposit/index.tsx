@@ -22,7 +22,7 @@ const Deposit = () => {
             ...formBooking,
             deposit: selectedDeposit,
         });
-    }, []);
+    }, [selectedDeposit]);
     //----------------------End----------------------//
 
 

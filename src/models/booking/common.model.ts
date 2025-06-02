@@ -13,7 +13,7 @@ export const BookingModel = z.object({
     status: z.enum(["Chờ xử lý", "Đã xác nhận", "Đã hoàn thành", "Đã hủy"]),
     source_type: z.enum(["web", "app", "facebook", "titok"]),
     deposit: z.number(),
-    user_note: z.string().optional(),
+    userNote: z.string().optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),
 });

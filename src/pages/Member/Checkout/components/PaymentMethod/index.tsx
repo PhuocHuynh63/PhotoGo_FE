@@ -1,6 +1,6 @@
 'use client'
 
-import { useFormBooking, useCheckoutSelectedMethod, useCheckoutSelectMethod, useSetFormBooking } from '@stores/checkout/selectors'
+import { useFormBooking, useCheckoutSelectedMethod, useCheckoutSelectMethod, useSetFormBooking, useSetIsValidStep } from '@stores/checkout/selectors'
 import React, { useEffect } from 'react'
 
 const PaymentMethod = () => {
@@ -17,12 +17,21 @@ const PaymentMethod = () => {
      */
     const setBookingForm = useSetFormBooking();
     const formBooking = useFormBooking();
+
+    const setIsValidStep = useSetIsValidStep();
+
     useEffect(() => {
         setBookingForm({
             ...formBooking,
             method: (selectedMethod as "payos"),
         });
-    }, []);
+
+        if (selectedMethod) {
+            setIsValidStep(1, true);
+        } else {
+            setIsValidStep(1, false);
+        }
+    }, [selectedMethod]);
     //----------------------End----------------------//
 
     return (
