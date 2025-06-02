@@ -4,7 +4,8 @@ import { Card, CardContent } from "@components/Atoms/Card"
 import { Avatar } from "@components/Molecules/Avatar"
 import {
     ChevronRight, Ticket, Wallet, Star, ShoppingBag,
-    MessageSquare, Heart, KeyRound
+    MessageSquare, Heart, KeyRound,
+    Calendar
 } from "lucide-react"
 import { PAGES } from '../../../../types/IPages'
 import Button from "@components/Atoms/Button"
@@ -16,6 +17,7 @@ const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
     { tab: "points", label: "Điểm tích lũy", icon: Wallet },
     { tab: "rewards", label: "PhotoGo Rewards", icon: Star },
+    { tab: "attendance", label: "Điểm danh", icon: Calendar },
     { tab: "orders", label: "Đơn hàng", icon: ShoppingBag },
     { tab: "reviews", label: "Đánh giá", icon: MessageSquare },
     { tab: "favorites", label: "Yêu thích", icon: Heart },
