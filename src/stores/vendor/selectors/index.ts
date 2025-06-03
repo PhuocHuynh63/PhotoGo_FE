@@ -6,3 +6,4 @@ export const useSetVendor = () => useStore((state: ZUSTAND.IVendorState) => stat
 
 export const useServiceConceptImages = () => useStore((state: ZUSTAND.IVendorState) => state.serviceConceptImages)
 export const useSetServiceConceptImages = () => useStore((state: ZUSTAND.IVendorState) => state.setServiceImages)
+export const useAddMoreConceptImages = () => useStore((state) => state.addMoreConceptImages);

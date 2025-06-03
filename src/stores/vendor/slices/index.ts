@@ -7,17 +7,23 @@ export const createVendorSlice = (
     vendor: {} as IVendor,
     serviceConceptImages: [],
 
+    setVendor(vendor) {
+        return set(() => ({
+            vendor: vendor,
+        }))
+    },
+
     setServiceImages(serviceConceptImages) {
         return set(() => ({
             serviceConceptImages: serviceConceptImages,
         }))
     },
 
-    setVendor(vendor) {
-        return set(() => ({
-            vendor: vendor,
+    addMoreConceptImages(images) {
+        return set((state: any) => ({
+            serviceConceptImages: [...state.serviceConceptImages, ...images],
         }))
-    },
+    }
 })
 
 // Cần khai báo set bên ngoài slice nếu bạn dùng slice độc lập
