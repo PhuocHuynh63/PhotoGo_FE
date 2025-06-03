@@ -30,7 +30,8 @@ declare module ZUSTAND {
         vendor: IVendor;
         serviceConceptImages: IServiceConceptImage[];
         setVendor: (vendor: IVendor) => void;
-        setServiceImages: (serviceConceptImages: IServiceConceptImage[]) => void;
+        setServiceImages: (serviceConceptImages: IServiceConceptImage) => void;
+        addMoreConceptImages: (images: IServiceConceptImageModel[]) => void;
     }
 
     export interface IUserState {
