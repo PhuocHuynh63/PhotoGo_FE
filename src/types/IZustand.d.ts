@@ -1,6 +1,7 @@
 import { IBookingFormRequest } from "@models/booking/request.model";
 import { IServiceConceptImage } from "@models/serviceConcepts/common.model";
 import { IUser } from "@models/user/common.model";
+import { ICartItem } from "@models/cart/common.model";
 
 declare module ZUSTAND {
     export interface ICheckoutState {
@@ -39,5 +40,13 @@ declare module ZUSTAND {
         user: IUser | null;
         setSession: (session: METADATA.ISession | null) => void;
         setUser: (user: IUser | null) => void;
+    }
+
+    export interface ICartState {
+        cart: ICartItem[] | null;
+        getCart: () => ICartItem[] | null;
+        setCart: (cart: ICartItem[] | null) => void;
+        removeItem: (itemId: string, cartId: string) => Promise<void>;
+        removeItems: (itemIds: string[], cartId: string) => Promise<void>;
     }
 }

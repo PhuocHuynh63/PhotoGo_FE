@@ -198,9 +198,9 @@ const HomePage = ({ user }: PAGES.IHomePage) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center"
+                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm"
                     >
-                        <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg my-4 sm:my-8">
+                        <div className="transform scale-90">
                             <AttendanceBoard
                                 isLoggedIn={!!user?.id}
                                 userId={user?.id}

@@ -355,7 +355,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.3)_0%,transparent_50%)]"></div>
                         </div>
 
-                        <CardHeader className="text-center pb-4 sm:pb-6 lg:pb-8 pt-4 sm:pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8 relative">
+                        <CardHeader className="text-center  pt-4 sm:pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8 relative">
                             {/* Main Title */}
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}
@@ -425,7 +425,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                                 </div>
 
                                 {/* Level Info */}
-                                <div className="text-center space-y-1 sm:space-y-2">
+                                <div className="text-center space-y-2">
                                     <div
                                         className={`inline-block px-3 sm:px-4 py-1 rounded-full text-xs font-bold ${streakInfo.textColor} bg-orange-50 border border-orange-200`}
                                     >
@@ -453,16 +453,6 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
 
                     {/* Calendar Section */}
                     <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
-                        {/* Calendar Title */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6, duration: 0.6 }}
-                            className="text-center mb-4 sm:mb-6 lg:mb-8"
-                        >
-                            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-1 sm:mb-2">Lịch điểm danh tuần này</h2>
-                            <p className="text-xs sm:text-sm text-gray-600">Theo dõi tiến độ hàng ngày của bạn</p>
-                        </motion.div>
 
                         {/* Calendar Grid */}
                         <div className="grid grid-cols-7 gap-1 sm:gap-2 lg:gap-3 mb-6 sm:mb-8 lg:mb-10">

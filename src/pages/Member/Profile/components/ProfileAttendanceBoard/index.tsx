@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/Atoms/ui/card"
 import { Button } from "@/components/Atoms/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import AttendanceCalendarModal from "../AttendanceCalendarModal"
+import AttendanceCalendarModal from "../../../../Vendor/Components/AttendanceCalendarModal"
 import LucideIcon from "@components/Atoms/LucideIcon"
 
 
