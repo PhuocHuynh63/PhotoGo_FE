@@ -56,10 +56,13 @@ const PortfolioVendor = (
     };
     //------------------------------End-----------------------------//
 
+    // Only show 3 images in overview mode
+    const displayedImages = isOverview ? images.slice(0, 3) : images;
+
     return (
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {images.map((item: IServiceConceptImageModel) => (
+                {displayedImages?.map((item: IServiceConceptImageModel) => (
                     <div key={item.id} className="relative group overflow-hidden rounded-lg">
                         {item.image_url ? (
                             <img
@@ -78,7 +81,8 @@ const PortfolioVendor = (
                 ))}
             </div>
 
-            {hasMore && (
+            {/* Only show "Xem thêm" button if not in overview mode */}
+            {!isOverview && hasMore && (
                 <div className="text-center mt-6">
                     <ClearButton
                         onClick={loadMore}
