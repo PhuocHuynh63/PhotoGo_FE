@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 
 const FooterAction = () => {
     /**
@@ -47,9 +48,15 @@ const FooterAction = () => {
                 userId,
                 serviceConceptId,
                 spread,
-            )
+            ) as any
+
             console.log('Booking response:', res);
 
+            if (res.statusCode === 201) {
+                router.replace(res.data.paymentLink)
+            } else {
+                toast.error(res.message || 'Đặt lịch không thành công, vui lòng thử lại sau.')
+            }
         } catch (error) {
             console.error('Error creating booking:', error)
             return
