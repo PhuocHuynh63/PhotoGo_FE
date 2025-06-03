@@ -11,7 +11,7 @@ import { Switch } from "@/components/Atoms/ui/switch";
 import { Plus, Search, Edit, Eye, MoreHorizontal, PackageIcon, Clock, DollarSign } from "lucide-react";
 import ServiceModal from "@pages/Vendor/Components/Services/ServiceModal";
 import { toast } from "react-hot-toast";
-import { IServiceType } from "@models/serviceTypes/common.model";
+import { IServiceTypeModel } from "@models/serviceTypes/common.model";
 import packageService from "@services/packageServices";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@routes";
@@ -46,7 +46,7 @@ interface Vendor {
 }
 
 interface ServiceListProps {
-    serviceTypes: IServiceType[];
+    serviceTypes: IServiceTypeModel[];
     vendor: Vendor;
     onGetVendorData: () => Promise<Vendor>;
 }

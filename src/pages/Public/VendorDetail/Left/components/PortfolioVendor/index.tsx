@@ -2,8 +2,9 @@
 
 import { Skeleton } from '@components/Atoms/ui/skeleton'
 import { IServiceConceptImageModel } from '@models/serviceConcepts/common.model'
+import vendorService from '@services/vendors'
 import { useServiceConceptImages } from '@stores/vendor/selectors'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 type PortfolioVendorProps = {
     isOverview?: boolean
@@ -11,7 +12,14 @@ type PortfolioVendorProps = {
 
 const PortfolioVendor = ({ isOverview = true }: PortfolioVendorProps) => {
     const vendorData = useServiceConceptImages() as IServiceConceptImageModel[];
-    console.log("PortfolioVendor Data:", vendorData);
+    console.log("vendorData", vendorData);
+
+
+    // const porfolioImages = vendorService.getConceptImgsByVendorId()
+
+    useEffect(() => {
+
+    }, [vendorData]);
 
     const loadingImg = (img: string) => {
         return (

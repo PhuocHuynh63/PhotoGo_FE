@@ -18,9 +18,6 @@ const VendorDetailLayoutPage = ({
     concept
 }: PAGES.IVendorDetailPageProps) => {
 
-    console.log("VendorDetailLayoutPage Props:", concept);
-
-
     /**
      * * Set the vendor in the global state
      * @param vendor
@@ -48,7 +45,7 @@ const VendorDetailLayoutPage = ({
     //---------------------------End---------------------------//
 
     return (
-        <div className="">
+        <>
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -83,7 +80,7 @@ const VendorDetailLayoutPage = ({
                     </motion.div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
