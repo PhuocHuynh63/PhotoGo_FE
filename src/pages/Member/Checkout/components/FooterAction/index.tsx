@@ -40,19 +40,13 @@ const FooterAction = () => {
         mode: 'onChange',
     })
 
-    console.log('FooterAction: formBooking', formBooking);
-
-
     const onSubmit = async () => {
         const { userId, serviceConceptId, ...spread } = formBooking
         try {
             const res = await BookingService.createBooking(
                 userId,
                 serviceConceptId,
-                {
-                    ...spread,
-                    date: new Date(spread.date)?.toISOString().slice(0, 10),
-                }
+                spread,
             )
             console.log('Booking response:', res);
 
@@ -79,7 +73,10 @@ const FooterAction = () => {
                     type={currentStep === 3 ? 'submit' : 'button'}
                     onClick={
                         currentStep < 3
-                            ? () => setCurrentStep(currentStep + 1)
+                            ? (e) => {
+                                e.preventDefault();
+                                setCurrentStep(currentStep + 1);
+                            }
                             : undefined
                     }
                 >

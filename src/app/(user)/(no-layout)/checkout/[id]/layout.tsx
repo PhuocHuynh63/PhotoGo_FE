@@ -1,10 +1,12 @@
 import CheckoutLayoutClient from "@components/Templates/CheckoutLayout";
 import { authOptions } from "@lib/authOptions";
 import { ICheckoutSessionResponseModel } from "@models/checkoutSession/repsonse.model";
+import { IServiceConceptResponse } from "@models/concept/repsonse.model";
 import { IUserResponse } from "@models/user/response.model";
 import { ROUTES } from "@routes";
 import checkoutSessionService from "@services/checkoutSession";
-import ConceptService from "@services/concept";
+import conceptService from "@services/concept";
+import packageService from "@services/packageServices";
 import userService from "@services/user";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -18,7 +20,11 @@ async function getAUser(id: string) {
 }
 
 async function getConceptById(id: string) {
-    return ConceptService.getAServiceConceptById(id);
+    return conceptService.getAServiceConceptById(id);
+}
+
+async function getPackageById(id: string) {
+    return packageService.getPackageById(id);
 }
 
 export default async function CheckoutLayout({
@@ -54,7 +60,11 @@ export default async function CheckoutLayout({
     /**
      * Get concept by id
      */
-    // const concept = await getConceptById(checkoutSession.data?.data.conceptId || "") as SERVERS.IConceptResponse;
+    const concept = await getConceptById(checkoutSession.data?.data.conceptId || "") as IServiceConceptResponse;
+    console.log("concept", concept);
+
+    // const package = await getPackageById(concept.data.servicePackageId || "");
+
 
     return (
         <CheckoutLayoutClient checkoutSession={checkoutSession} user={user}>
