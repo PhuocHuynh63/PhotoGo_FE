@@ -60,7 +60,7 @@ const PortfolioVendor = (
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {images.map((item: IServiceConceptImageModel) => (
-                    <div key={item.id} className="group overflow-hidden rounded-lg">
+                    <div key={item.id} className="relative group overflow-hidden rounded-lg">
                         {item.image_url ? (
                             <img
                                 src={item.image_url}
@@ -70,6 +70,10 @@ const PortfolioVendor = (
                         ) : (
                             <Skeleton className="h-64 w-full" />
                         )}
+                        <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {/* <h3 className="text-white font-semibold">{item?.title}</h3>
+                            <p className="text-white/80 text-sm">{item?.category}</p> */}
+                        </div>
                     </div>
                 ))}
             </div>
