@@ -9,7 +9,6 @@ import EmblaCarousel from "@components/Organisms/AutoPlayCarousel"
 import { AnimatePresence, motion } from 'framer-motion'
 import AutoScrollCarousel from "@components/Organisms/AutoScrollCarousel"
 import Link from 'next/link'
-import { IVendor } from "@models/vendor/common.model"
 import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
 import AttendanceBoard from "../AttendanceModal"
@@ -117,7 +116,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = ({ data, user }: PAGES.IHomePage) => {
+const HomePage = ({ user }: PAGES.IHomePage) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -125,19 +124,36 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
     const [howItWorksAnimation, setHowItWorksAnimation] = useState(false)
     const [testimonialsAnimation, setTestimonialsAnimation] = useState(false)
     const [ctaAnimation, setCtaAnimation] = useState(false)
-    const [vendorData, setVendorData] = useState<IVendor | null>(null)
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowModal(true)
-        }, 1000)
+        if (!user?.id) return;
 
-        return () => clearTimeout(timer)
-    }, [])
+        const storageKey = `attendance_${user.id}`;
+        const savedData = localStorage.getItem(storageKey);
+        const today = new Date().toISOString().split('T')[0];
+
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            const hasCheckedToday = parsed.some((record: { date: string; checked: boolean }) =>
+                record.date === today && record.checked
+            );
+
+            if (!hasCheckedToday) {
+                const timer = setTimeout(() => {
+                    setShowModal(true);
+                }, 1000);
+                return () => clearTimeout(timer);
+            }
+        } else {
+            const timer = setTimeout(() => {
+                setShowModal(true);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [user?.id]);
 
     useEffect(() => {
-        setVendorData(data)
         const handleScroll = () => {
             setScrollY(window.scrollY)
         }
@@ -182,72 +198,55 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-hidden"
-                        onClick={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setShowModal(false)
-                            }
-                        }}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center"
                     >
-                        {/* Scrollable Container */}
-                        <div className="h-full overflow-y-auto overflow-x-hidden">
-                            <div className="min-h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
-                                <motion.div
-                                    initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                                    exit={{ scale: 0.8, opacity: 0, y: 50 }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                                    className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg my-4 sm:my-8"
-                                >
-                                    {/* Enhanced Close Button */}
-                                    <motion.button
-                                        onClick={() => setShowModal(false)}
-                                        className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 z-20 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full shadow-2xl flex items-center justify-center hover:from-orange-600 hover:to-orange-700 transition-all duration-300 group border-2 sm:border-4 border-white"
-                                        whileHover={{ scale: 1.1, rotate: 90 }}
-                                        whileTap={{ scale: 0.9 }}
-                                    >
-                                        <LucideIcon name="X" iconSize={24} iconColor={"white"} className="cursor-pointer" />
-                                        {/* <X className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white group-hover:rotate-90 transition-transform duration-300 cursor-pointer" /> */}
-                                    </motion.button>
-
-                                    {/* Attendance Board */}
-                                    <AttendanceBoard isLoggedIn={user ? true : false} userId={user?.id} />
-                                </motion.div>
-                            </div>
+                        <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg my-4 sm:my-8">
+                            <AttendanceBoard
+                                isLoggedIn={!!user?.id}
+                                userId={user?.id}
+                                onClose={() => setShowModal(false)}
+                            />
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Hero section */}
-            <div id="hero" className="relative w-full h-[110vh] overflow-hidden">
-                <BackToTop />
-                <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
-                    <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
-                </div>
-                <div className="relative container mx-auto px-4 py-40 h-full">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <div className="flex flex-col gap-8 max-w-2xl text-light mt-20">
-                            <h1 className="text-5xl font-bold drop-shadow">
-                                Ghi lại khoảnh khắc hoàn hảo của bạn
-                            </h1>
-                            <p className="text-xl drop-shadow">
-                                Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
-                            </p>
-                            <div className="flex gap-4">
-                                <Link href="/booking" passHref>
-                                    <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
-                                </Link>
-                                <Link href="/search/vendors" passHref>
-                                    <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre w-full">Khám phá dịch vụ</ClearButton>
-                                </Link>
+            <div className="relative">
+                <div
+                    ref={(el) => {
+                        sectionRefs.current[0] = el;
+                    }}
+                    id="hero"
+                    className="relative h-screen flex items-center justify-center overflow-hidden"
+                >
+                    <BackToTop />
+                    <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
+                        <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
+                    </div>
+                    <div className="relative container mx-auto px-4 py-40 h-full">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={heroAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <div className="flex flex-col gap-8 max-w-2xl text-light mt-20">
+                                <h1 className="text-5xl font-bold drop-shadow">
+                                    Ghi lại khoảnh khắc hoàn hảo của bạn
+                                </h1>
+                                <p className="text-xl drop-shadow">
+                                    Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
+                                </p>
+                                <div className="flex gap-4">
+                                    <Link href="/booking" passHref>
+                                        <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
+                                    </Link>
+                                    <Link href="/search/vendors" passHref>
+                                        <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre w-full">Khám phá dịch vụ</ClearButton>
+                                    </Link>
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
+                        </motion.div>
+                    </div>
                 </div>
             </div>
 
@@ -255,7 +254,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
             <motion.div
                 id="services"
                 className="flex container mx-auto px-4 py-16 items-center justify-center"
-                ref={el => { sectionRefs.current[0] = el; }}
+                ref={el => { sectionRefs.current[1] = el; }}
             >
                 <div className="flex flex-col gap-8 w-full">
                     <motion.div
@@ -275,7 +274,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
                         {/* Photographers Card */}
                         <motion.div
                             className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
-                            ref={el => { sectionRefs.current[1] = el; }}
+                            ref={el => { sectionRefs.current[2] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                             transition={{ duration: 0.8, delay: 0.1 }}
@@ -317,7 +316,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
                         {/* Studios Card */}
                         <motion.div
                             className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
-                            ref={el => { sectionRefs.current[2] = el; }}
+                            ref={el => { sectionRefs.current[3] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                             transition={{ duration: 0.8, delay: 0.2 }}
@@ -357,7 +356,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
                         {/* Makeup Artists Card */}
                         <motion.div
                             className="p-8 shadow-xl rounded-xl flex flex-col gap-4 h-full hover:scale-105 transition-all duration-300 ease-in-out"
-                            ref={el => { sectionRefs.current[3] = el; }}
+                            ref={el => { sectionRefs.current[4] = el; }}
                             initial={{ opacity: 0, y: 20 }}
                             animate={servicesAnimation ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                             transition={{ duration: 0.8, delay: 0.3 }}
@@ -401,7 +400,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
             <motion.div
                 id="how-it-works"
                 className="bg-gray-50 py-16"
-                ref={el => { sectionRefs.current[1] = el; }}
+                ref={el => { sectionRefs.current[2] = el; }}
             >
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col gap-8">
@@ -441,7 +440,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
             <motion.div
                 id="testimonials"
                 className="py-16"
-                ref={el => { sectionRefs.current[2] = el; }}
+                ref={el => { sectionRefs.current[3] = el; }}
             >
                 <div className="">
                     <div className="flex flex-col gap-8">
@@ -476,7 +475,7 @@ const HomePage = ({ data, user }: PAGES.IHomePage) => {
             <motion.div
                 id="cta"
                 className="bg-gray-50 py-16"
-                ref={el => { sectionRefs.current[3] = el; }}
+                ref={el => { sectionRefs.current[4] = el; }}
             >
                 <div className="container mx-auto px-4 text-center">
                     <motion.div

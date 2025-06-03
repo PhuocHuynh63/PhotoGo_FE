@@ -1,6 +1,7 @@
 import { IServiceConceptImageModel } from '@models/serviceConcepts/response.model';
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
+import { ICartResponse } from '@models/cart/response.model';
 declare namespace PAGES {
     interface ILogin {
         data: any;
@@ -8,6 +9,7 @@ declare namespace PAGES {
 
     interface IHeader {
         user: IUser | undefined;
+        cart: ICartResponse;
     }
     interface IProfile {
         user: IUser | undefined;

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/
 import { Badge } from "@/components/Atoms/ui/badge"
 import { Button } from "@/components/Atoms/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Atoms/ui/avatar"
-import { Calendar, Clock, Users, DollarSign, Phone, MessageSquare } from "lucide-react"
+import { Calendar, Clock, Users, DollarSign, MessageSquare } from "lucide-react"
 
 interface TodayAppointment {
     id: string
@@ -137,10 +137,6 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                                         </div>
                                     </div>
                                     <div className="mt-2 flex gap-1">
-                                        <Button size="sm" variant="outline" className="h-7 px-2 text-xs cursor-pointer">
-                                            <Phone className="h-3 w-3 mr-1" />
-                                            Gọi
-                                        </Button>
                                         <Button size="sm" variant="outline" className="h-7 px-2 text-xs cursor-pointer">
                                             <MessageSquare className="h-3 w-3 mr-1" />
                                             Nhắn

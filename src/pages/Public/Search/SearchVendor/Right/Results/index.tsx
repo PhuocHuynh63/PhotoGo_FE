@@ -25,9 +25,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const totalPages = vendors?.pagination.totalPage
-    console.log(
-        vendors
-    )
+
     useEffect(() => {
         const current = searchParams?.get('current');
         if (current) {

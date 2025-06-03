@@ -16,6 +16,7 @@ import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 import { usePathname } from "next/navigation";
+import { useCartStore } from "@store/cart"
 
 //#region Helpers
 const timeAgo = (date: string) => {
@@ -36,7 +37,8 @@ const timeAgo = (date: string) => {
 };
 //#endregion
 
-export default function HeaderHomePage({ user }: PAGES.IHeader) {
+export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
+    const { setCart, cart: cartState } = useCartStore()
     //#region States
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
@@ -48,62 +50,7 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
     //#endregion
 
     //#region Mock Data
-    const cart: ICOMPONENTS.CartItem[] = [
-        {
-            id: 1,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 2,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-        {
-            id: 2,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 1,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-        {
-            id: 3,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 2,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-        {
-            id: 4,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 1,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-        {
-            id: 5,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 2,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-        {
-            id: 6,
-            name: "string",
-            price: 11111,
-            img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg",
-            vendor_id: 3,
-            duration: 120,
-            booked_date: new Date("2023-01-01"),
-        },
-    ];
+    const cartItems = cartState || [];
     //#endregion
 
     //#region Effects
@@ -130,6 +77,13 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
             document.body.style.overflow = "auto";
         };
     }, [isOpenCart]);
+
+    useEffect(() => {
+        if (cart?.data) {
+            setCart(cart.data)
+        }
+    }, [cart?.data, setCart])
+
     //#endregion
 
     //#region Memoized Values
@@ -199,13 +153,24 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                         iconSize={26}
                         iconColor={isScrolled ? "black" : "white"}
                     />
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                        {cart?.length || 0}
-                    </span>
+                    <motion.span
+                        key={cartItems.length}
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.5, opacity: 0 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 15
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
+                    >
+                        {cartItems.length || 0}
+                    </motion.span>
                 </div>
             </motion.div>
 
-            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} cart={cart || []} />
+            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} />
 
             {/* Notification Button */}
             <DropdownMenu>
@@ -428,9 +393,9 @@ export default function HeaderHomePage({ user }: PAGES.IHeader) {
                                         <div onClick={handleOpenCart} className="flex flex-col items-center gap-1 cursor-pointer">
                                             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center relative">
                                                 <LucideIcon name="ShoppingCart" iconSize={24} />
-                                                {cart.length > 0 && (
+                                                {cartItems.length > 0 && (
                                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                        {cart.length}
+                                                        {cartItems.length}
                                                     </span>
                                                 )}
                                             </div>

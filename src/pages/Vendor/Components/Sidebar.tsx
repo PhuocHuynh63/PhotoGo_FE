@@ -1,6 +1,6 @@
 "use client"
 
-import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Calendar1, Building2, Store, ChevronDown } from "lucide-react"
+import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Building2, Store, ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/Atoms/ui/collapsible"
@@ -32,8 +32,7 @@ export default function Sidebar() {
     const menuItems: SidebarItem[] = [
         { icon: User, label: "Hồ sơ", href: "/vendor/profile" },
         { icon: BarChart, label: "Thống kê", href: "/vendor/statistics" },
-        { icon: Calendar, label: "Lịch hẹn", href: "/vendor/appointments" },
-        { icon: Calendar1, label: "Lịch làm việc", href: "/vendor/calendar" },
+        { icon: Calendar, label: "Lịch", href: "/vendor/calendar" },
         { icon: Wallet, label: "Tài chính", href: "/vendor/finance" },
         {
             type: "collapsible", icon: Store, label: "Quản lý dịch vụ", items: [
