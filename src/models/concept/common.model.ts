@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const ConceptModel = z.object({
     id: z.string().uuid(),
-    servicePackgeId: z.string().uuid(),
+    servicePackageId: z.string().uuid(),
     name: z.string(),
     description: z.string().optional(),
     price: z.number(),

@@ -50,8 +50,6 @@ const FooterAction = () => {
                 spread,
             ) as any
 
-            console.log('Booking response:', res);
-
             if (res.statusCode === 201) {
                 router.replace(res.data.paymentLink)
             } else {

@@ -26,7 +26,6 @@ const LoginPage = () => {
     useRemoveLocalStorage("otp")
     const router = useRouter()
     const searchParams = useSearchParams();
-    console.log("searchParams", searchParams);
 
     //#endregion
 

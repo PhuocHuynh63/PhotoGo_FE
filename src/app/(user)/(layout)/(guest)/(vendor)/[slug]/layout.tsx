@@ -25,7 +25,6 @@ export default async function VendorDetailLayout({
      * Fetch vendor by slug
      */
     const vendor = await getVendorBySlug(slug) as IVendorResponse;
-    console.log("vendor", vendor);
 
     if (vendor.statusCode !== 200 || !vendor.data) {
         return notFound();

@@ -71,4 +71,12 @@ declare namespace PAGES {
     interface IChatProps {
         session: METADATA.ISession;
     }
+
+    interface ICheckoutLayoutProps {
+        children: React.ReactNode;
+        user: IUserResponse;
+        checkoutSession?: ICheckoutSessionResponseModel;
+        concept?: IServiceConceptResponse;
+        servicePackage?: IServicePackageResponse;
+    }
 }
