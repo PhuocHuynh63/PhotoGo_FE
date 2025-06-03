@@ -19,7 +19,6 @@ interface UpdateUserForm {
 
 export default function ProfileContent({ user }: { user: IUser }) {
     const [isEditing, setIsEditing] = useState(false)
-    console.log(user)
     const {
         register,
         handleSubmit,
@@ -33,13 +32,11 @@ export default function ProfileContent({ user }: { user: IUser }) {
     })
 
     const onSubmit = async (data: UpdateUserForm) => {
-        console.log("Cập nhật thông tin:", data)
 
         const response = await userService.updateUser(user.id, {
             fullName: data?.fullName,
             phoneNumber: data?.phoneNumber,
         }) as IBackendResponse<any>
-        console.log(response)
         if (response.statusCode === 200) {
             toast.success("Cập nhật thông tin thành công")
             setIsEditing(false)

@@ -25,7 +25,6 @@ export default function ChangePasswordForm() {
             return;
         }
 
-        console.log("Dữ liệu đổi mật khẩu:", data);
         await new Promise((res) => setTimeout(res, 1000)); // giả lập API
     };
 
