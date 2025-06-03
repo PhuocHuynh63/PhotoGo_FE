@@ -7,9 +7,15 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import Footer from "@components/Organisms/Footer";
 import HeaderHomePage from "@components/Organisms/HeaderHomePage";
+import { ICartResponse } from "@models/cart/response.model";
+import cartService from "@services/cart";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
+}
+
+async function getCartByUserId(userId: string) {
+    return await cartService.getCartByUserId(userId);
 }
 
 export default async function RootLayout({
@@ -24,9 +30,11 @@ export default async function RootLayout({
         userData = user?.data as IUser | undefined;
     }
 
+    const cart = await getCartByUserId(userData?.id as string) as ICartResponse;
+
     return (
         <>
-            <HeaderHomePage user={userData} />
+            <HeaderHomePage user={userData} cart={cart} />
             {children}
             <Footer />
         </>

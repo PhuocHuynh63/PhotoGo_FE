@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/Atoms/ui/button";
 import { Input } from "@/components/Atoms/ui/input";
 import { Label } from "@/components/Atoms/ui/label";
@@ -64,8 +64,6 @@ interface ServiceEditFormProps {
 
 export default function ServiceEditForm({ initialService, serviceTypes }: ServiceEditFormProps) {
     const router = useRouter();
-    // console.log('Initial Service:', initialService);
-    // console.log('Service Types:', serviceTypes);
 
     const [serviceData, setServiceData] = useState({
         name: initialService?.name,
@@ -75,7 +73,6 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         imagePreview: initialService?.image || "",
     });
     const [concepts, setConcepts] = useState<ConceptFormData[]>(initialService?.serviceConcepts?.map((c) => {
-        console.log('Concept serviceTypes:', c.serviceTypes);
         return {
             id: c.id || "",
             name: c.name || "",
