@@ -1,12 +1,13 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { ServiceTypeModel } from "@models/serviceTypes/common.model";
 import { z } from "zod";
+import { ConceptModel } from "./common.model";
 
 /**
  * Model of ServiceConcept
  */
 export const ServiceConceptByIdResponseModel = z.object({
-    data: ServiceTypeModel,
+    data: ConceptModel,
     serviceConceptServiceTypes: z.array(
         z.object({
             serviceConceptId: z.string().uuid(),
@@ -15,6 +16,7 @@ export const ServiceConceptByIdResponseModel = z.object({
             serviceType: ServiceTypeModel,
         })
     ),
+    // images: 
 });
 
 export const ServiceConceptByIdResponse = BackendResponseModel(ServiceTypeModel);

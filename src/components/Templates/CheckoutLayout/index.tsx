@@ -8,7 +8,7 @@ import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
 import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
-import { useSetUser, useUser } from "@stores/user/selectors";
+import { useSetUser } from "@stores/user/selectors";
 import { useEffect } from "react";
 
 export default function CheckoutLayoutClient({
@@ -36,8 +36,6 @@ export default function CheckoutLayoutClient({
      */
     const setBookingForm = useSetFormBooking();
     const formBooking = useFormBooking();
-    console.log("CheckoutLayoutClient: formBooking", formBooking);
-
 
     useEffect(() => {
         if (checkoutSession) {
