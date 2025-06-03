@@ -40,7 +40,7 @@ const VendorOverviewPage = () => {
         {/* Portfolio */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Tác phẩm nổi bật</h2>
-          <PortfolioVendor />
+          <PortfolioVendor isOverview={true} />
 
           <div className="flex justify-center mt-4 text-center">
             <ButtonNoBackgroundVendorDetail onClick={() => router.push(ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'portfolio'))} className="flex items-center gap-1 border px-3 py-2 mt-4 rounded-md text-muted-foreground hover:bg-muted/50 transition-colors">
