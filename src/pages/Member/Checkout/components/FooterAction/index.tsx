@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { IBookingFormRequest } from '@models/booking/request.model'
 import BookingService from '@services/booking'
 import { useCheckoutStep, useFormBooking, useIsValidStep, useSetCheckoutStep } from '@stores/checkout/selectors'
 import { ArrowRight } from 'lucide-react'
@@ -52,7 +51,7 @@ const FooterAction = () => {
                 serviceConceptId,
                 {
                     ...spread,
-                    date: new Date(spread.date).toISOString().slice(0, 10),
+                    date: new Date(spread.date)?.toISOString().slice(0, 10),
                 }
             )
             console.log('Booking response:', res);
