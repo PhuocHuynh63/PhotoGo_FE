@@ -3,10 +3,17 @@
 import Button from '@components/Atoms/Button'
 import Input from '@components/Atoms/Input'
 import { Separator } from '@components/Atoms/Seperator/Seperator'
+import { IServiceConcept } from '@models/serviceConcepts/common.model'
+import { IServicePackage } from '@models/servicePackages/common.model'
+import { useServiceConcept, useServicePackage } from '@stores/vendor/selectors'
 import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import React from 'react'
 
 const SummaryInformation = () => {
+    const servicePackage = useServicePackage() as IServicePackage
+    const serviceConcept = useServiceConcept() as IServiceConcept
+
+
     return (
         <>
             {/* Right Column - Order Summary */}

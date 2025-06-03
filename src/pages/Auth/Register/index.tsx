@@ -33,7 +33,6 @@ const RegisterPage = () => {
     })
     const onSubmit = async (data: IUserRegisterRequest) => {
         const res = await authService.register(data) as IUserRegisterResponse
-        console.log(res.message);
         if (res.statusCode === 201) {
             router.push(`${ROUTES.AUTH.VERIFY_OTP}?purpose=activate-account`)
             localStorage.setItem('email', data.email);

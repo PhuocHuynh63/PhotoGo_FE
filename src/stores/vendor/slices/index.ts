@@ -1,11 +1,15 @@
 import { IVendor } from "@models/vendor/common.model"
 import { ZUSTAND } from "../../../types/IZustand"
+import { IServicePackage } from "@models/servicePackages/common.model"
+import { IServiceConcept } from "@models/serviceConcepts/common.model"
 
 export const createVendorSlice = (
     set: any
 ): ZUSTAND.IVendorState => ({
     vendor: {} as IVendor,
     serviceConceptImages: [],
+    servicePackage: {} as IServicePackage,
+    concept: {} as IServiceConcept,
 
     setVendor(vendor) {
         return set(() => ({
@@ -23,7 +27,19 @@ export const createVendorSlice = (
         return set((state: any) => ({
             serviceConceptImages: [...state.serviceConceptImages, ...images],
         }))
-    }
+    },
+
+    setServicePackage(servicePackage) {
+        return set(() => ({
+            servicePackage: servicePackage,
+        }))
+    },
+
+    setConcept(concept) {
+        return set(() => ({
+            concept: concept,
+        }))
+    },
 })
 
 // Cần khai báo set bên ngoài slice nếu bạn dùng slice độc lập
