@@ -367,24 +367,35 @@ declare namespace ICOMPONENTS {
         read: boolean;
         createdAt: string;
     }
+
+    interface ServiceConcept {
+        id: string,
+        servicePackageId: string,
+        name: string,
+        description: string,
+        price: string,
+        duration: number,
+        status: string,
+        createdAt: string,
+        updatedAt: string
+    }
     interface CartItem {
-        id: number
-        name: string
-        img: string
-        price: number
-        vendor_id: number
-        duration: number
-        booked_date: Date
+        id: string,
+        cartId: string,
+        serviceConceptId: string,
+        created_at: string,
+        updated_at: string,
+        serviceConcept: ServiceConcept
     }
     interface VendorGroup {
-        vendor_id: number
+        vendor_id: string
         items: CartItem[]
     }
 
     interface ShoppingCartModalProps {
         isOpen: boolean
         onClose: () => void
-        cart: CartItem[]
+        cartItems: CartItem[]
     }
     interface User {
         id: string | number;

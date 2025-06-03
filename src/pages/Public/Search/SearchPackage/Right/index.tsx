@@ -193,7 +193,6 @@ export default function Right() {
         setCurrentPage(newPage);
     };
 
-    console.log(currentPage)
 
     const totalServices = allPackages.length;
     const totalPages = Math.ceil(totalServices / Number(itemsPerPage))
@@ -202,7 +201,6 @@ export default function Right() {
         (currentPage - 1) * Number(itemsPerPage),
         currentPage * Number(itemsPerPage)
     );
-    console.log(currentServices.length)
     // Format duration for display
     const formatDuration = (minutes: number) => {
         if (minutes < 60) return `${minutes} phút`

@@ -393,7 +393,7 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
                 transition={{ duration: 0.6, delay: 0.8 }}
             >
                 <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 pt-4">
                         <h3 className="text-lg font-bold text-orange-700 mb-3 flex items-center gap-2">
                             <Camera className="w-5 h-5" />
                             Mẹo duy trì thói quen điểm danh

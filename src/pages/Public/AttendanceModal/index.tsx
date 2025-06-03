@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import { CheckCircle, Circle, Camera, Zap, Star, Sparkles, Trophy, Target, Flame, Crown, Award } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -17,9 +17,10 @@ interface AttendanceRecord {
 interface AttendanceBoardProps {
     isLoggedIn: boolean
     userId?: string
+    onClose?: () => void
 }
 
-const AttendanceBoard = ({ isLoggedIn, userId }: AttendanceBoardProps) => {
+const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) => {
     const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([])
     const [hasCheckedToday, setHasCheckedToday] = useState(false)
     const [consecutiveDays, setConsecutiveDays] = useState(0)
@@ -27,6 +28,21 @@ const AttendanceBoard = ({ isLoggedIn, userId }: AttendanceBoardProps) => {
     const [showCelebration, setShowCelebration] = useState(false)
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
+    const modalRef = useRef<HTMLDivElement>(null)
+
+    // Handle click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                onClose?.()
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [onClose])
 
     // Lấy ngày hôm nay theo định dạng YYYY-MM-DD
     const getTodayString = () => {
@@ -219,6 +235,7 @@ const AttendanceBoard = ({ isLoggedIn, userId }: AttendanceBoardProps) => {
     if (!isLoggedIn || !showBoard) {
         return (
             <motion.div
+                ref={modalRef}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, type: "spring", stiffness: 200 }}

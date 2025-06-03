@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/Atoms/ui/card"
 import { Button } from "@/components/Atoms/ui/button"
-import { CheckCircle, Circle, Camera, Zap, Star, Target, Flame, Crown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import AttendanceCalendarModal from "../AttendanceCalendarModal"
+import LucideIcon from "@components/Atoms/LucideIcon"
+
 
 interface AttendanceRecord {
     date: string
@@ -23,7 +25,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
     const [consecutiveDays, setConsecutiveDays] = useState(0)
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
-
+    const [showCalendarModal, setShowCalendarModal] = useState(false)
     // Lấy ngày hôm nay theo định dạng YYYY-MM-DD
     const getTodayString = () => {
         return new Date().toISOString().split("T")[0]
@@ -153,11 +155,19 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
     }
 
     // Get streak info with enhanced levels
-    const getStreakInfo = (days: number) => {
+    const getStreakInfo = (days: number): {
+        color: string
+        icon: "Crown" | "Flame" | "Target" | "Zap" | "Circle"
+        title: string
+        subtitle: string
+        bgGlow: string
+        textColor: string
+        level: string
+    } => {
         if (days >= 7)
             return {
                 color: "from-orange-400 via-orange-500 to-orange-600",
-                icon: Crown,
+                icon: "Crown",
                 title: "Bậc Thầy Nhiếp Ảnh",
                 subtitle: "Chuỗi Huyền Thoại",
                 bgGlow: "from-orange-400/30 to-orange-600/30",
@@ -167,7 +177,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
         if (days >= 5)
             return {
                 color: "from-orange-500 via-orange-600 to-orange-700",
-                icon: Flame,
+                icon: "Flame",
                 title: "Bùng Cháy",
                 subtitle: "Đam Mê Rực Lửa",
                 bgGlow: "from-orange-500/25 to-orange-700/25",
@@ -177,7 +187,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
         if (days >= 3)
             return {
                 color: "from-orange-300 via-orange-400 to-orange-500",
-                icon: Target,
+                icon: "Target",
                 title: "Đang Tiến Bộ",
                 subtitle: "Xây Dựng Đà",
                 bgGlow: "from-orange-300/20 to-orange-500/20",
@@ -187,7 +197,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
         if (days >= 1)
             return {
                 color: "from-orange-200 via-orange-300 to-orange-400",
-                icon: Zap,
+                icon: "Zap",
                 title: "Khởi Đầu Tốt",
                 subtitle: "Những Bước Đầu Tiên",
                 bgGlow: "from-orange-200/15 to-orange-400/15",
@@ -196,7 +206,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
             }
         return {
             color: "from-gray-300 via-gray-400 to-gray-500",
-            icon: Circle,
+            icon: "Circle",
             title: "Bắt Đầu Hành Trình",
             subtitle: "Bắt Đầu Con Đường Của Bạn",
             bgGlow: "from-gray-300/10 to-gray-500/10",
@@ -211,7 +221,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
         return (
             <div className="text-center py-8 px-4">
                 <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Camera className="w-8 h-8 text-gray-400" />
+                    <LucideIcon name="Camera" className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-xl font-medium text-gray-700 mb-2">Vui lòng đăng nhập</h3>
                 <p className="text-gray-500">Đăng nhập để truy cập bảng điểm danh</p>
@@ -263,13 +273,22 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                     <h3 className="text-lg font-medium text-gray-800">Lịch điểm danh tuần này</h3>
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
-                            <Circle className="w-4 h-4 text-gray-400" />
+                            <LucideIcon name="Circle" className="w-4 h-4 text-gray-400" />
                             <span className="text-xs text-gray-500">Chưa điểm danh</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4 text-orange-500" />
+                            <LucideIcon name="CheckCircle" className="w-4 h-4 text-orange-500" />
                             <span className="text-xs text-gray-500">Đã điểm danh</span>
                         </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowCalendarModal(true)}
+                            className="text-orange-600 border-orange-200 hover:bg-orange-50 h-8 px-3"
+                        >
+                            <LucideIcon name="Calendar" className="w-4 h-4 mr-1" />
+                            <span className="text-xs">Xem lịch</span>
+                        </Button>
                     </div>
                 </div>
 
@@ -320,10 +339,10 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                                                 animate={{ scale: 1 }}
                                                 transition={{ type: "spring", stiffness: 500, damping: 15 }}
                                             >
-                                                <CheckCircle className="w-6 h-6 text-orange-500" />
+                                                <LucideIcon name="CheckCircle" className="w-6 h-6 text-orange-500" />
                                             </motion.div>
                                         ) : (
-                                            <Circle className={`w-6 h-6 ${isToday ? "text-orange-300" : "text-gray-300"}`} />
+                                            <LucideIcon name="Circle" className={`w-6 h-6 ${isToday ? "text-orange-300" : "text-gray-300"}`} />
                                         )}
                                     </div>
 
@@ -351,7 +370,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                     <div
                         className={`w-10 h-10 rounded-full bg-gradient-to-r ${streakInfo.color} flex items-center justify-center shadow-md`}
                     >
-                        <streakInfo.icon className="w-5 h-5 text-white" />
+                        <LucideIcon name={streakInfo.icon} className="w-5 h-5 text-white" />
                     </div>
                     <div>
                         <h3 className={`font-medium ${streakInfo.textColor}`}>{streakInfo.title}</h3>
@@ -385,7 +404,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                     <Card className="bg-gradient-to-r py-4 from-orange-50 to-orange-100 border-orange-200">
                         <CardContent>
                             <div className="flex items-center justify-center gap-3 pt-4">
-                                <CheckCircle className="w-5 h-5 text-orange-500" />
+                                <LucideIcon name="CheckCircle" className="w-5 h-5 text-orange-500" />
                                 <div>
                                     <div className="font-medium text-orange-700">Đã điểm danh hôm nay!</div>
                                     <div className="text-xs text-orange-600">Quay lại vào ngày mai</div>
@@ -405,13 +424,13 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                                 >
-                                    <Zap className="w-5 h-5" />
+                                    <LucideIcon name="Zap" className="w-5 h-5" />
                                 </motion.div>
                                 <span>Đang xử lý...</span>
                             </div>
                         ) : (
                             <div className="flex items-center gap-2">
-                                <Camera className="w-5 h-5" />
+                                <LucideIcon name="Camera" className="w-5 h-5" />
                                 <span>Điểm danh ngay</span>
                             </div>
                         )}
@@ -422,7 +441,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
             {/* Rewards Info */}
             <div className="mt-6 bg-gray-50 rounded-lg p-4 text-sm">
                 <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 text-orange-500" />
+                    <LucideIcon name="Star" className="w-4 h-4 text-orange-500" />
                     <h4 className="font-medium text-gray-700">Phần thưởng điểm danh</h4>
                 </div>
                 <ul className="space-y-2 text-gray-600 text-xs">
@@ -440,6 +459,7 @@ const ProfileAttendanceBoard = ({ isLoggedIn, userId, onCheckIn }: ProfileAttend
                     </li>
                 </ul>
             </div>
+            <AttendanceCalendarModal isOpen={showCalendarModal} onClose={() => setShowCalendarModal(false)} userId={userId} />
         </div>
     )
 }
