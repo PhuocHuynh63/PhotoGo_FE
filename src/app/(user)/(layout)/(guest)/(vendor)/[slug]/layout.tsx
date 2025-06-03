@@ -1,6 +1,6 @@
 import VendorDetailLayoutPage from "@components/Templates/VendorDetailLayout";
 import { authOptions } from "@lib/authOptions";
-import { IServiceConceptImageModel } from "@models/serviceConcepts/response.model";
+import { IServiceConceptImageResponseModel } from "@models/serviceConcepts/response.model";
 import { IVendorResponse } from "@models/vendor/response.model";
 import vendorService from "@services/vendors";
 import { getServerSession } from "next-auth";
@@ -35,7 +35,7 @@ export default async function VendorDetailLayout({
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
 
-    const concept = await getConceptImgsByVendorId(vendor.data.id, '1', '10') as IServiceConceptImageModel
+    const concept = await getConceptImgsByVendorId(vendor.data.id, '1', '10') as IServiceConceptImageResponseModel
 
     return (
         <>

@@ -17,5 +17,5 @@ export const ServiceConceptImageModelResponse = z.object({
 });
 
 export const ServiceConceptImageResponseModel = BackendResponseModel(ServiceConceptImageModelResponse);
-export type IServiceConceptImageModel = z.infer<typeof ServiceConceptImageResponseModel>;
+export type IServiceConceptImageResponseModel = z.infer<typeof ServiceConceptImageResponseModel>;
 //----------------------End----------------------//

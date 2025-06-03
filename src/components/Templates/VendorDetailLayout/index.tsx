@@ -36,7 +36,7 @@ const VendorDetailLayoutPage = ({
     useEffect(() => {
         setVendor(vendor);
         setSession(session);
-        setConceptImages(concept.data || []);
+        setConceptImages(concept.data?.data || []);
 
         return () => {
             reset();

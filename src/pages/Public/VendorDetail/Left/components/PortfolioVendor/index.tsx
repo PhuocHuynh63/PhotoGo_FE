@@ -1,38 +1,60 @@
 'use client'
 
-import { useServiceConceptImages, useAddMoreConceptImages } from '@stores/vendor/selectors';
+import { useServiceConceptImages, useAddMoreConceptImages, useVendor } from '@stores/vendor/selectors';
 import { useState } from 'react';
 import { IServiceConceptImageModel } from '@models/serviceConcepts/common.model';
 import { Skeleton } from '@components/Atoms/ui/skeleton';
 import vendorService from '@services/vendors';
+import { IVendor } from '@models/vendor/common.model';
+import { IServiceConceptImageResponseModel } from '@models/serviceConcepts/response.model';
+import ClearButton from '@components/Atoms/ClearButton';
 
-const PortfolioVendor = ({ vendorId }: { vendorId: string }) => {
-    const images = useServiceConceptImages();
-    console.log('PortfolioVendor images:', images);
+type PortfolioVendorProps = {
+    isOverview?: boolean;
+};
 
+const PortfolioVendor = (
+    {
+        isOverview
+    }: PortfolioVendorProps
+) => {
+
+    /**
+     * Zustand store for service concept images and vendor
+     */
+    const images = useServiceConceptImages() as IServiceConceptImageModel[];
+    const vendor = useVendor() as IVendor;
     const addMoreImages = useAddMoreConceptImages();
+    //------------------------------End-----------------------------//
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [offset, setOffset] = useState(10); // Bắt đầu từ sau 10 ảnh preload
-    const [hasMore, setHasMore] = useState(true);
+    /**
+     * Handle loading more images
+     */
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(2);
+    const [hasMore, setHasMore] = useState<boolean>(true);
 
     const loadMore = async () => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
-            const res = await vendorService.getConceptImgsByVendorId(vendorId, offset.toString(), '10');
-            const newImgs = res.data?.data || [];
+            const res = await vendorService.getConceptImgsByVendorId(vendor.id, currentPage.toString(), '10') as IServiceConceptImageResponseModel;
+            const newImgs = res.data?.data || [] as IServiceConceptImageModel[];
 
-            if (newImgs.length < 10) setHasMore(false);
+            //#region Check if new images are empty
+            const pagination = res.data?.pagination;
+            if (pagination && currentPage >= pagination.totalPage) setHasMore(false);
+            //#endregion
 
             addMoreImages(newImgs);
-            setOffset((prev) => prev + 10);
+            setCurrentPage((prev) => prev + 1);
         } catch (e) {
             console.error('Failed to load more:', e);
         } finally {
             setIsLoading(false);
         }
     };
+    //------------------------------End-----------------------------//
 
     return (
         <>
@@ -54,13 +76,13 @@ const PortfolioVendor = ({ vendorId }: { vendorId: string }) => {
 
             {hasMore && (
                 <div className="text-center mt-6">
-                    <button
+                    <ClearButton
                         onClick={loadMore}
                         disabled={isLoading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        className='w-3xs border-primary border-1 hover:bg-orange-100 hover:text-white text-primary font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                         {isLoading ? 'Đang tải...' : 'Xem thêm'}
-                    </button>
+                    </ClearButton>
                 </div>
             )}
         </>
