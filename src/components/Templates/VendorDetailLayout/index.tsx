@@ -8,15 +8,14 @@ import VendorContactInformation from '@pages/Public/VendorDetail/Right/ContactIn
 import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
-import { useSetVendor } from '@stores/vendor/selectors';
+import { useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
 import { useSetSession } from '@stores/user/selectors';
-
-
 
 const VendorDetailLayoutPage = ({
     children,
     vendor,
-    session
+    session,
+    concept
 }: PAGES.IVendorDetailPageProps) => {
 
     /**
@@ -26,23 +25,27 @@ const VendorDetailLayoutPage = ({
      */
     const setVendor = useSetVendor();
     const setSession = useSetSession();
+    const setConceptImages = useSetServiceConceptImages();
+
     const reset = () => {
         setVendor(null);
         setSession(null);
+        setConceptImages([]);
     }
 
     useEffect(() => {
         setVendor(vendor);
         setSession(session);
+        setConceptImages(concept.data?.data || []);
 
         return () => {
             reset();
         }
-    }, [vendor, session, setVendor]);
+    }, [vendor, session, concept, setVendor, setSession, setConceptImages]);
     //---------------------------End---------------------------//
 
     return (
-        <div className="">
+        <>
             <motion.div
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -77,7 +80,7 @@ const VendorDetailLayoutPage = ({
                     </motion.div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

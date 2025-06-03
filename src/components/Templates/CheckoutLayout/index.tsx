@@ -8,7 +8,7 @@ import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
 import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
-import { useSetUser, useUser } from "@stores/user/selectors";
+import { useSetUser } from "@stores/user/selectors";
 import { useEffect } from "react";
 
 export default function CheckoutLayoutClient({
@@ -36,14 +36,32 @@ export default function CheckoutLayoutClient({
      */
     const setBookingForm = useSetFormBooking();
     const formBooking = useFormBooking();
+
     useEffect(() => {
         if (checkoutSession) {
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                service_concept_id: checkoutSession.data?.data.conceptId || "",
+                serviceConceptId: checkoutSession.data?.data.conceptId || "",
                 date: checkoutSession.data?.data.date || "",
                 time: checkoutSession.data?.data.time || "",
+            });
+        }
+
+        return () => {
+            setBookingForm({
+                ...formBooking,
+                userId: "",
+                serviceConceptId: "",
+                date: "",
+                time: "",
+                sourceType: "trực tiếp",
+                depositAmount: 30,
+                // method: 'payos',
+                fullName: "",
+                phone: "",
+                email: "",
+                userNote: "",
             });
         }
     }, [checkoutSession]);
