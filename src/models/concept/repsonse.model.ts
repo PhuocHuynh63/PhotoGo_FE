@@ -7,15 +7,17 @@ import { ConceptModel } from "./common.model";
  * Model of ServiceConcept
  */
 export const ServiceConceptByIdResponseModel = z.object({
-    data: ConceptModel,
-    serviceConceptServiceTypes: z.array(
-        z.object({
-            serviceConceptId: z.string().uuid(),
-            serviceTypeId: z.string().uuid(),
-            createdAt: z.string(),
-            serviceType: ServiceTypeModel,
-        })
-    ),
+    data: z.object({
+        ...ConceptModel.shape,
+        serviceConceptServiceTypes: z.array(
+            z.object({
+                serviceConceptId: z.string().uuid(),
+                serviceTypeId: z.string().uuid(),
+                createdAt: z.string(),
+                serviceType: ServiceTypeModel,
+            })
+        ),
+    }),
     // images: 
 });
 

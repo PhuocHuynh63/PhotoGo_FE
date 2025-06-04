@@ -58,16 +58,15 @@ export default async function CheckoutLayout({
     const user = await getAUser(session.user.id) as IUserResponse;
 
     /**
-     * Get concept by id
+     *  Get concept and service package by conceptId from checkout session
      */
     const concept = await getConceptById(checkoutSession.data?.data.conceptId || "") as IServiceConceptResponse;
-    console.log("concept", concept);
-
-    // const package = await getPackageById(concept.data.servicePackageId || "");
+    const servicePackage = await getPackageById(concept.data.servicePackageId || "");
+    //-----------------------End----------------------//
 
 
     return (
-        <CheckoutLayoutClient checkoutSession={checkoutSession} user={user}>
+        <CheckoutLayoutClient checkoutSession={checkoutSession} user={user} concept={concept} servicePackage={servicePackage}>
             {children}
         </CheckoutLayoutClient>
     );

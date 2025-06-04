@@ -38,7 +38,9 @@ const packageService = {
     },
 
     getPackageById: async (id: string) => {
-        return await http.get(`/service-packages/${id}`)
+        return await http.get(`/service-packages/${id}`,
+            { next: { tags: [`service-package-${id}`] } }
+        )
     },
 
     deletePackage: async (id: string) => {

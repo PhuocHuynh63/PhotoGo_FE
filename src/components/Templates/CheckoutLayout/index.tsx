@@ -1,7 +1,5 @@
 'use client'
 
-import { ICheckoutSessionResponseModel } from "@models/checkoutSession/repsonse.model";
-import { IUserResponse } from "@models/user/response.model";
 import FooterAction from "@pages/Member/Checkout/components/FooterAction";
 import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
@@ -9,17 +7,17 @@ import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
 import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
 import { useSetUser } from "@stores/user/selectors";
+import { PAGES } from "../../../types/IPages";
 import { useEffect } from "react";
+import { useSetServiceConcept, useSetServicePackage } from "@stores/vendor/selectors";
 
 export default function CheckoutLayoutClient({
     children,
     user,
-    checkoutSession
-}: Readonly<{
-    children: React.ReactNode;
-    user: IUserResponse;
-    checkoutSession?: ICheckoutSessionResponseModel;
-}>) {
+    checkoutSession,
+    concept,
+    servicePackage
+}: PAGES.ICheckoutLayoutProps) {
     /**
      * Define variables
      */
@@ -29,6 +27,24 @@ export default function CheckoutLayoutClient({
     useEffect(() => {
         setUser(user.data ?? null);
     }, [user]);
+    //----------------------End----------------------//
+
+    /**
+     *  Set service package when available
+     */
+    const setServicePackage = useSetServicePackage();
+    useEffect(() => {
+        setServicePackage(servicePackage.data ?? null);
+    }, [servicePackage]);
+    //----------------------End----------------------//
+
+    /**
+     * Set concept when available
+     */
+    const setConcept = useSetServiceConcept();
+    useEffect(() => {
+        setConcept(concept.data ?? null);
+    }, [concept]);
     //----------------------End----------------------//
 
     /**
@@ -62,6 +78,28 @@ export default function CheckoutLayoutClient({
                 phone: "",
                 email: "",
                 userNote: "",
+            });
+            setServicePackage({
+                id: "",
+                name: "",
+                description: "",
+                status: "",
+                image: "",
+                vendorId: "",
+                serviceConcepts: [],
+                price: "",
+                duration: 0,
+                created_at: "",
+                updated_at: ""
+            });
+            setConcept({
+                id: "",
+                name: "",
+                description: "",
+                images: [],
+                price: "",
+                duration: 0,
+                serviceTypes: []
             });
         }
     }, [checkoutSession]);
