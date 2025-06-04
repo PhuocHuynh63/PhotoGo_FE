@@ -13,18 +13,27 @@ import Image from 'next/image'
 import React from 'react'
 
 const SummaryInformation = () => {
+    /**
+     * Define variables from stores
+     * - useServicePackage: Get the selected service package
+     *  - useServiceConcept: Get the service concept details
+     *  - useFormBooking: Get the booking form details
+     *  - useSelectedDeposit: Get the selected deposit percentage
+     */
     const servicePackage = useServicePackage() as IServicePackage
-
     const serviceConcept = useServiceConcept() as IServiceConcept
-    console.log('serviceConcept', serviceConcept);
-
-
     const formBooking = useFormBooking() as IBookingFormRequest;
-
     const selectedDeposit = useSelectedDeposit();
+    //----------------------End----------------------//
 
+    /**
+     * Calculate deposit and remaining amounts
+     * - depositAmount: The amount to be deposited based on the selected percentage
+     * - remainingAmount: The remaining amount after the deposit
+     */
     const depositAmount = Number(serviceConcept.price) * (selectedDeposit) / 100;
     const remainingAmount = Number(serviceConcept.price) - depositAmount;
+    //----------------------End----------------------//
     return (
         <>
             {/* Right Column - Order Summary */}
