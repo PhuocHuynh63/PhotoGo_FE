@@ -79,6 +79,28 @@ export default function CheckoutLayoutClient({
                 email: "",
                 userNote: "",
             });
+            setServicePackage({
+                id: "",
+                name: "",
+                description: "",
+                status: "",
+                image: "",
+                vendorId: "",
+                serviceConcepts: [],
+                price: "",
+                duration: 0,
+                created_at: "",
+                updated_at: ""
+            });
+            setConcept({
+                id: "",
+                name: "",
+                description: "",
+                images: [],
+                price: "",
+                duration: 0,
+                serviceTypes: []
+            });
         }
     }, [checkoutSession]);
     //----------------------End----------------------//

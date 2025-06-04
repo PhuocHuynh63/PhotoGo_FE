@@ -3,17 +3,37 @@
 import Button from '@components/Atoms/Button'
 import Input from '@components/Atoms/Input'
 import { Separator } from '@components/Atoms/Seperator/Seperator'
+import { IBookingFormRequest } from '@models/booking/request.model'
 import { IServiceConcept } from '@models/serviceConcepts/common.model'
 import { IServicePackage } from '@models/servicePackages/common.model'
+import { useFormBooking, useSelectedDeposit } from '@stores/checkout/selectors'
 import { useServiceConcept, useServicePackage } from '@stores/vendor/selectors'
 import { Calendar, Clock, Shield, Star } from 'lucide-react'
+import Image from 'next/image'
 import React from 'react'
 
 const SummaryInformation = () => {
+    /**
+     * Define variables from stores
+     * - useServicePackage: Get the selected service package
+     *  - useServiceConcept: Get the service concept details
+     *  - useFormBooking: Get the booking form details
+     *  - useSelectedDeposit: Get the selected deposit percentage
+     */
     const servicePackage = useServicePackage() as IServicePackage
     const serviceConcept = useServiceConcept() as IServiceConcept
+    const formBooking = useFormBooking() as IBookingFormRequest;
+    const selectedDeposit = useSelectedDeposit();
+    //----------------------End----------------------//
 
-
+    /**
+     * Calculate deposit and remaining amounts
+     * - depositAmount: The amount to be deposited based on the selected percentage
+     * - remainingAmount: The remaining amount after the deposit
+     */
+    const depositAmount = Number(serviceConcept.price) * (selectedDeposit) / 100;
+    const remainingAmount = Number(serviceConcept.price) - depositAmount;
+    //----------------------End----------------------//
     return (
         <>
             {/* Right Column - Order Summary */}
@@ -25,29 +45,35 @@ const SummaryInformation = () => {
                     </div>
 
                     <div className="flex gap-4 mb-6">
-                        <div className="h-16 w-16 bg-gray-100 rounded-md flex-shrink-0"></div>
+                        <Image
+                            src={servicePackage?.image || '/placeholder.png'}
+                            alt={servicePackage?.name || 'Service Package'}
+                            className="h-16 w-16 bg-gray-100 rounded-md flex-shrink-0"
+                            width={64}
+                            height={64}
+                        />
                         <div className="flex-1">
-                            <h3 className="font-medium">Gói chụp ảnh cưới cao cấp</h3>
+                            <h3 className="font-medium">{servicePackage.name || NaN}</h3>
                             <div className="flex items-center text-sm text-gray-500 mb-1">
                                 <Star className="h-4 w-4 text-[#f0a06a] mr-1" />
-                                Studio Ánh Dương
+                                {serviceConcept.name || NaN}
                             </div>
                             <div className="flex gap-4 text-xs text-gray-500">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
-                                    15/06/2023
+                                    {formBooking.date || '30/04/1975'}
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Clock className="h-3 w-3" />
-                                    09:00
+                                    {formBooking.time || '00:00'}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <Separator className="my-6" />
+                    {/* <Separator className="my-6" /> */}
 
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                         <div className="flex items-center gap-2 mb-4">
                             <Star className="h-5 w-5 text-[#f0a06a]" />
                             <h3 className="font-medium">Dịch vụ bổ sung</h3>
@@ -63,7 +89,7 @@ const SummaryInformation = () => {
                                 <span className="font-medium">2,000,000đ</span>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <Separator className="my-6" />
 
@@ -86,19 +112,19 @@ const SummaryInformation = () => {
                     <div className="space-y-2 mb-6">
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Tạm tính</span>
-                            <span className="font-medium">12,000,000đ</span>
+                            <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Tổng cộng</span>
-                            <span className="font-medium">12,000,000đ</span>
+                            <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-[#f0a06a] font-medium">
-                            <span>Đặt cọc (30%)</span>
-                            <span>3,600,000đ</span>
+                            <span>Đặt cọc ({selectedDeposit}%)</span>
+                            <span>-{depositAmount.toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Số tiền còn lại</span>
-                            <span className="font-medium">8,400,000đ</span>
+                            <span className="font-medium">{remainingAmount.toLocaleString()}đ</span>
                         </div>
                     </div>
 
@@ -151,7 +177,7 @@ const SummaryInformation = () => {
 
                     <div className="mt-6 text-center">
                         <div className="text-sm text-gray-500 mb-2">Cần hỗ trợ?</div>
-                        <Button variant="link" className="text-[#f0a06a]">
+                        <Button variant="link" className="text-white">
                             Liên hệ với chúng tôi
                         </Button>
                     </div>
