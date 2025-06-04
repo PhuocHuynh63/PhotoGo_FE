@@ -16,29 +16,15 @@ import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 import { usePathname } from "next/navigation";
-import { useCartStore } from "@store/cart"
+import { useCart, useSetCart } from "@stores/cart/selectors";
+import { formatRelativeTime } from "@utils/helpers/Date";
 
-//#region Helpers
-const timeAgo = (date: string) => {
-    const seconds = Math.floor(
-        (new Date().getTime() - new Date(date).getTime()) / 1000
-    );
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return `${interval} năm trước`;
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) return `${interval} tháng trước`;
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) return `${interval} ngày trước`;
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) return `${interval} giờ trước`;
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) return `${interval} phút trước`;
-    return `${seconds} giây trước`;
-};
-//#endregion
+
 
 export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
-    const { setCart, cart: cartState } = useCartStore()
+    // console.log(cart)
+    const cartState = useCart()
+    const setCart = useSetCart()
     //#region States
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
@@ -235,7 +221,7 @@ export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
                                             {notification.title}
                                         </p>
                                         <p className="text-xs text-gray-400">
-                                            {timeAgo(notification.createdAt)}
+                                            {formatRelativeTime(notification.createdAt)}
                                         </p>
                                     </div>
                                     <div className="flex w-full justify-between">

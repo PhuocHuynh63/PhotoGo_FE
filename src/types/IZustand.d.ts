@@ -43,10 +43,11 @@ declare module ZUSTAND {
     }
 
     export interface ICartState {
-        cart: ICartItem[] | null;
-        getCart: () => ICartItem[] | null;
-        setCart: (cart: ICartItem[] | null) => void;
-        removeItem: (itemId: string, cartId: string) => Promise<void>;
-        removeItems: (itemIds: string[], cartId: string) => Promise<void>;
+        cart: ICartItem[] | null
+        getCart: () => ICartItem[] | null
+        setCart: (cart: ICartItem[] | null) => void
+        addToCart: (serviceConceptId: string, cartId: string, userId: string) => Promise<void>
+        removeItem: (itemId: string, cartId: string) => Promise<void>
+        removeItems: (itemIds: string[], cartId: string) => Promise<void>
     }
 }
