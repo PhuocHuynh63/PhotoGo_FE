@@ -4,6 +4,8 @@ import { IVendor } from '@models/vendor/common.model';
 import { ICartResponse } from '@models/cart/response.model';
 import { IReviewPaginationResponse } from '@models/review/repsonse.model';
 import { IVendorResponse } from '@models/vendor/response.model';
+import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
+
 declare namespace PAGES {
     interface ILogin {
         data: any;
@@ -20,6 +22,8 @@ declare namespace PAGES {
     interface IHomePage {
         data: IVendor;
         user: IUser | undefined;
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
     }
     interface Promotion {
         id: number;
@@ -85,5 +89,19 @@ declare namespace PAGES {
     interface IReviewProps {
         vendor: IVendorResponse;
         review: IReviewPaginationResponse;
+    }
+  
+    interface IAttendancePageProps {
+        user: IUser | undefined;
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
+    }
+    interface IProfileAttendanceBoardProps {
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
+    }
+
+    interface IAttendanceCalendarInlineProps {
+        attendance?: IAttendance[]
     }
 }
