@@ -14,13 +14,13 @@ import { Skeleton } from "@components/Atoms/ui/skeleton"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { opacity: 0, scale: 1 },
     visible: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.8 }
+    exit: { opacity: 0, scale: 1 }
 };
 
 export default function Right({ packages, pagination }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'] }) {
-    const [sortBy, setSortBy] = useState("")
+    // const [sortBy, setSortBy] = useState("")
     const [loading] = useState(false)
     const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
     const searchParams = useSearchParams();
@@ -45,7 +45,6 @@ export default function Right({ packages, pagination }: { packages: IServicePack
         }
         router.push(`?${params.toString()}`);
     };
-    console.log(packages)
 
     // Skeleton loading component
     const SkeletonCard = () => (
@@ -68,18 +67,18 @@ export default function Right({ packages, pagination }: { packages: IServicePack
     );
 
     return (
-        <motion.div
-            className="flex-1 pl-6 p-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-        >
-            <div className="mb-6">
-                <h2 className="text-lg font-medium">Kết quả tìm kiếm</h2>
-                <p className="text-sm text-gray-500">Tìm thấy {pagination?.totalItem} kết quả</p>
-            </div>
+        <div className="flex-1 pl-6 p-3">
+            <motion.div
+                className="mb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+            >
+                <h2 className="text-3xl font-medium pb-2">Kết quả tìm kiếm</h2>
+                <p className="text-sm text-gray-500">Tìm thấy <span className="font-medium">{pagination?.totalItem}</span> kết quả</p>
+            </motion.div>
 
-            <div className="flex items-center justify-end mb-4">
+            {/* <div className="flex items-center justify-end mb-4">
                 <div className="flex items-center">
                     <select className="border rounded-md p-1 text-sm" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="relevant">Phù hợp nhất</option>
@@ -90,7 +89,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                         <option value="rating">Đánh giá cao nhất</option>
                     </select>
                 </div>
-            </div>
+            </div> */}
 
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -233,6 +232,6 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                 </div>
             )}
 
-        </motion.div>
+        </div >
     )
 }
