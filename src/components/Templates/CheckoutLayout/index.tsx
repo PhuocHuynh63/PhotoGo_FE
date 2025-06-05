@@ -83,12 +83,13 @@ export default function CheckoutLayoutClient({
                 id: "",
                 name: "",
                 description: "",
-                status: "",
                 image: "",
-                vendorId: "",
+                status: "",
+                // vendorId: "",
                 serviceConcepts: [],
-                price: "",
-                duration: 0,
+                minPrice: 0,
+                maxPrice: 0,
+                // duration: 0,
                 created_at: "",
                 updated_at: ""
             });
