@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
 
 import { CheckCircle, Circle, Camera, Zap, Star, Sparkles, Trophy, Target, Flame, Crown, Award } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -10,11 +10,8 @@ import Link from "next/link"
 import { ROUTES } from "@routes"
 import { IAttendance } from "@models/attendance/common.model"
 import attendanceService from "@services/attendance"
+import toast from "react-hot-toast"
 
-interface AttendanceRecord {
-    date: string
-    checked: boolean
-}
 
 interface ApiResponse {
     statusCode?: number
@@ -29,15 +26,110 @@ interface AttendanceBoardProps {
     attendance: IAttendance[] | undefined
 }
 
+// Utility functions outside the component
+const getTodayString = () => new Date().toISOString().split("T")[0]
+
+const getLast7Days = () => {
+    const days = []
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        days.push(date.toISOString().split("T")[0])
+    }
+    return days
+}
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+    const months = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"]
+    return {
+        day: days[date.getDay()],
+        date: date.getDate(),
+        month: months[date.getMonth()],
+    }
+}
+
+const getStreakInfo = (days: number) => {
+    if (days >= 7)
+        return {
+            color: "from-orange-400 via-orange-500 to-orange-600",
+            icon: Crown,
+            title: "Bậc thầy Nhiếp ảnh",
+            bgGlow: "from-orange-400/30 to-orange-600/30",
+            textColor: "text-orange-600",
+        }
+    if (days >= 5)
+        return {
+            color: "from-orange-500 via-orange-600 to-orange-700",
+            icon: Flame,
+            title: "Đang bùng cháy",
+            bgGlow: "from-orange-500/25 to-orange-700/25",
+            textColor: "text-orange-700",
+        }
+    if (days >= 3)
+        return {
+            color: "from-orange-300 via-orange-400 to-orange-500",
+            icon: Target,
+            title: "Đang tiến bộ",
+            bgGlow: "from-orange-300/20 to-orange-500/20",
+            textColor: "text-orange-500",
+        }
+    if (days >= 1)
+        return {
+            color: "from-orange-200 via-orange-300 to-orange-400",
+            icon: Zap,
+            title: "Khởi đầu tốt",
+            bgGlow: "from-orange-200/15 to-orange-400/15",
+            textColor: "text-orange-400",
+        }
+    return {
+        color: "from-gray-300 via-gray-400 to-gray-500",
+        icon: Circle,
+        title: "Bắt đầu hành trình",
+        bgGlow: "from-gray-300/10 to-gray-500/10",
+        textColor: "text-gray-500",
+    }
+}
+
 const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: AttendanceBoardProps) => {
-    const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([])
-    const [hasCheckedToday, setHasCheckedToday] = useState(false)
-    const [consecutiveDays, setConsecutiveDays] = useState(0)
-    const [showBoard, setShowBoard] = useState(false)
     const [showCelebration, setShowCelebration] = useState(false)
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
     const modalRef = useRef<HTMLDivElement>(null)
+
+    // Derived: attendanceData for last 7 days
+    const attendanceData = useMemo(() => {
+        if (!isLoggedIn || !userId) return []
+        const last7Days = getLast7Days()
+        return last7Days.map((date) => {
+            const apiRecord = attendance?.find((record) => record.date === date)
+            return {
+                date,
+                checked: apiRecord ? apiRecord.isChecked : false
+            }
+        })
+    }, [isLoggedIn, userId, attendance])
+
+    // Derived: hasCheckedToday
+    const hasCheckedToday = useMemo(() => {
+        const today = getTodayString()
+        return attendanceData.find((record) => record.date === today)?.checked || false
+    }, [attendanceData])
+
+    // Derived: consecutiveDays
+    const consecutiveDays = useMemo(() => {
+        let consecutive = 0
+        const sortedAttendance = [...attendanceData].reverse()
+        for (const record of sortedAttendance) {
+            if (record.checked) consecutive++
+            else break
+        }
+        return consecutive
+    }, [attendanceData])
+
+    // Memo streakInfo
+    const streakInfo = useMemo(() => getStreakInfo(consecutiveDays), [consecutiveDays])
 
     // Handle click outside
     useEffect(() => {
@@ -46,192 +138,43 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                 onClose?.()
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside)
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
     }, [onClose])
 
-    // Lấy ngày hôm nay theo định dạng YYYY-MM-DD
-    const getTodayString = () => {
-        return new Date().toISOString().split("T")[0]
-    }
-
-    // Lấy 7 ngày gần nhất
-    const getLast7Days = () => {
-        const days = []
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date()
-            date.setDate(date.getDate() - i)
-            days.push(date.toISOString().split("T")[0])
-        }
-        return days
-    }
-
-    // Load dữ liệu điểm danh từ API attendance prop
-    useEffect(() => {
-        if (!isLoggedIn || !userId) return
-
-        const last7Days = getLast7Days()
-
-        // Map 7 ngày gần nhất với dữ liệu từ API
-        const attendanceRecords: AttendanceRecord[] = last7Days.map((date) => {
-            // Tìm trong dữ liệu attendance từ API
-            const apiRecord = attendance?.find((record) => record.date === date)
-            return {
-                date,
-                checked: apiRecord ? apiRecord.isChecked : false
-            }
-        })
-
-        setAttendanceData(attendanceRecords)
-
-        // Kiểm tra đã điểm danh hôm nay chưa
-        const today = getTodayString()
-        const todayRecord = attendanceRecords.find((record) => record.date === today)
-        setHasCheckedToday(todayRecord?.checked || false)
-
-        // Tính số ngày liên tục
-        calculateConsecutiveDays(attendanceRecords)
-
-        // Hiển thị bảng điểm danh
-        setShowBoard(true)
-    }, [isLoggedIn, userId, attendance])
-
-    // Tính số ngày điểm danh liên tục
-    const calculateConsecutiveDays = (attendance: AttendanceRecord[]) => {
-        let consecutive = 0
-        const sortedAttendance = [...attendance].reverse() // Từ hôm nay về trước
-
-        for (const record of sortedAttendance) {
-            if (record.checked) {
-                consecutive++
-            } else {
-                break
-            }
-        }
-
-        setConsecutiveDays(consecutive)
-    }
-
-    // Xử lý điểm danh
-    const handleCheckIn = async () => {
+    // Check-in handler
+    const handleCheckIn = useCallback(async () => {
         if (!isLoggedIn || !userId || hasCheckedToday || isCheckingIn) return
-
         setIsCheckingIn(true)
-
         try {
             const today = getTodayString()
-
-            // Call API để điểm danh
             const response = await attendanceService.checkIn(userId)
-            console.log(response)
-
-            // Chỉ cập nhật UI khi điểm danh thành công
             if (response && (response as ApiResponse)?.statusCode === 201) {
-                // Optimistic update: Cập nhật state local ngay lập tức
-                const updatedAttendance = attendanceData.map((record) =>
-                    record.date === today ? { ...record, checked: true } : record,
-                )
-
-                setAttendanceData(updatedAttendance)
-                setHasCheckedToday(true)
-
-                // Tính lại số ngày liên tục
-                const newConsecutive = consecutiveDays + 1
-                setConsecutiveDays(newConsecutive)
-
-                // Show confetti effect
+                // Optimistic update: update attendanceData in-place
+                toast.success("Điểm danh thành công")
+                attendanceData.forEach((record) => {
+                    if (record.date === today) record.checked = true
+                })
                 setShowConfetti(true)
                 setTimeout(() => setShowConfetti(false), 2000)
-
-                // Kiểm tra nếu đạt 7 ngày liên tục
-                if (newConsecutive === 7) {
-                    console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
-                    console.log("✨ Bạn đã hoàn thành thử thách 7 ngày liên tục!")
-                    console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
-                    console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
-                    console.log("🎯 Thành tích mới: Photography Master!")
-
+                // Celebration if 7 days
+                if (consecutiveDays + 1 === 7) {
                     setTimeout(() => {
                         setShowCelebration(true)
                         setTimeout(() => setShowCelebration(false), 5000)
                     }, 500)
                 }
-            } else {
-                console.error("Điểm danh không thành công:", response)
-                // Có thể hiển thị thông báo lỗi cho user
             }
         } catch (error) {
-            console.error("Lỗi khi điểm danh:", error)
-            // Có thể hiển thị thông báo lỗi cho user
+            toast.error(error as string)
         } finally {
             setIsCheckingIn(false)
         }
-    }
+    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, attendanceData, consecutiveDays])
 
-    // ** Format date **
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
-        const months = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"]
-        return {
-            day: days[date.getDay()],
-            date: date.getDate(),
-            month: months[date.getMonth()],
-        }
-    }
-    // ** End format date **
-
-    // ** Get streak info with enhanced levels **
-    const getStreakInfo = (days: number) => {
-        if (days >= 7)
-            return {
-                color: "from-orange-400 via-orange-500 to-orange-600",
-                icon: Crown,
-                title: "Bậc thầy Nhiếp ảnh",
-                bgGlow: "from-orange-400/30 to-orange-600/30",
-                textColor: "text-orange-600",
-            }
-        if (days >= 5)
-            return {
-                color: "from-orange-500 via-orange-600 to-orange-700",
-                icon: Flame,
-                title: "Đang bùng cháy",
-                bgGlow: "from-orange-500/25 to-orange-700/25",
-                textColor: "text-orange-700",
-            }
-        if (days >= 3)
-            return {
-                color: "from-orange-300 via-orange-400 to-orange-500",
-                icon: Target,
-                title: "Đang tiến bộ",
-                bgGlow: "from-orange-300/20 to-orange-500/20",
-                textColor: "text-orange-500",
-            }
-        if (days >= 1)
-            return {
-                color: "from-orange-200 via-orange-300 to-orange-400",
-                icon: Zap,
-                title: "Khởi đầu tốt",
-                bgGlow: "from-orange-200/15 to-orange-400/15",
-                textColor: "text-orange-400",
-            }
-        return {
-            color: "from-gray-300 via-gray-400 to-gray-500",
-            icon: Circle,
-            title: "Bắt đầu hành trình",
-            bgGlow: "from-gray-300/10 to-gray-500/10",
-            textColor: "text-gray-500",
-        }
-    }
-    // ** End get streak info with enhanced levels **
-
-
-    const streakInfo = getStreakInfo(consecutiveDays)
-
-    if (!isLoggedIn || !showBoard) {
+    if (!isLoggedIn || attendanceData.length === 0) {
         return (
             <motion.div
                 ref={modalRef}

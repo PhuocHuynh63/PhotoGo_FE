@@ -8,6 +8,8 @@ import AttendanceCalendarInline from "../../../../Vendor/Components/AttendanceCa
 import LucideIcon from "@components/Atoms/LucideIcon"
 import { IAttendance } from "@models/attendance/common.model"
 import { CheckCircle, Circle } from "lucide-react"
+import toast from "react-hot-toast"
+import attendanceService from "@services/attendance"
 
 type IconName = "Crown" | "Flame" | "Target" | "Zap" | "Circle";
 
@@ -22,7 +24,11 @@ interface AttendanceRecord {
     date: string
     checked: boolean
 }
-
+interface ApiResponse {
+    statusCode?: number
+    message?: string
+    data?: unknown
+}
 // Utility functions outside the component
 const getTodayString = () => new Date().toISOString().split("T")[0]
 
@@ -113,19 +119,21 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
     const [showCalendarModal, setShowCalendarModal] = useState(false)
+    const [localAttendanceData, setLocalAttendanceData] = useState<AttendanceRecord[] | null>(null);
 
     // Memoize attendanceData
     const attendanceData = useMemo(() => {
-        if (!isLoggedIn || !userId) return []
-        const last7Days = getLast7Days()
+        if (localAttendanceData) return localAttendanceData;
+        if (!isLoggedIn || !userId) return [];
+        const last7Days = getLast7Days();
         return last7Days.map((date) => {
-            const apiRecord = attendance?.find((record) => record.date === date)
+            const apiRecord = attendance?.find((record) => record.date === date);
             return {
                 date,
                 checked: apiRecord ? apiRecord.isChecked : false
             }
-        })
-    }, [isLoggedIn, userId, attendance])
+        });
+    }, [isLoggedIn, userId, attendance, localAttendanceData]);
 
     // Memoize consecutiveDays
     const consecutiveDays = useMemo(() => calculateConsecutiveDays(attendanceData), [attendanceData])
@@ -143,23 +151,26 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
         if (!isLoggedIn || !userId || hasCheckedToday || isCheckingIn) return
         setIsCheckingIn(true)
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-            setShowConfetti(true)
-            setTimeout(() => setShowConfetti(false), 2000)
-            if (onCheckIn) onCheckIn()
-            if (consecutiveDays + 1 === 7) {
-                console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
-                console.log("✨ Bạn đã hoàn thành thử thách 7 ngày liên tục!")
-                console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
-                console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
-                console.log("🎯 Thành tích mới: Photography Master!")
+            const today = getTodayString()
+            const response = await attendanceService.checkIn(userId)
+            if (response && (response as ApiResponse)?.statusCode === 201) {
+                toast.success("Điểm danh thành công")
+                setLocalAttendanceData(prev => {
+                    const newData = (prev || attendanceData).map(record =>
+                        record.date === today ? { ...record, checked: true } : record
+                    );
+                    return newData;
+                })
+                setShowConfetti(true)
+                setTimeout(() => setShowConfetti(false), 2000)
+                if (onCheckIn) onCheckIn()
             }
         } catch (error) {
-            console.error("Error during check-in:", error)
+            toast.error(error as string)
         } finally {
             setIsCheckingIn(false)
         }
-    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, onCheckIn, consecutiveDays])
+    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, onCheckIn, attendanceData, setLocalAttendanceData])
 
     if (!isLoggedIn) {
         return (
@@ -382,7 +393,7 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
                     <Button
                         onClick={handleCheckIn}
                         disabled={isCheckingIn}
-                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-6 rounded-lg shadow-md transition-all duration-300"
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-6 rounded-lg shadow-md transition-all duration-300 cursor-pointer"
                     >
                         {isCheckingIn ? (
                             <div className="flex items-center gap-2">

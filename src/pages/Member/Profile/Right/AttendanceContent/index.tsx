@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/card"
-import { Calendar, Trophy, Flame, Target, Star, TrendingUp, Award, Camera, Clock, CheckCircle2 } from "lucide-react"
+import { Calendar, Trophy, Flame, Star, TrendingUp, Camera, Clock, CheckCircle2 } from "lucide-react"
 import { motion } from "framer-motion"
 import ProfileAttendanceBoard from "@pages/Member/Profile/components/ProfileAttendanceBoard"
 import { PAGES } from '../../../../../types/IPages';
@@ -136,16 +136,6 @@ const AttendancePage = ({ user, attendance, checkAttendance }: PAGES.IAttendance
             year: "numeric",
         })
     }
-
-    const getStreakLevel = (streak: number) => {
-        if (streak >= 30) return { level: "Bậc Thầy", color: "text-purple-600", icon: Award }
-        if (streak >= 14) return { level: "Chuyên Gia", color: "text-orange-600", icon: Trophy }
-        if (streak >= 7) return { level: "Nâng Cao", color: "text-orange-500", icon: Flame }
-        if (streak >= 3) return { level: "Trung Cấp", color: "text-blue-500", icon: Target }
-        return { level: "Sơ Cấp", color: "text-green-500", icon: Star }
-    }
-
-    const streakLevel = getStreakLevel(attendanceStats.currentStreak)
 
     // Xử lý callback điểm danh
     const handleCheckIn = () => {
