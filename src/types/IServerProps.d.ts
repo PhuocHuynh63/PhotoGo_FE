@@ -4,7 +4,13 @@ declare namespace SERVERS {
     }
 
     interface VendorDetailPageProps {
-        children: React.ReactNode;
+        params: Promise<{
+            slug: string;
+        }>;
+    }
+
+    interface VendorDetailLayoutProps {
+        children?: React.ReactNode;
         params: Promise<{
             slug: string;
         }>;

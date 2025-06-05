@@ -1,15 +1,11 @@
 import { z } from "zod";
 import { CategoryModel } from "./common.model";
+import { PaginationModel } from "@models/metadata";
 
 export const CategoriesDataModel = z.object({
     data: z.array(CategoryModel),
     message: z.string(),
-    pagination: z.object({
-        totalItem: z.number(),
-        current: z.number(),
-        totalPage: z.number(),
-        pageSize: z.number()
-    })
+    pagination: PaginationModel
 });
 
 export const CategoriesResponseModel = z.object({

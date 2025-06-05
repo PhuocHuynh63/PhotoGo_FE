@@ -2,7 +2,10 @@ import { IServiceConceptImageModel } from '@models/serviceConcepts/response.mode
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
 import { ICartResponse } from '@models/cart/response.model';
+import { IReviewPaginationResponse } from '@models/review/repsonse.model';
+import { IVendorResponse } from '@models/vendor/response.model';
 import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
+
 declare namespace PAGES {
     interface ILogin {
         data: any;
@@ -82,6 +85,12 @@ declare namespace PAGES {
         concept?: IServiceConceptResponse;
         servicePackage?: IServicePackageResponse;
     }
+
+    interface IReviewProps {
+        vendor: IVendorResponse;
+        review: IReviewPaginationResponse;
+    }
+  
     interface IAttendancePageProps {
         user: IUser | undefined;
         attendance: IAttendance[] | undefined;

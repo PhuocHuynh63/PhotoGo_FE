@@ -1,6 +1,7 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { VendorModel } from "./common.model";
 import { z } from "zod";
+import { PaginationModel } from "@models/metadata";
 
 /**
  * Model of VendorsData
@@ -8,12 +9,7 @@ import { z } from "zod";
 export const VendorsDataModel = z.object({
     data: z.array(VendorModel),
     message: z.string(),
-    pagination: z.object({
-        totalItem: z.number(),
-        current: z.number(),
-        totalPage: z.number(),
-        pageSize: z.number()
-    })
+    pagination: PaginationModel
 });
 
 export const VendorsResponseModel = BackendResponseModel(VendorsDataModel);
