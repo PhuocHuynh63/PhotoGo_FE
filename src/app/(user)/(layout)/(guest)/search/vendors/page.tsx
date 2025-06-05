@@ -3,7 +3,7 @@ import SearchVendorPage from "@pages/Public/Search/SearchVendor";
 import vendorService from "@services/vendors";
 import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
-import { IVendorResponse, IVendorsData } from "@models/vendor/response.model";
+import { IVendorsData } from "@models/vendor/response.model";
 
 
 async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {

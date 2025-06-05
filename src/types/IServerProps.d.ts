@@ -26,4 +26,7 @@ declare namespace SERVERS {
             id: string;
         }>;
     }
+    interface SearchPackagePageProps {
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    }
 }

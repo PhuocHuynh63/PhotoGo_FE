@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo, useCallback } from "react"
 
 import { CheckCircle, Circle, Camera, Zap, Star, Sparkles, Trophy, Target, Flame, Crown, Award } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -8,27 +8,128 @@ import { Card, CardContent, CardHeader } from "@components/Atoms/ui/card"
 import { Button } from "@components/Atoms/ui/button"
 import Link from "next/link"
 import { ROUTES } from "@routes"
+import { IAttendance } from "@models/attendance/common.model"
+import attendanceService from "@services/attendance"
+import toast from "react-hot-toast"
 
-interface AttendanceRecord {
-    date: string
-    checked: boolean
+
+interface ApiResponse {
+    statusCode?: number
+    message?: string
+    data?: unknown
 }
 
 interface AttendanceBoardProps {
     isLoggedIn: boolean
     userId?: string
     onClose?: () => void
+    attendance: IAttendance[] | undefined
 }
 
-const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) => {
-    const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([])
-    const [hasCheckedToday, setHasCheckedToday] = useState(false)
-    const [consecutiveDays, setConsecutiveDays] = useState(0)
-    const [showBoard, setShowBoard] = useState(false)
+// Utility functions outside the component
+const getTodayString = () => new Date().toISOString().split("T")[0]
+
+const getLast7Days = () => {
+    const days = []
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        days.push(date.toISOString().split("T")[0])
+    }
+    return days
+}
+
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
+    const months = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"]
+    return {
+        day: days[date.getDay()],
+        date: date.getDate(),
+        month: months[date.getMonth()],
+    }
+}
+
+const getStreakInfo = (days: number) => {
+    if (days >= 7)
+        return {
+            color: "from-orange-400 via-orange-500 to-orange-600",
+            icon: Crown,
+            title: "Bậc thầy Nhiếp ảnh",
+            bgGlow: "from-orange-400/30 to-orange-600/30",
+            textColor: "text-orange-600",
+        }
+    if (days >= 5)
+        return {
+            color: "from-orange-500 via-orange-600 to-orange-700",
+            icon: Flame,
+            title: "Đang bùng cháy",
+            bgGlow: "from-orange-500/25 to-orange-700/25",
+            textColor: "text-orange-700",
+        }
+    if (days >= 3)
+        return {
+            color: "from-orange-300 via-orange-400 to-orange-500",
+            icon: Target,
+            title: "Đang tiến bộ",
+            bgGlow: "from-orange-300/20 to-orange-500/20",
+            textColor: "text-orange-500",
+        }
+    if (days >= 1)
+        return {
+            color: "from-orange-200 via-orange-300 to-orange-400",
+            icon: Zap,
+            title: "Khởi đầu tốt",
+            bgGlow: "from-orange-200/15 to-orange-400/15",
+            textColor: "text-orange-400",
+        }
+    return {
+        color: "from-gray-300 via-gray-400 to-gray-500",
+        icon: Circle,
+        title: "Bắt đầu hành trình",
+        bgGlow: "from-gray-300/10 to-gray-500/10",
+        textColor: "text-gray-500",
+    }
+}
+
+const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: AttendanceBoardProps) => {
     const [showCelebration, setShowCelebration] = useState(false)
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
     const modalRef = useRef<HTMLDivElement>(null)
+
+    // Derived: attendanceData for last 7 days
+    const attendanceData = useMemo(() => {
+        if (!isLoggedIn || !userId) return []
+        const last7Days = getLast7Days()
+        return last7Days.map((date) => {
+            const apiRecord = attendance?.find((record) => record.date === date)
+            return {
+                date,
+                checked: apiRecord ? apiRecord.isChecked : false
+            }
+        })
+    }, [isLoggedIn, userId, attendance])
+
+    // Derived: hasCheckedToday
+    const hasCheckedToday = useMemo(() => {
+        const today = getTodayString()
+        return attendanceData.find((record) => record.date === today)?.checked || false
+    }, [attendanceData])
+
+    // Derived: consecutiveDays
+    const consecutiveDays = useMemo(() => {
+        let consecutive = 0
+        const sortedAttendance = [...attendanceData].reverse()
+        for (const record of sortedAttendance) {
+            if (record.checked) consecutive++
+            else break
+        }
+        return consecutive
+    }, [attendanceData])
+
+    // Memo streakInfo
+    const streakInfo = useMemo(() => getStreakInfo(consecutiveDays), [consecutiveDays])
 
     // Handle click outside
     useEffect(() => {
@@ -37,202 +138,43 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                 onClose?.()
             }
         }
-
         document.addEventListener('mousedown', handleClickOutside)
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
     }, [onClose])
 
-    // Lấy ngày hôm nay theo định dạng YYYY-MM-DD
-    const getTodayString = () => {
-        return new Date().toISOString().split("T")[0]
-    }
-
-    // Lấy 7 ngày gần nhất
-    const getLast7Days = () => {
-        const days = []
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date()
-            date.setDate(date.getDate() - i)
-            days.push(date.toISOString().split("T")[0])
-        }
-        return days
-    }
-
-    // Load dữ liệu điểm danh từ localStorage
-    useEffect(() => {
-        if (!isLoggedIn || !userId) return
-
-        const storageKey = `attendance_${userId}`
-        const savedData = localStorage.getItem(storageKey)
-        const last7Days = getLast7Days()
-
-        let attendance: AttendanceRecord[] = []
-
-        if (savedData) {
-            const parsed = JSON.parse(savedData)
-            attendance = last7Days.map((date) => {
-                const existing = parsed.find((record: AttendanceRecord) => record.date === date)
-                return existing || { date, checked: false }
-            })
-        } else {
-            attendance = last7Days.map((date) => ({ date, checked: false }))
-        }
-
-        setAttendanceData(attendance)
-
-        // Kiểm tra đã điểm danh hôm nay chưa
-        const today = getTodayString()
-        const todayRecord = attendance.find((record) => record.date === today)
-        setHasCheckedToday(todayRecord?.checked || false)
-
-        // Tính số ngày liên tục
-        calculateConsecutiveDays(attendance)
-
-        // Hiển thị bảng điểm danh
-        setShowBoard(true)
-    }, [isLoggedIn, userId])
-
-    // Tính số ngày điểm danh liên tục
-    const calculateConsecutiveDays = (attendance: AttendanceRecord[]) => {
-        let consecutive = 0
-        const sortedAttendance = [...attendance].reverse() // Từ hôm nay về trước
-
-        for (const record of sortedAttendance) {
-            if (record.checked) {
-                consecutive++
-            } else {
-                break
-            }
-        }
-
-        setConsecutiveDays(consecutive)
-    }
-
-    // Xử lý điểm danh
-    const handleCheckIn = async () => {
+    // Check-in handler
+    const handleCheckIn = useCallback(async () => {
         if (!isLoggedIn || !userId || hasCheckedToday || isCheckingIn) return
-
         setIsCheckingIn(true)
-
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-
-        const today = getTodayString()
-        const updatedAttendance = attendanceData.map((record) =>
-            record.date === today ? { ...record, checked: true } : record,
-        )
-
-        setAttendanceData(updatedAttendance)
-        setHasCheckedToday(true)
-
-        // Lưu vào localStorage
-        const storageKey = `attendance_${userId}`
-        const allData = JSON.parse(localStorage.getItem(storageKey) || "[]")
-        const existingIndex = allData.findIndex((record: AttendanceRecord) => record.date === today)
-
-        if (existingIndex >= 0) {
-            allData[existingIndex] = { date: today, checked: true }
-        } else {
-            allData.push({ date: today, checked: true })
-        }
-
-        localStorage.setItem(storageKey, JSON.stringify(allData))
-
-        // Tính lại số ngày liên tục
-        const newConsecutive = consecutiveDays + 1
-        setConsecutiveDays(newConsecutive)
-
-        setIsCheckingIn(false)
-
-        // Show confetti effect
-        setShowConfetti(true)
-        setTimeout(() => setShowConfetti(false), 2000)
-
-        // Kiểm tra nếu đạt 7 ngày liên tục
-        if (newConsecutive === 7) {
-            console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
-            console.log("✨ Bạn đã hoàn thành thử thách 7 ngày liên tục!")
-            console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
-            console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
-            console.log("🎯 Thành tích mới: Photography Master!")
-
-            setTimeout(() => {
-                setShowCelebration(true)
-                setTimeout(() => setShowCelebration(false), 5000)
-            }, 500)
-        }
-    }
-
-    // Định dạng ngày hiển thị
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
-        const months = ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"]
-        return {
-            day: days[date.getDay()],
-            date: date.getDate(),
-            month: months[date.getMonth()],
-        }
-    }
-
-    // Get streak info with enhanced levels
-    const getStreakInfo = (days: number) => {
-        if (days >= 7)
-            return {
-                color: "from-orange-400 via-orange-500 to-orange-600",
-                icon: Crown,
-                title: "Bậc thầy Nhiếp ảnh",
-                subtitle: "Chuỗi ngày huyền thoại",
-                bgGlow: "from-orange-400/30 to-orange-600/30",
-                textColor: "text-orange-600",
-                level: "BẬC THẦY",
+        try {
+            const today = getTodayString()
+            const response = await attendanceService.checkIn(userId)
+            if (response && (response as ApiResponse)?.statusCode === 201) {
+                // Optimistic update: update attendanceData in-place
+                toast.success("Điểm danh thành công")
+                attendanceData.forEach((record) => {
+                    if (record.date === today) record.checked = true
+                })
+                setShowConfetti(true)
+                setTimeout(() => setShowConfetti(false), 2000)
+                // Celebration if 7 days
+                if (consecutiveDays + 1 === 7) {
+                    setTimeout(() => {
+                        setShowCelebration(true)
+                        setTimeout(() => setShowCelebration(false), 5000)
+                    }, 500)
+                }
             }
-        if (days >= 5)
-            return {
-                color: "from-orange-500 via-orange-600 to-orange-700",
-                icon: Flame,
-                title: "Đang bùng cháy",
-                subtitle: "Đam mê rực lửa",
-                bgGlow: "from-orange-500/25 to-orange-700/25",
-                textColor: "text-orange-700",
-                level: "CHUYÊN GIA",
-            }
-        if (days >= 3)
-            return {
-                color: "from-orange-300 via-orange-400 to-orange-500",
-                icon: Target,
-                title: "Đang tiến bộ",
-                subtitle: "Tăng tốc độ",
-                bgGlow: "from-orange-300/20 to-orange-500/20",
-                textColor: "text-orange-500",
-                level: "NÂNG CAO",
-            }
-        if (days >= 1)
-            return {
-                color: "from-orange-200 via-orange-300 to-orange-400",
-                icon: Zap,
-                title: "Khởi đầu tốt",
-                subtitle: "Bước đi đầu tiên",
-                bgGlow: "from-orange-200/15 to-orange-400/15",
-                textColor: "text-orange-400",
-                level: "MỚI BẮT ĐẦU",
-            }
-        return {
-            color: "from-gray-300 via-gray-400 to-gray-500",
-            icon: Circle,
-            title: "Bắt đầu hành trình",
-            subtitle: "Hãy bắt đầu ngay!",
-            bgGlow: "from-gray-300/10 to-gray-500/10",
-            textColor: "text-gray-500",
-            level: "KHỞI ĐẦU",
+        } catch (error) {
+            toast.error(error as string)
+        } finally {
+            setIsCheckingIn(false)
         }
-    }
+    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, attendanceData, consecutiveDays])
 
-    const streakInfo = getStreakInfo(consecutiveDays)
-
-    if (!isLoggedIn || !showBoard) {
+    if (!isLoggedIn || attendanceData.length === 0) {
         return (
             <motion.div
                 ref={modalRef}
@@ -355,7 +297,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.3)_0%,transparent_50%)]"></div>
                         </div>
 
-                        <CardHeader className="text-center pb-4 sm:pb-6 lg:pb-8 pt-4 sm:pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8 relative">
+                        <CardHeader className="text-center  pt-4 sm:pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8 relative">
                             {/* Main Title */}
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}
@@ -425,14 +367,50 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                                 </div>
 
                                 {/* Level Info */}
-                                <div className="text-center space-y-1 sm:space-y-2">
-                                    <div
-                                        className={`inline-block px-3 sm:px-4 py-1 rounded-full text-xs font-bold ${streakInfo.textColor} bg-orange-50 border border-orange-200`}
-                                    >
-                                        {streakInfo.level}
-                                    </div>
+                                <div className="text-center space-y-2">
+
                                     <h3 className="text-lg sm:text-xl font-bold text-gray-800">{streakInfo.title}</h3>
-                                    <p className="text-sm text-gray-600">{streakInfo.subtitle}</p>
+                                </div>
+
+                                {/* Progress Section */}
+                                <div className="space-y-3 sm:space-y-4">
+                                    <div className="flex justify-between items-center text-sm font-medium">
+                                        <span className="text-gray-700">Tiến độ tuần này</span>
+                                        <span className={`${streakInfo.textColor} font-bold text-base sm:text-lg`}>
+                                            {Math.min(consecutiveDays, 7)}/7 ngày
+                                        </span>
+                                    </div>
+
+                                    <div className="relative">
+                                        <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden shadow-inner">
+                                            <motion.div
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${(Math.min(consecutiveDays, 7) / 7) * 100}%` }}
+                                                transition={{ duration: 2, ease: "easeOut", delay: 1.8 }}
+                                                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${streakInfo.color} relative overflow-hidden shadow-lg`}
+                                            >
+                                                {/* Progress Shine Effect */}
+                                                <motion.div
+                                                    animate={{ x: ["0%", "100%"] }}
+                                                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/3"
+                                                />
+                                            </motion.div>
+                                        </div>
+
+                                        {/* Progress Milestones */}
+                                        <div className="absolute top-0 w-full h-3 sm:h-4 flex justify-between items-center px-0.5 sm:px-1">
+                                            {[...Array(7)].map((_, i) => (
+                                                <motion.div
+                                                    key={i}
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{ delay: 2 + i * 0.1, duration: 0.3 }}
+                                                    className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${i < consecutiveDays ? "bg-white shadow-lg" : "bg-gray-400"}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Master Achievement */}
@@ -453,16 +431,6 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
 
                     {/* Calendar Section */}
                     <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
-                        {/* Calendar Title */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6, duration: 0.6 }}
-                            className="text-center mb-4 sm:mb-6 lg:mb-8"
-                        >
-                            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-1 sm:mb-2">Lịch điểm danh tuần này</h2>
-                            <p className="text-xs sm:text-sm text-gray-600">Theo dõi tiến độ hàng ngày của bạn</p>
-                        </motion.div>
 
                         {/* Calendar Grid */}
                         <div className="grid grid-cols-7 gap-1 sm:gap-2 lg:gap-3 mb-6 sm:mb-8 lg:mb-10">
@@ -594,7 +562,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                                         <Button
                                             onClick={handleCheckIn}
                                             disabled={isCheckingIn}
-                                            className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 text-white border-0 shadow-2xl py-7 sm:py-7 lg:py-7 px-4 sm:px-6 lg:px-8 text-base sm:text-lg lg:text-xl font-bold rounded-xl sm:rounded-2xl transition-all duration-300 relative overflow-hidden group"
+                                            className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 text-white border-0 shadow-2xl py-7 sm:py-7 lg:py-7 px-4 sm:px-6 lg:px-8 text-base sm:text-lg lg:text-xl font-bold rounded-xl sm:rounded-2xl transition-all duration-300 relative overflow-hidden group cursor-pointer"
                                         >
                                             {isCheckingIn ? (
                                                 <motion.div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
@@ -620,7 +588,6 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                                                     <Camera className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 mr-2 sm:mr-3 lg:mr-4" />
                                                     <div className="text-center">
                                                         <div>Điểm danh hôm nay</div>
-                                                        <div className="text-xs sm:text-sm font-medium opacity-90">Ghi nhận hoạt động</div>
                                                     </div>
                                                     <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 ml-2 sm:ml-3 lg:ml-4" />
                                                 </>
@@ -636,55 +603,6 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose }: AttendanceBoardProps) 
                                         </Button>
                                     </motion.div>
                                 )}
-                            </div>
-
-                            {/* Progress Section */}
-                            <div className="space-y-3 sm:space-y-4">
-                                <div className="flex justify-between items-center text-sm font-medium">
-                                    <span className="text-gray-700">Tiến độ tuần này</span>
-                                    <span className={`${streakInfo.textColor} font-bold text-base sm:text-lg`}>
-                                        {Math.min(consecutiveDays, 7)}/7 ngày
-                                    </span>
-                                </div>
-
-                                <div className="relative">
-                                    <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden shadow-inner">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${(Math.min(consecutiveDays, 7) / 7) * 100}%` }}
-                                            transition={{ duration: 2, ease: "easeOut", delay: 1.8 }}
-                                            className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${streakInfo.color} relative overflow-hidden shadow-lg`}
-                                        >
-                                            {/* Progress Shine Effect */}
-                                            <motion.div
-                                                animate={{ x: ["0%", "100%"] }}
-                                                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/3"
-                                            />
-                                        </motion.div>
-                                    </div>
-
-                                    {/* Progress Milestones */}
-                                    <div className="absolute top-0 w-full h-3 sm:h-4 flex justify-between items-center px-0.5 sm:px-1">
-                                        {[...Array(7)].map((_, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                transition={{ delay: 2 + i * 0.1, duration: 0.3 }}
-                                                className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${i < consecutiveDays ? "bg-white shadow-lg" : "bg-gray-400"}`}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="text-center">
-                                    <p className="text-xs text-gray-600">
-                                        {consecutiveDays < 7
-                                            ? `Còn ${7 - consecutiveDays} ngày để đạt Photography Master! 🎯`
-                                            : "🎉 Bạn đã đạt cấp độ cao nhất! Hãy tiếp tục duy trì!"}
-                                    </p>
-                                </div>
                             </div>
                         </motion.div>
                     </CardContent>

@@ -47,7 +47,13 @@ const packageService = {
         return await http.delete(`/service-packages/${id}`, {
             cache: 'no-store'
         })
-    }
+    },
+
+    getPackagesWithFilter: async (searchParams: URLSearchParams) => {
+        return await http.get(`/service-packages/filter?${searchParams.toString()}&pageSize=6`, {
+            next: { revalidate: 10 }
+        })
+    },
 }
 
 export default packageService

@@ -10,8 +10,11 @@ import Left from "./Left"
 import Right from "./Right"
 import LucideIcon from "@components/Atoms/LucideIcon";
 import Button from "@components/Atoms/Button";
+import { IServicePackage } from "@models/servicePackages/common.model";
+import { IServicePackagesData } from "@models/servicePackages/response.model";
 
-export default function SearchPackage() {
+export default function SearchPackage({ packages, pagination }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'] }) {
+  console.log(packages, pagination)
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
@@ -169,7 +172,7 @@ export default function SearchPackage() {
             <div className="hidden md:block">
               <Left onReset={handleResetAll} onApply={() => { }} />
             </div>
-            <Right />
+            <Right packages={packages} pagination={pagination} />
           </motion.div>
         </div>
       </div>
