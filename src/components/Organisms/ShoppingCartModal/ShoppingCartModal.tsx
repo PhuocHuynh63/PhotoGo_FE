@@ -190,7 +190,7 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
                             <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-lg font-medium">Giỏ hàng của bạn đang trống</p>
                             <p className="text-sm text-muted-foreground mt-1">Thêm một số dịch vụ vào giỏ hàng để xem chúng ở đây.</p>
-                            <Button className="mt-6 bg-[#D2B48C] hover:bg-[#C19A6B] text-white" onClick={onClose}>Tiếp tục mua sắm</Button>
+                            <Button className="mt-6 bg-primary text-white" onClick={onClose}>Tiếp tục mua sắm</Button>
                         </div>
                     ) : (
                         <div className="space-y-6">

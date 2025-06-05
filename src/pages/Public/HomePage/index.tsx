@@ -116,7 +116,7 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
 ]
 
 
-const HomePage = ({ user }: PAGES.IHomePage) => {
+const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
     const [scrollY, setScrollY] = useState(0)
     const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
     const [heroAnimation, setHeroAnimation] = useState(true)
@@ -126,32 +126,16 @@ const HomePage = ({ user }: PAGES.IHomePage) => {
     const [ctaAnimation, setCtaAnimation] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
+
     useEffect(() => {
         if (!user?.id) return;
-
-        const storageKey = `attendance_${user.id}`;
-        const savedData = localStorage.getItem(storageKey);
-        const today = new Date().toISOString().split('T')[0];
-
-        if (savedData) {
-            const parsed = JSON.parse(savedData);
-            const hasCheckedToday = parsed.some((record: { date: string; checked: boolean }) =>
-                record.date === today && record.checked
-            );
-
-            if (!hasCheckedToday) {
-                const timer = setTimeout(() => {
-                    setShowModal(true);
-                }, 1000);
-                return () => clearTimeout(timer);
-            }
-        } else {
+        if (!checkAttendance?.hasAttended) {
             const timer = setTimeout(() => {
                 setShowModal(true);
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [user?.id]);
+    }, [user?.id, checkAttendance]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -204,6 +188,7 @@ const HomePage = ({ user }: PAGES.IHomePage) => {
                             <AttendanceBoard
                                 isLoggedIn={!!user?.id}
                                 userId={user?.id}
+                                attendance={attendance}
                                 onClose={() => setShowModal(false)}
                             />
                         </div>

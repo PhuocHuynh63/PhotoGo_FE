@@ -317,11 +317,14 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                                         </>
                                     ) : (
                                         <div className="flex gap-2">
-                                            <Link href={ROUTES.AUTH.REGISTER} onClick={() => setIsMobileMenuOpen(false)}>
+                                            {/* <Link href={ROUTES.AUTH.REGISTER} onClick={() => setIsMobileMenuOpen(false)}>
                                                 <Button className="bg-primary text-white">Đăng ký</Button>
-                                            </Link>
+                                            </Link> */}
                                             <Link href={ROUTES.AUTH.LOGIN} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <Button className="bg-primary text-white">Đăng nhập</Button>
+                                                <Button className="bg-primary text-white relative group overflow-hidden">
+                                                    <span className="relative z-10">Đăng nhập</span>
+                                                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                                                </Button>
                                             </Link>
                                         </div>
                                     )}
@@ -521,11 +524,14 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                         <div className="hidden md:block">
                             {user ? renderUserMenu() : (
                                 <div className="flex gap-2">
-                                    <Link href={ROUTES.AUTH.REGISTER}>
+                                    {/* <Link href={ROUTES.AUTH.REGISTER}>
                                         <Button className="bg-primary text-white">Đăng ký</Button>
-                                    </Link>
+                                    </Link> */}
                                     <Link href={ROUTES.AUTH.LOGIN}>
-                                        <Button className="bg-primary text-white">Đăng nhập</Button>
+                                        <Button className="bg-primary text-white relative group overflow-hidden">
+                                            <span className="relative z-10">Đăng nhập</span>
+                                            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                                        </Button>
                                     </Link>
                                 </div>
                             )}

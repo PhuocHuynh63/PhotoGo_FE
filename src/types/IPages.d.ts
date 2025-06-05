@@ -2,6 +2,7 @@ import { IServiceConceptImageModel } from '@models/serviceConcepts/response.mode
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
 import { ICartResponse } from '@models/cart/response.model';
+import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
 declare namespace PAGES {
     interface ILogin {
         data: any;
@@ -18,6 +19,8 @@ declare namespace PAGES {
     interface IHomePage {
         data: IVendor;
         user: IUser | undefined;
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
     }
     interface Promotion {
         id: number;
@@ -78,5 +81,18 @@ declare namespace PAGES {
         checkoutSession?: ICheckoutSessionResponseModel;
         concept?: IServiceConceptResponse;
         servicePackage?: IServicePackageResponse;
+    }
+    interface IAttendancePageProps {
+        user: IUser | undefined;
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
+    }
+    interface IProfileAttendanceBoardProps {
+        attendance: IAttendance[] | undefined;
+        checkAttendance: ICheckAttendance | undefined;
+    }
+
+    interface IAttendanceCalendarInlineProps {
+        attendance?: IAttendance[]
     }
 }
