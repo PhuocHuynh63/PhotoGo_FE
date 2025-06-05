@@ -9,7 +9,6 @@ export const UserModel = z.object({
     fullName: z.string(),
     email: z.string(),
     phoneNumber: z.number().optional(),
-    password: z.string().optional(),
     avatarUrl: z.string().optional(),
     auth: z.string().optional(),
     note: z.string().optional(),

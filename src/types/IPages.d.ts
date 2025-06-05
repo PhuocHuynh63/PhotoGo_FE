@@ -2,6 +2,8 @@ import { IServiceConceptImageModel } from '@models/serviceConcepts/response.mode
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
 import { ICartResponse } from '@models/cart/response.model';
+import { IReviewPaginationResponse } from '@models/review/repsonse.model';
+import { IVendorResponse } from '@models/vendor/response.model';
 declare namespace PAGES {
     interface ILogin {
         data: any;
@@ -78,5 +80,10 @@ declare namespace PAGES {
         checkoutSession?: ICheckoutSessionResponseModel;
         concept?: IServiceConceptResponse;
         servicePackage?: IServicePackageResponse;
+    }
+
+    interface IReviewProps {
+        vendor: IVendorResponse;
+        review: IReviewPaginationResponse;
     }
 }

@@ -1,6 +1,7 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { z } from "zod";
 import { ServiceTypeModel } from "./common.model";
+import { PaginationModel } from "@models/metadata";
 
 /**
  * Model of ServiceTypesData
@@ -8,12 +9,7 @@ import { ServiceTypeModel } from "./common.model";
 export const ServiceTypesDataModel = z.object({
     data: z.array(ServiceTypeModel),
     message: z.string(),
-    pagination: z.object({
-        totalItem: z.number(),
-        current: z.number(),
-        totalPage: z.number(),
-        pageSize: z.number()
-    })
+    pagination: PaginationModel
 });
 
 export const ServiceTypesResponseModel = BackendResponseModel(ServiceTypesDataModel);
