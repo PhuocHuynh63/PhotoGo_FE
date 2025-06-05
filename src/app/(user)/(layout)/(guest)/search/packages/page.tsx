@@ -1,18 +1,27 @@
 import { IServicePackagesListResponse } from "@models/servicePackages/response.model";
+import { IServiceTypeModel } from "@models/serviceTypes/common.model";
+import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
 import SearchPackage from "@pages/Public/Search/SearchPackage";
 import packageServices from "@services/packageServices";
 
-async function getPackages({ searchParams }: SERVERS.SearchPackagePageProps) {
+async function getPackages({ searchParams, serviceTypes }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>, serviceTypes: IServiceTypeModel[] }) {
     const resolvedParams = await searchParams;
 
     const queryParams = new URLSearchParams();
 
-    if (resolvedParams.name) queryParams.append('name', resolvedParams.name as string);
-    if (resolvedParams.address) queryParams.append('location', resolvedParams.address as string);
+    if (resolvedParams.q) queryParams.append('name', resolvedParams.q as string);
+    if (resolvedParams.serviceType) {
+        const names = (resolvedParams.serviceType as string).split(',');
+        const ids = serviceTypes
+            .filter(st => names.includes(st.name))
+            .map(st => st.id);
+        if (ids.length > 0) {
+            ids.forEach(id => queryParams.append('serviceTypeIds', id));
+        }
+    }
     if (resolvedParams.minPrice) queryParams.append('minPrice', resolvedParams.minPrice as string);
     if (resolvedParams.maxPrice) queryParams.append('maxPrice', resolvedParams.maxPrice as string);
-    if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
-    // if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
+    // if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
     if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
     if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
     if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
@@ -24,12 +33,18 @@ async function getPackages({ searchParams }: SERVERS.SearchPackagePageProps) {
     return response.data;
 }
 
+async function getServiceTypes() {
+    const response = await packageServices.getServiceTypes() as IServiceTypesResponse;
+    return response.data;
+}
+
 export default async function SearchPackagePage({ searchParams }: SERVERS.SearchPackagePageProps) {
-    const packagesData = await getPackages({ searchParams });
-    console.log(packagesData)
+    const serviceTypes = await getServiceTypes();
+    const packagesData = await getPackages({ searchParams, serviceTypes: serviceTypes?.data || [] });
+    console.log(packagesData, serviceTypes)
     return (
         <>
-            <SearchPackage packages={packagesData.data} pagination={packagesData.pagination} />
+            <SearchPackage packages={packagesData.data} pagination={packagesData.pagination} serviceTypes={serviceTypes?.data} />
         </>
     );
 }
