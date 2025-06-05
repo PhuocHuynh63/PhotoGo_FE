@@ -32,7 +32,6 @@ const AttendancePage = ({ user, attendance, checkAttendance }: PAGES.IAttendance
         thisMonthDays: 0,
         totalRewards: 0,
     })
-    console.log(attendance, checkAttendance)
     const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
 
     // Get user info from attendance data
