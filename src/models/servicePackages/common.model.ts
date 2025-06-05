@@ -10,10 +10,11 @@ export const ServicePackageModel = z.object({
     description: z.string(),
     image: z.string(),
     status: z.string(),
-    vendorId: z.string(),
+    // vendorId: z.string(),
     serviceConcepts: z.array(ServiceConceptModel),
-    price: z.string(),
-    duration: z.number(),
+    minPrice: z.number(),
+    maxPrice: z.number(),
+    // duration: z.number(),
     created_at: z.string(),
     updated_at: z.string()
 });
