@@ -11,66 +11,22 @@ import { Tabs, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
 import TipTapEditor from "@components/Organisms/TipTapEditor"
 import { PAGES } from "../../../../../types/IPages"
 import { formatDateAgo } from "@utils/helpers/Date"
-
-// Define interfaces to match API data structure
-interface Image {
-  id: string;
-  imageUrl: string;
-}
-
-interface Review {
-  id: string;
-  comment: string;
-  rating: number;
-  createdAt: string;
-  updatedAt: string;
-  user: {
-    id: string;
-    fullName: string;
-    avatarUrl: string;
-  };
-  booking: {
-    id: string;
-  };
-  images: Image[];
-  vendor: {
-    id: string;
-    name: string;
-    logoUrl: string;
-    bannerUrl: string;
-    description: string;
-    status: string;
-  };
-}
-
-interface VendorData {
-  id: string;
-  name: string;
-  logoUrl: string;
-  bannerUrl: string;
-  description: string;
-  status: string;
-  averageRating?: number; // Optional, as it may come from vendor.data
-}
-
-interface Pagination {
-  current: number;
-  pageSize: number;
-  totalPage: number;
-  totalItem: number;
-}
+import { IReviewVendorDetailModel } from "@models/review/common.model"
+import { IVendor } from "@models/vendor/common.model"
 
 const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
-  const vendorData = vendor.data;
+  const vendorData = vendor.data as IVendor;
+
   const apiReviews = useMemo(() => {
-    // Transform images array to match expected format
     return review.data?.data.map((r) => ({
       ...r,
-      images: r.images.map((url: string, index: number) => ({
-        id: `image-${index}-${r.id}`, // Generate a unique ID for each image
-        imageUrl: url,
-      })),
-    }));
+      images: Array.isArray((r as any).images)
+        ? (r as any).images.map((url: string, index: number) => ({
+          id: `image-${index}-${r.id}`,
+          imageUrl: url,
+        }))
+        : [],
+    })) as IReviewVendorDetailModel[];
   }, [review.data?.data]);
   const apiPagination = useMemo(() => review.data?.pagination, [review.data?.pagination]);
 
@@ -111,7 +67,7 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
         starElement = <Star key={index} className={`${size} text-gray-300 ${interactive ? 'cursor-pointer' : ''}`} />;
       }
 
-      if (interactive && onClickStar) { 
+      if (interactive && onClickStar) {
         return <div key={index} onClick={() => onClickStar(starIndex)}>{starElement}</div>;
       }
       return starElement;
