@@ -17,7 +17,7 @@ async function getConceptImgsByVendorId(vendorId: string, current: string = '1',
 export default async function VendorDetailLayout({
     children,
     params
-}: SERVERS.VendorDetailPageProps
+}: SERVERS.VendorDetailLayoutProps
 ) {
     const { slug } = await params;
 

@@ -13,5 +13,6 @@ const ReviewPaginationResponse = z.object({
 
 const ReviewPagination = BackendResponseModel(ReviewPaginationResponse);
 export type IReviewPaginationResponse = z.infer<typeof ReviewPagination>;
+export type IReviewPaginationResponseModel = z.infer<typeof ReviewPaginationResponse>;
 //----------------------End----------------------//
 

@@ -1,5 +1,3 @@
-import { UserModel } from "@models/user/common.model";
-import { VendorModel } from "@models/vendor/common.model";
 import { z } from "zod"
 
 /**
@@ -16,17 +14,7 @@ export const ReviewModel = z.object({
     updatedAt: z.string()
 });
 
-export type IReview = z.infer<typeof ReviewModel>;
-//----------------------End----------------------//
-
-/**
- * Model of Review Image
- */
-export const ReviewImageModel = z.object({
-    id: z.string().uuid(),
-    imageUrl: z.string(),
-});
-export type IReviewImageModel = z.infer<typeof ReviewImageModel>;
+export type IReviewModel = z.infer<typeof ReviewModel>;
 //----------------------End----------------------//
 
 /**
@@ -50,7 +38,7 @@ export const ReviewVendorDetailModel = z.object({
     rating: z.number().min(0).max(5),
     comment: z.string().optional(),
     createdAt: z.string(),
-    images: z.array(ReviewImageModel).optional(),
+    images: z.array(z.string()).optional(),
     booking: z.object({ id: z.string().uuid() }),
 });
 export type IReviewVendorDetailModel = z.infer<typeof ReviewVendorDetailModel>;
