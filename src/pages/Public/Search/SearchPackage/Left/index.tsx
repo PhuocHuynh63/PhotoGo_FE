@@ -98,12 +98,12 @@ export default function Left({ onReset, onApply, serviceTypes }: { onReset: () =
     return (
         <>
             {/* Desktop Filter UI */}
-            <div className="hidden md:block w-64 pr-4 p-3">
+            <div className="hidden md:block w-64 pr-4 p-5">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-medium text-md mb-2 flex items-center justify-between">
-                        Bộ lọc tìm kiếm
+                    <h3 className="font-medium text-md flex items-center">
+                        Bộ lọc
                     </h3>
-                    <Button onClick={handleResetAll}>Xóa tất cả</Button>
+                    <Button onClick={handleResetAll} className="text-sm text-white">Xóa tất cả</Button>
                 </div>
                 <Accordion type="single" defaultValue="serviceType" collapsible>
                     {/* Service Type */}
