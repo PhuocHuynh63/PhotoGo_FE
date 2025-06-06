@@ -1,15 +1,16 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { Card, CardContent } from "@/components/Atoms/ui/card"
 import { Button } from "@/components/Atoms/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import AttendanceCalendarInline from "../../../../Vendor/Components/AttendanceCalendarInline"
+import AttendanceCalendarInline from "../AttendanceCalendarInline"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import { IAttendance } from "@models/attendance/common.model"
 import { CheckCircle, Circle } from "lucide-react"
 import toast from "react-hot-toast"
 import attendanceService from "@services/attendance"
+import { useRouter } from "next/navigation"
 
 type IconName = "Crown" | "Flame" | "Target" | "Zap" | "Circle";
 
@@ -27,7 +28,7 @@ interface AttendanceRecord {
 interface ApiResponse {
     statusCode?: number
     message?: string
-    data?: unknown
+    data?: { streak?: number }
 }
 // Utility functions outside the component
 const getTodayString = () => new Date().toISOString().split("T")[0]
@@ -105,21 +106,18 @@ const getStreakInfo = (days: number) => {
     }
 }
 
-const calculateConsecutiveDays = (attendance: AttendanceRecord[]) => {
-    let consecutive = 0
-    const sortedAttendance = [...attendance].reverse()
-    for (const record of sortedAttendance) {
-        if (record.checked) consecutive++
-        else break
-    }
-    return consecutive
-}
-
 const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userId, onCheckIn }: ProfileAttendanceBoardProps) => {
     const [isCheckingIn, setIsCheckingIn] = useState(false)
     const [showConfetti, setShowConfetti] = useState(false)
     const [showCalendarModal, setShowCalendarModal] = useState(false)
     const [localAttendanceData, setLocalAttendanceData] = useState<AttendanceRecord[] | null>(null);
+    const [consecutiveDays, setConsecutiveDays] = useState(attendance?.[0]?.streak ?? 0);
+    const router = useRouter();
+
+    // Cập nhật consecutiveDays khi attendance thay đổi
+    useEffect(() => {
+        setConsecutiveDays(attendance?.[0]?.streak ?? 0);
+    }, [attendance]);
 
     // Memoize attendanceData
     const attendanceData = useMemo(() => {
@@ -135,9 +133,6 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
         });
     }, [isLoggedIn, userId, attendance, localAttendanceData]);
 
-    // Memoize consecutiveDays
-    const consecutiveDays = useMemo(() => calculateConsecutiveDays(attendanceData), [attendanceData])
-
     // Memoize hasCheckedToday
     const hasCheckedToday = useMemo(() => {
         const today = getTodayString()
@@ -152,8 +147,8 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
         setIsCheckingIn(true)
         try {
             const today = getTodayString()
-            const response = await attendanceService.checkIn(userId)
-            if (response && (response as ApiResponse)?.statusCode === 201) {
+            const response = await attendanceService.checkIn(userId) as ApiResponse
+            if (response && response.statusCode === 201) {
                 toast.success("Điểm danh thành công")
                 setLocalAttendanceData(prev => {
                     const newData = (prev || attendanceData).map(record =>
@@ -161,16 +156,23 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
                     );
                     return newData;
                 })
+                // Nếu response.data.streak có trả về thì cập nhật luôn
+                if (response.data && typeof response.data.streak === 'number') {
+                    setConsecutiveDays(response.data.streak)
+                } else {
+                    setConsecutiveDays((prev) => prev + 1)
+                }
                 setShowConfetti(true)
                 setTimeout(() => setShowConfetti(false), 2000)
                 if (onCheckIn) onCheckIn()
+                router.refresh();
             }
         } catch (error) {
             toast.error(error as string)
         } finally {
             setIsCheckingIn(false)
         }
-    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, onCheckIn, attendanceData, setLocalAttendanceData])
+    }, [isLoggedIn, userId, hasCheckedToday, isCheckingIn, onCheckIn, attendanceData, setLocalAttendanceData, router])
 
     if (!isLoggedIn) {
         return (

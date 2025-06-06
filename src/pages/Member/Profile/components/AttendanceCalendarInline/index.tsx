@@ -6,7 +6,7 @@ import { Button } from "@/components/Atoms/ui/button"
 import { motion } from "framer-motion"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import { IAttendance } from "@models/attendance/common.model"
-import { PAGES } from "../../../../types/IPages"
+import { PAGES } from "../../../../../types/IPages"
 
 // Utility to calculate streaks for a given month
 function calculateStreaks(records: IAttendance[], year: number, month: number) {
