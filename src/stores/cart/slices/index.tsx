@@ -1,14 +1,9 @@
 import { StateCreator } from 'zustand'
-import { ICartItem } from '@models/cart/common.model'
-import http from '@configs/fetch'
 import toast from 'react-hot-toast'
 import { ZUSTAND } from '../../../types/IZustand'
+import cartService from '@services/cart'
+import { ICartResponse } from '@models/cart/response.model'
 
-interface ApiResponse {
-    statusCode: number
-    message: string
-    data?: ICartItem[]
-}
 
 export const createCartSlice: StateCreator<
     ZUSTAND.ICartState,
@@ -21,7 +16,7 @@ export const createCartSlice: StateCreator<
     getCart: () => get().cart,
     addToCart: async (serviceConceptId, cartId, userId) => {
         try {
-            const response = await http.post<ApiResponse>(`carts/${userId}/${cartId}/${serviceConceptId}/items`, {})
+            const response = await cartService.addToCart(userId, cartId, serviceConceptId) as ICartResponse
             if (response?.statusCode === 200 || response?.statusCode === 201) {
                 // Refresh cart data or add the new item to existing cart
                 if (response.data) {
@@ -36,7 +31,7 @@ export const createCartSlice: StateCreator<
     },
     removeItem: async (itemId, cartId) => {
         try {
-            const response = await http.delete<ApiResponse>(`/carts/${cartId}/items/${itemId}`, {})
+            const response = await cartService.removeItem(cartId, itemId) as ICartResponse
             if (response?.statusCode === 200) {
                 set((state) => {
                     if (!state.cart) return state
@@ -53,7 +48,7 @@ export const createCartSlice: StateCreator<
     removeItems: async (itemIds, cartId) => {
         try {
             for (const itemId of itemIds) {
-                const response = await http.delete<ApiResponse>(`/carts/${cartId}/items/${itemId}`, {})
+                const response = await cartService.removeItem(cartId, itemId) as ICartResponse
                 if (response?.statusCode === 200) {
                     set((state) => {
                         if (!state.cart) return state

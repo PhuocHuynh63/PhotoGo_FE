@@ -6,12 +6,13 @@ import { motion } from "framer-motion"
 import Button from "@components/Atoms/Button"
 import LucideIcon from "@components/Atoms/LucideIcon"
 import Pagination from "@components/Organisms/Pagination/Pagination"
-import Link from "next/link"
 import { IServicePackage } from "@models/servicePackages/common.model"
 import { IServicePackagesData } from "@models/servicePackages/response.model"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Skeleton } from "@components/Atoms/ui/skeleton"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
+import ViewConcept from "@pages/Public/VendorDetail/components/ViewConcept"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/Atoms/ui/tooltip"
 
 const cardVariants = {
     hidden: { opacity: 0, scale: 1 },
@@ -25,6 +26,16 @@ export default function Right({ packages, pagination }: { packages: IServicePack
     const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
     const searchParams = useSearchParams();
     const router = useRouter();
+
+    const [isOpen, setIsOpen] = useState(false)
+    const [selectedPackage, setSelectedPackage] = useState<string | undefined>(undefined)
+    const servicePackage = packages?.find((pkg) => pkg.id === selectedPackage) as IServicePackage
+
+    const handleViewConcept = (id: string) => {
+        setSelectedPackage(id)
+        setIsOpen(!isOpen)
+    }
+
 
     useEffect(() => {
         const current = searchParams?.get('current');
@@ -67,7 +78,13 @@ export default function Right({ packages, pagination }: { packages: IServicePack
     );
 
     return (
-        <div className="flex-1 pl-6 p-3">
+        <div className="flex-1 pl-6 p-3 border-l-2">
+
+            <ViewConcept
+                isOpen={isOpen}
+                onOpenChange={() => handleViewConcept(selectedPackage || '')}
+                servicePackage={servicePackage}
+            />
             <motion.div
                 className="mb-6"
                 initial={{ opacity: 0 }}
@@ -172,17 +189,27 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                     <p className="text-sm text-gray-600 mb-2 line-clamp-2">{pkg.description}</p>
                                 </div>
                                 <div className="flex flex-wrap gap-1 mb-2">
-                                    {pkg.serviceConcepts.map((type, i) => (
+                                    {pkg.serviceConcepts.slice(0, 2).map((type, i) => (
                                         <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                                             {type.name}
                                         </span>
                                     ))}
-                                    {/* {pkg.duration && (
-                                        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                                            {formatDuration(pkg.duration)}
-                                        </span>
-                                    )} */}
-
+                                    {pkg.serviceConcepts.length > 2 && (
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <span className="text-xs bg-gray-200 px-2 py-1 rounded-full cursor-pointer">
+                                                        +{pkg.serviceConcepts.length - 2}
+                                                    </span>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {pkg.serviceConcepts.slice(2).map((t, i) => (
+                                                        <div key={i}>{t.name}</div>
+                                                    ))}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-between items-center">
@@ -198,11 +225,13 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                             )}
                                         </span>
                                     </div>
-                                    <Link href={`/packages/${pkg.id}`}>
-                                        <Button>
-                                            Xem chi tiết
-                                        </Button>
-                                    </Link>
+
+                                    <Button
+                                        onClick={() => handleViewConcept(pkg.id)}
+                                    >
+                                        Xem concept
+                                    </Button>
+
                                 </div>
                             </div>
                         </motion.div>

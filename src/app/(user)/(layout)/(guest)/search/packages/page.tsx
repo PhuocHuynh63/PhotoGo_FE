@@ -41,7 +41,6 @@ async function getServiceTypes() {
 export default async function SearchPackagePage({ searchParams }: SERVERS.SearchPackagePageProps) {
     const serviceTypes = await getServiceTypes();
     const packagesData = await getPackages({ searchParams, serviceTypes: serviceTypes?.data || [] });
-    console.log(packagesData, serviceTypes)
     return (
         <>
             <SearchPackage packages={packagesData.data} pagination={packagesData.pagination} serviceTypes={serviceTypes?.data} />

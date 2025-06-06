@@ -16,7 +16,6 @@ import { IServiceTypeModel } from "@models/serviceTypes/common.model"
 import toast from 'react-hot-toast'
 
 export default function SearchPackage({ packages, pagination, serviceTypes }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'], serviceTypes: IServiceTypeModel[] | undefined }) {
-  console.log(packages, pagination)
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
