@@ -95,8 +95,6 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
     return { totalItems, totalPages, firstItemOnPage, lastItemOnPage };
   }, [reviewsToRender, currentPage, reviewsPerPage]);
   //------------------------End------------------------//
-  console.log("paginationData", paginationData);
-
 
   /**
    * Calculate rating counts for the summary section
@@ -143,7 +141,7 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
       />
 
       {/* Reviews List */}
-      <ReviewsList activeTab={activeTab} reviewsToRender={reviewsToRender} />
+      <ReviewsList activeTab={activeTab} reviewsToRender={reviewsToRender} isLoading={loading} />
 
       {/* Pagination */}
       <Pagination
