@@ -8,6 +8,7 @@ import ReviewsSummary from "./components/ReviewsSummary"
 import Filters from "./components/Filters"
 import ReviewsList from "./components/ReviewsList"
 import { useReviewsByVendorId } from "@hooks/useReview"
+import Pagination from "./components/Pagination"
 
 const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
   /**
@@ -82,7 +83,20 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
     if (shouldUseInitial) return review?.data as any;
     return data || [] as any;
   }, [shouldUseInitial, review?.data, data]);
+
+  const paginationData = useMemo(() => {
+    if (!reviewsToRender || !reviewsToRender?.data) return { totalItems: 0, totalPages: 0, firstItemOnPage: 0, lastItemOnPage: 0 };
+
+    const totalItems = reviewsToRender?.total || 0;
+    const totalPages = Math.ceil(totalItems / reviewsPerPage);
+    const firstItemOnPage = (currentPage - 1) * reviewsPerPage + 1;
+    const lastItemOnPage = Math.min(currentPage * reviewsPerPage, totalItems);
+
+    return { totalItems, totalPages, firstItemOnPage, lastItemOnPage };
+  }, [reviewsToRender, currentPage, reviewsPerPage]);
   //------------------------End------------------------//
+  console.log("paginationData", paginationData);
+
 
   /**
    * Calculate rating counts for the summary section
@@ -94,6 +108,7 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
     );
   }, [reviewsToRender]);
   //------------------------End------------------------//
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Mobile Tabs */}
@@ -131,6 +146,11 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
       <ReviewsList activeTab={activeTab} reviewsToRender={reviewsToRender} />
 
       {/* Pagination */}
+      <Pagination
+        activeTab={activeTab}
+        pagination={paginationData}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage} />
 
     </div >
   );
