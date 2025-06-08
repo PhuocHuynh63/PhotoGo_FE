@@ -67,3 +67,19 @@ export const UserUpdateProfileRequest = z.object({
 })
 export type IUserUpdateProfileRequest = z.TypeOf<typeof UserUpdateProfileRequest>;
 //----------------------End----------------------//
+
+/**
+ * UserModel is a Model for User Change Password request
+ * @param oldPassword - Old password of user
+ * @param newPassword - New password of user
+ */
+export const UserChangePasswordRequest = z.object({
+    oldPasswordHash: z.string().min(1, 'Mật khẩu cũ không được bỏ trống'),
+    password: z.string().min(1, 'Mật khẩu mới không được bỏ trống'),
+    confirmPassword: z.string().min(1, 'Xác nhận mật khẩu không được bỏ trống'),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword'],
+})
+export type IUserChangePasswordRequest = z.TypeOf<typeof UserChangePasswordRequest>;
+//----------------------End----------------------//

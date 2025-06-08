@@ -1,5 +1,5 @@
 import http from "@configs/fetch"
-import { IUserUpdateProfileRequest } from "@models/user/request.model"
+import { IUserChangePasswordRequest, IUserUpdateProfileRequest } from "@models/user/request.model"
 
 const userService = {
     getUser: async () => {
@@ -19,6 +19,9 @@ const userService = {
     },
 
     updateUser: async (userId: string, data: IUserUpdateProfileRequest) => {
+        return await http.put(`/users/${userId}`, data)
+    },
+    changePassword: async (userId: string, data: IUserChangePasswordRequest) => {
         return await http.put(`/users/${userId}`, data)
     }
 }
