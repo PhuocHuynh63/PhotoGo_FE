@@ -156,7 +156,10 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                             <div className="relative">
                                 <div className="relative h-60">
                                     <Image src={pkg.image || "/placeholder.svg"} fill
-                                        loading="lazy" alt={pkg.name}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        priority={index < 3}
+                                        loading={index < 3 ? "eager" : "lazy"}
+                                        alt={pkg.name}
                                         style={{
                                             objectFit: 'cover',
                                         }}
@@ -177,9 +180,9 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                             <div className="p-3">
                                 <div className="flex items-center mb-2">
 
-                                    <div className="flex text-yellow-400">
+                                    {/* <div className="flex text-yellow-400">
                                         <LucideIcon name="Star" iconSize={14} fill="yellow" />
-                                    </div>
+                                    </div> */}
                                     {/* <span className="text-sm font-medium ml-1">
 
                                         {pkg.vendor_rating}</span>

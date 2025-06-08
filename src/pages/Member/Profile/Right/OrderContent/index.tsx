@@ -210,7 +210,8 @@ function BookingCard({ booking }: { booking: Booking }) {
         <Card className="overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 <div className="relative md:w-1/3 h-48 md:h-auto">
-                    <Image src={booking.image || "/placeholder.svg"} alt={booking.packageName} fill className="object-cover" />
+                    <Image src={booking.image || "/placeholder.svg"} alt={booking.packageName} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" priority={true}
+                        loading="eager" className="object-cover" />
                 </div>
                 <CardContent className="flex-1 p-6">
                     <div className="flex flex-col md:flex-row justify-between p-3">
