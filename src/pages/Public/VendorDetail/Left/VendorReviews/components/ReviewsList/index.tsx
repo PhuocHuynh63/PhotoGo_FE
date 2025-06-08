@@ -1,24 +1,34 @@
 'use client';
 
 import { renderStars } from '@components/Atoms/Star';
-import { AvatarFallback, AvatarImage } from '@components/Atoms/ui/avatar';
 import { Card, CardContent } from '@components/Atoms/ui/card'
 import { Separator } from '@components/Atoms/ui/separator';
 import { Avatar } from '@components/Molecules/Avatar';
+import ReviewSkeleton from '@components/Molecules/ReviewSkeleton';
 import { IReviewVendorDetailModel } from '@models/review/common.model';
 import { formatDateAgo } from '@utils/helpers/Date';
 import { Clock, MessageCircle } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 
 type ReviewsListProps = {
     activeTab: string;
     reviewsToRender: any;
+    isLoading?: boolean;
 }
 
-const ReviewsList = ({ activeTab, reviewsToRender }: ReviewsListProps) => {
-
+const ReviewsList = ({ activeTab, reviewsToRender, isLoading }: ReviewsListProps) => {
+    const [showSkeleton, setShowSkeleton] = useState(true);
     const reviewsFromMember = reviewsToRender?.data as IReviewVendorDetailModel[];
 
+    if (isLoading || showSkeleton) {
+        return (
+            <div className={`space-y-4 sm:space-y-6 ${activeTab !== "reviews" ? "hidden md:block" : ""}`}>
+                {Array.from({ length: 3 }).map((_, index) => (
+                    <ReviewSkeleton key={index} delay={index * 150} setShowSkeleton={setShowSkeleton} />
+                ))}
+            </div>
+        );
+    }
 
     return (
         <div className={`space-y-4 sm:space-y-6 ${activeTab !== "reviews" ? "hidden md:block" : ""}`}>
