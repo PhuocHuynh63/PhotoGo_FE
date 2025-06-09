@@ -5,6 +5,10 @@ import { RegisterOptions, useForm } from "react-hook-form";
 import Input from "@components/Atoms/Input";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
+import userService from "@services/user";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@routes";
+import { IUserResponse } from "@models/user/response.model";
 
 type ChangePasswordData = {
     oldPassword: string;
@@ -12,7 +16,8 @@ type ChangePasswordData = {
     confirmPassword: string;
 };
 
-export default function ChangePasswordForm() {
+export default function ChangePasswordForm({ userId }: { userId: string }) {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -25,7 +30,18 @@ export default function ChangePasswordForm() {
             return;
         }
 
-        await new Promise((res) => setTimeout(res, 1000)); // giả lập API
+        const response = await userService.changePassword(userId, {
+            oldPasswordHash: data.oldPassword,
+            password: data.newPassword,
+            confirmPassword: data.confirmPassword,
+        }) as IUserResponse
+
+        if (response.statusCode === 200) {
+            toast.success("Cập nhật mật khẩu thành công");
+            router.push(ROUTES.USER.PROFILE);
+        } else {
+            toast.error(response.message || "Cập nhật mật khẩu thất bại");
+        }
     };
 
     const labelClasses = "block mb-1 font-medium";

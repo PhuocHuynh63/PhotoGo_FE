@@ -77,7 +77,7 @@ const StarRating: React.FC<StarRatingProps> = ({
                     <LucideIcon
                         name="Star"
                         iconSize={size}
-                        iconColor={color}
+                        iconColor={'#d1d5dc'}
                     />
                 </div>
             ))}

@@ -10,8 +10,12 @@ import Left from "./Left"
 import Right from "./Right"
 import LucideIcon from "@components/Atoms/LucideIcon";
 import Button from "@components/Atoms/Button";
+import { IServicePackage } from "@models/servicePackages/common.model";
+import { IServicePackagesData } from "@models/servicePackages/response.model";
+import { IServiceTypeModel } from "@models/serviceTypes/common.model"
+import toast from 'react-hot-toast'
 
-export default function SearchPackage() {
+export default function SearchPackage({ packages, pagination, serviceTypes }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'], serviceTypes: IServiceTypeModel[] | undefined }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
@@ -57,6 +61,7 @@ export default function SearchPackage() {
 
     params.set('current', '1');
     router.push(`?${params.toString()}`);
+    toast.success('Áp dụng bộ lọc thành công!');
   };
 
   useEffect(() => {
@@ -97,19 +102,21 @@ export default function SearchPackage() {
                 handleSort(value);
               }}
               options={[
+                { value: "Tất cả", icon: "ListFilter" },
                 { value: "Giá thấp đến cao", icon: "ArrowUpNarrowWide" },
                 { value: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
                 { value: "Đánh giá cao nhất", icon: "Stars" }
               ]}
               className="flex items-center gap-1 px-3 py-2 border rounded-md bg-white text-dark shadow-lg"
             />
-            <Button
-              className={`md:hidden px-3 py-2   border rounded-md shadow-lg text-dark hover:bg-gray-100 ${isFilterOpen ? "bg-primary" : ""}`}
-
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-            >
-              <LucideIcon name="SlidersHorizontal" iconSize={20} />
-            </Button>
+            <div className="md:hidden">
+              <Button
+                className={`px-3 py-2 border rounded-md shadow-lg text-dark hover:bg-gray-100 ${isFilterOpen ? "bg-primary" : ""}`}
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+              >
+                <LucideIcon name="SlidersHorizontal" iconSize={20} />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -152,7 +159,7 @@ export default function SearchPackage() {
                       </Button>
                     </div>
                     <div className="h-[60vh] overflow-y-auto pb-4">
-                      <Left onReset={handleResetAll} onApply={() => { }} />
+                      <Left onReset={handleResetAll} onApply={() => { }} serviceTypes={serviceTypes} />
                     </div>
                   </div>
                 </motion.div>
@@ -167,9 +174,9 @@ export default function SearchPackage() {
             transition={{ duration: 0.5 }}
           >
             <div className="hidden md:block">
-              <Left onReset={handleResetAll} onApply={() => { }} />
+              <Left onReset={handleResetAll} onApply={() => { }} serviceTypes={serviceTypes} />
             </div>
-            <Right />
+            <Right packages={packages} pagination={pagination} />
           </motion.div>
         </div>
       </div>

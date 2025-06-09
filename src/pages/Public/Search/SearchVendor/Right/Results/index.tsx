@@ -47,7 +47,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
     };
 
     return (
-        <div className="flex-1 pl-6 p-3">
+        <div className="flex-1 pl-6 p-3 border-l-2">
             <motion.div
                 className="mb-6"
                 initial={{ opacity: 0 }}

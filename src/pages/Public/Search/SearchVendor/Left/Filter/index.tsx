@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import CustomDatePicker from "@components/Atoms/DatePicker"
 import { ICategoriesData } from "@models/category/response.model"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
+import toast from "react-hot-toast"
 
 export default function Left({ onReset, categories, onApply }: {
     onReset: () => void,
@@ -88,7 +89,7 @@ export default function Left({ onReset, categories, onApply }: {
     }
 
     function handleApplyFilter() {
-        const params = new URLSearchParams();
+        const params = new URLSearchParams(searchParams?.toString());
 
         // Giữ lại param current nếu có
         const currentPage = searchParams?.get('current');
@@ -104,6 +105,8 @@ export default function Left({ onReset, categories, onApply }: {
         if (addresses.length > 0) params.set("address", addresses.map(a => a.key).join(","));
 
         router.push(`?${params.toString()}`);
+        toast.success('Áp dụng bộ lọc thành công!');
+
     }
 
     useEffect(() => {
@@ -139,12 +142,12 @@ export default function Left({ onReset, categories, onApply }: {
     return (
         <>
             {/* Desktop Filter UI */}
-            <div className="hidden md:block w-64 pr-4 border-r p-3">
+            <div className="hidden md:block w-64 pr-4 p-5">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="font-medium text-md mb-2 flex items-center justify-between">
-                        Bộ lọc tìm kiếm
+                    <h3 className="font-medium text-md flex items-center">
+                        Bộ lọc
                     </h3>
-                    <Button onClick={handleResetAll}>Xóa tất cả</Button>
+                    <Button onClick={handleResetAll} className="text-sm text-white">Xóa tất cả</Button>
                 </div>
 
                 {/* Service Type */}

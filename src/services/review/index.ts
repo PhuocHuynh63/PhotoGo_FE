@@ -1,11 +1,35 @@
 import http from "@configs/fetch"
 
 const reviewService = {
-    getReviewVendorByVendorId: async (id: string) => {
-        return await http.get(`/reviews/vendor/${id}`, {
-            next: { tags: [`review-vendor-${id}`] }
+    getReviewByVendorId: async (
+        vendorId: string,
+        current: number = 1,
+        pageSize: number = 10,
+        rating?: number,
+        sortBy: string = 'rating',
+        sortDirection: string = 'desc'
+    ) => {
+        const queryParams = new URLSearchParams({
+            current: current.toString(),
+            pageSize: pageSize.toString(),
+            sortBy,
+            sortDirection,
+        })
+
+        if (rating !== undefined) {
+            queryParams.append("rating", rating.toString())
+        }
+
+        return await http.get(`/reviews/vendor/${vendorId}?${queryParams.toString()}`, {
+            next: { revalidate: 10 },
         })
     },
+
+    getReviewByUserId: async (userId: string, current: string, pageSize: string, sortBy: string, sortDirection: string) => {
+        return await http.get(`/reviews/user/${userId}?current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`, {
+            next: { revalidate: 10 },
+        })
+    }
 }
 
-export default reviewService
+export default reviewService;

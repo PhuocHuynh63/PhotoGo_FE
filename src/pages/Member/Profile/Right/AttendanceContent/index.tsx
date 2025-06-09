@@ -2,95 +2,111 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/card"
-import { Calendar, Trophy, Flame, Target, Star, TrendingUp, Award, Camera, Clock, CheckCircle2 } from "lucide-react"
+import { Calendar, Trophy, Flame, Star, TrendingUp, Camera, Clock, CheckCircle2 } from "lucide-react"
 import { motion } from "framer-motion"
 import ProfileAttendanceBoard from "@pages/Member/Profile/components/ProfileAttendanceBoard"
+import { PAGES } from '../../../../../types/IPages';
+import { IAttendance } from '@models/attendance/common.model';
 
-interface AttendancePageProps {
-    isLoggedIn: boolean
-    userId?: string
+// Define proper types
+interface AttendanceStats {
+    totalDays: number
+    currentStreak: number
+    longestStreak: number
+    thisMonthDays: number
+    totalRewards: number
 }
 
-const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
-    const [attendanceStats, setAttendanceStats] = useState({
+interface RecentActivity {
+    date: string
+    type: string
+    description: string
+    points?: number
+}
+
+const AttendancePage = ({ user, attendance, checkAttendance }: PAGES.IAttendancePageProps) => {
+    const [attendanceStats, setAttendanceStats] = useState<AttendanceStats>({
         totalDays: 0,
         currentStreak: 0,
         longestStreak: 0,
         thisMonthDays: 0,
         totalRewards: 0,
     })
+    const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
 
-    const [recentActivity, setRecentActivity] = useState<
-        Array<{
-            date: string
-            type: string
-            description: string
-            points?: number
-        }>
-    >([])
+    // Get user info from attendance data
+    const userId = user?.id
+    const isLoggedIn = !!userId && !!attendance && attendance.length > 0
 
     // Tải thống kê điểm danh
     useEffect(() => {
-        if (!isLoggedIn || !userId) return
-
-        const storageKey = `attendance_${userId}`
-        const savedData = localStorage.getItem(storageKey)
-
-        if (savedData) {
-            const attendanceData = JSON.parse(savedData)
-
-            // Tính toán thống kê
-            const totalDays = attendanceData.filter((record: any) => record.checked).length
-            const currentStreak = calculateCurrentStreak(attendanceData)
-            const longestStreak = calculateLongestStreak(attendanceData)
-            const thisMonthDays = calculateThisMonthDays(attendanceData)
-
+        if (!attendance || attendance.length === 0) {
             setAttendanceStats({
-                totalDays,
-                currentStreak,
-                longestStreak,
-                thisMonthDays,
-                totalRewards: totalDays * 10, // 10 điểm mỗi ngày
+                totalDays: 0,
+                currentStreak: 0,
+                longestStreak: 0,
+                thisMonthDays: 0,
+                totalRewards: 0,
             })
-
-            // Tạo hoạt động gần đây
-            const recent = attendanceData
-                .filter((record: any) => record.checked)
-                .slice(-5)
-                .reverse()
-                .map((record: any) => ({
-                    date: record.date,
-                    type: "check-in",
-                    description: "Điểm danh thành công",
-                    points: 10,
-                }))
-
-            setRecentActivity(recent)
-        }
-    }, [isLoggedIn, userId])
-
-    const calculateCurrentStreak = (data: any[]) => {
-        let streak = 0
-        const sortedData = [...data].reverse()
-
-        for (const record of sortedData) {
-            if (record.checked) {
-                streak++
-            } else {
-                break
-            }
+            setRecentActivity([])
+            return
         }
 
-        return streak
-    }
+        // Calculate statistics from attendance data
+        const checkedAttendance = attendance.filter(record => record.isChecked)
+        const totalDays = checkedAttendance.length
+        const currentStreak = attendance[0]?.streak || 0
+        const longestStreak = calculateLongestStreak(attendance)
+        const thisMonthDays = calculateThisMonthDays(attendance)
 
-    const calculateLongestStreak = (data: any[]) => {
+        setAttendanceStats({
+            totalDays,
+            currentStreak,
+            longestStreak,
+            thisMonthDays,
+            totalRewards: totalDays * 10, // 10 điểm mỗi ngày
+        })
+
+        // Create recent activity from checked attendance
+        const recent = checkedAttendance
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 5)
+            .map(record => ({
+                date: record.date,
+                type: "check-in",
+                description: "Điểm danh thành công",
+                points: record.pointsEarned || 10,
+            }))
+
+        setRecentActivity(recent)
+    }, [attendance])
+
+    // const calculateCurrentStreak = (data: IAttendance[]): number => {
+    //     let streak = 0
+    //     // Sort by date descending to get current streak from most recent
+    //     const sortedData = [...data].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+    //     for (const record of sortedData) {
+    //         if (record.isChecked) {
+    //             streak++
+    //         } else {
+    //             break
+    //         }
+    //     }
+
+    //     return streak
+    // }
+
+    const calculateLongestStreak = (data: IAttendance[]): number => {
         let maxStreak = 0
         let currentStreak = 0
 
-        for (const record of data) {
-            if (record.checked) {
-                currentStreak++
+        // Sort by date ascending for proper streak calculation
+        const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+        for (const record of sortedData) {
+            if (record.streak > currentStreak) {
+                currentStreak = record.streak
                 maxStreak = Math.max(maxStreak, currentStreak)
             } else {
                 currentStreak = 0
@@ -100,12 +116,12 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
         return maxStreak
     }
 
-    const calculateThisMonthDays = (data: any[]) => {
+    const calculateThisMonthDays = (data: IAttendance[]): number => {
         const currentMonth = new Date().getMonth()
         const currentYear = new Date().getFullYear()
 
-        return data.filter((record: any) => {
-            if (!record.checked) return false
+        return data.filter(record => {
+            if (!record.isChecked) return false
             const recordDate = new Date(record.date)
             return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear
         }).length
@@ -120,25 +136,10 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
         })
     }
 
-    const getStreakLevel = (streak: number) => {
-        if (streak >= 30) return { level: "Bậc Thầy", color: "text-purple-600", icon: Award }
-        if (streak >= 14) return { level: "Chuyên Gia", color: "text-orange-600", icon: Trophy }
-        if (streak >= 7) return { level: "Nâng Cao", color: "text-orange-500", icon: Flame }
-        if (streak >= 3) return { level: "Trung Cấp", color: "text-blue-500", icon: Target }
-        return { level: "Sơ Cấp", color: "text-green-500", icon: Star }
-    }
-
-    const streakLevel = getStreakLevel(attendanceStats.currentStreak)
-
     // Xử lý callback điểm danh
     const handleCheckIn = () => {
-        // Làm mới thống kê sau khi điểm danh
-        const storageKey = `attendance_${userId}`
-        const savedData = localStorage.getItem(storageKey)
-
-        if (savedData) {
-            const attendanceData = JSON.parse(savedData)
-
+        // Update stats optimistically if user hasn't attended today
+        if (checkAttendance?.hasAttended === false) {
             setAttendanceStats((prev) => ({
                 ...prev,
                 totalDays: prev.totalDays + 1,
@@ -247,7 +248,13 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ProfileAttendanceBoard isLoggedIn={isLoggedIn} userId={userId} onCheckIn={handleCheckIn} />
+                            <ProfileAttendanceBoard
+                                attendance={attendance}
+                                checkAttendance={checkAttendance}
+                                isLoggedIn={isLoggedIn}
+                                userId={userId || ''}
+                                onCheckIn={handleCheckIn}
+                            />
                         </CardContent>
                     </Card>
                 </motion.div>
@@ -257,9 +264,9 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.6 }}
-                    className="space-y-6"
+                    className="space-y-5"
                 >
-                    {/* Cấp độ hiện tại */}
+                    {/* Cấp độ hiện tại
                     <Card className="bg-gradient-to-br from-gray-50 to-gray-100">
                         <CardHeader className="pb-3">
                             <CardTitle className="text-lg flex items-center gap-2">
@@ -315,7 +322,7 @@ const AttendancePage = ({ isLoggedIn, userId }: AttendancePageProps) => {
                                 </div>
                             )}
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     {/* Tiến độ tháng này */}
                     <Card>
