@@ -14,7 +14,7 @@ export default React.forwardRef<HTMLButtonElement, ICOMPONENTS.ButtonProps>(func
         iconSize = 18,
         iconColor = 'currentColor',
         isLoading = false,
-        loadingText = 'Loading...',
+        loadingText = 'Đang xử lý...',
         spinIcon = false,
         disabled = false,
         className = '',
