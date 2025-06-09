@@ -1,22 +1,91 @@
 'use client'
 
-import { useVendor } from '@lib/vendorContext'
 import { CalendarIcon, Clock, Globe, Mail, MapPin, Phone } from 'lucide-react'
-import React from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Button from '@components/Atoms/Button'
 import { ROUTES } from '@routes'
+import { useVendor } from '@stores/vendor/selectors'
+import { IVendor } from '@models/vendor/common.model'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/Atoms/ui/select'
+import { Badge } from '@components/Atoms/ui/badge'
 
 const VendorContactInformation = () => {
 
-    const vendorData = useVendor() as any
+    const vendorData = useVendor() as IVendor
+    // console.log('vendorData', vendorData);
+
+    /**
+     * Define params and router for navigation
+     */
     const params = useParams()
-    const slug = params?.slug as string
     const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const slug = params?.slug as string
+    const branch = searchParams?.get('branch') as string
+    console.log('branch', branch);
+    //---------------------------End---------------------------//
+
+    /**
+     * State to manage selected branch
+     */
+    const [selectedBranchId, setSelectedBranchId] = useState(vendorData.locations?.[0]?.id || '');
+    const selectedBranch = vendorData.locations?.find(b => b.id === selectedBranchId);
+    const handleBranchChange = (branchId: string) => {
+        setSelectedBranchId(branchId);
+        router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', '')}?branch=${selectedBranch}`);
+    };
+    //---------------------------End---------------------------//
 
 
     return (
         <>
+            <div className="py-6 px-6.5 mb-4.5 rounded-md bg-primary-opacity- border border-grey">
+                <h3 className="font-bold text-lg mb-4">Chọn chi nhánh</h3>
+                <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                        <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                        <div>
+                            <p className="font-medium">Chọn chi nhánh gần bạn nhất</p>
+                            <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p>
+                        </div>
+                    </div>
+
+                    <Select
+                        value={selectedBranchId}
+                        onValueChange={(value) => {
+                            const branch = vendorData?.locations?.find((b) => b.id === value)
+                            if (branch) setSelectedBranchId(branch.id)
+                        }}
+                    >
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {vendorData?.locations?.map((branch) => (
+                                <SelectItem key={branch.id} value={branch.id}>
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="h-4 w-4" />
+                                        <span>{branch.district}</span>
+                                        {/* {branch.isMain && (
+                                            <Badge variant="secondary" className="text-xs">
+                                                Chính
+                                            </Badge>
+                                        )} */}
+                                        {/* {!branch.available && (
+                                            <Badge variant="secondary" className="text-xs">
+                                                Hết lịch
+                                            </Badge>
+                                        )} */}
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
             <div className="py-6 px-6.5 rounded-md bg-primary-opacity- border border-grey">
                 <h3 className="font-bold text-lg mb-4">Thông tin liên hệ</h3>
                 <div className="space-y-3">
@@ -41,13 +110,13 @@ const VendorContactInformation = () => {
                             <p className="text-sm text-muted-foreground">{vendorData?.contact?.email}</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3">
+                    {/* <div className="flex items-start gap-3">
                         <Globe className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Website</p>
                             <p className="text-sm text-muted-foreground">{vendorData?.contact?.website}</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <h3 className="font-bold text-lg mb-3">Giờ làm việc</h3>

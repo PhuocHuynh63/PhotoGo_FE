@@ -6,9 +6,6 @@ export default async function ChangePassword() {
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
 
-
-
-
     return (
         <>
             <ChangePasswordPage userId={session?.user?.id} />

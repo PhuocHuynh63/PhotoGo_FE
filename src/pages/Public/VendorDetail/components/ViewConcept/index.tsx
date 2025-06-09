@@ -3,7 +3,7 @@
 import Button from "@components/Atoms/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
 import { Calendar } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
 import Booking from "../Booking";
 import { IServicePackage } from "@models/servicePackages/common.model";
@@ -13,14 +13,26 @@ type ConceptProps = {
     isOpen: boolean;
     onOpenChange?: (open: boolean) => void;
     servicePackage: IServicePackage;
+    initialConceptId?: string;
 };
 
-export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage }: ConceptProps) {
+export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage, initialConceptId }: ConceptProps) {
     const [activeTab, setActiveTab] = useState<string>("Hình ảnh");
 
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedConcept, setSelectedConcept] = useState(0);
+    
+    useEffect(() => {
+        if (initialConceptId && servicePackage?.serviceConcepts) {
+            const conceptIndex = servicePackage.serviceConcepts.findIndex(concept => concept.id === initialConceptId);
+            if (conceptIndex !== -1) {
+                setSelectedConcept(conceptIndex);
+                setCurrentImageIndex(0);
+            }
+        }
+    }, [initialConceptId, servicePackage?.serviceConcepts]);
+
     const handlePrevImage = () => {
         setCurrentImageIndex((prev) =>
             prev === 0 ? servicePackage.serviceConcepts[selectedConcept].images.length - 1 : prev - 1
