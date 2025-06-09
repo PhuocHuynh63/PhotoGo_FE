@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import ButtonNoBackgroundVendorDetail from '../ButtonNoBackGroundVendorDetail'
 import { Eye } from 'lucide-react'
 import { Card } from '@components/Atoms/Card'
@@ -19,6 +20,7 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
      * Call vendor store to get vendor data
      */
     const vendorData = useVendor() as IVendor
+    const searchParams = useSearchParams()
     //-----------------------------End---------------------------------//
 
     //TODO: remove this when we have real data
@@ -26,13 +28,48 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
 
     //#region View Concept
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedPackage, setSelectedPackage] = useState<any>(null)
+    const [selectedPackage, setSelectedPackage] = useState<string | null>(null)
     const servicePackage = vendorData?.servicePackages?.find((pkg) => pkg.id === selectedPackage) as IServicePackage
 
     const handleViewConcept = (id: string) => {
         setSelectedPackage(id)
         setIsOpen(!isOpen)
+        // Reset initialConceptId when manually opening/closing modal
+        if (isOpen) {
+            setInitialConceptId(null)
+        }
     }
+
+    // Store conceptId from URL params
+    const [initialConceptId, setInitialConceptId] = useState<string | null>(null)
+
+    // Handle URL query params for auto-opening concept modal
+    useEffect(() => {
+        if (vendorData?.servicePackages && !isOverview) {
+            const conceptId = searchParams?.get('conceptId')
+            
+            if (conceptId) {
+                // Tìm package chứa concept với ID tương ứng
+                const targetPackage = vendorData.servicePackages.find(pkg => 
+                    pkg.serviceConcepts?.some(concept => concept.id === conceptId)
+                )
+                
+                if (targetPackage) {
+                    setSelectedPackage(targetPackage.id)
+                    setInitialConceptId(conceptId)
+                    setIsOpen(true)
+                    
+                    // Optional: scroll to the package
+                    setTimeout(() => {
+                        const packageElement = document.getElementById(`package-${targetPackage.id}`)
+                        if (packageElement) {
+                            packageElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                        }
+                    }, 100)
+                }
+            }
+        }
+    }, [vendorData?.servicePackages, searchParams, isOverview])
     //#endregion
 
     //#region Render Image
@@ -117,15 +154,20 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
             </div>
             <ViewConcept
                 isOpen={isOpen}
-                onOpenChange={() => handleViewConcept(selectedPackage)}
+                onOpenChange={() => selectedPackage && handleViewConcept(selectedPackage)}
                 servicePackage={servicePackage}
+                initialConceptId={initialConceptId || undefined}
             />
         </>
     ) : (
         <>
             <div className="space-y-4">
                 {vendorData?.servicePackages?.map((pkg: IServicePackage) => (
-                    <Card key={pkg.id} className="overflow-hidden border-grey">
+                    <Card 
+                        key={pkg.id} 
+                        id={`package-${pkg.id}`}
+                        className="overflow-hidden border-grey"
+                    >
                         {renderPackageContent(pkg)}
                     </Card>
                 ))}
@@ -133,8 +175,9 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
 
             <ViewConcept
                 isOpen={isOpen}
-                onOpenChange={() => handleViewConcept(selectedPackage)}
+                onOpenChange={() => selectedPackage && handleViewConcept(selectedPackage)}
                 servicePackage={servicePackage}
+                initialConceptId={initialConceptId || undefined}
             />
         </>
     )

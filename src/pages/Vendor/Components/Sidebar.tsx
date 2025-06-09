@@ -43,7 +43,7 @@ export default function Sidebar() {
         },
         { icon: MessageSquare, label: "Tin nhắn", href: "/vendor/messages" },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
-        { icon: Settings, label: "Cài đặt", href: "/vendor/settings" },
+        { icon: Settings, label: "Cấu hình", href: "/vendor/settings" },
     ]
 
     return (
