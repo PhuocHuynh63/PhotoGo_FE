@@ -129,7 +129,8 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
       />
 
       {/* Write Review */}
-      <WriteReview activeTab={activeTab} />
+      {/* Todo: Tina */}
+      {/* <WriteReview activeTab={activeTab} /> */}
 
       {/* Filters */}
       <Filters
