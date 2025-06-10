@@ -48,7 +48,7 @@ const VendorContactInformation = () => {
                         <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Chọn chi nhánh gần bạn nhất</p>
-                            <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p>
+                            {/* <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p> */}
                         </div>
                     </div>
 
@@ -93,21 +93,21 @@ const VendorContactInformation = () => {
                         <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Địa chỉ</p>
-                            <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p>
+                            {/* <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p> */}
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <Phone className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Điện thoại</p>
-                            <p className="text-sm text-muted-foreground">{vendorData?.contact?.phone}</p>
+                            {/* <p className="text-sm text-muted-foreground">{vendorData?.contact?.phone}</p> */}
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <Mail className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Email</p>
-                            <p className="text-sm text-muted-foreground">{vendorData?.contact?.email}</p>
+                            {/* <p className="text-sm text-muted-foreground">{vendorData?.contact?.email}</p> */}
                         </div>
                     </div>
                     {/* <div className="flex items-start gap-3">
@@ -121,7 +121,7 @@ const VendorContactInformation = () => {
 
                 <h3 className="font-bold text-lg mb-3">Giờ làm việc</h3>
                 <div className="space-y-2">
-                    {vendorData?.businessHours?.map((item: any, index: number) => (
+                    {/* {vendorData?.businessHours?.map((item: any, index: number) => (
                         <div key={index} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ const VendorContactInformation = () => {
                             </div>
                             <span className="text-sm font-medium">{item.hours}</span>
                         </div>
-                    ))}
+                    ))} */}
                 </div>
 
                 <div className="mt-6">
