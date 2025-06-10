@@ -10,6 +10,8 @@ import { useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Skeleton } from '@components/Atoms/ui/skeleton'
 import Link from 'next/link'
+import { useSession } from '@stores/user/selectors'
+import { useChat } from '@utils/hooks/useChat'
 
 const VendorCover = () => {
 
@@ -19,10 +21,18 @@ const VendorCover = () => {
     const vendorData = useVendor() as IVendor
     //-----------------------------End---------------------------------//
 
-    const router = useRouter()
-    const params = useParams()
+    const router = useRouter();
+    const params = useParams();
     const slug = params?.slug as string
 
+    const session = useSession();
+
+    let accessToken = session?.accessToken!;
+    let userId = session?.user?.id!;
+    // let userVendorId = vendorData?.user_id?.id!;
+
+    const { activeConversation } = useChat(userId, accessToken);
+    console.log('activeConversation', activeConversation);
 
     return (
         <section className="relative">

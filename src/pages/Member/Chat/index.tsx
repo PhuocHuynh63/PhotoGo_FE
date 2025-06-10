@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from '@utils/hooks/useChatSocket';
+import { useChat } from '@utils/hooks/useChat';
 import { PAGES } from '../../../types/IPages';
 import SidebarChat from './Left/Sidebar';
 import ContentChat from './Right/Content';

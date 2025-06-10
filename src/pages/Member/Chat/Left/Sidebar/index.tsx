@@ -25,9 +25,6 @@ export default function SidebarChat({
 }: SidebarChatProps) {
     const [searchValue, setSearchValue] = useState('');
 
-    console.log('conversations', conversations);
-
-
     const filteredConversations = conversations?.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
