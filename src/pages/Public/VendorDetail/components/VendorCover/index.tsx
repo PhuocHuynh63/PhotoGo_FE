@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { Badge, Heart, MapPin, Share2, Star, MessageCircle } from 'lucide-react'
+import { Heart, MapPin, Star, MessageCircle } from 'lucide-react'
 import React from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'
@@ -9,6 +9,7 @@ import { ROUTES } from '@routes'
 import { useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Skeleton } from '@components/Atoms/ui/skeleton'
+import Link from 'next/link'
 
 const VendorCover = () => {
 
@@ -93,8 +94,10 @@ const VendorCover = () => {
                                     <span className="hidden sm:inline">Lưu</span>
                                 </ButtonVendorDetail>
                                 <ButtonVendorDetail className="gap-1">
-                                    <MessageCircle className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Liên hệ</span>
+                                    <Link href={ROUTES.USER.CHAT} className='flex items-center gap-1.5'>
+                                        <MessageCircle className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Liên hệ</span>
+                                    </Link>
                                 </ButtonVendorDetail>
                                 <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)}>Đặt lịch ngay</Button>
                             </div>
