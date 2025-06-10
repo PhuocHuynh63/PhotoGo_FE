@@ -2,6 +2,7 @@ import { CategoryModel } from "@models/category/common.model";
 import { LocationModel } from "@models/location/common.model";
 import { ReviewModel } from "@models/review/common.model";
 import { ServicePackageModel } from "@models/servicePackages/common.model";
+import { UserModel } from "@models/user/common.model";
 import { z } from "zod";
 
 /**
@@ -25,6 +26,7 @@ export const VendorModel = z.object({
     isRemarkable: z.boolean(),
     minPrice: z.number(),
     maxPrice: z.number(),
+    user_id: UserModel,
 });
 
 export type IVendor = z.TypeOf<typeof VendorModel>;
