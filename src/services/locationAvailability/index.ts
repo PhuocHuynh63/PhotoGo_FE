@@ -13,6 +13,9 @@ const locationAvailabilityService = {
     createTimeSlots: async (data: any, locationAvailabilityId: string) => {
         return await http.post(`/location-availability/${locationAvailabilityId}/slot-time`, data)
     },
+    deleteLocationAvailability: async (locationAvailabilityId: string) => {
+        return await http.delete(`/location-availability/${locationAvailabilityId}`, {})
+    },
 }
 
 export default locationAvailabilityService

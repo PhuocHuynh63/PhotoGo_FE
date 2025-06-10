@@ -12,6 +12,8 @@ import Link from 'next/link'
 import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
 import AttendanceBoard from "../AttendanceModal"
+import VendorCarousel from "./components/VendorCarousel"
+
 
 
 const carouselItems: ICOMPONENTS.CarouselItem[] = [
@@ -115,6 +117,37 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
     },
 ]
 
+const vendorList: { vendorLogo: string }[] = [
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+
+]
 
 const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
     const [scrollY, setScrollY] = useState(0)
@@ -234,6 +267,14 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                     </div>
                 </div>
             </div>
+
+            {/* <div className="container mx-auto px-4 py-16">
+                <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-4 text-black items-center justify-center">
+                        <VendorCarousel slides={vendorList} autoScroll={true} />
+                    </div>
+                </div>
+            </div> */}
 
             {/* Services section */}
             <motion.div

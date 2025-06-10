@@ -68,7 +68,7 @@ const EmblaCarousel: React.FC<ICOMPONENTS.PropType> = (props) => {
                 <div className="flex ">
                     {slides.map((item) => (
                         <div className="px-4 py-6" key={item.id}>
-                            <div className="p-6 shadow-md rounded-xl w-[25rem] h-[12.5rem] bg-red-4s00">
+                            <div className="p-6 shadow-md rounded-xl w-[25rem] h-[12.5rem] bg-white">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-12 h-12 rounded-full bg-gray-200">
                                         <Avatar size={50} src={item.avatar} fallback={item.avatar} />
