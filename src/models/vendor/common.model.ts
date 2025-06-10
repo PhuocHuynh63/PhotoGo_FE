@@ -28,6 +28,28 @@ export const VendorModel = z.object({
     maxPrice: z.number(),
     user_id: UserModel,
 });
-
 export type IVendor = z.TypeOf<typeof VendorModel>;
+
+//----------------------End----------------------//
+
+/**
+ * Model of Vendor By ID
+ */
+export const VendorByIdModel = z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+    description: z.string(),
+    logo: z.string().nullable(),
+    banner: z.string().nullable(),
+    status: z.string(),
+    category: CategoryModel.optional(),
+    locations: z.array(LocationModel),
+    servicePackages: z.array(ServicePackageModel),
+    averageRating: z.number(),
+    totalPrice: z.number(),
+    user_id: UserModel,
+});
+
+export type IVendorById = z.TypeOf<typeof VendorByIdModel>;
 //----------------------End----------------------//

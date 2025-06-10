@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { Badge, Heart, MapPin, Share2, Star, MessageCircle } from 'lucide-react'
+import { Heart, MapPin, Star, MessageCircle } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'

@@ -13,7 +13,7 @@ export default function ButtonNoBackground({
     iconSize = 18,
     iconColor = 'currentColor',
     isLoading = false,
-    loadingText = 'Loading...',
+    loadingText = 'Đang xử lý...',
     spinIcon = false,
     disabled = false,
     className = '',

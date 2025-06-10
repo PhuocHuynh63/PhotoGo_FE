@@ -1,10 +1,7 @@
-import { IVendor } from '@models/vendor/common.model';
-import { useVendor } from '@stores/vendor/selectors'
 import React from 'react'
 
 const GoogleMapVendor = () => {
 
-  const vendor = useVendor() as IVendor
 
 
   return (
