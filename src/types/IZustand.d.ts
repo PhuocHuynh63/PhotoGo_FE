@@ -55,4 +55,8 @@ declare module ZUSTAND {
         removeItem: (itemId: string, cartId: string) => Promise<void>
         removeItems: (itemIds: string[], cartId: string) => Promise<void>
     }
+
+    export interface IChatingState {
+        
+    }
 }
