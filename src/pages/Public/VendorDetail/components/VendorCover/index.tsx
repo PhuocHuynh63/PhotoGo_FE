@@ -29,18 +29,32 @@ const VendorCover = () => {
     const session = useSession()
     const token = session?.accessToken || '';
 
+    /**
+     * Socket connection to handle chat functionality
+     */
     const [socket, setSocket] = useState<Socket | null>(null);
     useEffect(() => {
         const socketInstance = getSocket(token);
         setSocket(socketInstance);
+        if (socketInstance) {
+            socketInstance.on('joinedRoom', (data) => {
+                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
+            });
+        }
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off('joinedRoom');
+            }
+        };
     }, [token]);
 
     const handleSelectConversation = () => {
-        if (socket) {
+        if (socket && socket.connected) {
             socket.emit('joinChat', { memberId: vendorData.user_id.id });
         }
     };
-
+    //-----------------------------End---------------------------------//
 
 
 
