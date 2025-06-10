@@ -60,12 +60,20 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
         return new Date().toISOString().split("T")[0]
     }
 
-    // Lấy 7 ngày gần nhất
-    const getLast7Days = () => {
+    // Lấy 7 ngày của tuần hiện tại (Thứ 2 đến Chủ nhật)
+    const getCurrentWeekDays = () => {
+        const today = new Date()
+        const currentDay = today.getDay() // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
+
+        // Tính toán ngày đầu tuần (Thứ 2)
+        const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay // Nếu là Chủ nhật thì lùi 6 ngày
+        const monday = new Date(today)
+        monday.setDate(today.getDate() + mondayOffset)
+
         const days = []
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date()
-            date.setDate(date.getDate() - i)
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(monday)
+            date.setDate(monday.getDate() + i)
             days.push(date.toISOString().split("T")[0])
         }
         return days
@@ -75,10 +83,10 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
     useEffect(() => {
         if (!isLoggedIn || !userId) return
 
-        const last7Days = getLast7Days()
+        const currentWeekDays = getCurrentWeekDays()
 
-        // Map 7 ngày gần nhất với dữ liệu từ API
-        const attendanceRecords: AttendanceRecord[] = last7Days.map((date) => {
+        // Map 7 ngày của tuần hiện tại với dữ liệu từ API
+        const attendanceRecords: AttendanceRecord[] = currentWeekDays.map((date: string) => {
             // Tìm trong dữ liệu attendance từ API
             const apiRecord = attendance?.find((record) => record.date === date)
             return {
@@ -94,8 +102,9 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
         const todayRecord = attendanceRecords.find((record) => record.date === today)
         setHasCheckedToday(todayRecord?.checked || false)
 
-        // Lấy số ngày streak từ attendance[0]
-        setConsecutiveDays(attendance?.[0]?.streak ?? 0)
+        // Tính số ngày đã điểm danh trong tuần hiện tại
+        const checkedDaysInWeek = attendanceRecords.filter(record => record.checked).length
+        setConsecutiveDays(checkedDaysInWeek)
 
         // Hiển thị bảng điểm danh
         setShowBoard(true)
@@ -124,8 +133,9 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                 setAttendanceData(updatedAttendance)
                 setHasCheckedToday(true)
 
-                // Cập nhật số ngày streak mới (tăng lên 1)
-                setConsecutiveDays((attendance?.[0]?.streak ?? 0) + 1)
+                // Tính lại số ngày đã điểm danh trong tuần (tăng lên 1)
+                const newCheckedDaysInWeek = updatedAttendance.filter(record => record.checked).length
+                setConsecutiveDays(newCheckedDaysInWeek)
 
                 // Show confetti effect
                 setShowConfetti(true)
@@ -134,13 +144,13 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                 // Gọi refresh để server component fetch lại attendance mới nhất
                 router.refresh()
 
-                // Kiểm tra nếu đạt 7 ngày liên tục
-                if ((attendance?.[0]?.streak ?? 0) + 1 === 7) {
+                // Kiểm tra nếu hoàn thành cả tuần (7 ngày)
+                if (newCheckedDaysInWeek === 7) {
                     console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
-                    console.log("✨ Bạn đã hoàn thành thử thách 7 ngày liên tục!")
+                    console.log("✨ Bạn đã hoàn thành toàn bộ tuần!")
                     console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
                     console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
-                    console.log("🎯 Thành tích mới: Photography Master!")
+                    console.log("🎯 Thành tích mới: Weekly Photography Master!")
 
                     setTimeout(() => {
                         setShowCelebration(true)
@@ -172,13 +182,13 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
     }
     // ** End format date **
 
-    // ** Get streak info with enhanced levels **
-    const getStreakInfo = (days: number) => {
+    // ** Get weekly progress info **
+    const getWeeklyProgressInfo = (days: number) => {
         if (days >= 7)
             return {
                 color: "from-orange-400 via-orange-500 to-orange-600",
                 icon: Crown,
-                title: "Bậc thầy Nhiếp ảnh",
+                title: "Hoàn thành tuần",
                 bgGlow: "from-orange-400/30 to-orange-600/30",
                 textColor: "text-orange-600",
             }
@@ -186,7 +196,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
             return {
                 color: "from-orange-500 via-orange-600 to-orange-700",
                 icon: Flame,
-                title: "Đang bùng cháy",
+                title: "Gần hoàn thành",
                 bgGlow: "from-orange-500/25 to-orange-700/25",
                 textColor: "text-orange-700",
             }
@@ -202,22 +212,22 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
             return {
                 color: "from-orange-200 via-orange-300 to-orange-400",
                 icon: Zap,
-                title: "Khởi đầu tốt",
+                title: "Khởi đầu tuần",
                 bgGlow: "from-orange-200/15 to-orange-400/15",
                 textColor: "text-orange-400",
             }
         return {
             color: "from-gray-300 via-gray-400 to-gray-500",
             icon: Circle,
-            title: "Bắt đầu hành trình",
+            title: "Chưa bắt đầu",
             bgGlow: "from-gray-300/10 to-gray-500/10",
             textColor: "text-gray-500",
         }
     }
-    // ** End get streak info with enhanced levels **
+    // ** End get weekly progress info **
 
 
-    const streakInfo = getStreakInfo(consecutiveDays)
+    const weeklyProgressInfo = getWeeklyProgressInfo(consecutiveDays)
 
     if (!isLoggedIn || !showBoard) {
         return (
@@ -315,7 +325,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                         opacity: [0.5, 0.8, 0.5],
                     }}
                     transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
-                    className={`absolute -inset-3 sm:-inset-6 bg-gradient-to-r ${streakInfo.bgGlow} rounded-2xl sm:rounded-3xl blur-2xl sm:blur-3xl`}
+                    className={`absolute -inset-3 sm:-inset-6 bg-gradient-to-r ${weeklyProgressInfo.bgGlow} rounded-2xl sm:rounded-3xl blur-2xl sm:blur-3xl`}
                 />
 
                 {/* Celebration Ring */}
@@ -333,7 +343,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
 
                 <Card className="relative z-10 bg-white border-0 shadow-2xl overflow-hidden">
                     {/* Decorative Top Border */}
-                    <div className={`h-1 sm:h-2 bg-gradient-to-r ${streakInfo.color}`}></div>
+                    <div className={`h-1 sm:h-2 bg-gradient-to-r ${weeklyProgressInfo.color}`}></div>
 
                     {/* Header Section */}
                     <div className="relative bg-gradient-to-br from-gray-50 to-white">
@@ -376,7 +386,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                 </motion.div>
                                 <div className="text-left">
                                     <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">PhotoGo</h1>
-                                    <p className="text-xs sm:text-sm text-gray-600 font-medium">Attendance Tracker</p>
+                                    <p className="text-xs sm:text-sm text-gray-600 font-medium">Theo dõi điểm danh</p>
                                 </div>
                             </motion.div>
 
@@ -402,11 +412,11 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                                     : "0 0 0 0 rgba(251, 146, 60, 0)",
                                         }}
                                         transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                                        className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r ${streakInfo.color} text-white font-bold text-base sm:text-lg lg:text-xl shadow-xl`}
+                                        className={`inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r ${weeklyProgressInfo.color} text-white font-bold text-base sm:text-lg lg:text-xl shadow-xl`}
                                     >
-                                        <streakInfo.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                                        <weeklyProgressInfo.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                                         <span>{consecutiveDays}</span>
-                                        <span className="text-sm sm:text-base lg:text-lg">ngày liên tục</span>
+                                        <span className="text-sm sm:text-base lg:text-lg">ngày trong tuần</span>
                                         <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                                     </motion.div>
                                 </div>
@@ -414,15 +424,15 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                 {/* Level Info */}
                                 <div className="text-center space-y-2">
 
-                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">{streakInfo.title}</h3>
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800">{weeklyProgressInfo.title}</h3>
                                 </div>
 
                                 {/* Progress Section */}
                                 <div className="space-y-3 sm:space-y-4">
                                     <div className="flex justify-between items-center text-sm font-medium">
                                         <span className="text-gray-700">Tiến độ tuần này</span>
-                                        <span className={`${streakInfo.textColor} font-bold text-base sm:text-lg`}>
-                                            {Math.min(consecutiveDays, 7)}/7 ngày
+                                        <span className={`${weeklyProgressInfo.textColor} font-bold text-base sm:text-lg`}>
+                                            {consecutiveDays}/7 ngày
                                         </span>
                                     </div>
 
@@ -430,9 +440,9 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                         <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden shadow-inner">
                                             <motion.div
                                                 initial={{ width: 0 }}
-                                                animate={{ width: `${(Math.min(consecutiveDays, 7) / 7) * 100}%` }}
+                                                animate={{ width: `${(consecutiveDays / 7) * 100}%` }}
                                                 transition={{ duration: 2, ease: "easeOut", delay: 1.8 }}
-                                                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${streakInfo.color} relative overflow-hidden shadow-lg`}
+                                                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${weeklyProgressInfo.color} relative overflow-hidden shadow-lg`}
                                             >
                                                 {/* Progress Shine Effect */}
                                                 <motion.div
@@ -466,7 +476,7 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                         className="flex items-center justify-center gap-2 text-orange-600 bg-gradient-to-r from-orange-50 to-orange-100 px-4 sm:px-6 py-2 sm:py-3 rounded-xl border border-orange-200 mx-2 sm:mx-4"
                                     >
                                         <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
-                                        <span className="font-bold text-xs sm:text-sm">Photography Master Achieved!</span>
+                                        <span className="font-bold text-xs sm:text-sm">Weekly Master Achieved!</span>
                                         <Award className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </motion.div>
                                 )}
@@ -707,8 +717,8 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
                                     >
                                         <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-2 sm:mb-3">CHÚC MỪNG!</h3>
                                         <div className="bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
-                                            <p className="text-white/95 text-lg sm:text-xl font-bold mb-1">Photography Master</p>
-                                            <p className="text-white/90 text-sm">7 ngày liên tục hoàn thành!</p>
+                                            <p className="text-white/95 text-lg sm:text-xl font-bold mb-1">Weekly Master</p>
+                                            <p className="text-white/90 text-sm">Hoàn thành cả tuần!</p>
                                         </div>
                                     </motion.div>
 

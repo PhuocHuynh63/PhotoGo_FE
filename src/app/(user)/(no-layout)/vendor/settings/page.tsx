@@ -1,5 +1,6 @@
 import { authOptions } from "@lib/authOptions";
-import SettingPage from "@pages/Vendor/Settings";
+import { IVendorResponse } from "@models/vendor/response.model";
+import WorkingHoursSettings from "@pages/Vendor/Settings";
 import vendorService from "@services/vendors";
 import { getServerSession } from "next-auth";
 
@@ -12,12 +13,10 @@ async function getVendorData(id: string) {
 export default async function VendorProfile() {
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
-    const vendor = await getVendorData(session.user.id);
-
-
+    const vendor = await getVendorData(session.user.id) as IVendorResponse;
     return (
         <>
-            <SettingPage />
+            <WorkingHoursSettings vendor={vendor?.data} />
         </>
     )
 }

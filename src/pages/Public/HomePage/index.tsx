@@ -204,7 +204,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                     id="hero"
                     className="relative h-screen flex items-center justify-center overflow-hidden"
                 >
-                    <BackToTop />
+                    <BackToTop size={40} />
                     <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                         <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
                     </div>

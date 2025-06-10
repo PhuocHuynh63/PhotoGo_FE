@@ -3,10 +3,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { ArrowUp } from 'lucide-react'
 
-export default function BackToTop({ containerRef }: { containerRef?: React.RefObject<HTMLElement | null> }) {
+interface BackToTopProps {
+  containerRef?: React.RefObject<HTMLElement | null>
+  size?: number // Kích thước tùy chỉnh (mặc định 64px)
+}
+
+export default function BackToTop({ containerRef, size = 64 }: BackToTopProps) {
   const [visible, setVisible] = useState(false)
   const [progress, setProgress] = useState(0)
   const defaultContainerRef = useRef<HTMLElement | null>(null)
+
+  // Tính toán các giá trị dựa trên kích thước
+  const radius = (size * 20) / 64 // Tỷ lệ radius theo kích thước gốc
+  const circumference = 2 * Math.PI * radius
+  const strokeWidth = Math.max(2, size / 16) // Đảm bảo stroke không quá mỏng
+  const iconSize = Math.max(16, size * 0.4) // Kích thước icon tương đối
+  const fontSize = Math.max(10, size * 0.25) // Kích thước font tương đối
 
   // Theo dõi sự kiện cuộn
   useEffect(() => {
@@ -88,18 +100,29 @@ export default function BackToTop({ containerRef }: { containerRef?: React.RefOb
     <div className="fixed bottom-8 right-8 z-[99999]" style={{ pointerEvents: 'auto' }}>
       <div className="relative">
         {/* Vòng tròn tiến trình */}
-        <svg className="w-16 h-16 rotate-[-90deg]" viewBox="0 0 50 50">
-          <circle cx="25" cy="25" r="20" fill="none" stroke="#e5e7eb" strokeWidth="4" />
+        <svg 
+          className="rotate-[-90deg]" 
+          style={{ width: size, height: size }}
+          viewBox={`0 0 ${size} ${size}`}
+        >
+          <circle 
+            cx={size / 2} 
+            cy={size / 2} 
+            r={radius} 
+            fill="none" 
+            stroke="#e5e7eb" 
+            strokeWidth={strokeWidth} 
+          />
           <circle
-            cx="25"
-            cy="25"
-            r="20"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
             fill="none"
             stroke="#f97316"
-            strokeWidth="4"
+            strokeWidth={strokeWidth}
             strokeLinecap="round"
-            strokeDasharray="125.6"
-            strokeDashoffset={125.6 - (125.6 * progress) / 100}
+            strokeDasharray={circumference}
+            strokeDashoffset={circumference - (circumference * progress) / 100}
           />
         </svg>
 
@@ -111,9 +134,12 @@ export default function BackToTop({ containerRef }: { containerRef?: React.RefOb
           type="button"
         >
           {progress >= 99 ? (
-            <ArrowUp className="h-7 w-7 text-orange-500" />
+            <ArrowUp style={{ width: iconSize, height: iconSize }} className="text-orange-500" />
           ) : (
-            <div className="text-base font-bold text-orange-500">
+            <div 
+              className="font-bold text-orange-500"
+              style={{ fontSize: `${fontSize}px` }}
+            >
               {Math.round(progress)}%
             </div>
           )}
