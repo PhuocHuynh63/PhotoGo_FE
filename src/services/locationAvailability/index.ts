@@ -1,0 +1,16 @@
+import http from "@configs/fetch"
+import { ILocationAvailabilityRequest } from "@models/locationAvailability/request.model"
+
+const locationAvailabilityService = {
+    getLocationAvailabilityByLocationId: async (locationId: string) => {
+        return await http.get(`/location-availability/location/${locationId}?isAvailable=true&current=1&pageSize=10&sortBy=createdAt&sortDirection=asc`)
+    },
+    createLocationAvailability: async (data: ILocationAvailabilityRequest, locationId: string) => {
+        return await http.post(`/location-availability/${locationId}`, data)
+    },
+    deleteLocationAvailability: async (locationAvailabilityId: string) => {
+        return await http.delete(`/location-availability/${locationAvailabilityId}`, {})
+    },
+}
+
+export default locationAvailabilityService

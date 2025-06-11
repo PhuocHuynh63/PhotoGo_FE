@@ -26,6 +26,7 @@ export const VendorModel = z.object({
     isRemarkable: z.boolean(),
     minPrice: z.number(),
     maxPrice: z.number(),
+    user_id: UserModel,
 });
 export type IVendor = z.TypeOf<typeof VendorModel>;
 

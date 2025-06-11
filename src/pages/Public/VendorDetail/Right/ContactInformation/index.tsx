@@ -31,11 +31,11 @@ const VendorContactInformation = () => {
      * State to manage selected branch
      */
     const [selectedBranchId, setSelectedBranchId] = useState(vendorData.locations?.[0]?.id || '');
-    const selectedBranch = vendorData.locations?.find(b => b.id === selectedBranchId);
-    const handleBranchChange = (branchId: string) => {
-        setSelectedBranchId(branchId);
-        router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', '')}?branch=${selectedBranch}`);
-    };
+    // const selectedBranch = vendorData.locations?.find(b => b.id === selectedBranchId);
+    // const handleBranchChange = (branchId: string) => {
+    //     setSelectedBranchId(branchId);
+    //     router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', '')}?branch=${selectedBranch}`);
+    // };
     //---------------------------End---------------------------//
 
 

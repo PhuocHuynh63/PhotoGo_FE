@@ -184,7 +184,7 @@ const AttendanceCalendarInline = ({ attendance }: PAGES.IAttendanceCalendarInlin
                                     className="aspect-square relative"
                                 >
                                     <div
-                                        className={`w-full h-full flex items-center justify-center text-sm font-medium rounded-full transition-all duration-200 ${day.isToday
+                                        className={`w-8 h-8 flex items-center justify-center text-sm font-medium rounded-full transition-all duration-200 ${day.isToday
                                             ? day.isChecked
                                                 ? "bg-orange-500 text-white shadow-lg"
                                                 : "bg-orange-100 text-orange-600 border-2 border-orange-300"
@@ -199,7 +199,7 @@ const AttendanceCalendarInline = ({ attendance }: PAGES.IAttendanceCalendarInlin
                                             <motion.div
                                                 initial={{ scale: 0 }}
                                                 animate={{ scale: 1 }}
-                                                className="absolute -top-0.5 -right-0.5"
+                                                className="absolute -top-0 right-5"
                                             >
                                                 <LucideIcon name="CheckCircle" className="w-3 h-3 text-orange-600 bg-white rounded-full" />
                                             </motion.div>
@@ -212,7 +212,7 @@ const AttendanceCalendarInline = ({ attendance }: PAGES.IAttendanceCalendarInlin
                                                     opacity: [0.7, 1, 0.7],
                                                 }}
                                                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                                                className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-orange-500 rounded-full"
+                                                className="absolute bottom-4.5 w-1.5 h-1.5 bg-orange-500 rounded-full"
                                             />
                                         )}
                                     </div>

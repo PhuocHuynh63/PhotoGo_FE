@@ -33,11 +33,19 @@ interface ApiResponse {
 // Utility functions outside the component
 const getTodayString = () => new Date().toISOString().split("T")[0]
 
-const getLast7Days = () => {
+const getCurrentWeekDays = () => {
+    const today = new Date()
+    const currentDay = today.getDay() // 0 = Chủ nhật, 1 = Thứ 2, ..., 6 = Thứ 7
+
+    // Tính toán ngày đầu tuần (Thứ 2)
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay // Nếu là Chủ nhật thì lùi 6 ngày
+    const monday = new Date(today)
+    monday.setDate(today.getDate() + mondayOffset)
+
     const days = []
-    for (let i = 6; i >= 0; i--) {
-        const date = new Date()
-        date.setDate(date.getDate() - i)
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(monday)
+        date.setDate(monday.getDate() + i)
         days.push(date.toISOString().split("T")[0])
     }
     return days
@@ -54,26 +62,26 @@ const formatDate = (dateString: string) => {
     }
 }
 
-const getStreakInfo = (days: number) => {
+const getWeeklyProgressInfo = (days: number) => {
     if (days >= 7)
         return {
             color: "from-orange-400 via-orange-500 to-orange-600",
             icon: "Crown",
-            title: "Bậc Thầy Nhiếp Ảnh",
-            subtitle: "Chuỗi Huyền Thoại",
+            title: "Hoàn Thành Tuần",
+            subtitle: "Master Tuần Này",
             bgGlow: "from-orange-400/30 to-orange-600/30",
             textColor: "text-orange-600",
-            level: "BẬC THẦY",
+            level: "HOÀN THÀNH",
         }
     if (days >= 5)
         return {
             color: "from-orange-500 via-orange-600 to-orange-700",
             icon: "Flame",
-            title: "Bùng Cháy",
-            subtitle: "Đam Mê Rực Lửa",
+            title: "Gần Hoàn Thành",
+            subtitle: "Còn Chút Nữa Thôi",
             bgGlow: "from-orange-500/25 to-orange-700/25",
             textColor: "text-orange-700",
-            level: "CHUYÊN GIA",
+            level: "GẦN XONG",
         }
     if (days >= 3)
         return {
@@ -83,26 +91,26 @@ const getStreakInfo = (days: number) => {
             subtitle: "Xây Dựng Đà",
             bgGlow: "from-orange-300/20 to-orange-500/20",
             textColor: "text-orange-500",
-            level: "NÂNG CAO",
+            level: "TIẾN BỘ",
         }
     if (days >= 1)
         return {
             color: "from-orange-200 via-orange-300 to-orange-400",
             icon: "Zap",
-            title: "Khởi Đầu Tốt",
-            subtitle: "Những Bước Đầu Tiên",
+            title: "Khởi Đầu Tuần",
+            subtitle: "Bắt Đầu Tốt",
             bgGlow: "from-orange-200/15 to-orange-400/15",
             textColor: "text-orange-400",
-            level: "NGƯỜI MỚI",
+            level: "BẮT ĐẦU",
         }
     return {
         color: "from-gray-300 via-gray-400 to-gray-500",
         icon: "Circle",
-        title: "Bắt Đầu Hành Trình",
-        subtitle: "Bắt Đầu Con Đường Của Bạn",
+        title: "Chưa Bắt Đầu",
+        subtitle: "Hãy Bắt Đầu Tuần Mới",
         bgGlow: "from-gray-300/10 to-gray-500/10",
         textColor: "text-gray-500",
-        level: "NGƯỜI MỚI",
+        level: "CHƯA BẮT ĐẦU",
     }
 }
 
@@ -111,20 +119,30 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
     const [showConfetti, setShowConfetti] = useState(false)
     const [showCalendarModal, setShowCalendarModal] = useState(false)
     const [localAttendanceData, setLocalAttendanceData] = useState<AttendanceRecord[] | null>(null);
-    const [consecutiveDays, setConsecutiveDays] = useState(attendance?.[0]?.streak ?? 0);
+    const [consecutiveDays, setConsecutiveDays] = useState(0);
     const router = useRouter();
 
-    // Cập nhật consecutiveDays khi attendance thay đổi
+    // Cập nhật consecutiveDays khi attendance thay đổi - tính số ngày đã điểm danh trong tuần
     useEffect(() => {
-        setConsecutiveDays(attendance?.[0]?.streak ?? 0);
-    }, [attendance]);
+        if (!isLoggedIn || !userId) return;
+        const currentWeekDays = getCurrentWeekDays();
+        const weeklyAttendance = currentWeekDays.map((date: string) => {
+            const apiRecord = attendance?.find((record) => record.date === date);
+            return {
+                date,
+                checked: apiRecord ? apiRecord.isChecked : false
+            }
+        });
+        const checkedDaysInWeek = weeklyAttendance.filter(record => record.checked).length;
+        setConsecutiveDays(checkedDaysInWeek);
+    }, [attendance, isLoggedIn, userId]);
 
     // Memoize attendanceData
     const attendanceData = useMemo(() => {
         if (localAttendanceData) return localAttendanceData;
         if (!isLoggedIn || !userId) return [];
-        const last7Days = getLast7Days();
-        return last7Days.map((date) => {
+        const currentWeekDays = getCurrentWeekDays();
+        return currentWeekDays.map((date: string) => {
             const apiRecord = attendance?.find((record) => record.date === date);
             return {
                 date,
@@ -139,7 +157,7 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
         return attendanceData.find((record) => record.date === today)?.checked || false
     }, [attendanceData])
 
-    const streakInfo = useMemo(() => getStreakInfo(consecutiveDays), [consecutiveDays])
+    const weeklyProgressInfo = useMemo(() => getWeeklyProgressInfo(consecutiveDays), [consecutiveDays])
 
     // Handle check-in
     const handleCheckIn = useCallback(async () => {
@@ -156,12 +174,12 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
                     );
                     return newData;
                 })
-                // Nếu response.data.streak có trả về thì cập nhật luôn
-                if (response.data && typeof response.data.streak === 'number') {
-                    setConsecutiveDays(response.data.streak)
-                } else {
-                    setConsecutiveDays((prev) => prev + 1)
-                }
+                // Tính lại số ngày đã điểm danh trong tuần
+                const updatedData = (localAttendanceData || attendanceData).map(record =>
+                    record.date === today ? { ...record, checked: true } : record
+                );
+                const newCheckedDaysInWeek = updatedData.filter(record => record.checked).length;
+                setConsecutiveDays(newCheckedDaysInWeek);
                 setShowConfetti(true)
                 setTimeout(() => setShowConfetti(false), 2000)
                 if (onCheckIn) onCheckIn()
@@ -329,31 +347,31 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
             {/* Streak Info */}
             <div className="mb-6">
                 <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${streakInfo.color} flex items-center justify-center shadow-md`}>
-                        <LucideIcon name={streakInfo.icon as IconName} className="w-5 h-5 text-white" />
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${weeklyProgressInfo.color} flex items-center justify-center shadow-md`}>
+                        <LucideIcon name={weeklyProgressInfo.icon as IconName} className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h3 className={`font-medium ${streakInfo.textColor}`}>{streakInfo.title}</h3>
-                        <p className="text-xs text-gray-500">{streakInfo.subtitle}</p>
+                        <h3 className={`font-medium ${weeklyProgressInfo.textColor}`}>{weeklyProgressInfo.title}</h3>
+                        <p className="text-xs text-gray-500">{weeklyProgressInfo.subtitle}</p>
                     </div>
                     <div className="ml-auto">
-                        <div className="text-xl font-bold text-gray-800"><span className="text-primary border border-primary rounded-md px-2 py-1">{consecutiveDays}</span> ngày liên tục</div>
+                        <div className="text-xl font-bold text-gray-800"><span className="text-primary border border-primary rounded-md px-2 py-1">{consecutiveDays}</span> ngày trong tuần</div>
                     </div>
                 </div>
                 <div className="space-y-3 sm:space-y-4">
                     <div className="flex justify-between items-center text-sm font-medium">
                         <span className="text-gray-700">Tiến độ tuần này</span>
-                        <span className={`${streakInfo.textColor} font-bold text-base sm:text-sm`}>
-                            {Math.min(consecutiveDays, 7)}/7 ngày
+                        <span className={`${weeklyProgressInfo.textColor} font-bold text-base sm:text-sm`}>
+                            {consecutiveDays}/7 ngày
                         </span>
                     </div>
                     <div className="relative">
                         <div className="w-full bg-gray-200 rounded-full h-2 sm:h-4 overflow-hidden shadow-inner">
                             <motion.div
                                 initial={{ width: 0 }}
-                                animate={{ width: `${(Math.min(consecutiveDays, 7) / 7) * 100}%` }}
+                                animate={{ width: `${(consecutiveDays / 7) * 100}%` }}
                                 transition={{ duration: 2, ease: "easeOut", delay: 1.8 }}
-                                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${streakInfo.color} relative overflow-hidden shadow-lg`}
+                                className={`h-3 sm:h-4 rounded-full bg-gradient-to-r ${weeklyProgressInfo.color} relative overflow-hidden shadow-lg`}
                             >
                                 <motion.div
                                     animate={{ x: ["0%", "100%"] }}

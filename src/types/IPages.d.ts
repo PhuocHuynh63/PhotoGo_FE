@@ -5,6 +5,7 @@ import { ICartResponse } from '@models/cart/response.model';
 import { IReviewPaginationResponse } from '@models/review/repsonse.model';
 import { IVendorResponse } from '@models/vendor/response.model';
 import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
+import { ILocationSchedule } from '@models/locationAvailability/common.model';
 
 declare namespace PAGES {
     interface ILogin {
@@ -90,7 +91,7 @@ declare namespace PAGES {
         vendor: IVendorResponse;
         review: IReviewPaginationResponse;
     }
-  
+
     interface IAttendancePageProps {
         user: IUser | undefined;
         attendance: IAttendance[] | undefined;
@@ -103,5 +104,13 @@ declare namespace PAGES {
 
     interface IAttendanceCalendarInlineProps {
         attendance?: IAttendance[]
+    }
+    interface IWorkingHoursSettingsProps {
+        vendor: IVendor;
+    }
+    interface IManageWorkingDateProps {
+        workingHoursList: ILocationSchedule[];
+        isLoadingData: boolean;
+        fetchWorkingHours: () => void;
     }
 }
