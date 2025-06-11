@@ -1,4 +1,5 @@
 import { authOptions } from "@lib/authOptions";
+import { IVendor } from "@models/vendor/common.model";
 import { IVendorResponse } from "@models/vendor/response.model";
 import WorkingHoursSettings from "@pages/Vendor/Settings";
 import vendorService from "@services/vendors";
@@ -16,7 +17,7 @@ export default async function VendorProfile() {
     const vendor = await getVendorData(session.user.id) as IVendorResponse;
     return (
         <>
-            <WorkingHoursSettings vendor={vendor?.data} />
+            <WorkingHoursSettings vendor={vendor?.data as IVendor} />
         </>
     )
 }

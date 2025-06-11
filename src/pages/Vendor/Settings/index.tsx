@@ -1,68 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import toast from "react-hot-toast"
-import { IVendor } from "@models/vendor/common.model"
-import locationAvailabilityService from "@services/locationAvailability"
+import { useState } from "react"
+import { useLocationAvailability } from "@/utils/hooks/useLocationAvailability"
 import CreateWorkingDate from "@pages/Vendor/Settings/Left/CreateWorkingDate"
 import ManageWorkingDate from "@pages/Vendor/Settings/Right/ManageWorkingDate"
+import { PAGES } from "../../../types/IPages"
+import { ILocation } from "@models/locationAvailability/common.model"
 
-interface Location {
-    id: string
-    address: string
-    district: string
-    ward: string
-    city: string
-}
-
-interface SlotTime {
-    id: string
-    slot: number
-    startSlotTime: string
-    endSlotTime: string
-    isStrictTimeBlocking: boolean
-    maxParallelBookings: number
-}
-
-interface WorkingHoursData {
-    id: string
-    startTime: string
-    endTime: string
-    isAvailable: boolean
-    createdAt: string
-    updatedAt: string
-    location: Location
-    workingDates: string[]
-    slotTimes: SlotTime[]
-}
-
-export default function WorkingHoursSettings({ vendor }: { vendor: IVendor }) {
-    const [isLoadingData, setIsLoadingData] = useState(true)
-    const [workingHoursList, setWorkingHoursList] = useState<WorkingHoursData[]>([])
+export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSettingsProps) {
     const [selectedLocation, setSelectedLocation] = useState<string>(vendor?.locations[0]?.id || "") // Default location
-    const [locations] = useState<Location[]>(vendor?.locations || [])
+    const [locations] = useState<ILocation[]>(vendor?.locations || [])
 
-    const fetchWorkingHours = async () => {
-        setIsLoadingData(true)
-        try {
-            const result = await locationAvailabilityService.getLocationAvailabilityByLocationId(selectedLocation)
-            console.log(result)
-            if (result.statusCode === 200) {
-                setWorkingHoursList(result?.data.data as WorkingHoursData[])
-            } else {
-                toast.error("Không thể tải dữ liệu lịch làm việc")
-            }
-        } catch (error) {
-            console.error("Error fetching working hours:", error)
-            toast.error("Đã xảy ra lỗi khi tải dữ liệu lịch làm việc")
-        } finally {
-            setIsLoadingData(false)
-        }
-    }
-
-    useEffect(() => {
-        fetchWorkingHours()
-    }, [selectedLocation])
+    // Sử dụng custom hook để fetch working hours
+    const {
+        data: workingHoursList,
+        loading: isLoadingData,
+        refetch: fetchWorkingHours
+    } = useLocationAvailability({
+        locationId: selectedLocation,
+        enabled: !!selectedLocation
+    })
 
     return (
         <div className="p-6 space-y-6">

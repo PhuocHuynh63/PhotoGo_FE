@@ -15,35 +15,10 @@ import React, { useState } from 'react'
 import { cn } from '@utils/helpers/CN'
 import locationAvailabilityService from '@services/locationAvailability'
 import { toast } from 'react-hot-toast'
+import { PAGES } from '../../../../../types/IPages'
+import { ILocationScheduleResponse } from '@models/locationAvailability/response.model'
+import { ISlotTime } from '@models/locationAvailability/common.model'
 
-interface Location {
-    id: string
-    address: string
-    district: string
-    ward: string
-    city: string
-}
-
-interface SlotTime {
-    id: string
-    slot: number
-    startSlotTime: string
-    endSlotTime: string
-    isStrictTimeBlocking: boolean
-    maxParallelBookings: number
-}
-
-interface WorkingHoursData {
-    id: string
-    startTime: string
-    endTime: string
-    isAvailable: boolean
-    createdAt: string
-    updatedAt: string
-    location: Location
-    workingDates: string[]
-    slotTimes: SlotTime[]
-}
 
 
 const formatTime = (time: string) => {
@@ -51,7 +26,7 @@ const formatTime = (time: string) => {
     return `${hours}:${minutes}`
 }
 
-const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours }: { workingHoursList: WorkingHoursData[], isLoadingData: boolean, fetchWorkingHours: () => void }) => {
+const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours }: PAGES.IManageWorkingDateProps) => {
 
     const [selectedDateForSlots, setSelectedDateForSlots] = useState<{ [key: string]: string }>({})
     const [editingSlot, setEditingSlot] = useState<{ workingDateId: string, slotTimeId: string, selectedDate: string } | null>(null)
@@ -66,7 +41,7 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
         }
 
         try {
-            const result = await locationAvailabilityService.deleteLocationAvailability(workingHoursId)
+            const result = await locationAvailabilityService.deleteLocationAvailability(workingHoursId) as ILocationScheduleResponse
             console.log(result)
             if (result.statusCode === 200) {
                 toast.success("Đã xóa lịch làm việc thành công")
@@ -172,13 +147,13 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                         <div className="space-y-4">
                                             <div className="flex flex-wrap gap-2">
                                                 {workingHours.workingDates
-                                                    ?.sort((a, b) => {
+                                                    ?.sort((a: string, b: string) => {
                                                         // Convert date strings to Date objects for proper sorting
                                                         const dateA = new Date(a.split('/').reverse().join('-'))
                                                         const dateB = new Date(b.split('/').reverse().join('-'))
                                                         return dateA.getTime() - dateB.getTime()
                                                     })
-                                                    ?.map((date) => (
+                                                    ?.map((date: string) => (
                                                         <Badge
                                                             key={date}
                                                             variant={selectedDateForSlots[workingHours.id] === date ? "default" : "outline"}
@@ -204,12 +179,12 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {workingHours.workingDates
-                                                                    ?.sort((a, b) => {
+                                                                    ?.sort((a: string, b: string) => {
                                                                         const dateA = new Date(a.split('/').reverse().join('-'))
                                                                         const dateB = new Date(b.split('/').reverse().join('-'))
                                                                         return dateA.getTime() - dateB.getTime()
                                                                     })
-                                                                    ?.map((date) => (
+                                                                    ?.map((date: string) => (
                                                                         <SelectItem key={date} value={date}>
                                                                             {date}
                                                                         </SelectItem>
@@ -221,8 +196,8 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
 
                                                 {workingHours.slotTimes?.length > 0 && selectedDateForSlots[workingHours.id] ? (
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                        {workingHours.slotTimes?.sort((a, b) => a.slot - b.slot).map((slot) => {
-                                                            const isEditing = editingSlot?.workingDateId === workingHours.id && editingSlot?.slotTimeId === slot.slot.toString()
+                                                        {workingHours.slotTimes?.map((slot: ISlotTime) => {
+                                                            const isEditing = editingSlot?.workingDateId === workingHours.id && editingSlot?.slotTimeId === slot.id
 
                                                             return (
                                                                 <div key={slot.slot} className="border rounded-md p-3 flex flex-col space-y-2">
