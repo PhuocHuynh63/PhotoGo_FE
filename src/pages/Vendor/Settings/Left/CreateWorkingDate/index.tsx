@@ -76,7 +76,7 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                                     <SelectValue placeholder="Chọn địa điểm" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {locations.map((location) => (
+                                    {locations?.map((location) => (
                                         <SelectItem key={location.id} value={location.id}>
                                             {location.address}, {location.district} - {location.ward}
                                         </SelectItem>
