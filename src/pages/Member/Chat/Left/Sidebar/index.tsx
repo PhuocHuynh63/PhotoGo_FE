@@ -10,7 +10,8 @@ import { Avatar } from '@components/Molecules/Avatar';
 
 interface SidebarChatProps {
     conversations: any[];
-    activeConversation: any | null;
+    activeConversation: string;
+    onSelectActiveConversation: (conversationId: string) => void;
     onSelectConversation: (conversation: any) => void;
     showSidebar: boolean;
     isMobile: boolean;
@@ -19,19 +20,23 @@ interface SidebarChatProps {
 export default function SidebarChat({
     conversations,
     activeConversation,
+    onSelectActiveConversation,
     onSelectConversation,
     showSidebar,
     isMobile,
 }: SidebarChatProps) {
+
     const [searchValue, setSearchValue] = useState('');
-
-    console.log('conversations', conversations);
-
 
     const filteredConversations = conversations?.filter((conv) =>
         conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
 
+    /**
+     * Format time
+     * @param date 
+     * @returns 
+     */
     const formatTime = (date: string | undefined) => {
         if (!date) return '';
         const d = new Date(date);
@@ -52,6 +57,17 @@ export default function SidebarChat({
         }
         return `${d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     };
+    //---------------------End---------------------//
+
+    /**
+     * Handle select conversation
+     * @param conversation 
+     */
+    const handleSelectConversation = (conversation: any) => {
+        onSelectActiveConversation(conversation.id);
+        onSelectConversation(conversation);
+    };
+    //---------------------End---------------------//
 
     return (
         <>
@@ -75,9 +91,9 @@ export default function SidebarChat({
                                 key={conversation.id}
                                 className={cn(
                                     'flex items-center p-3 cursor-pointer hover:bg-gray-100',
-                                    activeConversation?.id === conversation.id && 'bg-gray-100'
+                                    activeConversation === conversation.id && 'bg-gray-100'
                                 )}
-                                onClick={() => onSelectConversation(conversation)}
+                                onClick={() => handleSelectConversation(conversation)}
                             >
                                 <div className="relative">
                                     <Avatar className="h-12 w-12 mr-3"

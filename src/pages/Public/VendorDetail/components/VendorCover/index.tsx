@@ -1,14 +1,17 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import { Badge, Heart, MapPin, Share2, Star, MessageCircle } from 'lucide-react'
-import React from 'react'
+import { Heart, MapPin, Star, MessageCircle } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'
 import { ROUTES } from '@routes'
 import { useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Skeleton } from '@components/Atoms/ui/skeleton'
+import { Socket } from 'socket.io-client'
+import { getSocket } from '@configs/socket'
+import { useSession } from '@stores/user/selectors'
 
 const VendorCover = () => {
 
@@ -21,6 +24,38 @@ const VendorCover = () => {
     const router = useRouter()
     const params = useParams()
     const slug = params?.slug as string
+
+
+    const session = useSession()
+    const token = session?.accessToken || '';
+
+    /**
+     * Socket connection to handle chat functionality
+     */
+    const [socket, setSocket] = useState<Socket | null>(null);
+    useEffect(() => {
+        const socketInstance = getSocket(token);
+        setSocket(socketInstance);
+        if (socketInstance) {
+            socketInstance.on('joinedRoom', (data) => {
+                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
+            });
+        }
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off('joinedRoom');
+            }
+        };
+    }, [token]);
+
+    const handleSelectConversation = () => {
+        if (socket && socket.connected) {
+            socket.emit('joinChat', { memberId: vendorData.user_id.id });
+        }
+    };
+    //-----------------------------End---------------------------------//
+
 
 
     return (
@@ -92,7 +127,7 @@ const VendorCover = () => {
                                     <Heart className="h-4 w-4" />
                                     <span className="hidden sm:inline">Lưu</span>
                                 </ButtonVendorDetail>
-                                <ButtonVendorDetail className="gap-1">
+                                <ButtonVendorDetail className="gap-1" onClick={handleSelectConversation}>
                                     <MessageCircle className="h-4 w-4" />
                                     <span className="hidden sm:inline">Liên hệ</span>
                                 </ButtonVendorDetail>

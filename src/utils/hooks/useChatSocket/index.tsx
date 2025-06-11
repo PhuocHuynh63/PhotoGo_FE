@@ -1,3 +1,4 @@
+// hooks/useChat.ts
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -5,36 +6,15 @@ import { Socket } from 'socket.io-client';
 import { disconnectSocket, getSocket } from '@configs/socket';
 import chatService from '@services/chat';
 import userService from '@services/user';
-import { PAGES } from '../../../types/IPages';
-import SidebarChat from './Left/Sidebar';
-import ContentChat from './Right/Content';
-import { useParams, useRouter } from 'next/navigation';
 
-export default function ChatPage(session: PAGES.IChatProps) {
-    /**
-     * Define from URL
-     * Get chat ID from URL parameters
-     */
-    const param = useParams();
-    const router = useRouter();
-    const chatId = param?.id as string;
-    //---------------------End---------------------//
-
-    /**
-     * Get user ID and token from session
-     */
-    const userId = session.session?.user?.id;
-    const token = session.session?.accessToken;
-    //---------------------End---------------------//
-
+export function useChat(userId: string, token: string | undefined) {
     const [isMobile, setIsMobile] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [conversations, setConversations] = useState<any[]>([]);
     const [activeConversation, setActiveConversation] = useState<any | null>(null);
     const [showSidebar, setShowSidebar] = useState(true);
-    const [activeConversationId, setActiveConversationId] = useState<string>(chatId || '');
-
     const activeConversationRef = useRef(activeConversation);
+
     useEffect(() => {
         activeConversationRef.current = activeConversation;
     }, [activeConversation]);
@@ -44,7 +24,7 @@ export default function ChatPage(session: PAGES.IChatProps) {
         checkIsMobile();
         window.addEventListener('resize', checkIsMobile);
 
-        const socketInstance = getSocket(token);
+        const socketInstance = getSocket(token || '');
         setSocket(socketInstance);
 
         const fetchChats = async () => {
@@ -55,7 +35,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
                         const partnerId = chat.members.find((m: string) => m !== userId)!;
                         const user = await userService.getAUser(partnerId);
                         const unreadCount = chat.messages.filter((m: any) => m.sender_id !== userId && !m.read).length;
-                        setActiveConversationId(chat.id);
                         return {
                             id: chat.id,
                             user,
@@ -80,7 +59,9 @@ export default function ChatPage(session: PAGES.IChatProps) {
                 )
             );
             if (activeConversationRef.current?.id === chatId) {
-                setActiveConversation((prev: any) => (prev ? { ...prev, messages, unreadCount: 0 } : prev));
+                setActiveConversation((prev: any) =>
+                    prev ? { ...prev, messages, unreadCount: 0 } : prev
+                );
             }
         });
 
@@ -126,6 +107,7 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
         return () => {
             window.removeEventListener('resize', checkIsMobile);
+            disconnectSocket();
         };
     }, [token, userId]);
 
@@ -135,21 +117,25 @@ export default function ChatPage(session: PAGES.IChatProps) {
         }
         setActiveConversation({
             ...conversation,
+            messages: conversation.messages.map((m: any) => ({ ...m, read: true })),
             unreadCount: 0,
         });
 
-        setConversations(prevConvs =>
-            prevConvs.map(conv =>
+        setConversations(prev =>
+            prev.map(conv =>
                 conv.id === conversation.id
-                    ? { ...conv, unreadCount: 0 }
+                    ? {
+                        ...conv,
+                        messages: conv.messages.map((m: any) => ({ ...m, read: true })),
+                        unreadCount: 0,
+                    }
                     : conv
             )
         );
+
         if (isMobile) {
             setShowSidebar(false);
         }
-
-        router.push(`/chat/${conversation.id}`);
     };
 
     const handleSendMessage = (content: string) => {
@@ -170,26 +156,14 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
     const toggleSidebar = () => setShowSidebar(prev => !prev);
 
-    return (
-        <div className="flex w-full h-screen">
-            <SidebarChat
-                conversations={conversations}
-                activeConversation={activeConversationId}
-                onSelectActiveConversation={setActiveConversationId}
-                onSelectConversation={handleSelectConversation}
-                showSidebar={showSidebar}
-                isMobile={isMobile}
-            />
-            <div className="flex-1 flex flex-col h-full">
-                <ContentChat
-                    activeConversation={activeConversation}
-                    onSendMessage={handleSendMessage}
-                    onLeaveChat={handleLeaveChat}
-                    toggleSidebar={toggleSidebar}
-                    isMobile={isMobile}
-                    userId={userId}
-                />
-            </div>
-        </div>
-    );
+    return {
+        isMobile,
+        conversations,
+        activeConversation,
+        showSidebar,
+        handleSelectConversation,
+        handleSendMessage,
+        handleLeaveChat,
+        toggleSidebar,
+    };
 }

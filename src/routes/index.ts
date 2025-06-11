@@ -22,6 +22,7 @@ const USER = {
     DASHBOARD: '/user',
     PROFILE: '/profile',
     CHECKOUT: '/checkout/:id',
+    CHAT: '/chat/:id',
     BOOKINGS: {
 
     },
