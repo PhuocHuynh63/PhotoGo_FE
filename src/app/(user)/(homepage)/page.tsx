@@ -12,6 +12,7 @@ import { IAttendanceResponseModel, ICheckAttendanceResponseModel } from "@models
 // Mock data cho homepage
 const mockVendorData = {
   id: "1",
+  user_id: "1",
   name: "Studio ABC",
   slug: "studio-abc",
   description: "Studio chụp ảnh chuyên nghiệp",
