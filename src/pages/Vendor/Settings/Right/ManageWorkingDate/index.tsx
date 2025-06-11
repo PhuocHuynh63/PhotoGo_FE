@@ -111,7 +111,7 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                         <div className="flex justify-center items-center py-8">
                             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
                         </div>
-                    ) : workingHoursList.length > 0 ? (
+                    ) : workingHoursList?.length > 0 ? (
                         <Accordion type="single" collapsible className="w-full">
                             {workingHoursList?.map((workingHours) => (
                                 <AccordionItem key={workingHours.id} value={workingHours.id}>

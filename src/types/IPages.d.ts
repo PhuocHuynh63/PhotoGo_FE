@@ -21,7 +21,6 @@ declare namespace PAGES {
     }
 
     interface IHomePage {
-        data: IVendor;
         user: IUser | undefined;
         attendance: IAttendance[] | undefined;
         checkAttendance: ICheckAttendance | undefined;

@@ -27,7 +27,7 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = (props) => {
         <div className="w-full relative">
             <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex">
-                    {slides.map((item) => (
+                    {slides?.map((item) => (
                         <div className="px-4 py-6" key={item.id}>
                             <div className="rounded-xl overflow-hidden shadow-md">
                                 <img
