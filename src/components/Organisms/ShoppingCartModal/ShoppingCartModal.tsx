@@ -22,17 +22,21 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     const removeItem = useRemoveItem()
     const removeItems = useRemoveItems()
     const router = useRouter()
-    const cartItems = cart || []
 
-    const vendorGroups: ICOMPONENTS.VendorGroup[] = cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
-        const existingGroup = groups.find((group) => group.vendor_id === item.serviceConcept.servicePackageId)
-        if (existingGroup) {
-            existingGroup.items.push(item)
-        } else {
-            groups.push({ vendor_id: item.serviceConcept.servicePackageId, items: [item] })
-        }
-        return groups
-    }, [])
+    // Đảm bảo cartItems luôn là array và không null/undefined
+    const cartItems = Array.isArray(cart) ? cart : []
+
+    const vendorGroups: ICOMPONENTS.VendorGroup[] = cartItems.length > 0
+        ? cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
+            const existingGroup = groups.find((group) => group.vendor_id === item.serviceConcept.servicePackageId)
+            if (existingGroup) {
+                existingGroup.items.push(item)
+            } else {
+                groups.push({ vendor_id: item.serviceConcept.servicePackageId, items: [item] })
+            }
+            return groups
+        }, [])
+        : []
 
     useEffect(() => {
         if (!isOpen) {
@@ -130,11 +134,11 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     }
 
     const calculateTotal = () => {
-        return cartItems.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + parseInt(item.serviceConcept.price), 0)
+        return cartItems.filter((item) => selectedItems.includes(item.id))?.reduce((total, item) => total + parseInt(item.serviceConcept.price), 0)
     }
 
     const calculateTotalDuration = () => {
-        return cartItems.filter((item) => selectedItems.includes(item.id)).reduce((total, item) => total + item.serviceConcept.duration, 0)
+        return cartItems.filter((item) => selectedItems.includes(item.id))?.reduce((total, item) => total + item.serviceConcept.duration, 0)
     }
 
     const renderItemDetails = (item: ICOMPONENTS.CartItem) => (
