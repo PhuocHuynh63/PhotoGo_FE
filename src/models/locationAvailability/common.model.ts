@@ -29,6 +29,14 @@ export const LocationModel = z.object({
 export type ILocation = z.TypeOf<typeof LocationModel>
 
 /**
+ * Model of WorkingDate
+ */
+export const WorkingDateModel = z.object({
+    id: z.string(),
+    date: z.string(),
+});
+
+/**
  * Model of LocationSchedule (based on the response data)
  */
 export const LocationScheduleModel = z.object({
@@ -40,7 +48,7 @@ export const LocationScheduleModel = z.object({
     isAvailable: z.boolean(),
     location: LocationModel,
     slotTimes: z.array(SlotTimeModel),
-    workingDates: z.array(z.string()),
+    workingDates: z.array(WorkingDateModel),
 });
 export type ILocationSchedule = z.TypeOf<typeof LocationScheduleModel>
 

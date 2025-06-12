@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@components/Atoms/ui/label'
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@components/Atoms/ui/select'
 import { Button } from '@components/Atoms/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@components/Atoms/ui/dialog'
 
 import { Input } from '@components/Atoms/ui/input'
 import { Switch } from '@components/Atoms/ui/switch'
@@ -31,6 +32,7 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
     const [endTime, setEndTime] = useState("19:00")
     const [isAvailable, setIsAvailable] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -38,7 +40,18 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
             toast.error("Vui lòng chọn ngày bắt đầu")
             return
         }
+        if (!selectedLocation) {
+            toast.error("Vui lòng chọn địa điểm")
+            return
+        }
+        
+        setShowConfirmModal(true)
+    }
 
+    const handleConfirmSubmit = async () => {
+        if (!date) return
+
+        setShowConfirmModal(false)
         setIsLoading(true)
         try {
             const formattedDate = format(date, "dd/MM/yyyy")
@@ -58,6 +71,11 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
         } finally {
             setIsLoading(false)
         }
+    }
+
+    const getSelectedLocationName = () => {
+        const location = locations?.find(loc => loc.id === selectedLocation)
+        return location ? `${location.address}, ${location.district} - ${location.ward}` : 'Không xác định'
     }
 
     return (
@@ -143,6 +161,56 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                     </Button>
                 </CardFooter>
             </Card>
+
+            {/* Modal Confirm */}
+            <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Xác nhận tạo lịch làm việc</DialogTitle>
+                        <DialogDescription>
+                            Bạn có chắc chắn muốn tạo lịch làm việc với thông tin sau?
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-3">
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Địa điểm:</p>
+                            <p className="text-sm text-gray-600">{getSelectedLocationName()}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Ngày bắt đầu:</p>
+                            <p className="text-sm text-gray-600">{date ? format(date, "dd/MM/yyyy") : ""}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Thời gian:</p>
+                            <p className="text-sm text-gray-600">{startTime} - {endTime}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Trạng thái:</p>
+                            <p className="text-sm text-gray-600">{isAvailable ? "Có thể đặt lịch" : "Không thể đặt lịch"}</p>
+                        </div>
+                        <div className="mt-3 p-3 bg-blue-50 rounded-md">
+                            <p className="text-sm text-blue-700">
+                                ⚠️ Lịch làm việc sẽ được tạo cho 7 ngày liên tục từ ngày được chọn.
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button className='cursor-pointer' variant="outline" onClick={() => setShowConfirmModal(false)}>
+                            Hủy
+                        </Button>
+                        <Button className='cursor-pointer' onClick={handleConfirmSubmit} disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Đang tạo...
+                                </>
+                            ) : (
+                                "Xác nhận"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

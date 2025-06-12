@@ -9,7 +9,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Input } from '@components/Atoms/ui/input'
 import { Trash2, Edit, Check, X } from 'lucide-react'
 import { Alert, AlertTitle, AlertDescription } from '@components/Atoms/ui/alert'
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@components/Atoms/ui/alert-dialog'
 
 import React, { useState } from 'react'
 import { cn } from '@utils/helpers/CN'
@@ -32,16 +32,22 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
     const [editingSlot, setEditingSlot] = useState<{ workingDateId: string, slotTimeId: string, selectedDate: string } | null>(null)
     const [editingMaxBookings, setEditingMaxBookings] = useState(1)
     const [isUpdatingSlot, setIsUpdatingSlot] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [workingHoursToDelete, setWorkingHoursToDelete] = useState<string | null>(null)
+    const [isDeletingWorkingHours, setIsDeletingWorkingHours] = useState(false)
 
     const handleDeleteWorkingHours = async (workingHoursId: string, e: React.MouseEvent) => {
         e.stopPropagation() // Prevent accordion from toggling
+        setWorkingHoursToDelete(workingHoursId)
+        setShowDeleteModal(true)
+    }
 
-        if (!confirm("Bạn có chắc chắn muốn xóa lịch làm việc này?")) {
-            return
-        }
+    const confirmDeleteWorkingHours = async () => {
+        if (!workingHoursToDelete) return
 
+        setIsDeletingWorkingHours(true)
         try {
-            const result = await locationAvailabilityService.deleteLocationAvailability(workingHoursId) as ILocationScheduleResponse
+            const result = await locationAvailabilityService.deleteLocationAvailability(workingHoursToDelete) as ILocationScheduleResponse
             console.log(result)
             if (result.statusCode === 200) {
                 toast.success("Đã xóa lịch làm việc thành công")
@@ -52,12 +58,20 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
         } catch (error) {
             console.error("Error deleting working hours:", error)
             toast.error("Đã xảy ra lỗi khi xóa lịch làm việc")
+        } finally {
+            setIsDeletingWorkingHours(false)
+            setShowDeleteModal(false)
+            setWorkingHoursToDelete(null)
         }
     }
 
+    const cancelDeleteWorkingHours = () => {
+        setShowDeleteModal(false)
+        setWorkingHoursToDelete(null)
+    }
+
     // Handle editing slot
-    const handleEditSlot = (workingDateId: string, slotTimeId: string, selectedDate: string, currentMaxBookings: number) => {
-        console.log(workingDateId, slotTimeId, selectedDate, currentMaxBookings)
+    const handleEditSlot = async (workingDateId: string, slotTimeId: string, selectedDate: string, currentMaxBookings: number) => {
         setEditingSlot({ workingDateId, slotTimeId, selectedDate })
         setEditingMaxBookings(currentMaxBookings)
     }
@@ -74,13 +88,14 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
 
         setIsUpdatingSlot(true)
         try {
-            // TODO: Implement update slot API call
-            // const result = await locationAvailabilityService.updateSlotTime({
-            //     workingDateId: editingSlot.workingDateId,
-            //     slotTimeId: editingSlot.slotTimeId,
-            //     isStrictTimeBlocking: true,
-            //     maxParallelBookings: editingMaxBookings
-            // })
+            console.log(editingMaxBookings === 1)
+            const updateData = {
+                isStrictTimeBlocking: editingMaxBookings === 1,
+                maxParallelBookings: editingMaxBookings
+            }
+
+            const result = await locationAvailabilityService.updateSlotTime(updateData, editingSlot.workingDateId, editingSlot.slotTimeId)
+            console.log(result)
 
             toast.success("Đã cập nhật slot thành công")
             setEditingSlot(null)
@@ -128,8 +143,8 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                                         </Badge>
                                                     </div>
                                                     <span className="text-sm text-gray-500">
-                                                        {workingHours?.workingDates?.length} ngày từ {workingHours?.workingDates[0]} đến{" "}
-                                                        {workingHours?.workingDates[workingHours?.workingDates?.length - 1]}
+                                                        {workingHours?.workingDates?.length} ngày từ {workingHours?.workingDates[0]?.date} đến{" "}
+                                                        {workingHours?.workingDates[workingHours?.workingDates?.length - 1]?.date}
                                                     </span>
                                                 </div>
                                             </div>
@@ -147,20 +162,20 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                         <div className="space-y-4">
                                             <div className="flex flex-wrap gap-2">
                                                 {workingHours.workingDates
-                                                    ?.sort((a: string, b: string) => {
+                                                    ?.sort((a, b) => {
                                                         // Convert date strings to Date objects for proper sorting
-                                                        const dateA = new Date(a.split('/').reverse().join('-'))
-                                                        const dateB = new Date(b.split('/').reverse().join('-'))
+                                                        const dateA = new Date(a.date.split('/').reverse().join('-'))
+                                                        const dateB = new Date(b.date.split('/').reverse().join('-'))
                                                         return dateA.getTime() - dateB.getTime()
                                                     })
-                                                    ?.map((date: string) => (
+                                                    ?.map((workingDate) => (
                                                         <Badge
-                                                            key={date}
-                                                            variant={selectedDateForSlots[workingHours.id] === date ? "default" : "outline"}
+                                                            key={workingDate.id}
+                                                            variant={selectedDateForSlots[workingHours.id] === workingDate.date ? "default" : "outline"}
                                                             className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                                                            onClick={() => setSelectedDateForSlots(prev => ({ ...prev, [workingHours.id]: date }))}
+                                                            onClick={() => setSelectedDateForSlots(prev => ({ ...prev, [workingHours.id]: workingDate.date }))}
                                                         >
-                                                            {date}
+                                                            {workingDate.date}
                                                         </Badge>
                                                     ))}
                                             </div>
@@ -179,14 +194,14 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {workingHours.workingDates
-                                                                    ?.sort((a: string, b: string) => {
-                                                                        const dateA = new Date(a.split('/').reverse().join('-'))
-                                                                        const dateB = new Date(b.split('/').reverse().join('-'))
+                                                                    ?.sort((a, b) => {
+                                                                        const dateA = new Date(a.date.split('/').reverse().join('-'))
+                                                                        const dateB = new Date(b.date.split('/').reverse().join('-'))
                                                                         return dateA.getTime() - dateB.getTime()
                                                                     })
-                                                                    ?.map((date: string) => (
-                                                                        <SelectItem key={date} value={date}>
-                                                                            {date}
+                                                                    ?.map((workingDate) => (
+                                                                        <SelectItem key={workingDate.id} value={workingDate.date}>
+                                                                            {workingDate.date}
                                                                         </SelectItem>
                                                                     ))}
                                                             </SelectContent>
@@ -197,7 +212,12 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                                 {workingHours.slotTimes?.length > 0 && selectedDateForSlots[workingHours.id] ? (
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                         {workingHours.slotTimes?.map((slot: ISlotTime) => {
-                                                            const isEditing = editingSlot?.workingDateId === workingHours.id && editingSlot?.slotTimeId === slot.id
+                                                            // Find the workingDate ID for the selected date
+                                                            const selectedDate = selectedDateForSlots[workingHours.id]
+                                                            const selectedWorkingDate = workingHours.workingDates?.find(wd => wd.date === selectedDate)
+                                                            const workingDateId = selectedWorkingDate?.id || workingHours.id
+
+                                                            const isEditing = editingSlot?.workingDateId === workingDateId && editingSlot?.slotTimeId === slot.id
 
                                                             return (
                                                                 <div key={slot.slot} className="border rounded-md p-3 flex flex-col space-y-2">
@@ -211,7 +231,7 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                                                                                 <Button
                                                                                     variant="ghost"
                                                                                     size="sm"
-                                                                                    onClick={() => handleEditSlot(workingHours.id, slot.id, selectedDateForSlots[workingHours.id], slot.maxParallelBookings)}
+                                                                                    onClick={() => handleEditSlot(workingDateId, slot.id, selectedDate, slot.maxParallelBookings)}
                                                                                     className="h-6 w-6 p-0 text-gray-500 hover:text-blue-600"
                                                                                 >
                                                                                     <Edit className="h-3 w-3" />
@@ -303,6 +323,33 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
                     )}
                 </CardContent>
             </Card>
+            <AlertDialog open={showDeleteModal} onOpenChange={cancelDeleteWorkingHours}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Bạn có chắc chắn muốn xóa lịch làm việc này? Hành động này không thể hoàn tác.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className='cursor-pointer' disabled={isDeletingWorkingHours}>Hủy</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDeleteWorkingHours}
+                            disabled={isDeletingWorkingHours}
+                            className="cursor-pointer bg-red-600 hover:bg-red-700"
+                        >
+                            {isDeletingWorkingHours ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Đang xóa...
+                                </>
+                            ) : (
+                                "Xóa"
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     )
 }

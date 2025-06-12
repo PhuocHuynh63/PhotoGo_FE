@@ -117,34 +117,72 @@ const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
     },
 ]
 
-const vendorList: { vendorLogo: string }[] = [
+const vendorList: { id: string, src: string, alt: string }[] = [
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "1",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "2",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "3",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
 
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "4",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "5",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "6",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "7",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "8",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
     {
-        vendorLogo: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+        id: "9",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        id: "10",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        id: "11",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        id: "12",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
+    },
+    {
+        id: "13",
+        alt: 'vendor logo',
+        src: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
     },
 
 ]
@@ -238,6 +276,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                     className="relative h-screen flex items-center justify-center overflow-hidden"
                 >
                     <BackToTop size={40} />
+
                     <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
                         <EmblaCarousel slides={carouselItems} showControls={false} autoplay={true} />
                     </div>
@@ -268,13 +307,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                 </div>
             </div>
 
-            {/* <div className="container mx-auto px-4 py-16">
-                <div className="flex flex-col gap-8">
-                    <div className="flex flex-col gap-4 text-black items-center justify-center">
-                        <VendorCarousel slides={vendorList} autoScroll={true} />
-                    </div>
-                </div>
-            </div> */}
+            <VendorCarousel slides={vendorList} autoScroll={true} />
 
             {/* Services section */}
             <motion.div
