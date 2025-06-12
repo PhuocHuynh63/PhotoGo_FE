@@ -119,6 +119,7 @@ export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
                         className="hover:bg-white/10 p-1 rounded-md"
                         isScrolled={isScrolled}
                         isLoaded={isLoaded}
+                        homePage={true}
                     />
                 </div>
             </motion.div>

@@ -177,33 +177,21 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
 
                                 <div className="p-3">
 
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex flex-col items-start text-dark">
-                                            <h3 className="text-dark font-medium text-lg h-16">{vendor.name}</h3>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div className="flex flex-col items-start text-dark flex-1">
+                                            <h3 className="text-dark font-medium text-lg h-16 line-clamp-2">{vendor.name}</h3>
                                             <span className="text-dark text-xs flex">
                                                 <LucideIcon name="MapPin" iconSize={14} />
                                                 {vendor.locations[0]?.address}, {vendor.locations[0]?.city}
                                             </span>
                                         </div>
-                                        <div className="rounded-full border px-2 py-1 flex items-center justify-center">
-                                            {vendor.category && (
-                                                <span className="flex items-center justify-center w-full">
-                                                    {vendor.category.id === "C001" && (
-                                                        <LucideIcon iconSize={16} name="MapPinHouse" />
-                                                    )}
-                                                    {vendor.category.id === "C003" && (
-                                                        <LucideIcon iconSize={16} name="User" />
-                                                    )}
-                                                    {vendor.category.id === "C002" && (
-                                                        <LucideIcon iconSize={16} name="Paintbrush" />
-                                                    )}
-                                                    {vendor.category.id === "CAT002" && (
-                                                        <LucideIcon iconSize={16} name="PartyPopper" />
-                                                    )}
+                                        {vendor.distance && (
+                                            <div className="rounded-full border px-2 py-1 flex items-center justify-center">
+                                                <span className="flex items-center justify-center w-full text-xs">
+                                                    {vendor.distance ? `${vendor.distance.toFixed(1)} km` : "Không xác định"}
                                                 </span>
-                                            )}
-                                        </div>
-
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex items-center mb-2">

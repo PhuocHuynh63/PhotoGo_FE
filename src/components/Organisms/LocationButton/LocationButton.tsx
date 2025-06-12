@@ -4,14 +4,16 @@ import { useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/Molecules/Tooltip"
 import Button from "@components/Atoms/Button"
 import LucideIcon from "@components/Atoms/LucideIcon"
+import Cookies from "js-cookie";
 
 interface LocationButtonProps {
     className?: string
     isScrolled?: boolean
     isLoaded?: boolean
+    homePage?: boolean
 }
 
-export default function LocationButton({ className, isScrolled, isLoaded }: LocationButtonProps) {
+export default function LocationButton({ className, isScrolled, isLoaded, homePage }: LocationButtonProps) {
     const [location, setLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -22,40 +24,43 @@ export default function LocationButton({ className, isScrolled, isLoaded }: Loca
     const [tooltipOpen, setTooltipOpen] = useState(false);
 
     /**
-     * Take the location from localStorage if it exists
-     * and set it to the state.
+     * Take the location from Cookies if it exists.
      */
     useEffect(() => {
         if (location === null) {
-            const saved = localStorage.getItem("user_location");
-            if (saved) {
-                setLocation(JSON.parse(saved));
+            const cookie = Cookies.get("user_location");
+            if (cookie) {
+                try {
+                    setLocation(JSON.parse(cookie));
+                } catch (e) {
+                    console.log("Error parsing user_location cookie:", e);
+                }
             }
         }
     }, []);
     //---------------------------End-----------------------------//
 
     /**
-     * Save the location to localStorage whenever it changes.
+     * Save the location to cookies whenever it changes.
      * This ensures that the location persists across page reloads.
      */
     useEffect(() => {
         if (location) {
-            const saved = localStorage.getItem("user_location");
+            const saved = Cookies.get("user_location");
             if (!saved || saved !== JSON.stringify(location)) {
-                localStorage.setItem("user_location", JSON.stringify(location));
+                Cookies.set("user_location", JSON.stringify(location), { expires: 7 });
             }
         }
     }, [location]);
     //---------------------------End-----------------------------//
 
     /**
-     * Clear the location from localStorage when the component unmounts.
+     * Clear the location from cookies when the component unmounts.
      * This prevents stale data from being stored if the user navigates away.
      */
     useEffect(() => {
         const handleUnload = () => {
-            localStorage.removeItem("user_location");
+            Cookies.remove("user_location");
         };
         window.addEventListener("beforeunload", handleUnload);
         return () => window.removeEventListener("beforeunload", handleUnload);
@@ -145,7 +150,7 @@ export default function LocationButton({ className, isScrolled, isLoaded }: Loca
                         <LucideIcon
                             name="MapPin"
                             iconSize={24}
-                            iconColor={location ? isScrolled ? '#51c778' : '#50C878' : 'white'}
+                            iconColor={location ? isScrolled ? '#51c778' : '#50C878' : homePage ? 'white' : 'black'}
                         />
                     </Button>
                 </TooltipTrigger>
