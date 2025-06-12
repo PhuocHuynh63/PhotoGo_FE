@@ -13,6 +13,7 @@ export const VendorModel = z.object({
     name: z.string(),
     slug: z.string(),
     description: z.string(),
+    distance: z.number().optional(),
     logo: z.string().nullable(),
     banner: z.string().nullable(),
     status: z.string(),
