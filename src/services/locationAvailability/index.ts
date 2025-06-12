@@ -1,5 +1,5 @@
 import http from "@configs/fetch"
-import { ILocationAvailabilityRequest } from "@models/locationAvailability/request.model"
+import { ILocationAvailabilityRequest, IUpdateSlotTimeRequest } from "@models/locationAvailability/request.model"
 
 const locationAvailabilityService = {
     getLocationAvailabilityByLocationId: async (locationId: string) => {
@@ -11,6 +11,9 @@ const locationAvailabilityService = {
     deleteLocationAvailability: async (locationAvailabilityId: string) => {
         return await http.delete(`/location-availability/${locationAvailabilityId}`, {})
     },
+    updateSlotTime: async (data: IUpdateSlotTimeRequest, workingDateId: string, slotTimeId: string) => {
+        return await http.patch(`/location-availability/${workingDateId}/slot-time/${slotTimeId}`, data)
+    }
 }
 
 export default locationAvailabilityService
