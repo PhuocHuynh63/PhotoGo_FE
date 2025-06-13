@@ -3,7 +3,6 @@ import { useState, useMemo } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
 import { PAGES } from "../../../../../types/IPages"
 import { IVendor } from "@models/vendor/common.model"
-import WriteReview from "./components/WriteReview"
 import ReviewsSummary from "./components/ReviewsSummary"
 import Filters from "./components/Filters"
 import ReviewsList from "./components/ReviewsList"
@@ -84,15 +83,14 @@ const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
     return data || [] as any;
   }, [shouldUseInitial, review?.data, data]);
 
-  const paginationData = useMemo(() => {
+  const paginationData: any = useMemo(() => {
     if (!reviewsToRender || !reviewsToRender?.data) return { totalItems: 0, totalPages: 0, firstItemOnPage: 0, lastItemOnPage: 0 };
 
-    const totalItems = reviewsToRender?.total || 0;
-    const totalPages = Math.ceil(totalItems / reviewsPerPage);
+    const totalItems = reviewsToRender?.pagination || 0;
     const firstItemOnPage = (currentPage - 1) * reviewsPerPage + 1;
     const lastItemOnPage = Math.min(currentPage * reviewsPerPage, totalItems);
 
-    return { totalItems, totalPages, firstItemOnPage, lastItemOnPage };
+    return { totalItems, firstItemOnPage, lastItemOnPage };
   }, [reviewsToRender, currentPage, reviewsPerPage]);
   //------------------------End------------------------//
 

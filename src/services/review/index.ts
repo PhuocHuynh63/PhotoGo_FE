@@ -4,15 +4,15 @@ const reviewService = {
     getReviewByVendorId: async (
         vendorId: string,
         current: number = 1,
-        pageSize: number = 10,
+        pageSize: number,
         rating?: number,
-        sortBy: string = 'rating',
+        sortBy: string,
         sortDirection: string = 'desc'
     ) => {
         const queryParams = new URLSearchParams({
             current: current.toString(),
-            pageSize: pageSize.toString(),
-            sortBy,
+            pageSize: pageSize.toString() || '5',
+            sortBy: sortBy || 'rating',
             sortDirection,
         })
 
