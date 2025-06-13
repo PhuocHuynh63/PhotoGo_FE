@@ -14,9 +14,9 @@ type ReviewByVendorIdParams = {
 export function useReviewsByVendorId({
     vendorId,
     current = 1,
-    pageSize = 10,
+    pageSize,
     rating,
-    sortBy = 'rating',
+    sortBy,
     sortDirection = 'desc',
 }: ReviewByVendorIdParams) {
     const [data, setData] = useState<IReviewPaginationResponse>();
@@ -26,7 +26,7 @@ export function useReviewsByVendorId({
     useEffect(() => {
         let isMounted = true;
         setLoading(true);
-        reviewService.getReviewByVendorId(vendorId, current, pageSize, rating, sortBy, sortDirection)
+        reviewService.getReviewByVendorId(vendorId, current, pageSize!, rating, sortBy, sortDirection)
             .then((response: any) => {
                 if (isMounted) {
                     setData(response.data);

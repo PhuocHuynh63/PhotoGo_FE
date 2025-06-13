@@ -4,12 +4,15 @@ import vendorService from "@services/vendors";
 import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
 import { IVendorsData } from "@models/vendor/response.model";
+import { cookies } from "next/headers";
 
 
 async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     const resolvedParams = await searchParams;
 
     const queryParams = new URLSearchParams();
+    const sortBy = resolvedParams.sortBy ?? 'distance';
+    const sortDirection = resolvedParams.sortDirection ?? 'asc';
 
     if (resolvedParams.name) queryParams.append('name', resolvedParams.name as string);
     if (resolvedParams.address) queryParams.append('location', resolvedParams.address as string);
@@ -18,8 +21,19 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
     // if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
     if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
-    if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
-    if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
+    queryParams.append('sortBy', sortBy as string);
+    queryParams.append('sortDirection', sortDirection as string);
+
+    const userLocationCookie = (await cookies()).get("user_location")?.value;
+    if (userLocationCookie) {
+        try {
+            const parsed = JSON.parse(userLocationCookie);
+            if (parsed.lat) queryParams.append("userLatitude", parsed.lat.toString());
+            if (parsed.lng) queryParams.append("userLongitude", parsed.lng.toString());
+        } catch (err) {
+            console.error("Invalid user_location cookie", err);
+        }
+    }
 
     const response = await vendorService.getVendorsWithFilter(queryParams) as any;
     return response;

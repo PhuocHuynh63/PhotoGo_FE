@@ -13,3 +13,6 @@ export const useSetServicePackage = () => useStore((state: ZUSTAND.IVendorState)
 
 export const useServiceConcept = () => useStore((state: ZUSTAND.IVendorState) => state.concept)
 export const useSetServiceConcept = () => useStore((state: ZUSTAND.IVendorState) => state.setConcept)
+
+export const useReviews = () => useStore((state: ZUSTAND.IVendorState) => state.reviews)
+export const useSetReviews = () => useStore((state: ZUSTAND.IVendorState) => state.setReviews)

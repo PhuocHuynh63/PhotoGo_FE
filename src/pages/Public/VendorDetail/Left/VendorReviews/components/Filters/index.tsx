@@ -21,7 +21,6 @@ const Filters = ({
     setSelectSortBy,
     setRatingFilter,
 }: FiltersProps) => {
-    const [showFilters, setShowFilters] = useState<boolean>(false);
 
     return (
         <Card className={`shadow-lg ${activeTab !== "reviews" ? "hidden md:block" : ""}`}>
