@@ -105,7 +105,7 @@ const VendorCover = () => {
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex items-center">
                                         <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                                        <span className="ml-1 font-medium">{(vendorData?.averageRating).toFixed(1) ?? 'N/A'}</span>
+                                        <span className="ml-1 font-medium">{(vendorData?.averageRating)?.toFixed(1) ?? 'N/A'}</span>
                                         <span className="text-muted-foreground ml-1">({reviewCount} đánh giá)</span>
                                     </div>
                                     <span className="text-muted-foreground">•</span>
