@@ -1,31 +1,39 @@
 'use client'
 
-import { useVendor } from '@stores/vendor/selectors'
+import { useReviews, useVendor } from '@stores/vendor/selectors'
 import { ChevronRight } from 'lucide-react'
 import React from 'react'
 import { ROUTES } from '@routes'
 import { useParams, useRouter } from 'next/navigation'
 import ButtonNoBackgroundVendorDetail from '../components/ButtonNoBackGroundVendorDetail'
 import PackageVendor from '../components/PackageVendor'
-import ReviewVendor from '../components/ReviewVendor'
 import PortfolioVendor from '../components/PortfolioVendor'
 import { IVendor } from '@models/vendor/common.model'
+import ReviewsList from '../VendorReviews/components/ReviewsList'
+import { IReviewPaginationResponse } from '@models/review/repsonse.model'
 
 
 const VendorOverviewPage = () => {
+  /**
+    * Get slug from URL
+    */
+  const router = useRouter();
+  const params = useParams();
+  const slug = params?.slug as string;
+  //-----------------------------End---------------------------------//
 
   /**
     * Call vendor store to get vendor data
     */
-  const vendorData = useVendor() as IVendor
+  const vendorData = useVendor() as IVendor;
   //-----------------------------End---------------------------------//
 
   /**
-   * Get slug from URL
-   */
-  const router = useRouter()
-  const params = useParams()
-  const slug = params?.slug as string
+    * Get reviews from vendor store
+    */
+  const review = useReviews() as IReviewPaginationResponse;
+  console.log('>>>>>>>>>>>>>>>>>', review);
+
   //-----------------------------End---------------------------------//
 
   return (
@@ -66,7 +74,11 @@ const VendorOverviewPage = () => {
 
         {/* Review */}
         <section className="mb-8" >
-          <ReviewVendor />
+          <h2 className="text-2xl font-bold mb-4">Đánh giá từ khách hàng</h2>
+          <ReviewsList
+            isOverview={true}
+            reviewsToRender={review?.data}
+          />
         </section>
 
         <div className="flex justify-center mt-4">

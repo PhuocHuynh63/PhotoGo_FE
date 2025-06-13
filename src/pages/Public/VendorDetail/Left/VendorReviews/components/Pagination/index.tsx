@@ -16,19 +16,13 @@ type PaginationProps = {
 }
 
 const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: PaginationProps) => {
+    if (!pagination || !pagination.totalItems) return null;
+    
     const { totalItems, firstItemOnPage } = pagination;
 
-    console.log("Pagination Component Rendered", {
-        activeTab,
-        totalItems,
-        firstItemOnPage,
-        currentPage,
-    });
-
-
-    const totalPages = totalItems.totalPage;
-    const totalItem = totalItems.totalItem;
-    const lastItemOnPage = Math.min(firstItemOnPage + totalItems.pageSize - 1, totalItem);
+    const totalPages = totalItems?.totalPage;
+    const totalItem = totalItems?.totalItem;
+    const lastItemOnPage = Math.min(firstItemOnPage + totalItems?.pageSize - 1, totalItem);
 
 
     return (

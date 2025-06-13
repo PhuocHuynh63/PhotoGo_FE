@@ -1,22 +1,25 @@
 "use client"
 import { useState, useMemo } from "react"
 import { Tabs, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
-import { PAGES } from "../../../../../types/IPages"
 import { IVendor } from "@models/vendor/common.model"
 import ReviewsSummary from "./components/ReviewsSummary"
 import Filters from "./components/Filters"
 import ReviewsList from "./components/ReviewsList"
 import { useReviewsByVendorId } from "@hooks/useReview"
 import Pagination from "./components/Pagination"
+import { useReviews, useVendor } from "@stores/vendor/selectors"
+import { IReviewPaginationResponse } from "@models/review/repsonse.model"
 
-const VendorReviewsPage = ({ vendor, review }: PAGES.IReviewProps) => {
+const VendorReviewsPage = () => {
   /**
    * Define state
    */
   const [activeTab, setActiveTab] = useState<string>("Đánh giá");
   //------------------------End------------------------//
 
-  const vendorData = vendor?.data as IVendor;
+
+  const vendorData = useVendor() as IVendor;
+  const review = useReviews() as IReviewPaginationResponse;
 
   /**
    * State for rating filter, sort options, and their handlers
