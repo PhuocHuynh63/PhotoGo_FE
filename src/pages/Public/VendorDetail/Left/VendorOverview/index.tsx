@@ -32,8 +32,6 @@ const VendorOverviewPage = () => {
     * Get reviews from vendor store
     */
   const review = useReviews() as IReviewPaginationResponse;
-  console.log('>>>>>>>>>>>>>>>>>', review);
-
   //-----------------------------End---------------------------------//
 
   return (
