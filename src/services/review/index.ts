@@ -3,17 +3,17 @@ import http from "@configs/fetch"
 const reviewService = {
     getReviewByVendorId: async (
         vendorId: string,
-        current: number = 1,
-        pageSize: number = 10,
+        current?: number,
+        pageSize?: number,
         rating?: number,
-        sortBy: string = 'rating',
-        sortDirection: string = 'desc'
+        sortBy?: string,
+        sortDirection?: string,
     ) => {
         const queryParams = new URLSearchParams({
-            current: current.toString(),
-            pageSize: pageSize.toString(),
-            sortBy,
-            sortDirection,
+            current: (current || 1).toString(),
+            pageSize: (pageSize || 5).toString(),
+            sortBy: sortBy || 'created_at',
+            sortDirection: sortDirection || 'desc',
         })
 
         if (rating !== undefined) {

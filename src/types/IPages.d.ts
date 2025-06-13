@@ -72,6 +72,7 @@ declare namespace PAGES {
         vendor: IVendor;
         session: METADATA.ISession | null;
         concept: IServiceConceptImageModel;
+        review: IReviewPaginationResponse;
     }
 
     interface IChatProps {
@@ -87,8 +88,8 @@ declare namespace PAGES {
     }
 
     interface IReviewProps {
-        vendor: IVendorResponse;
-        review: IReviewPaginationResponse;
+        vendor?: IVendorResponse;
+        review?: IReviewPaginationResponse;
     }
 
     interface IAttendancePageProps {

@@ -6,28 +6,33 @@ import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'
 import { ROUTES } from '@routes'
-import { useVendor } from '@stores/vendor/selectors'
+import { useReviews, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Skeleton } from '@components/Atoms/ui/skeleton'
 import { Socket } from 'socket.io-client'
 import { getSocket } from '@configs/socket'
 import { useSession } from '@stores/user/selectors'
+import { IReviewPaginationResponse } from '@models/review/repsonse.model'
 
 const VendorCover = () => {
 
     /**
-     * Call vendor store to get vendor data
+     * Define state for slug and router
      */
-    const vendorData = useVendor() as IVendor
+    const router = useRouter();
+    const params = useParams();
+    const slug = params?.slug as string;
+    const session = useSession();
+    const token = session?.accessToken || '';
     //-----------------------------End---------------------------------//
 
-    const router = useRouter()
-    const params = useParams()
-    const slug = params?.slug as string
-
-
-    const session = useSession()
-    const token = session?.accessToken || '';
+    /**
+     * Call vendor store to get vendor data
+     */
+    const vendorData = useVendor() as IVendor;
+    const reviews = useReviews() as IReviewPaginationResponse;
+    const reviewCount = reviews.data?.data.length || 0;
+    //-----------------------------End---------------------------------//
 
     /**
      * Socket connection to handle chat functionality
@@ -100,8 +105,8 @@ const VendorCover = () => {
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="flex items-center">
                                         <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                                        <span className="ml-1 font-medium">{vendorData?.averageRating}</span>
-                                        <span className="text-muted-foreground ml-1">({/*{vendorData?.reviewCount}*/}0 đánh giá)</span>
+                                        <span className="ml-1 font-medium">{(vendorData?.averageRating)?.toFixed(1) ?? 'N/A'}</span>
+                                        <span className="text-muted-foreground ml-1">({reviewCount} đánh giá)</span>
                                     </div>
                                     <span className="text-muted-foreground">•</span>
                                     <div className="flex items-center text-muted-foreground">

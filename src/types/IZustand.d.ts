@@ -3,6 +3,7 @@ import { IServiceConcept, IServiceConceptImage } from "@models/serviceConcepts/c
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IUser } from "@models/user/common.model";
 import { ICartItem } from "@models/cart/common.model";
+import { IReviewPaginationResponse } from "@models/review/repsonse.model";
 
 declare module ZUSTAND {
     export interface ICheckoutState {
@@ -33,11 +34,13 @@ declare module ZUSTAND {
         serviceConceptImages: IServiceConceptImage[];
         servicePackage: IServicePackage;
         concept: IServiceConcept;
+        reviews: IReviewPaginationResponse;
         setVendor: (vendor: IVendor) => void;
         setServiceImages: (serviceConceptImages: IServiceConceptImage) => void;
         addMoreConceptImages: (images: IServiceConceptImageModel[]) => void;
         setServicePackage: (servicePackage: IServicePackage) => void;
         setConcept: (concept: IServiceConcept) => void;
+        setReviews: (reviews: IReviewPaginationResponse) => void;
     }
 
     export interface IUserState {
@@ -57,6 +60,6 @@ declare module ZUSTAND {
     }
 
     export interface IChatingState {
-        
+
     }
 }
