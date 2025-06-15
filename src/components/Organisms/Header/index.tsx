@@ -18,6 +18,8 @@ import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 import { usePathname } from "next/navigation";
 import { useCart, useSetCart } from "@stores/cart/selectors";
 import { formatRelativeTime } from "@utils/helpers/Date";
+import { AvatarWithBorder } from "../AvatarBorder";
+import { Rank } from "../AvatarBorder/rankStyles";
 
 export default function Header({ user, cart }: PAGES.IHeader) {
     //#region States
@@ -229,12 +231,16 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
                     >
-                        <Avatar
-                            className="cursor-pointer"
-                            src={user?.avatarUrl || "/default-avatar.png"}
-                            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-                            alt={user?.fullName || "User"}
-                        />
+                        <AvatarWithBorder
+                            rank={user?.rank as Rank}
+                        >
+                            <Avatar
+                                className="cursor-pointer"
+                                src={user?.avatarUrl || "/default-avatar.png"}
+                                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                alt={user?.fullName || "User"}
+                            />
+                        </AvatarWithBorder>
                     </motion.div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

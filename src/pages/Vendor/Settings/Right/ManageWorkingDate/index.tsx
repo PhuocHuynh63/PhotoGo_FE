@@ -1,33 +1,20 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@components/Atoms/ui/card'
 import { Button } from '@components/Atoms/ui/button'
-import { RefreshCw } from 'lucide-react'
+import { Calendar, RefreshCw } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@components/Atoms/ui/accordion'
-import { Badge } from '@components/Atoms/ui/badge'
-import { Label } from '@components/Atoms/ui/label'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@components/Atoms/ui/select'
-import { Input } from '@components/Atoms/ui/input'
-import { Trash2, Edit, Check, X } from 'lucide-react'
-import { Alert, AlertTitle, AlertDescription } from '@components/Atoms/ui/alert'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@components/Atoms/ui/alert-dialog'
-
-import React, { useState } from 'react'
 import { cn } from '@utils/helpers/CN'
 import locationAvailabilityService from '@services/locationAvailability'
 import { toast } from 'react-hot-toast'
 import { PAGES } from '../../../../../types/IPages'
 import { ILocationScheduleResponse } from '@models/locationAvailability/response.model'
-import { ISlotTime } from '@models/locationAvailability/common.model'
+import React, { useState, useEffect } from 'react'
 
+import YearSelector from './components/YearSelector'
+import MonthList from './components/MonthList'
+import DeleteConfirmationDialog from './components/DeleteConfirmationDialog'
+import { formatTime, getAllYears, getMonthFromDate, getMonthName, getWeekdayLabel, getWeekFromDate, groupWorkingHoursByMonthAndWeek } from '@utils/helpers/Date'
 
-
-const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':')
-    return `${hours}:${minutes}`
-}
-
-const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours }: PAGES.IManageWorkingDateProps) => {
-
+const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours, setShowActionBar, setSelectedWorkingDateId, setSelectedWorkingDateAvailability }: PAGES.IManageWorkingDateProps) => {
     const [selectedDateForSlots, setSelectedDateForSlots] = useState<{ [key: string]: string }>({})
     const [editingSlot, setEditingSlot] = useState<{ workingDateId: string, slotTimeId: string, selectedDate: string } | null>(null)
     const [editingMaxBookings, setEditingMaxBookings] = useState(1)
@@ -35,6 +22,39 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [workingHoursToDelete, setWorkingHoursToDelete] = useState<string | null>(null)
     const [isDeletingWorkingHours, setIsDeletingWorkingHours] = useState(false)
+    const [selectedYear, setSelectedYear] = useState<number>(() => {
+        const now = new Date()
+        return now.getFullYear()
+    })
+    const [activeMonth, setActiveMonth] = useState<string | null>(null)
+    const [prevSelectedDate, setPrevSelectedDate] = useState<string | null>(null)
+
+    const years = getAllYears(workingHoursList)
+    const groupedData = groupWorkingHoursByMonthAndWeek(workingHoursList, selectedYear)
+
+    // Reset ActionBar animation when selected date changes
+    useEffect(() => {
+        const currentSelectedDate = Object.values(selectedDateForSlots)[0]
+        if (currentSelectedDate && currentSelectedDate !== prevSelectedDate) {
+            // Temporarily hide ActionBar
+            setShowActionBar(false)
+            setSelectedWorkingDateId("")
+            setSelectedWorkingDateAvailability(true)
+
+            // Show ActionBar again after a short delay
+            setTimeout(() => {
+                const workingHoursId = Object.keys(selectedDateForSlots)[0]
+                const workingDate = workingHoursList.find(wh => wh.id === workingHoursId)
+                if (workingDate) {
+                    setShowActionBar(true)
+                    setSelectedWorkingDateId(workingDate.workingDates[0].id)
+                    setSelectedWorkingDateAvailability(workingDate.workingDates[0].isAvailable)
+                }
+            }, 50)
+
+            setPrevSelectedDate(currentSelectedDate)
+        }
+    }, [selectedDateForSlots])
 
     const handleDeleteWorkingHours = async (workingHoursId: string, e: React.MouseEvent) => {
         e.stopPropagation() // Prevent accordion from toggling
@@ -70,19 +90,16 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
         setWorkingHoursToDelete(null)
     }
 
-    // Handle editing slot
     const handleEditSlot = async (workingDateId: string, slotTimeId: string, selectedDate: string, currentMaxBookings: number) => {
         setEditingSlot({ workingDateId, slotTimeId, selectedDate })
         setEditingMaxBookings(currentMaxBookings)
     }
 
-    // Handle canceling edit
     const handleCancelEdit = () => {
         setEditingSlot(null)
         setEditingMaxBookings(1)
     }
 
-    // Handle updating slot
     const handleUpdateSlot = async () => {
         if (!editingSlot) return
 
@@ -108,249 +125,112 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours 
         }
     }
 
+    const handleDateSelect = (workingHoursId: string, date: string) => {
+        setSelectedDateForSlots((prev) => ({
+            ...prev,
+            [workingHoursId]: date,
+        }))
+    }
+
+    const handleDateUnselect = (workingHoursId: string) => {
+        setSelectedDateForSlots((prev) => {
+            const newState = { ...prev }
+            delete newState[workingHoursId]
+            return newState
+        })
+    }
+
     return (
-        <>
-            <Card className="md:col-span-2">
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                        <CardTitle>Lịch làm việc đã tạo</CardTitle>
-                        <CardDescription>Quản lý các lịch làm việc và khung giờ</CardDescription>
+        <Card className="md:col-span-2 shadow-sm border-slate-200">
+            <CardHeader className="flex flex-row items-center justify-between bg-slate-50 rounded-t-lg">
+                <div>
+                    <CardTitle className="text-slate-800 flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-emerald-600" />
+                        Lịch làm việc đã tạo
+                    </CardTitle>
+                    <CardDescription className="text-slate-500">Quản lý các lịch làm việc và khung giờ</CardDescription>
+                </div>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchWorkingHours}
+                    disabled={isLoadingData}
+                    className="cursor-pointer hover:bg-slate-100 border-slate-200"
+                >
+                    <RefreshCw className={cn("h-4 w-4 mr-2", isLoadingData && "animate-spin")} />
+                    Làm mới
+                </Button>
+            </CardHeader>
+            <CardContent className="p-4 md:p-6">
+                <YearSelector
+                    selectedYear={selectedYear}
+                    years={years}
+                    onYearChange={setSelectedYear}
+                />
+
+                {isLoadingData ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="h-10 w-10 animate-spin text-emerald-600" />
+                            <span className="text-slate-500 mt-2">Đang tải dữ liệu...</span>
+                        </div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={fetchWorkingHours} disabled={isLoadingData} className='cursor-pointer'>
-                        <RefreshCw className={cn("h-4 w-4 mr-2", isLoadingData && "animate-spin")} />
-                        Làm mới
-                    </Button>
-                </CardHeader>
-                <CardContent>
-                    {isLoadingData ? (
-                        <div className="flex justify-center items-center py-8">
-                            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                        </div>
-                    ) : workingHoursList?.length > 0 ? (
-                        <Accordion type="single" collapsible className="w-full">
-                            {workingHoursList?.map((workingHours) => (
-                                <AccordionItem key={workingHours.id} value={workingHours.id}>
-                                    <div className="relative">
-                                        <AccordionTrigger className="hover:bg-gray-50 px-4 rounded-md cursor-pointer pr-16">
-                                            <div className="flex items-center justify-between w-full">
-                                                <div className="flex flex-col items-start text-left">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="font-medium">
-                                                            {formatTime(workingHours.startTime)} - {formatTime(workingHours.endTime)}
-                                                        </span>
-                                                        <Badge variant={workingHours.isAvailable ? "default" : "outline"}>
-                                                            {workingHours.isAvailable ? "Hoạt động" : "Không hoạt động"}
-                                                        </Badge>
-                                                    </div>
-                                                    <span className="text-sm text-gray-500">
-                                                        {workingHours?.workingDates?.length} ngày từ {workingHours?.workingDates[0]?.date} đến{" "}
-                                                        {workingHours?.workingDates[workingHours?.workingDates?.length - 1]?.date}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </AccordionTrigger>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={(e) => handleDeleteWorkingHours(workingHours.id, e)}
-                                            className="absolute top-1/2 right-4 -translate-y-1/2 text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    <AccordionContent className="px-4">
-                                        <div className="space-y-4">
-                                            <div className="flex flex-wrap gap-2">
-                                                {workingHours.workingDates
-                                                    ?.sort((a, b) => {
-                                                        // Convert date strings to Date objects for proper sorting
-                                                        const dateA = new Date(a.date.split('/').reverse().join('-'))
-                                                        const dateB = new Date(b.date.split('/').reverse().join('-'))
-                                                        return dateA.getTime() - dateB.getTime()
-                                                    })
-                                                    ?.map((workingDate) => (
-                                                        <Badge
-                                                            key={workingDate.id}
-                                                            variant={selectedDateForSlots[workingHours.id] === workingDate.date ? "default" : "outline"}
-                                                            className="cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                                                            onClick={() => setSelectedDateForSlots(prev => ({ ...prev, [workingHours.id]: workingDate.date }))}
-                                                        >
-                                                            {workingDate.date}
-                                                        </Badge>
-                                                    ))}
-                                            </div>
+                ) : workingHoursList?.length > 0 ? (
+                    <div className="space-y-4">
+                        {Array.from({ length: 12 }, (_, i) => i + 1)
+                            .filter((month) => groupedData[month] && Object.keys(groupedData[month]).length > 0)
+                            .map((month) => {
+                                const monthData = groupedData[month]
+                                const isActive = activeMonth === `month-${month}`
 
-                                            <div className="border rounded-md p-4">
-                                                <div className="flex justify-between items-center mb-4">
-                                                    <h4 className="font-medium">Khung giờ làm việc</h4>
-                                                    <div className="flex items-center gap-2">
-                                                        <Label className="text-sm">Chọn ngày:</Label>
-                                                        <Select
-                                                            value={selectedDateForSlots[workingHours.id] || ""}
-                                                            onValueChange={(value) => setSelectedDateForSlots(prev => ({ ...prev, [workingHours.id]: value }))}
-                                                        >
-                                                            <SelectTrigger className="w-32">
-                                                                <SelectValue placeholder="Chọn ngày" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {workingHours.workingDates
-                                                                    ?.sort((a, b) => {
-                                                                        const dateA = new Date(a.date.split('/').reverse().join('-'))
-                                                                        const dateB = new Date(b.date.split('/').reverse().join('-'))
-                                                                        return dateA.getTime() - dateB.getTime()
-                                                                    })
-                                                                    ?.map((workingDate) => (
-                                                                        <SelectItem key={workingDate.id} value={workingDate.date}>
-                                                                            {workingDate.date}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                </div>
+                                return (
+                                    <MonthList
+                                        key={`month-${month}`}
+                                        month={month}
+                                        monthData={monthData}
+                                        isActive={isActive}
+                                        selectedDateForSlots={selectedDateForSlots}
+                                        editingSlot={editingSlot}
+                                        editingMaxBookings={editingMaxBookings}
+                                        isUpdatingSlot={isUpdatingSlot}
+                                        onToggle={() => setActiveMonth(activeMonth === `month-${month}` ? null : `month-${month}`)}
+                                        onDelete={handleDeleteWorkingHours}
+                                        onDateSelect={handleDateSelect}
+                                        onDateUnselect={handleDateUnselect}
+                                        onEditSlot={handleEditSlot}
+                                        onUpdateSlot={handleUpdateSlot}
+                                        onCancelEdit={handleCancelEdit}
+                                        onMaxBookingsChange={setEditingMaxBookings}
+                                        formatTime={formatTime}
+                                        getMonthFromDate={getMonthFromDate}
+                                        getWeekFromDate={getWeekFromDate}
+                                        getWeekdayLabel={getWeekdayLabel}
+                                        getMonthName={getMonthName}
+                                        setShowActionBar={setShowActionBar}
+                                        setSelectedWorkingDateId={setSelectedWorkingDateId}
+                                    />
+                                )
+                            })}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 border rounded-lg bg-slate-50">
+                        <Calendar className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                        <p className="text-slate-600 font-medium">Chưa có lịch làm việc nào được tạo</p>
+                        <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
+                            Sử dụng form bên trái để tạo lịch làm việc mới. Bạn có thể thêm ngày, giờ và các khung thời gian cho lịch
+                            làm việc.
+                        </p>
+                    </div>
+                )}
+            </CardContent>
 
-                                                {workingHours.slotTimes?.length > 0 && selectedDateForSlots[workingHours.id] ? (
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                        {workingHours.slotTimes?.map((slot: ISlotTime) => {
-                                                            // Find the workingDate ID for the selected date
-                                                            const selectedDate = selectedDateForSlots[workingHours.id]
-                                                            const selectedWorkingDate = workingHours.workingDates?.find(wd => wd.date === selectedDate)
-                                                            const workingDateId = selectedWorkingDate?.id || workingHours.id
-
-                                                            const isEditing = editingSlot?.workingDateId === workingDateId && editingSlot?.slotTimeId === slot.id
-
-                                                            return (
-                                                                <div key={slot.slot} className="border rounded-md p-3 flex flex-col space-y-2">
-                                                                    <div className="flex justify-between items-center">
-                                                                        <span className="font-medium">Slot {slot.slot}</span>
-                                                                        {!isEditing ? (
-                                                                            <div className="flex items-center gap-2">
-                                                                                <Badge variant="outline" className="text-xs">
-                                                                                    {slot.maxParallelBookings} lịch
-                                                                                </Badge>
-                                                                                <Button
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    onClick={() => handleEditSlot(workingDateId, slot.id, selectedDate, slot.maxParallelBookings)}
-                                                                                    className="h-6 w-6 p-0 text-gray-500 hover:text-blue-600"
-                                                                                >
-                                                                                    <Edit className="h-3 w-3" />
-                                                                                </Button>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="flex items-center gap-1">
-                                                                                <Input
-                                                                                    type="number"
-                                                                                    min="1"
-                                                                                    max="10"
-                                                                                    value={editingMaxBookings}
-                                                                                    onChange={(e) => setEditingMaxBookings(parseInt(e.target.value) || 1)}
-                                                                                    className="w-16 h-6 text-xs"
-                                                                                />
-                                                                                <Button
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    onClick={handleUpdateSlot}
-                                                                                    disabled={isUpdatingSlot}
-                                                                                    className="h-6 w-6 p-0 text-green-600 hover:text-green-700"
-                                                                                >
-                                                                                    {isUpdatingSlot ? (
-                                                                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                                                                    ) : (
-                                                                                        <Check className="h-3 w-3" />
-                                                                                    )}
-                                                                                </Button>
-                                                                                <Button
-                                                                                    variant="ghost"
-                                                                                    size="sm"
-                                                                                    onClick={handleCancelEdit}
-                                                                                    className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
-                                                                                >
-                                                                                    <X className="h-3 w-3" />
-                                                                                </Button>
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-                                                                    <span className="text-sm text-gray-600">
-                                                                        {formatTime(slot.startSlotTime)} - {formatTime(slot.endSlotTime)}
-                                                                    </span>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                ) : workingHours.slotTimes?.length > 0 ? (
-                                                    <div className="text-center py-4 text-gray-500">
-                                                        <p>Vui lòng chọn ngày để xem và chỉnh sửa khung giờ</p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="space-y-3">
-                                                        <Alert>
-                                                            <AlertTitle>Chưa có khung giờ</AlertTitle>
-                                                            <AlertDescription>
-                                                                Lịch làm việc này chưa có khung giờ. Bấm nút bên dưới để tạo các khung giờ tự động.
-                                                            </AlertDescription>
-                                                        </Alert>
-                                                        {/* <Button
-                                                                    onClick={() => handleCreateTimeSlots(workingHours.id)}
-                                                                    disabled={isLoadingSlots}
-                                                                    className="w-full"
-                                                                >
-                                                                    {isLoadingSlots ? (
-                                                                        <>
-                                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                                            Đang tạo...
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <Plus className="mr-2 h-4 w-4" />
-                                                                            Tạo khung giờ tự động
-                                                                        </>
-                                                                    )}
-                                                                </Button> */}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    ) : (
-                        <div className="text-center py-8 border rounded-md">
-                            <p className="text-gray-500">Chưa có lịch làm việc nào được tạo</p>
-                            <p className="text-sm text-gray-400 mt-1">Sử dụng form bên trái để tạo lịch làm việc mới</p>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-            <AlertDialog open={showDeleteModal} onOpenChange={cancelDeleteWorkingHours}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Bạn có chắc chắn muốn xóa lịch làm việc này? Hành động này không thể hoàn tác.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel className='cursor-pointer' disabled={isDeletingWorkingHours}>Hủy</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={confirmDeleteWorkingHours}
-                            disabled={isDeletingWorkingHours}
-                            className="cursor-pointer bg-red-600 hover:bg-red-700"
-                        >
-                            {isDeletingWorkingHours ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Đang xóa...
-                                </>
-                            ) : (
-                                "Xóa"
-                            )}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </>
+            <DeleteConfirmationDialog
+                isOpen={showDeleteModal}
+                isDeleting={isDeletingWorkingHours}
+                onCancel={cancelDeleteWorkingHours}
+                onConfirm={confirmDeleteWorkingHours}
+            />
+        </Card>
     )
 }
 

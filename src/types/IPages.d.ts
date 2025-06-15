@@ -112,5 +112,13 @@ declare namespace PAGES {
         workingHoursList: ILocationSchedule[];
         isLoadingData: boolean;
         fetchWorkingHours: () => void;
+        showActionBar: boolean;
+        setShowActionBar: (show: boolean) => void;
+        setSelectedWorkingDateId: (id: string) => void;
+        setSelectedWorkingDateAvailability: (isAvailable: boolean) => void;
+    }
+
+    interface IVendorProfileInfoProps {
+        profileData: IVendor;
     }
 }
