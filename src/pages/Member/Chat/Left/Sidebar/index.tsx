@@ -29,7 +29,7 @@ export default function SidebarChat({
     const [searchValue, setSearchValue] = useState('');
 
     const filteredConversations = conversations?.filter((conv) =>
-        conv.user.data.fullName.toLowerCase().includes(searchValue.toLowerCase())
+        conv.user.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
 
     /**
@@ -68,6 +68,8 @@ export default function SidebarChat({
         onSelectConversation(conversation);
     };
     //---------------------End---------------------//
+    console.log('Filtered Conversations:', filteredConversations);
+
 
     return (
         <>
@@ -97,8 +99,8 @@ export default function SidebarChat({
                             >
                                 <div className="relative">
                                     <Avatar className="h-12 w-12 mr-3"
-                                        src={conversation.user.data.avatarUrl}
-                                        alt={conversation.user.data.fullName}
+                                        src={conversation.user.avatarUrl}
+                                        alt={conversation.user.fullName}
                                     />
                                     {conversation.user.status === 'online' && (
                                         <span className="absolute bottom-0 right-3 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
@@ -106,7 +108,7 @@ export default function SidebarChat({
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-center">
-                                        <h3 className="font-semibold truncate">{conversation.user.data.fullName}</h3>
+                                        <h3 className="font-semibold truncate">{conversation.user.fullName}</h3>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <p
@@ -116,7 +118,7 @@ export default function SidebarChat({
                                             )}
                                         >
                                             {/* {conversation.lastMessage?.sender_id === userId ? 'Bạn: ' : ''} */}
-                                            {conversation.lastMessage?.text}
+                                            {conversation.lastMessageText}
                                         </p>
                                         {conversation.unreadCount > 0 && (
                                             <span className="bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ml-1">
