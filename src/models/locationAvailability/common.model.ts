@@ -34,6 +34,7 @@ export type ILocation = z.TypeOf<typeof LocationModel>
 export const WorkingDateModel = z.object({
     id: z.string(),
     date: z.string(),
+    isAvailable: z.boolean(),
 });
 
 /**

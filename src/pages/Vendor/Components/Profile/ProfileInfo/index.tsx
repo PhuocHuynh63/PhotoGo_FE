@@ -1,173 +1,136 @@
 "use client"
 
 import { useState } from "react"
-
-import { CheckCircle } from "lucide-react"
-import { Badge } from "@components/Atoms/ui/badge"
-import { Progress } from "@components/Atoms/ui/progress"
-import { Button } from "@components/Atoms/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
-import { Switch } from "@components/Atoms/ui/switch"
+import { PAGES } from "../../../../../types/IPages"
 
-interface ProfileData {
-    name: string
-    verified: boolean
-    completionPercentage: number
-    email: string
-    phone: string
-    address: string
-    workingHours: string
-    workingDays: string
-    description: string
-    settings: {
-        showProfile: boolean
-        showLocation: boolean
-        emailNotifications: boolean
-    }
+// Import child components
+import ProfileHeader from "@pages/Vendor/Components/Profile/ProfileInfo/components/ProfileHeader"
+import BasicInfo from "@pages/Vendor/Components/Profile/ProfileInfo/components/BasicInfo"
+import DisplaySettingsComponent from "@pages/Vendor/Components/Profile/ProfileInfo/components/DisplaySettings"
+import ServicesTab from "@pages/Vendor/Components/Profile/ProfileInfo/components/ServicesTab"
+import PricingTab from "@pages/Vendor/Components/Profile/ProfileInfo/components/PricingTab"
+
+interface DisplaySettings {
+    showProfile: boolean;
+    showLocation: boolean;
+    emailNotifications: boolean;
 }
 
-interface ProfileInfoProps {
-    profileData: ProfileData
-}
+export default function ProfileInfo({ profileData }: PAGES.IVendorProfileInfoProps) {
+    // Initialize default settings since vendor model doesn't have settings
+    const [settings, setSettings] = useState<DisplaySettings>({
+        showProfile: true,
+        showLocation: true,
+        emailNotifications: false,
+    })
 
-export default function ProfileInfo({ profileData }: ProfileInfoProps) {
-    const [settings, setSettings] = useState(profileData?.settings)
+    // State for services pagination
+    const [visibleServicesCount, setVisibleServicesCount] = useState(3) // Show 3 services initially
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const SERVICES_PER_LOAD = 3 // Load 3 more services each time
 
-    const handleSettingChange = (setting: keyof typeof settings, value: boolean) => {
-        setSettings((prev) => ({
+    const handleSettingChange = (setting: keyof DisplaySettings, value: boolean) => {
+        setSettings((prev: DisplaySettings) => ({
             ...prev,
             [setting]: value,
         }))
     }
 
+    const handleLoadMoreServices = () => {
+        setIsLoadingMore(true)
+        // Simulate loading delay
+        setTimeout(() => {
+            setVisibleServicesCount(prev => prev + SERVICES_PER_LOAD)
+            setIsLoadingMore(false)
+        }, 500)
+    }
+
+    // Calculate completion percentage based on available data
+    const calculateCompletionPercentage = () => {
+        let completedFields = 0
+        const totalFields = 8
+
+        if (profileData?.name) completedFields++
+        if (profileData?.description) completedFields++
+        if (profileData?.logo) completedFields++
+        if (profileData?.user_id?.email) completedFields++
+        if (profileData?.user_id?.phoneNumber) completedFields++
+        if (profileData?.locations?.length > 0) completedFields++
+        if (profileData?.servicePackages?.length > 0) completedFields++
+        if (profileData?.category) completedFields++
+
+        return Math.round((completedFields / totalFields) * 100)
+    }
+
+    // Calculate min/max prices from all service concepts
+    const calculateConceptPriceRange = () => {
+        if (!profileData?.servicePackages?.length) return null
+
+        const allPrices: number[] = []
+
+        profileData.servicePackages.forEach(servicePackage => {
+            servicePackage.serviceConcepts?.forEach(concept => {
+                const price = parseFloat(concept.price)
+                if (!isNaN(price)) {
+                    allPrices.push(price)
+                }
+            })
+        })
+
+        if (allPrices.length === 0) return null
+
+        return {
+            minPrice: Math.min(...allPrices),
+            maxPrice: Math.max(...allPrices)
+        }
+    }
+
+    const conceptPriceRange = calculateConceptPriceRange()
+    const completionPercentage = calculateCompletionPercentage()
+
     return (
         <div className="p-6">
-            <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-                    {profileData?.name?.charAt(0)}
-                </div>
-
-                <div>
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold">{profileData?.name}</h3>
-                        {profileData?.verified && (
-                            <Badge variant="outline" className="bg-green-200 text-green-800 flex items-center gap-1">
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                Đã xác minh
-                            </Badge>
-                        )}
-                    </div>
-
-                    <div className="mt-2">
-                        <p className="text-sm text-gray-500 mb-1">Hoàn thành hồ sơ</p>
-                        <div className="flex items-center gap-2">
-                            <Progress value={profileData?.completionPercentage} className="w-32 h-2" />
-                            <span className="text-sm font-medium">{profileData?.completionPercentage}%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="ml-auto">
-                    <Button
-                        variant="outline"
-                        className="bg-orange-50 text-orange-500 border-orange-200 hover:bg-orange-100 hover:text-orange-600"
-                    >
-                        Chỉnh sửa
-                    </Button>
-                </div>
-            </div>
+            <ProfileHeader
+                profileData={profileData}
+                completionPercentage={completionPercentage}
+            />
 
             <Tabs defaultValue="info">
                 <TabsList className="mb-4">
-                    <TabsTrigger value="info">Thông tin cơ bản</TabsTrigger>
-                    <TabsTrigger value="services">Dịch vụ</TabsTrigger>
-                    <TabsTrigger value="pricing">Bảng giá</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="info">Thông tin cơ bản</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="services">Dịch vụ</TabsTrigger>
+                    <TabsTrigger className="cursor-pointer" value="pricing">Bảng giá</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="info" className="space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Email</h4>
-                            <p>{profileData?.email}</p>
-                        </div>
+                    <BasicInfo
+                        profileData={profileData}
+                        conceptPriceRange={conceptPriceRange}
+                    />
 
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Địa chỉ</h4>
-                            <p>{profileData?.address}</p>
-                        </div>
-
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Số điện thoại</h4>
-                            <p>{profileData?.phone}</p>
-                        </div>
-
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Giờ mở cửa</h4>
-                            <p>{profileData?.workingHours}</p>
-                        </div>
-
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Website</h4>
-                            <p>www.anhduongstudio.com</p>
-                        </div>
-
-                        <div>
-                            <h4 className="text-sm font-medium text-gray-500 mb-1">Ngày làm việc</h4>
-                            <p>{profileData?.workingDays}</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 className="text-sm font-medium text-gray-500 mb-1">Mô tả</h4>
-                        <p className="text-sm">{profileData?.description}</p>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200">
-                        <h4 className="text-sm font-medium mb-3">Cài đặt hiển thị</h4>
-
-                        <div className="space-y-3">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-medium">Hồ sơ công khai</p>
-                                    <p className="text-sm text-gray-500">Cho phép khách hàng tìm thấy hồ sơ của bạn</p>
-                                </div>
-                                <Switch
-                                    checked={settings?.showProfile}
-                                    onCheckedChange={(checked) => handleSettingChange("showProfile", checked)}
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-medium">Hiển thị địa điểm</p>
-                                    <p className="text-sm text-gray-500">Cho phép khách hàng đặt lịch với bạn</p>
-                                </div>
-                                <Switch
-                                    checked={settings?.showLocation}
-                                    onCheckedChange={(checked) => handleSettingChange("showLocation", checked)}
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-medium">Thông báo email</p>
-                                    <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
-                                </div>
-                                <Switch
-                                    checked={settings?.emailNotifications}
-                                    onCheckedChange={(checked) => handleSettingChange("emailNotifications", checked)}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    <DisplaySettingsComponent
+                        settings={settings}
+                        onSettingChange={handleSettingChange}
+                    />
                 </TabsContent>
 
                 <TabsContent value="services">
-                    <p className="text-gray-500">Chưa có dịch vụ nào được thêm.</p>
+                    <ServicesTab
+                        profileData={profileData}
+                        visibleServicesCount={visibleServicesCount}
+                        isLoadingMore={isLoadingMore}
+                        onLoadMore={handleLoadMoreServices}
+                    />
                 </TabsContent>
 
                 <TabsContent value="pricing">
-                    <p className="text-gray-500">Chưa có bảng giá nào được thêm.</p>
+                    <PricingTab
+                        profileData={profileData}
+                        visibleServicesCount={visibleServicesCount}
+                        isLoadingMore={isLoadingMore}
+                        onLoadMore={handleLoadMoreServices}
+                    />
                 </TabsContent>
             </Tabs>
         </div>

@@ -29,3 +29,15 @@ export const UserRegisterModelResponse = UserModel
 export const UserRegister = BackendResponseModel(UserRegisterModelResponse);
 export type IUserRegisterResponse = z.TypeOf<typeof UserRegister>
 //----------------------End----------------------//
+
+/**
+ * UserModel is a Model for User Update response
+ */
+export const UserUpdateModelResponse = z.object({
+    data: UserModel,
+    message: z.string(),
+    statusCode: z.number()
+})
+export const UserUpdate = BackendResponseModel(UserUpdateModelResponse);
+export type IUserUpdateResponse = z.TypeOf<typeof UserUpdate>
+//----------------------End----------------------//

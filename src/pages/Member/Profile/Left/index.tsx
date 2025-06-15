@@ -1,7 +1,6 @@
 'use client'
 
 import { Card, CardContent } from "@components/Atoms/Card"
-import { Avatar } from "@components/Molecules/Avatar"
 import {
     ChevronRight, Ticket, Wallet, Star, ShoppingBag,
     MessageSquare, Heart, KeyRound,
@@ -12,6 +11,9 @@ import Button from "@components/Atoms/Button"
 import { motion } from "framer-motion"
 import { usePathname, useRouter } from "next/navigation"
 import { ROUTES } from "@routes"
+import { AvatarWithBorder } from "@components/Organisms/AvatarBorder"
+import { Avatar } from "@components/Molecules/Avatar"
+import { Rank } from "@components/Organisms/AvatarBorder/rankStyles"
 
 const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
@@ -61,7 +63,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     const router = useRouter();
     const pathname = usePathname();
     const currentTab = pathname?.split('/').pop() || 'profile';
-    const userRank = user?.rank || ''; // Use empty string if no rank
+    const userRank = user?.rank || 'Đồng'; // Use empty string if no rank
     const gradientClass = getRankGradient(userRank);
 
     return (
@@ -82,12 +84,16 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                 </svg>
 
                 <div className="flex flex-col items-center justify-center relative z-10">
-                    <Avatar
-                        className={`w-2 rounded-full ${userRank.toLowerCase() === 'kim cương' ? 'ring-4 ring-white/30' : ''}`}
-                        src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
-                        alt={user?.fullName || 'User'}
-                        size={100}
-                    />
+                    <AvatarWithBorder
+                        rank={userRank as Rank}
+                    >
+                        <Avatar
+                            src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
+                            alt={user?.fullName || 'User'}
+                            size={100}
+                        />
+                    </AvatarWithBorder>
+
                     <h2 className="mt-3 text-xl font-bold">{user?.fullName || 'Unknown User'}</h2>
 
                     <Button
@@ -142,12 +148,10 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         >
                             <Button
                                 onClick={() => router.push(`${ROUTES.USER.PROFILE}/${tab}`)}
-                                className={`{bg-none shadow-none hover:bg-none ${currentTab === tab
-                                    ? "text-primary font-medium"
-                                    : "text-gray-700 hover:text-primary"}`}
+                                className={`w-full text-left ${currentTab === tab ? "text-primary font-medium" : "text-gray-700 hover:text-primary"}`}
                             >
-                                <Icon className={`w-5 h-5 mr-3`} />
-                                <span>{label}</span>
+                                <Icon className="w-5 h-5 mr-3" />
+                                {label}
                             </Button>
                         </motion.li>
                     ))}

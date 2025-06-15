@@ -4,7 +4,8 @@ import { z } from "zod";
  * Model of LocationAvailability Request
  */
 export const LocationAvailabilityRequestModel = z.object({
-    date: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
     startTime: z.string(),
     endTime: z.string(),
     isAvailable: z.boolean(),
@@ -22,3 +23,15 @@ export const UpdateSlotTimeRequestModel = z.object({
 });
 
 export type IUpdateSlotTimeRequest = z.TypeOf<typeof UpdateSlotTimeRequestModel>;
+
+
+/**
+ * Model of Update Availability Request
+ */
+export const UpdateAvailabilityRequestModel = z.object({
+    isAvailable: z.boolean(),
+});
+
+export type IUpdateAvailabilityRequest = z.TypeOf<typeof UpdateAvailabilityRequestModel>;
+
+//----------------------End----------------------//
