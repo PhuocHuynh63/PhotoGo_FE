@@ -11,28 +11,42 @@ import { Clock, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react'
 
 type ReviewsListProps = {
-    activeTab: string;
+    activeTab?: string;
     reviewsToRender: any;
     isLoading?: boolean;
+    isOverview?: boolean;
 }
 
-const ReviewsList = ({ activeTab, reviewsToRender, isLoading }: ReviewsListProps) => {
-    const [showSkeleton, setShowSkeleton] = useState(true);
-    const reviewsFromMember = reviewsToRender?.data as IReviewVendorDetailModel[];
+const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: ReviewsListProps) => {
 
+    /**
+     * If the active tab is not "reviews", we hide the reviews list on larger screens
+     */
+    const reviewsFromMember = reviewsToRender?.data as IReviewVendorDetailModel[];
+    const reviewsToDisplay = isOverview
+        ? reviewsFromMember?.slice(0, 1)
+        : reviewsFromMember;
+    //-----------------------------End---------------------------------//
+
+    /**
+     * Rendor skeleton
+     */
+    const [showSkeleton, setShowSkeleton] = useState(true);
     if (isLoading || showSkeleton) {
+        const skeletonCount = isOverview ? 1 : 3;
         return (
             <div className={`space-y-4 sm:space-y-6 ${activeTab !== "reviews" ? "hidden md:block" : ""}`}>
-                {Array.from({ length: 3 }).map((_, index) => (
+                {Array.from({ length: skeletonCount }).map((_, index) => (
                     <ReviewSkeleton key={index} delay={index * 150} setShowSkeleton={setShowSkeleton} />
                 ))}
             </div>
         );
     }
+    //----------------------End---------------------//
 
     return (
         <div className={`space-y-4 sm:space-y-6 ${activeTab !== "reviews" ? "hidden md:block" : ""}`}>
-            {reviewsFromMember?.length === 0 ? (
+            {reviewsToDisplay?.length === 0 ? (
                 <Card className="shadow-lg">
                     <CardContent className="p-6 sm:p-12 text-center">
                         <div className="text-gray-400 mb-4">
@@ -43,7 +57,7 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading }: ReviewsListProps
                     </CardContent>
                 </Card>
             ) : (
-                reviewsFromMember?.map((r) => (
+                reviewsToDisplay?.map((r) => (
                     <Card key={r.id} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
                         <CardContent className="p-4 sm:p-6">
                             <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4">

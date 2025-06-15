@@ -2,6 +2,7 @@ import { IVendor } from "@models/vendor/common.model"
 import { ZUSTAND } from "../../../types/IZustand"
 import { IServicePackage } from "@models/servicePackages/common.model"
 import { IServiceConcept } from "@models/serviceConcepts/common.model"
+import { IReviewPaginationResponse } from "@models/review/repsonse.model"
 
 export const createVendorSlice = (
     set: any
@@ -10,6 +11,7 @@ export const createVendorSlice = (
     serviceConceptImages: [],
     servicePackage: {} as IServicePackage,
     concept: {} as IServiceConcept,
+    reviews: {} as IReviewPaginationResponse,
 
     setVendor(vendor) {
         return set(() => ({
@@ -38,6 +40,12 @@ export const createVendorSlice = (
     setConcept(concept) {
         return set(() => ({
             concept: concept,
+        }))
+    },
+
+    setReviews(reviews) {
+        return set(() => ({
+            reviews: reviews,
         }))
     },
 })

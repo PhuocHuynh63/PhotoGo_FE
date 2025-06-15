@@ -2,23 +2,28 @@
 
 import { Button } from '@components/Atoms/ui/button';
 import { Card, CardContent } from '@components/Atoms/ui/card';
+import { IPagination } from '@models/metadata';
 import React from 'react'
 
 type PaginationProps = {
     activeTab: string;
     pagination: {
-        totalItems: number,
-        totalPages: number,
+        totalItems: IPagination,
         firstItemOnPage: number,
-        lastItemOnPage: number,
     };
     currentPage: number;
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: PaginationProps) => {
-    if (activeTab !== "reviews" || !pagination) return null;
-    const { totalItems, totalPages, firstItemOnPage, lastItemOnPage } = pagination;
+    if (!pagination || !pagination.totalItems) return null;
+    
+    const { totalItems, firstItemOnPage } = pagination;
+
+    const totalPages = totalItems?.totalPage;
+    const totalItem = totalItems?.totalItem;
+    const lastItemOnPage = Math.min(firstItemOnPage + totalItems?.pageSize - 1, totalItem);
+
 
     return (
         <>
@@ -27,7 +32,7 @@ const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: Pagi
                     <CardContent className="p-4 sm:p-6">
                         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-4 xs:gap-2">
                             <div className="text-xs sm:text-sm text-gray-600 text-center xs:text-left">
-                                Đang hiển thị {firstItemOnPage} đến {lastItemOnPage} của {totalItems} đánh giá
+                                Đang hiển thị {firstItemOnPage} đến {lastItemOnPage}  của {totalItem} đánh giá
                             </div>
                             <div className="flex items-center justify-center xs:justify-end space-x-1 sm:space-x-2">
                                 <Button
@@ -35,7 +40,7 @@ const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: Pagi
                                     size="sm"
                                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    className="h-8 px-2 sm:px-3 text-xs sm:text-sm"
+                                    className="cursor-pointer h-8 px-2 sm:px-3 text-xs sm:text-sm"
                                 >
                                     Trước
                                 </Button>
@@ -53,7 +58,7 @@ const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: Pagi
                                                 variant={currentPage === page ? "default" : "outline"}
                                                 size="sm"
                                                 onClick={() => setCurrentPage(page)}
-                                                className={`h-8 w-8 p-0 text-xs sm:text-sm ${currentPage === page ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
+                                                className={`cursor-pointer h-8 w-8 p-0 text-xs sm:text-sm ${currentPage === page ? "bg-blue-600 hover:bg-blue-700 text-white" : ""}`}
                                             >
                                                 {page}
                                             </Button>
@@ -76,7 +81,7 @@ const Pagination = ({ activeTab, pagination, currentPage, setCurrentPage }: Pagi
                                     size="sm"
                                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    className="h-8 px-2 sm:px-3 text-xs sm:text-sm"
+                                    className="cursor-pointer h-8 px-2 sm:px-3 text-xs sm:text-sm"
                                 >
                                     Sau
                                 </Button>

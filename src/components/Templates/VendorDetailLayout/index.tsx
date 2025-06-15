@@ -8,14 +8,15 @@ import VendorContactInformation from '@pages/Public/VendorDetail/Right/ContactIn
 import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
-import { useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
+import { useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
 import { useSetSession } from '@stores/user/selectors';
 
 const VendorDetailLayoutPage = ({
     children,
     vendor,
     session,
-    concept
+    concept,
+    review
 }: PAGES.IVendorDetailPageProps) => {
 
     /**
@@ -26,6 +27,7 @@ const VendorDetailLayoutPage = ({
     const setVendor = useSetVendor();
     const setSession = useSetSession();
     const setConceptImages = useSetServiceConceptImages();
+    const setReviews = useSetReviews();
 
     const reset = () => {
         setVendor(null);
@@ -37,6 +39,7 @@ const VendorDetailLayoutPage = ({
         setVendor(vendor);
         setSession(session);
         setConceptImages(concept.data?.data || []);
+        setReviews(review);
 
         return () => {
             reset();

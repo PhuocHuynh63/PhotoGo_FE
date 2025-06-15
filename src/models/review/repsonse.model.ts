@@ -8,7 +8,8 @@ import { PaginationModel } from "@models/metadata";
  */
 const ReviewPaginationResponse = z.object({
     data: z.array(ReviewVendorDetailModel),
-    pagination: PaginationModel
+    pagination: PaginationModel,
+    averageRating: z.number().optional(),
 });
 
 const ReviewPagination = BackendResponseModel(ReviewPaginationResponse);
