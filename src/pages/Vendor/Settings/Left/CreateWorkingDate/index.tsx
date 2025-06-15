@@ -8,12 +8,13 @@ import { Input } from '@components/Atoms/ui/input'
 import { Switch } from '@components/Atoms/ui/switch'
 import { Loader2 } from 'lucide-react'
 import { Plus } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, differenceInDays } from 'date-fns'
 
 
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import locationAvailabilityService from '@services/locationAvailability'
+import { validateWorkingDateForm } from '@utils/helpers/Validation'
 
 import CustomDatePicker from '@components/Atoms/DatePicker'
 
@@ -27,7 +28,8 @@ interface Location {
 
 const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, fetchWorkingHours }: { locations: Location[], selectedLocation: string, setSelectedLocation: (value: string) => void, fetchWorkingHours: () => void }) => {
 
-    const [date, setDate] = useState<Date | undefined>(new Date())
+    const [startDate, setStartDate] = useState<Date | undefined>(new Date())
+    const [endDate, setEndDate] = useState<Date | undefined>(new Date())
     const [startTime, setStartTime] = useState("08:00")
     const [endTime, setEndTime] = useState("19:00")
     const [isAvailable, setIsAvailable] = useState(true)
@@ -36,34 +38,43 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!date) {
-            toast.error("Vui lòng chọn ngày bắt đầu")
+
+        // Validate form data using helper function
+        const validation = validateWorkingDateForm({
+            startDate,
+            endDate,
+            startTime,
+            endTime,
+            selectedLocation
+        })
+
+        if (!validation.isValid) {
+            toast.error(validation.message)
             return
         }
-        if (!selectedLocation) {
-            toast.error("Vui lòng chọn địa điểm")
-            return
-        }
-        
+
         setShowConfirmModal(true)
     }
 
     const handleConfirmSubmit = async () => {
-        if (!date) return
+        if (!startDate || !endDate) return
 
         setShowConfirmModal(false)
         setIsLoading(true)
         try {
-            const formattedDate = format(date, "dd/MM/yyyy")
+            const formattedStartDate = format(startDate, "dd/MM/yyyy")
+            const formattedEndDate = format(endDate, "dd/MM/yyyy")
+            const numberOfDays = differenceInDays(endDate, startDate)
             const result = await locationAvailabilityService.createLocationAvailability(
                 {
-                    date: formattedDate,
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate,
                     startTime,
                     endTime,
                     isAvailable,
                 }, selectedLocation)
             console.log(result)
-            toast.success("Đã tạo lịch làm việc cho 7 ngày liên tục")
+            toast.success(`Đã tạo lịch làm việc cho ${numberOfDays} ngày liên tục`)
             fetchWorkingHours() // Refresh data
         } catch (error) {
             console.error("Error creating working hours:", error)
@@ -78,12 +89,14 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
         return location ? `${location.address}, ${location.district} - ${location.ward}` : 'Không xác định'
     }
 
+    const numberOfDays = endDate && startDate ? differenceInDays(endDate, startDate) : 0
+
     return (
         <>
             <Card className="md:col-span-1">
                 <CardHeader>
                     <CardTitle>Tạo lịch làm việc mới</CardTitle>
-                    <CardDescription>Tạo lịch làm việc cho 7 ngày liên tục từ ngày được chọn</CardDescription>
+                    <CardDescription>Tạo lịch làm việc cho {numberOfDays} ngày liên tục từ ngày được chọn</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -107,10 +120,23 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                             <Label>Ngày bắt đầu</Label>
                             <CustomDatePicker
                                 placeholder="Chọn ngày bắt đầu"
-                                value={date || null}
+                                value={startDate || null}
                                 onChange={(selectedDate) => {
                                     if (selectedDate) {
-                                        setDate(selectedDate)
+                                        setStartDate(selectedDate)
+                                    }
+                                }}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Ngày kết thúc</Label>
+                            <CustomDatePicker
+                                placeholder="Chọn ngày kết thúc"
+                                value={endDate || null}
+                                onChange={(selectedDate) => {
+                                    if (selectedDate) {
+                                        setEndDate(selectedDate)
                                     }
                                 }}
                             />
@@ -178,7 +204,11 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-700">Ngày bắt đầu:</p>
-                            <p className="text-sm text-gray-600">{date ? format(date, "dd/MM/yyyy") : ""}</p>
+                            <p className="text-sm text-gray-600">{startDate ? format(startDate, "dd/MM/yyyy") : ""}</p>
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-700">Ngày kết thúc:</p>
+                            <p className="text-sm text-gray-600">{endDate ? format(endDate, "dd/MM/yyyy") : ""}</p>
                         </div>
                         <div>
                             <p className="text-sm font-medium text-gray-700">Thời gian:</p>
@@ -190,7 +220,7 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                         </div>
                         <div className="mt-3 p-3 bg-blue-50 rounded-md">
                             <p className="text-sm text-blue-700">
-                                ⚠️ Lịch làm việc sẽ được tạo cho 7 ngày liên tục từ ngày được chọn.
+                                ⚠️ Lịch làm việc sẽ được tạo cho {numberOfDays} ngày liên tục từ ngày được chọn.
                             </p>
                         </div>
                     </div>

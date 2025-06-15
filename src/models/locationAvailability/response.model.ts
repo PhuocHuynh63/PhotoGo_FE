@@ -13,3 +13,21 @@ export const LocationScheduleResponse = BackendResponseModel(LocationScheduleRes
 export type ILocationScheduleResponse = z.infer<typeof LocationScheduleResponse>;
 
 //----------------------End----------------------// 
+
+/**
+ * Model of Update Availability Response
+ */
+export const UpdateAvailabilityResponseModel = z.object({
+    data: z.object({
+        id: z.string(),
+        date: z.string(),
+        isAvailable: z.boolean()
+    }),
+    message: z.string(),
+    statusCode: z.number()
+});
+
+export const UpdateAvailabilityResponse = BackendResponseModel(UpdateAvailabilityResponseModel);
+export type IUpdateAvailabilityResponse = z.infer<typeof UpdateAvailabilityResponse>;
+
+//----------------------End----------------------// 

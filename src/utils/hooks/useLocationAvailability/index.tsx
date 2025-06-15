@@ -29,6 +29,7 @@ export function useLocationAvailability({
             if (result.statusCode === 200 && result.data) {
                 setData(result.data.data);
             } else {
+                setData([]);
                 const errorMessage = "Không thể tải dữ liệu lịch làm việc";
                 setError(errorMessage);
                 toast.error(errorMessage);
