@@ -1,7 +1,6 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@components/Atoms/ui/avatar"
-import { Bell, User, Settings, LogOut } from "lucide-react"
+import { Bell } from "lucide-react"
 import { IUser } from "@models/user/common.model"
 import {
     DropdownMenu,
@@ -14,6 +13,7 @@ import {
 import { signOut } from "next-auth/react"
 import { ROUTES } from "@routes"
 import { useRouter } from "next/navigation"
+import { Avatar } from "@components/Molecules/Avatar"
 
 export default function Header({ userData }: { userData: IUser }) {
     const router = useRouter()
@@ -40,10 +40,7 @@ export default function Header({ userData }: { userData: IUser }) {
 
                 <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center gap-2 cursor-pointer">
-                        <Avatar className="w-8 h-8">
-                            <AvatarImage src={userData?.avatarUrl} alt="Admin" />
-                            <AvatarFallback>{userData?.avatarUrl}</AvatarFallback>
-                        </Avatar>
+                        <Avatar src={userData?.avatarUrl} alt={userData?.fullName} size={32} />
                         <div>
                             <p className="text-sm font-medium">{userData?.fullName}</p>
                             <p className="text-xs text-gray-500">{userData?.email}</p>
@@ -57,8 +54,10 @@ export default function Header({ userData }: { userData: IUser }) {
                         }}>
                             Hồ sơ
                         </DropdownMenuItem>
-                        <DropdownMenuItem icon="Settings">
-                            Cài đặt
+                        <DropdownMenuItem icon="Settings" className="cursor-pointer" onClick={() => {
+                            router.push(ROUTES.VENDOR.CALENDAR)
+                        }}>
+                            Lịch làm việc
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem icon="LogOut" className="text-red-600" onClick={() => {

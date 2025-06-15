@@ -736,16 +736,16 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                 )}
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={handleClose} disabled={isLoading}>
+                    <Button variant="outline" onClick={handleClose} disabled={isLoading} className="cursor-pointer">
                         Hủy
                     </Button>
                     {step === "service" ? (
-                        <Button onClick={handleCreateService} disabled={isLoading} className="gap-2">
+                        <Button onClick={handleCreateService} disabled={isLoading} className="gap-2 cursor-pointer">
                             {isLoading ? "Đang tạo..." : "Tiếp tục"}
                             <ArrowRight className="h-4 w-4" />
                         </Button>
                     ) : (
-                        <Button onClick={handleCreateConcept} disabled={isLoading}>
+                        <Button onClick={handleCreateConcept} disabled={isLoading} className="cursor-pointer">
                             {isLoading ? "Đang tạo..." : "Hoàn thành"}
                         </Button>
                     )}
