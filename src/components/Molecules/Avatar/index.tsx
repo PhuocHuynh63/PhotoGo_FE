@@ -40,7 +40,7 @@ const Avatar = forwardRef<
             .map(part => part[0])
             .join('')
             .toUpperCase()
-            .slice(0, 2)
+            .slice(0, 3)
     }
 
     const avatarContent = (

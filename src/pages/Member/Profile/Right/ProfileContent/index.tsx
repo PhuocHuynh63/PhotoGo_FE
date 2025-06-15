@@ -4,8 +4,8 @@ import Button from "@components/Atoms/Button"
 import { Card, CardContent } from "@components/Atoms/Card"
 import Input from "@components/Atoms/Input"
 import Label from "@components/Atoms/Label"
-import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { IUser } from "@models/user/common.model"
+import { IUserUpdateResponse } from "@models/user/response.model"
 import userService from "@services/user"
 import { Edit, Info } from "lucide-react"
 import { useState } from "react"
@@ -36,7 +36,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
         const response = await userService.updateUser(user.id, {
             fullName: data?.fullName,
             phoneNumber: data?.phoneNumber,
-        }) as IBackendResponse<any>
+        }) as IUserUpdateResponse
         if (response.statusCode === 200) {
             toast.success("Cập nhật thông tin thành công")
             setIsEditing(false)
