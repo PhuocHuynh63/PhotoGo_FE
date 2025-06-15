@@ -1,8 +1,8 @@
 export type Rank = 'Đồng' | 'Bạc' | 'Vàng' | 'Kim Cương';
 
 export const rankConfigs: Record<Rank, {
-    className: string;
-    color: string;
+    className?: string;
+    color?: string;
 }> = {
     'Đồng': {
         className: 'rank-glow-slow',

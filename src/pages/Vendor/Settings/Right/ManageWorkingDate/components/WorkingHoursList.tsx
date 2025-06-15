@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { Calendar } from 'lucide-react'
 import { ILocationSchedule } from '@models/locationAvailability/common.model'
@@ -58,6 +58,69 @@ const WorkingHoursList = ({
         setIsMounted(true)
     }, [])
 
+    // Memoize filtered and sorted working dates
+    const filteredWorkingDates = useMemo(() => {
+        if (!workingHours.workingDates) return []
+        
+        return workingHours.workingDates
+            .filter(wd => getMonthFromDate(wd.date) === month && getWeekFromDate(wd.date) === week)
+            .sort((a, b) => {
+                const dateA = new Date(a.date.split("/").reverse().join("-"))
+                const dateB = new Date(b.date.split("/").reverse().join("-"))
+                return dateA.getTime() - dateB.getTime()
+            })
+    }, [workingHours.workingDates, month, week, getMonthFromDate, getWeekFromDate])
+
+    // Memoize date selection handlers
+    const handleDateClick = useCallback((workingDate: ILocationSchedule['workingDates'][number]) => {
+        const isActive = selectedDateForSlots[workingHours.id] === workingDate.date
+        if (isActive) {
+            onDateUnselect(workingHours.id)
+        } else {
+            onDateSelect(workingHours.id, workingDate.date, workingDate.id, workingDate.isAvailable)
+        }
+    }, [workingHours.id, selectedDateForSlots, onDateUnselect, onDateSelect])
+
+    // Memoize time slots list props
+    const timeSlotsListProps = useMemo(() => ({
+        workingHours,
+        selectedDate: selectedDateForSlots[workingHours.id],
+        editingSlot,
+        editingMaxBookings,
+        isUpdatingSlot,
+        onDateChange: (value: string) => {
+            const selectedWorkingDate = workingHours.workingDates?.find(wd => wd.date === value)
+            if (selectedWorkingDate) {
+                onDateSelect(workingHours.id, value, selectedWorkingDate.id, selectedWorkingDate.isAvailable)
+            }
+        },
+        onEditSlot,
+        onUpdateSlot,
+        onCancelEdit,
+        onMaxBookingsChange,
+        formatTime,
+        getMonthFromDate,
+        getWeekFromDate,
+        month,
+        week
+    }), [
+        workingHours,
+        selectedDateForSlots,
+        editingSlot,
+        editingMaxBookings,
+        isUpdatingSlot,
+        onDateSelect,
+        onEditSlot,
+        onUpdateSlot,
+        onCancelEdit,
+        onMaxBookingsChange,
+        formatTime,
+        getMonthFromDate,
+        getWeekFromDate,
+        month,
+        week
+    ])
+
     if (!isMounted) {
         return null
     }
@@ -88,63 +151,20 @@ const WorkingHoursList = ({
                                 Ngày làm việc trong tuần này
                             </h4>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                                {workingHours.workingDates
-                                    ?.filter(
-                                        (wd) =>
-                                            getMonthFromDate(wd.date) === month &&
-                                            getWeekFromDate(wd.date) === week,
-                                    )
-                                    ?.sort((a, b) => {
-                                        const dateA = new Date(a.date.split("/").reverse().join("-"))
-                                        const dateB = new Date(b.date.split("/").reverse().join("-"))
-                                        return dateA.getTime() - dateB.getTime()
-                                    })
-                                    ?.map((workingDate) => {
-                                        const isActive = selectedDateForSlots[workingHours.id] === workingDate.date
-                                        return (
-                                            <WorkingDateCard
-                                                key={workingDate.id}
-                                                date={workingDate.date}
-                                                isAvailable={workingDate.isAvailable}
-                                                isActive={isActive}
-                                                weekdayLabel={getWeekdayLabel(workingDate.date)}
-                                                onClick={() => {
-                                                    if (isActive) {
-                                                        onDateUnselect(workingHours.id)
-                                                    } else {
-                                                        onDateSelect(workingHours.id, workingDate.date, workingDate.id, workingDate.isAvailable)
-                                                    }
-                                                }}
-                                            />
-                                        )
-                                    })}
+                                {filteredWorkingDates?.map((workingDate) => (
+                                    <WorkingDateCard
+                                        key={workingDate.id}
+                                        date={workingDate.date}
+                                        isAvailable={workingDate.isAvailable}
+                                        isActive={selectedDateForSlots[workingHours.id] === workingDate.date}
+                                        weekdayLabel={getWeekdayLabel(workingDate.date)}
+                                        onClick={() => handleDateClick(workingDate)}
+                                    />
+                                ))}
                             </div>
                         </div>
 
-                        <TimeSlotsList
-                            workingHours={workingHours}
-                            selectedDate={selectedDateForSlots[workingHours.id]}
-                            editingSlot={editingSlot}
-                            editingMaxBookings={editingMaxBookings}
-                            isUpdatingSlot={isUpdatingSlot}
-                            onDateChange={(value) => {
-                                const selectedWorkingDate = workingHours.workingDates?.find(
-                                    (wd) => wd.date === value
-                                )
-                                if (selectedWorkingDate) {
-                                    onDateSelect(workingHours.id, value, selectedWorkingDate.id, selectedWorkingDate.isAvailable)
-                                }
-                            }}
-                            onEditSlot={onEditSlot}
-                            onUpdateSlot={onUpdateSlot}
-                            onCancelEdit={onCancelEdit}
-                            onMaxBookingsChange={onMaxBookingsChange}
-                            formatTime={formatTime}
-                            getMonthFromDate={getMonthFromDate}
-                            getWeekFromDate={getWeekFromDate}
-                            month={month}
-                            week={week}
-                        />
+                        <TimeSlotsList {...timeSlotsListProps} />
                     </div>
                 </div>
             )}

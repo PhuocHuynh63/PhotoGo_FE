@@ -14,7 +14,10 @@ export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({
 }) => {
     const avatarRef = useRef<HTMLDivElement>(null);
     const [size, setSize] = useState<number>(0);
-    const { className, color } = rankConfigs[rank];
+    
+    // Get rank config with fallback to default values
+    const rankConfig = rankConfigs[rank as Rank] || rankConfigs['Đồng'];
+    const { className = '', color = '#cd7f32' } = rankConfig;
 
     useLayoutEffect(() => {
         if (!avatarRef.current) return;
