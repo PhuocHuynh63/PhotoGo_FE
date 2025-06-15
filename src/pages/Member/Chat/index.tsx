@@ -9,6 +9,8 @@ import { PAGES } from '../../../types/IPages';
 import SidebarChat from './Left/Sidebar';
 import ContentChat from './Right/Content';
 import { useParams, useRouter } from 'next/navigation';
+import { useChatByUserId, useMessageByChatId } from '@utils/hooks/useChat';
+import { IUserResponse } from '@models/user/response.model';
 
 export default function ChatPage(session: PAGES.IChatProps) {
     /**
@@ -39,6 +41,49 @@ export default function ChatPage(session: PAGES.IChatProps) {
         activeConversationRef.current = activeConversation;
     }, [activeConversation]);
 
+    /**
+     *  Fetch chat list by user ID
+     */
+    const { chat } = useChatByUserId({
+        userId: userId || '',
+        page: 1,
+        pageSize: 15,
+    });
+
+    useEffect(() => {
+        if (!chat || chat.length === 0) return;
+
+        const format = async () => {
+            const convs = await Promise.all(
+                chat?.map(async (chat: any) => {
+                    const partnerId = chat.members.find((m: string) => m !== userId);
+                    if (!partnerId) return null;
+                    const user = await userService.getAUser(partnerId) as IUserResponse;
+                    return {
+                        id: chat.id,
+                        user: user.data,
+                        member: partnerId,
+                        lastMessageText: chat.lastMessageText,
+                        unreadCount: chat.unreadCount,
+                    };
+                })
+            );
+            setConversations(convs);
+        };
+
+        format();
+    }, [chat, userId]);
+    //---------------------End---------------------//
+
+    const { message } = useMessageByChatId({
+        chatId: activeConversationId,
+        page: 1,
+        pageSize: 15,
+    });
+    console.log('messages', message);
+
+
+
     useEffect(() => {
         const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
         checkIsMobile();
@@ -46,32 +91,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
         const socketInstance = getSocket(token);
         setSocket(socketInstance);
-
-        const fetchChats = async () => {
-            try {
-                const chats = await chatService.getChatList(userId) as { data: any[] };
-                const convs: any[] = await Promise.all(
-                    chats?.data?.map(async (chat: any) => {
-                        const partnerId = chat.members.find((m: string) => m !== userId)!;
-                        const user = await userService.getAUser(partnerId);
-                        const unreadCount = chat.messages.filter((m: any) => m.sender_id !== userId && !m.read).length;
-                        setActiveConversationId(chat.id);
-                        return {
-                            id: chat.id,
-                            user,
-                            member: partnerId,
-                            messages: chat.messages,
-                            unreadCount,
-                            lastMessage: chat.messages[chat.messages.length - 1],
-                        };
-                    })
-                );
-                setConversations(convs);
-            } catch (error) {
-                console.error('Lỗi khi lấy danh sách chat:', error);
-            }
-        };
-        fetchChats();
 
         socketInstance.on('joinChat', ({ chatId, messages }) => {
             setConversations(prev =>

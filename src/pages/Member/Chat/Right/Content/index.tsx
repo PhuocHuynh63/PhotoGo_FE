@@ -91,16 +91,16 @@ export default function ContentChat({
                                 </Button>
                             )}
                             <Avatar className="h-12 w-12 mr-3"
-                                src={activeConversation.user.data.avatarUrl}
-                                alt={activeConversation.user.data.fullName}
+                                src={activeConversation.user.avatarUrl}
+                                alt={activeConversation.user.fullName}
                             />
                             <div>
-                                <h2 className="font-semibold">{activeConversation.user.data.fullName}</h2>
+                                <h2 className="font-semibold">{activeConversation.user.fullName}</h2>
                                 <p className="text-xs text-gray-500">
-                                    {activeConversation.user.data.status === 'online'
+                                    {activeConversation.user.status === 'online'
                                         ? 'Đang hoạt động'
-                                        : activeConversation.user.data.lastSeen
-                                            ? `Hoạt động ${formatTime(activeConversation.user.data.lastSeen)}`
+                                        : activeConversation.user.lastSeen
+                                            ? `Hoạt động ${formatTime(activeConversation.user.lastSeen)}`
                                             : 'Không hoạt động'}
                                 </p>
                             </div>
@@ -121,8 +121,8 @@ export default function ContentChat({
                                 >
                                     {message.sender_id !== userId && (
                                         <Avatar className="h-12 w-12 mr-3"
-                                            src={activeConversation.user.data.avatarUrl}
-                                            alt={activeConversation.user.data.fullName}
+                                            src={activeConversation.user.avatarUrl}
+                                            alt={activeConversation.user.fullName}
                                         />
                                     )}
                                     <div
