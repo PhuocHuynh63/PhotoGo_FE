@@ -9,7 +9,7 @@ import { Avatar } from '@components/Molecules/Avatar';
 
 
 interface SidebarChatProps {
-    conversations: any[];
+    listChatOfUser: any[];
     activeConversation: string;
     onSelectActiveConversation: (conversationId: string) => void;
     onSelectConversation: (conversation: any) => void;
@@ -18,7 +18,7 @@ interface SidebarChatProps {
 }
 
 export default function SidebarChat({
-    conversations,
+    listChatOfUser,
     activeConversation,
     onSelectActiveConversation,
     onSelectConversation,
@@ -28,7 +28,7 @@ export default function SidebarChat({
 
     const [searchValue, setSearchValue] = useState('');
 
-    const filteredConversations = conversations?.filter((conv) =>
+    const filteredConversations = listChatOfUser?.filter((conv) =>
         conv.user.fullName.toLowerCase().includes(searchValue.toLowerCase())
     );
 

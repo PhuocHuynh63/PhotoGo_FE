@@ -5,9 +5,11 @@ import { z } from "zod";
  */
 export const ChatModel = z.object({
     id: z.string(),
-    members: z.array(z.any()),
-    messages: z.array(z.any()),
-    last_updated: z.string(),
+    members: z.array(z.string()),
+    lastMessageText: z.string().nullable(),
+    createdAt: z.string(),
+    lastUpdatedAt: z.string(),
+    unreadCount: z.number().default(0),
 })
-export type IChat = z.TypeOf<typeof ChatModel>
+export type IChatModel = z.TypeOf<typeof ChatModel>
 //----------------------End----------------------//

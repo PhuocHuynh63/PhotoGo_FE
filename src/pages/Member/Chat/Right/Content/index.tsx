@@ -37,6 +37,7 @@ export default function ContentChat({
     };
     //---------------------End---------------------//
 
+    console.log('Active Conversation:', activeConversation);
 
     /**
      * Format time
