@@ -23,20 +23,33 @@ const VendorContactInformation = () => {
     const searchParams = useSearchParams()
 
     const slug = params?.slug as string
-    const branch = searchParams?.get('branch') as string
-    console.log('branch', branch);
+    const location = searchParams?.get('location') as string
     //---------------------------End---------------------------//
 
     /**
      * State to manage selected branch
      */
-    const [selectedBranchId, setSelectedBranchId] = useState(vendorData.locations?.[0]?.id || '');
-    // const selectedBranch = vendorData.locations?.find(b => b.id === selectedBranchId);
-    // const handleBranchChange = (branchId: string) => {
-    //     setSelectedBranchId(branchId);
-    //     router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', '')}?branch=${selectedBranch}`);
-    // };
+    const selectedBranch = vendorData?.locations?.find(
+        (branch) => branch.district === location
+    )
+    const selectedBranchId = selectedBranch?.id || ''
+
+    const handleBranchChange = (branchId: string) => {
+        const branch = vendorData?.locations?.find((b) => b.id === branchId)
+        if (!branch) return
+
+        const current = new URLSearchParams(searchParams?.toString())
+        current.set('location', branch.district)
+        const newUrl = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', '')}?${current.toString()}`
+        router.push(newUrl)
+    }
     //---------------------------End---------------------------//
+
+    console.log(vendorData?.locations);
+
+    const addressVendor = vendorData?.locations?.length
+        ? `${vendorData.locations[0]?.address}, ${vendorData.locations[0]?.ward}, ${vendorData.locations[0]?.district}, ${vendorData.locations[0]?.city}, ${vendorData.locations[0]?.province}`
+        : ''
 
 
     return (
@@ -48,19 +61,15 @@ const VendorContactInformation = () => {
                         <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Chọn chi nhánh gần bạn nhất</p>
-                            {/* <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p> */}
                         </div>
                     </div>
 
                     <Select
                         value={selectedBranchId}
-                        onValueChange={(value) => {
-                            const branch = vendorData?.locations?.find((b) => b.id === value)
-                            if (branch) setSelectedBranchId(branch.id)
-                        }}
+                        onValueChange={handleBranchChange}
                     >
                         <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder='Chọn chi nhánh' />
                         </SelectTrigger>
                         <SelectContent>
                             {vendorData?.locations?.map((branch) => (
@@ -68,23 +77,13 @@ const VendorContactInformation = () => {
                                     <div className="flex items-center gap-2">
                                         <MapPin className="h-4 w-4" />
                                         <span>{branch.district}</span>
-                                        {/* {branch.isMain && (
-                                            <Badge variant="secondary" className="text-xs">
-                                                Chính
-                                            </Badge>
-                                        )} */}
-                                        {/* {!branch.available && (
-                                            <Badge variant="secondary" className="text-xs">
-                                                Hết lịch
-                                            </Badge>
-                                        )} */}
                                     </div>
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                 </div>
-            </div>
+            </div >
 
             <div className="py-6 px-6.5 rounded-md bg-primary-opacity- border border-grey">
                 <h3 className="font-bold text-lg mb-4">Thông tin liên hệ</h3>
@@ -93,30 +92,23 @@ const VendorContactInformation = () => {
                         <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Địa chỉ</p>
-                            {/* <p className="text-sm text-muted-foreground">{vendorData?.location?.address}</p> */}
+                            <p className="text-sm text-muted-foreground">{addressVendor}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <Phone className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Điện thoại</p>
-                            {/* <p className="text-sm text-muted-foreground">{vendorData?.contact?.phone}</p> */}
+                            <p className="text-sm text-muted-foreground">{vendorData?.user_id?.phoneNumber}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
                         <Mail className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Email</p>
-                            {/* <p className="text-sm text-muted-foreground">{vendorData?.contact?.email}</p> */}
+                            <p className="text-sm text-muted-foreground">{vendorData?.user_id?.email}</p>
                         </div>
                     </div>
-                    {/* <div className="flex items-start gap-3">
-                        <Globe className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
-                        <div>
-                            <p className="font-medium">Website</p>
-                            <p className="text-sm text-muted-foreground">{vendorData?.contact?.website}</p>
-                        </div>
-                    </div> */}
                 </div>
 
                 <h3 className="font-bold text-lg mb-3">Giờ làm việc</h3>

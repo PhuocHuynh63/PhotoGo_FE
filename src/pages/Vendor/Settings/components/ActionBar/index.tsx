@@ -27,12 +27,12 @@ export default function ActionBar({ workingDateId, isAvailable, onUpdateAvailabi
             <div className="flex items-center justify-center space-x-2">
                 <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center gap-2">
+                        <span>Disable</span>
                         <LucideIcon
-                            name="CheckCircle"
-                            iconColor="#22c55e"
+                            name="XCircle"
+                            iconColor="#ef4444"
                             className="w-5 h-5"
                         />
-                        <span>Enable</span>
                     </div>
                     <Switch
                         checked={enabled}
@@ -40,12 +40,12 @@ export default function ActionBar({ workingDateId, isAvailable, onUpdateAvailabi
                         className="[&[data-state=checked]]:bg-green-500 [&[data-state=unchecked]]:bg-red-500 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg active:scale-95"
                     />
                     <div className="flex items-center justify-center gap-2">
-                        <span>Disable</span>
                         <LucideIcon
-                            name="XCircle"
-                            iconColor="#ef4444"
+                            name="CheckCircle"
+                            iconColor="#22c55e"
                             className="w-5 h-5"
                         />
+                        <span>Enable</span>
                     </div>
                 </div>
             </div>

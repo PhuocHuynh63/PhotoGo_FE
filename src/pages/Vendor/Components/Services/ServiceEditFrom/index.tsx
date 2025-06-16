@@ -37,6 +37,7 @@ interface ServiceConcept {
     price: number;
     duration: number;
     serviceTypes?: { id: string }[];
+    serviceConceptServiceTypes?: { serviceTypeId: string; serviceType?: ServiceType }[];
     images?: ServiceConceptImage[];
 }
 
@@ -64,7 +65,6 @@ interface ServiceEditFormProps {
 
 export default function ServiceEditForm({ initialService, serviceTypes }: ServiceEditFormProps) {
     const router = useRouter();
-
     const [serviceData, setServiceData] = useState({
         name: initialService?.name,
         description: initialService?.description,
@@ -79,7 +79,11 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             description: c.description || "",
             price: c.price || 0,
             duration: c.duration || 60,
-            serviceTypeIds: c.serviceTypes?.map((t) => t.id) || [],
+            serviceTypeIds:
+                // Prefer the new response shape first
+                (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
+                    // Fallback to the old shape if present
+                    .concat(c.serviceTypes?.map((t) => t.id) || []),
             images: [],
         };
     }) || []);

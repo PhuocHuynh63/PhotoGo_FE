@@ -41,7 +41,7 @@ const LoadingPage = () => {
                 </div>
 
                 <div className="flex flex-col items-center">
-                    <p className="text-sm text-gray-500 mb-1">Loading amazing photos...</p>
+                    <p className="text-sm text-gray-500 mb-1">Những khung hình tuyệt đẹp đang tìm về miền ký ức...</p>
                     <p className="text-xs font-medium text-orange-500">{progress}%</p>
                 </div>
             </div>

@@ -44,17 +44,31 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
             // Show ActionBar again after a short delay
             setTimeout(() => {
                 const workingHoursId = Object.keys(selectedDateForSlots)[0]
-                const workingDate = workingHoursList.find(wh => wh.id === workingHoursId)
-                if (workingDate) {
-                    setShowActionBar(true)
-                    setSelectedWorkingDateId(workingDate.workingDates[0].id)
-                    setSelectedWorkingDateAvailability(workingDate.workingDates[0].isAvailable)
+                const selectedDate = selectedDateForSlots[workingHoursId]
+                const workingHours = workingHoursList.find(wh => wh.id === workingHoursId)
+                let isAvailable = true
+                let workingDateId = ""
+                if (workingHours && selectedDate) {
+                    const workingDate = workingHours.workingDates.find(wd => wd.date === selectedDate)
+                    if (workingDate) {
+                        isAvailable = workingDate.isAvailable
+                        workingDateId = workingDate.id
+                    }
                 }
+                setShowActionBar(true)
+                setSelectedWorkingDateId(workingDateId)
+                setSelectedWorkingDateAvailability(isAvailable)
             }, 50)
 
             setPrevSelectedDate(currentSelectedDate)
         }
     }, [selectedDateForSlots])
+
+    // Hàm reset selectedDateForSlots và prevSelectedDate
+    const handleResetSelectedDate = () => {
+        setSelectedDateForSlots({})
+        setPrevSelectedDate(null)
+    }
 
     const handleDeleteWorkingHours = async (workingHoursId: string, e: React.MouseEvent) => {
         e.stopPropagation() // Prevent accordion from toggling
@@ -71,7 +85,8 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
             console.log(result)
             if (result.statusCode === 200) {
                 toast.success("Đã xóa lịch làm việc thành công")
-                fetchWorkingHours() // Refresh data
+                fetchWorkingHours()
+                setPrevSelectedDate(null)
             } else {
                 toast.error("Đã xảy ra lỗi khi xóa lịch làm việc")
             }
@@ -116,7 +131,8 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
 
             toast.success("Đã cập nhật slot thành công")
             setEditingSlot(null)
-            fetchWorkingHours() // Refresh data
+            fetchWorkingHours()
+            setPrevSelectedDate(null)
         } catch (error) {
             console.error("Error updating slot:", error)
             toast.error("Đã xảy ra lỗi khi cập nhật slot")
@@ -208,6 +224,7 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
                                         getMonthName={getMonthName}
                                         setShowActionBar={setShowActionBar}
                                         setSelectedWorkingDateId={setSelectedWorkingDateId}
+                                        onResetSelectedDate={handleResetSelectedDate}
                                     />
                                 )
                             })}

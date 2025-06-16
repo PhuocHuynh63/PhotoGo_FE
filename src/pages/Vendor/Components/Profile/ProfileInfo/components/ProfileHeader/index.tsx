@@ -16,18 +16,18 @@ export default function ProfileHeader({ profileData, completionPercentage }: Pro
 
     return (
         <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden relative">
+            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden relative border border-gray-300">
                 {profileData?.logo ? (
                     <Image
                         src={profileData.logo}
                         alt={profileData?.name || "Vendor logo"}
                         fill
                         className="object-cover"
-                        sizes="64px"
+                        sizes="96px"
                         priority={true}
                     />
                 ) : (
-                    <span className="text-xl font-semibold">{profileData?.name?.charAt(0)}</span>
+                    <span className="text-3xl font-semibold">{profileData?.name?.charAt(0)}</span>
                 )}
             </div>
 
