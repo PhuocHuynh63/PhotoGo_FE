@@ -37,6 +37,7 @@ export default function ContentChat({
     };
     //---------------------End---------------------//
 
+    console.log('Active Conversation:', activeConversation);
 
     /**
      * Format time
@@ -116,10 +117,10 @@ export default function ContentChat({
                         <div className="space-y-3">
                             {activeConversation?.messages?.map((message: any) => (
                                 <div
-                                    key={message.sender_id + message.timestamp}
-                                    className={cn('flex', message.sender_id === userId ? 'justify-end' : 'justify-start')}
+                                    key={message.senderId + message.timestamp}
+                                    className={cn('flex', message.senderId === userId ? 'justify-end' : 'justify-start')}
                                 >
-                                    {message.sender_id !== userId && (
+                                    {message.senderId !== userId && (
                                         <Avatar className="h-12 w-12 mr-3"
                                             src={activeConversation.user.avatarUrl}
                                             alt={activeConversation.user.fullName}
@@ -128,7 +129,7 @@ export default function ContentChat({
                                     <div
                                         className={cn(
                                             'max-w-[70%] rounded-2xl p-3',
-                                            message.sender_id === userId
+                                            message.senderId === userId
                                                 ? 'bg-blue-500 text-white rounded-tr-none'
                                                 : 'bg-gray-200 rounded-tl-none'
                                         )}
@@ -136,7 +137,7 @@ export default function ContentChat({
                                         <p>{message.text}</p>
                                         <div className=" makeover flex items-center justify-end mt-1">
                                             <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
-                                            {message.sender_id === userId && (
+                                            {message.senderId === userId && (
                                                 <span className="ml-1 text-xs">{message.read ? '✓✓' : '✓'}</span>
                                             )}
                                         </div>

@@ -1,49 +1,44 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Socket } from 'socket.io-client';
-import { disconnectSocket, getSocket } from '@configs/socket';
-import chatService from '@services/chat';
+import { getSocket } from '@configs/socket';
 import userService from '@services/user';
 import { PAGES } from '../../../types/IPages';
 import SidebarChat from './Left/Sidebar';
 import ContentChat from './Right/Content';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useChatByUserId, useMessageByChatId } from '@utils/hooks/useChat';
 import { IUserResponse } from '@models/user/response.model';
+import { ROUTES } from '@routes';
+import { IChatModel } from '@models/chat/common.model';
 
 export default function ChatPage(session: PAGES.IChatProps) {
-    /**
-     * Define from URL
-     * Get chat ID from URL parameters
-     */
     const param = useParams();
-    const router = useRouter();
     const chatId = param?.id as string;
-    //---------------------End---------------------//
 
-    /**
-     * Get user ID and token from session
-     */
     const userId = session.session?.user?.id;
     const token = session.session?.accessToken;
-    //---------------------End---------------------//
 
     const [isMobile, setIsMobile] = useState(false);
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [conversations, setConversations] = useState<any[]>([]);
-    const [activeConversation, setActiveConversation] = useState<any | null>(null);
+    const [listChatOfUser, setListChatOfUser] = useState<any[]>([]);
+    const [conversation, setConversation] = useState<any[]>([]);
     const [showSidebar, setShowSidebar] = useState(true);
+
+    // ✨ [REFACTOR] Suy luận `activeConversation` từ `activeConversationId` và `listChatOfUser`.
+    // Cách này giúp state luôn nhất quán và tránh được lỗi giao diện nhấp nháy.
     const [activeConversationId, setActiveConversationId] = useState<string>(chatId || '');
+    const activeConversation = useMemo(() => {
+        if (!activeConversationId || !listChatOfUser.length) return null;
+        return listChatOfUser.find(c => c.id === activeConversationId);
+    }, [activeConversationId, listChatOfUser]);
 
     const activeConversationRef = useRef(activeConversation);
     useEffect(() => {
         activeConversationRef.current = activeConversation;
     }, [activeConversation]);
 
-    /**
-     *  Fetch chat list by user ID
-     */
     const { chat } = useChatByUserId({
         userId: userId || '',
         page: 1,
@@ -53,36 +48,42 @@ export default function ChatPage(session: PAGES.IChatProps) {
     useEffect(() => {
         if (!chat || chat.length === 0) return;
 
-        const format = async () => {
+        const formatConversations = async () => {
             const convs = await Promise.all(
-                chat?.map(async (chat: any) => {
-                    const partnerId = chat.members.find((m: string) => m !== userId);
+                chat.map(async (chatItem: IChatModel) => {
+                    const partnerId = chatItem.members.find((m: string) => m !== userId);
                     if (!partnerId) return null;
-                    const user = await userService.getAUser(partnerId) as IUserResponse;
+                    const user = (await userService.getAUser(partnerId)) as IUserResponse;
                     return {
-                        id: chat.id,
+                        id: chatItem.id,
                         user: user.data,
                         member: partnerId,
-                        lastMessageText: chat.lastMessageText,
-                        unreadCount: chat.unreadCount,
+                        lastMessageText: chatItem.lastMessageText,
+                        unreadCount: chatItem.unreadCount,
                     };
                 })
             );
-            setConversations(convs);
+            const validConvs = convs.filter(c => c !== null);
+            setListChatOfUser(validConvs);
         };
 
-        format();
+        formatConversations();
     }, [chat, userId]);
-    //---------------------End---------------------//
 
-    const { message } = useMessageByChatId({
+    const { message: fetchedMessages } = useMessageByChatId({
         chatId: activeConversationId,
         page: 1,
         pageSize: 15,
     });
-    console.log('messages', message);
 
-
+    useEffect(() => {
+        if (fetchedMessages?.length) {
+            setConversation([...fetchedMessages]);
+        } else {
+            // Đảm bảo `conversation` được reset khi không có tin nhắn (ví dụ: chat mới)
+            setConversation([]);
+        }
+    }, [fetchedMessages]);
 
     useEffect(() => {
         const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
@@ -92,50 +93,25 @@ export default function ChatPage(session: PAGES.IChatProps) {
         const socketInstance = getSocket(token);
         setSocket(socketInstance);
 
-        socketInstance.on('joinChat', ({ chatId, messages }) => {
-            setConversations(prev =>
-                prev.map(conv =>
-                    conv.id === chatId ? { ...conv, messages, unreadCount: 0 } : conv
-                )
-            );
-            if (activeConversationRef.current?.id === chatId) {
-                setActiveConversation((prev: any) => (prev ? { ...prev, messages, unreadCount: 0 } : prev));
-            }
-        });
+        socketInstance.on('newMessage', (newMessageData) => {
+            const { chatId: messageChatId, text } = newMessageData;
 
-        socketInstance.on('newMessage', (message) => {
-            setConversations(prev =>
-                prev.map(conv => {
-                    if (conv.id === message.chatId) {
-                        const isActive = activeConversationRef.current?.id === conv.id;
+            setListChatOfUser(prevList =>
+                prevList.map(conv => {
+                    if (conv.id === messageChatId) {
+                        const isActive = activeConversationRef.current?.id === messageChatId;
                         return {
                             ...conv,
-                            messages: [...conv.messages, { ...message, read: isActive }],
-                            lastMessage: { ...message, read: isActive },
-                            unreadCount: isActive ? 0 : conv.unreadCount + 1,
+                            lastMessageText: text,
+                            unreadCount: isActive ? 0 : (conv.unreadCount || 0) + 1,
                         };
                     }
                     return conv;
                 })
             );
 
-            if (activeConversationRef.current?.id === message.chatId) {
-                setActiveConversation((prev: any) =>
-                    prev
-                        ? {
-                            ...prev,
-                            messages: [...prev.messages, { ...message, read: true }],
-                            lastMessage: { ...message, read: true },
-                            unreadCount: 0,
-                        }
-                        : prev
-                );
-            }
-        });
-
-        socketInstance.on('leftRoom', ({ chatId }) => {
-            if (activeConversationRef.current?.id === chatId) {
-                setActiveConversation(null);
+            if (activeConversationRef.current?.id === messageChatId) {
+                setConversation(prev => [...prev, { ...newMessageData, read: true }]);
             }
         });
 
@@ -145,39 +121,43 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
         return () => {
             window.removeEventListener('resize', checkIsMobile);
+            socketInstance.off('newMessage');
         };
-    }, [token, userId]);
+    }, [token]);
 
-    const handleSelectConversation = (conversation: any) => {
+    // ✨ [REFACTOR] Hàm xử lý giờ chỉ cần cập nhật ID
+    const handleSelectConversation = (conversationData: any) => {
+        if (activeConversationId === conversationData.id) return;
+
         if (socket) {
-            socket.emit('joinChat', { memberId: conversation.member });
+            socket.emit('joinChat', { memberId: conversationData.member });
         }
-        setActiveConversation({
-            ...conversation,
-            unreadCount: 0,
-        });
 
-        setConversations(prevConvs =>
+        setActiveConversationId(conversationData.id);
+
+        setListChatOfUser(prevConvs =>
             prevConvs.map(conv =>
-                conv.id === conversation.id
-                    ? { ...conv, unreadCount: 0 }
-                    : conv
+                conv.id === conversationData.id ? { ...conv, unreadCount: 0 } : conv
             )
         );
+
         if (isMobile) {
             setShowSidebar(false);
         }
 
-        router.push(`/chat/${conversation.id}`);
+        const newUrl = `${ROUTES.USER.CHAT.replace(':id', conversationData.id)}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
     };
 
     const handleSendMessage = (content: string) => {
         if (socket && activeConversation) {
-            socket.emit('sendMessage', {
+            const messagePayload = {
                 chatId: activeConversation.id,
+                senderId: userId,
                 text: content,
                 timestamp: new Date().toISOString(),
-            });
+            };
+            socket.emit('sendMessage', messagePayload);
         }
     };
 
@@ -189,19 +169,27 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
     const toggleSidebar = () => setShowSidebar(prev => !prev);
 
+    // ✨ [REFACTOR] Kết hợp `activeConversation` và `conversation` trước khi truyền xuống ContentChat
+    console.log(conversation);
+
+    const fullActiveConversation = useMemo(() => {
+        if (!activeConversation) return null;
+        return { ...activeConversation, messages: conversation };
+    }, [activeConversation, conversation]);
+
     return (
         <div className="flex w-full h-screen">
             <SidebarChat
-                conversations={conversations}
-                activeConversation={activeConversationId}
                 onSelectActiveConversation={setActiveConversationId}
+                listChatOfUser={listChatOfUser}
+                activeConversation={activeConversation}
                 onSelectConversation={handleSelectConversation}
                 showSidebar={showSidebar}
                 isMobile={isMobile}
             />
             <div className="flex-1 flex flex-col h-full">
                 <ContentChat
-                    activeConversation={activeConversation}
+                    activeConversation={fullActiveConversation}
                     onSendMessage={handleSendMessage}
                     onLeaveChat={handleLeaveChat}
                     toggleSidebar={toggleSidebar}
