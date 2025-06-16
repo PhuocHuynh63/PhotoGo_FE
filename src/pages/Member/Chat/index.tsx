@@ -78,7 +78,7 @@ export default function ChatPage(session: PAGES.IChatProps) {
 
     useEffect(() => {
         if (fetchedMessages?.length) {
-            setConversation([...fetchedMessages].reverse());
+            setConversation([...fetchedMessages]);
         } else {
             // Đảm bảo `conversation` được reset khi không có tin nhắn (ví dụ: chat mới)
             setConversation([]);
@@ -170,6 +170,8 @@ export default function ChatPage(session: PAGES.IChatProps) {
     const toggleSidebar = () => setShowSidebar(prev => !prev);
 
     // ✨ [REFACTOR] Kết hợp `activeConversation` và `conversation` trước khi truyền xuống ContentChat
+    console.log(conversation);
+
     const fullActiveConversation = useMemo(() => {
         if (!activeConversation) return null;
         return { ...activeConversation, messages: conversation };
