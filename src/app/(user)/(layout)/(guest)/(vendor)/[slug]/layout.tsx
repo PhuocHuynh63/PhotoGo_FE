@@ -3,6 +3,7 @@ import { authOptions } from "@lib/authOptions";
 import { IReviewPaginationResponse } from "@models/review/repsonse.model";
 import { IServiceConceptImageResponseModel } from "@models/serviceConcepts/response.model";
 import { IVendorResponse } from "@models/vendor/response.model";
+import locationAvailabilityService from "@services/locationAvailability";
 import reviewService from "@services/review";
 import vendorService from "@services/vendors";
 import { getServerSession } from "next-auth";
@@ -18,6 +19,10 @@ async function getConceptImgsByVendorId(vendorId: string, current: string = '1',
 
 async function getReviewByVendorId(vendorId: string) {
     return await reviewService.getReviewByVendorId(vendorId)
+}
+
+async function getLocationAvailabilityByLocationId(locationId: string) {
+    return await locationAvailabilityService.getLocationAvailabilityByLocationId(locationId);
 }
 
 export default async function VendorDetailLayout({

@@ -2,12 +2,19 @@
 
 import { ROUTES } from '@routes'
 import NavLink from '@utils/helpers/NavLink'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import React from 'react'
 
 const VendorNavigation = () => {
+    /**
+     *  Get slug from URL and search parameters
+     *  Use useParams to get the slug and useSearchParams to get the location
+     */
     const params = useParams()
     const slug = params?.slug as string
+    const searchParams = useSearchParams();
+    const location = searchParams?.get('location');
+    //-----------------------------End---------------------------------//
 
     const tabs = [
         { label: 'Tổng quan', page: '' },
@@ -22,9 +29,12 @@ const VendorNavigation = () => {
             <div className="mx-14 pb-2">
                 <div className="flex gap-4 overflow-x-auto">
                     {tabs.map(tab => {
-                        const tabHref = ROUTES.PUBLIC.VENDOR_DETAIL
+                        let tabHref = ROUTES.PUBLIC.VENDOR_DETAIL
                             .replace(':slug', slug)
                             .replace(':page', tab.page)
+                        if (location) {
+                            tabHref += `?location=${encodeURIComponent(location)}`;
+                        }
 
                         return (
                             <NavLink

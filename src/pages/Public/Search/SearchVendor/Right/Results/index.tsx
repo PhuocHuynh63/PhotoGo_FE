@@ -46,6 +46,12 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
         router.push(`?${params.toString()}`);
     };
 
+    const handleNavigationVendorDetail = (slug: string, district: string) => {
+        const basePath = ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", slug).replace(":page", "");
+        const query = `?location=${encodeURIComponent(district)}`;
+        router.push(`${basePath}${query}`);
+    };
+
     return (
         <div className="flex-1 pl-6 p-3 border-l-2">
             <motion.div
@@ -120,7 +126,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                 animate="visible"
                                 exit="exit"
                                 transition={{ duration: 0.5, ease: "easeOut" }}
-                                onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(":slug", vendor.slug).replace(":page", "")}`)}
+                                onClick={() => handleNavigationVendorDetail(vendor.slug, vendor.locations[0]?.district || "")}
                             >
                                 <div className="absolute top-2 right-2 z-10">
                                     <Button className="shadow-none hover:bg-none flex items-center justify-center">
