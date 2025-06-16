@@ -2,8 +2,8 @@ import http from "@configs/fetch"
 import { ILocationAvailabilityRequest, IUpdateAvailabilityRequest, IUpdateSlotTimeRequest } from "@models/locationAvailability/request.model"
 
 const locationAvailabilityService = {
-    getLocationAvailabilityByLocationId: async (locationId: string) => {
-        return await http.get(`/location-availability/location/${locationId}?isAvailable=true&current=1&pageSize=10&sortBy=createdAt&sortDirection=asc`)
+    getLocationAvailabilityByLocationId: async (locationId: string, isAvailable: boolean = true, current: number = 1, pageSize: number = 10, sortBy: string = 'createdAt', sortDirection = 'asc') => {
+        return await http.get(`/location-availability/location/${locationId}?isAvailable=${isAvailable}&current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
     },
     createLocationAvailability: async (data: ILocationAvailabilityRequest, locationId: string) => {
         return await http.post(`/location-availability/${locationId}`, data)
