@@ -5,6 +5,7 @@ import { useState } from "react"
 import { CreditCard, Plus, Copy, Check, ExternalLink } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Button } from "@components/Atoms/ui/button"
+import WithdrawModal from "@pages/Vendor/Components/Finances/WithdrawModal"
 
 interface BankAccount {
     id: string
@@ -16,9 +17,10 @@ interface BankAccount {
 
 interface BankAccountsProps {
     accounts: BankAccount[]
+    availableBalance: number
 }
 
-export default function BankAccounts({ accounts }: BankAccountsProps) {
+export default function BankAccounts({ accounts, availableBalance }: BankAccountsProps) {
     const [copied, setCopied] = useState<string | null>(null)
 
     const copyToClipboard = (text: string, id: string) => {
@@ -31,10 +33,13 @@ export default function BankAccounts({ accounts }: BankAccountsProps) {
         <Card className="bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-medium">Thông tin tài khoản ngân hàng</CardTitle>
-                <Button variant="ghost" size="sm" className="h-8 gap-1">
-                    <Plus className="h-4 w-4" />
-                    <span>Gắn thẻ</span>
-                </Button>
+                <div className="flex gap-2">
+                    <WithdrawModal availableBalance={availableBalance} accounts={accounts} />
+                    <Button variant="ghost" size="sm" className="h-8 gap-1 cursor-pointer">
+                        <Plus className="h-4 w-4" />
+                        <span>Gắn thẻ</span>
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent>
                 {accounts?.map((account) => (
@@ -52,7 +57,7 @@ export default function BankAccounts({ accounts }: BankAccountsProps) {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-6 w-6 p-0"
+                                    className="h-6 w-6 p-0 cursor-pointer"
                                     onClick={() => copyToClipboard(account.accountNumber, `${account.id}-number`)}
                                 >
                                     {copied === `${account.id}-number` ? (

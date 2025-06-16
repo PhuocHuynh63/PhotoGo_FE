@@ -61,7 +61,6 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
         ...vendor,
         servicePackages: vendor?.servicePackages || [],
     });
-
     // Hàm để lấy dữ liệu mới từ server và cập nhật state
     const refreshVendorData = async () => {
         try {

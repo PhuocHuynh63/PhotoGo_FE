@@ -28,6 +28,7 @@ interface MonthListProps {
     getMonthName: (month: number) => string
     setShowActionBar: (show: boolean) => void
     setSelectedWorkingDateId: (id: string) => void
+    onResetSelectedDate: () => void
 }
 
 const MonthList = ({
@@ -52,7 +53,8 @@ const MonthList = ({
     getWeekdayLabel,
     getMonthName,
     setShowActionBar,
-    setSelectedWorkingDateId
+    setSelectedWorkingDateId,
+    onResetSelectedDate
 }: MonthListProps) => {
     const [activeWeek, setActiveWeek] = useState<string | null>(null)
     const [prevSelectedDate, setPrevSelectedDate] = useState<string | null>(null)
@@ -83,6 +85,9 @@ const MonthList = ({
                 }
                 setPrevSelectedDate(currentSelectedDate)
             }
+        } else {
+            // Nếu không còn ngày nào được chọn (đóng accordion), reset prevSelectedDate về null
+            setPrevSelectedDate(null)
         }
     }, [selectedDateForSlots])
 
@@ -102,6 +107,7 @@ const MonthList = ({
             // Ẩn ActionBar khi đóng tháng
             setShowActionBar(false)
             setSelectedWorkingDateId("")
+            onResetSelectedDate()
         }
         onToggle()
     }
