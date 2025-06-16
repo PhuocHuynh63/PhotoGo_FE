@@ -349,7 +349,7 @@ export default function FinancePage() {
                 <TabsContent value="overview" className="space-y-6">
                     <FinanceOverview data={financeData.overview} />
 
-                    <BankAccounts accounts={financeData.bankAccounts} />
+                    <BankAccounts accounts={financeData.bankAccounts} availableBalance={financeData.overview.availableBalance} />
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <MonthlyRevenue data={financeData.monthlyRevenue} />
