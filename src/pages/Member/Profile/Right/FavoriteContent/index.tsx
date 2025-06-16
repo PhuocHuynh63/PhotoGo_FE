@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@components/Atoms/Button";
 import { Card } from "@components/Atoms/Card";
@@ -105,10 +106,11 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
                                 >
                                     <Card className="hover:shadow-lg transition-shadow duration-300 group rounded-2xl overflow-hidden border">
                                         <div className="relative h-44 sm:h-48 overflow-hidden">
-                                            <img
+                                            <Image
                                                 src={item.serviceConcept.images?.[0] || '/placeholder-image.jpg'}
                                                 alt={item.serviceConcept.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
                                             <Button
                                                 variant="ghost"
@@ -168,19 +170,21 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
                     )}
                 </>
             ) : (
-                <div className="flex flex-col items-center justify-center mt-12 text-center text-gray-500">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-24 w-24 text-gray-300 mb-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
-                    </svg>
+                <div className="flex flex-col items-center justify-center min-h-[400px] text-center text-gray-500">
+                    <div className="flex items-center justify-center w-24 h-24 mb-4">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-full h-full text-gray-300"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z" />
+                        </svg>
+                    </div>
                     <p className="text-lg font-medium">Bạn chưa có sản phẩm yêu thích nào.</p>
                     <p className="text-sm mt-1">Hãy khám phá và thêm vào danh sách yêu thích nhé!</p>
                 </div>

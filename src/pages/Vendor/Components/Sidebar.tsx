@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/Atoms/ui/collapsible"
 import { LucideIcon } from "lucide-react"
 import { signOut } from "next-auth/react"
+import { ROUTES } from "@routes"
 
 type MenuItem = {
     icon: LucideIcon
@@ -43,7 +44,7 @@ export default function Sidebar() {
         },
         { icon: MessageSquare, label: "Tin nhắn", href: "/vendor/messages" },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
-        { icon: Settings, label: "Cấu hình", href: "/vendor/settings" },
+        { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.CALENDAR },
     ]
 
     return (
@@ -65,7 +66,7 @@ export default function Sidebar() {
                     if ('type' in item && item.type === "collapsible") {
                         return (
                             <Collapsible key={index} className="mb-0">
-                                <CollapsibleTrigger className="group flex items-center justify-between w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
+                                <CollapsibleTrigger className="group flex items-center justify-between w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer">
                                     <div className="flex items-center gap-3">
                                         <item.icon className="w-5 h-5" />
                                         <span>{item.label}</span>
@@ -73,7 +74,7 @@ export default function Sidebar() {
                                     <ChevronDown className="w-5 h-5 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                                 </CollapsibleTrigger>
 
-                                <CollapsibleContent className="ml-4 mt-2 space-y-2">
+                                <CollapsibleContent className="ml-4 mt-2 space-y-2 cursor-pointer">
                                     {item.items.map((subItem, subIndex) => (
                                         <Link key={subIndex} href={subItem.href}>
                                             <div className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer ${pathname === subItem.href

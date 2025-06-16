@@ -127,6 +127,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                                         src={image?.imageUrl || "/placeholder.svg"}
                                                         alt={`${concept?.name} ${index + 1}`}
                                                         fill
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                         className="object-cover rounded-lg"
                                                     />
                                                 </div>
@@ -146,10 +147,10 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
             </div>
 
             <div className="mt-6 flex justify-between items-center">
-                <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.LIST)}>
+                <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.LIST)} className="cursor-pointer">
                     Quay lại danh sách
                 </Button>
-                <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.EDIT.replace(':id', service?.id))} className="gap-2">
+                <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.EDIT.replace(':id', service?.id))} className="gap-2 cursor-pointer">
                     <Edit className="h-4 w-4" />
                     Chỉnh sửa
                 </Button>
