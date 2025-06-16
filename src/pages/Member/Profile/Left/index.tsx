@@ -63,7 +63,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     const router = useRouter();
     const pathname = usePathname();
     const currentTab = pathname?.split('/').pop() || 'profile';
-    const userRank = user?.rank || 'Đồng'; // Use empty string if no rank
+    const userRank = user?.rank || ''; // Use empty string if no rank
     const gradientClass = getRankGradient(userRank);
 
     return (
@@ -148,10 +148,15 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         >
                             <Button
                                 onClick={() => router.push(`${ROUTES.USER.PROFILE}/${tab}`)}
-                                className={`w-full text-left ${currentTab === tab ? "text-primary font-medium" : "text-gray-700 hover:text-primary"}`}
+                                className={`bg-none shadow-none hover:bg-none ${
+                                    currentTab === tab
+                                        ? "text-primary font-medium"
+                                        : "text-gray-700 hover:text-primary"
+                                }`}
+                                variant="ghost"
                             >
-                                <Icon className="w-5 h-5 mr-3" />
-                                {label}
+                                <Icon className={`w-5 h-5 mr-3`} />
+                                <span>{label}</span>
                             </Button>
                         </motion.li>
                     ))}

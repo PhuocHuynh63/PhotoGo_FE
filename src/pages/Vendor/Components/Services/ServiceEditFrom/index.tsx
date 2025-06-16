@@ -289,7 +289,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 Chỉnh sửa dịch vụ: <span className="text-primary">{serviceData?.name}</span>
                             </div>
 
-                            <Button variant="destructive" size="icon" onClick={() => handleDeleteService()} disabled={isLoading}>
+                            <Button variant="destructive" size="icon" onClick={() => handleDeleteService()} disabled={isLoading} className="cursor-pointer">
                                 <Trash className="h-4 w-4 text-white" />
                             </Button>
                         </div>
@@ -350,7 +350,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     <Button
                                         variant="destructive"
                                         size="sm"
-                                        className="absolute top-0 right-0 h-8 w-8 p-0 text-white bg-red-500"
+                                        className="absolute top-0 right-0 h-8 w-8 p-0 text-white bg-red-500 cursor-pointer"
                                         onClick={() =>
                                             setServiceData((prev) => ({ ...prev, image: undefined, imagePreview: "" }))
                                         }
@@ -380,7 +380,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                         <h3 className="text-lg font-medium">
                             Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
                         </h3>
-                        <Button variant="outline" onClick={handleAddConcept} className="gap-2">
+                        <Button variant="outline" onClick={handleAddConcept} className="gap-2 cursor-pointer">
                             Thêm gói dịch vụ
                         </Button>
                     </div>
@@ -479,7 +479,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
-                                                className="absolute top-1 right-1 h-8 w-8 p-0 text-white bg-red-500"
+                                                className="absolute top-1 right-1 h-8 w-8 p-0 text-white bg-red-500 cursor-pointer"
                                                 onClick={() => removeConceptImage(currentConceptIndex, index)}
                                             >
                                                 <X className="h-3 w-3" />
@@ -516,6 +516,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             variant="outline"
                             onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
                             disabled={currentConceptIndex === 0}
+                            className="cursor-pointer"
                         >
                             Gói trước
                         </Button>
@@ -523,19 +524,20 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             variant="outline"
                             onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
                             disabled={currentConceptIndex === concepts.length - 1}
+                            className="cursor-pointer"
                         >
                             Gói tiếp theo
                         </Button>
-                        <Button variant="outline" onClick={() => handleRemoveConcept(currentConceptIndex)} disabled={concepts.length <= 1}>
+                        <Button variant="outline" onClick={() => handleRemoveConcept(currentConceptIndex)} disabled={concepts.length <= 1} className="cursor-pointer">
                             Xóa gói này
                         </Button>
                     </div>
 
                     <div className="mt-6 flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService.id))}>
+                        <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService.id))} className="cursor-pointer">
                             Hủy
                         </Button>
-                        <Button onClick={() => handleSubmit()} disabled={isLoading}>
+                        <Button onClick={() => handleSubmit()} disabled={isLoading} className="cursor-pointer">
                             {isLoading ? "Đang cập nhật..." : "Lưu thay đổi"}
                         </Button>
                     </div>

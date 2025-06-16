@@ -235,7 +235,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="object-cover"
-                                        priority={false}
+                                        priority={true}
                                     />
                                 </div>
                             )}
@@ -280,7 +280,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="flex-1 gap-1"
+                                    className="flex-1 gap-1 cursor-pointer"
                                     onClick={() => handleViewService(service)}
                                 >
                                     <Eye className="h-4 w-4" />
@@ -289,7 +289,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="flex-1 gap-1"
+                                    className="flex-1 gap-1 cursor-pointer"
                                     onClick={() => handleEditService(service)}
                                 >
                                     <Edit className="h-4 w-4" />
@@ -306,7 +306,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                     <PackageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy dịch vụ nào</h3>
                     <p className="text-gray-500 mb-4">Thử thay đổi bộ lọc hoặc tạo dịch vụ mới</p>
-                    <Button onClick={handleCreateService} className="gap-2">
+                    <Button onClick={handleCreateService} className="gap-2 cursor-pointer">
                         <Plus className="h-4 w-4" />
                         Thêm dịch vụ mới
                     </Button>
