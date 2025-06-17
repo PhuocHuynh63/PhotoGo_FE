@@ -82,7 +82,7 @@ export default function CustomCalendar({ selectedDate, onDateSelect, availabilit
             <CardContent className="p-4">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <Button variant="outline" size="sm" onClick={() => navigateMonth("prev")} className="h-8 w-8 p-0">
+                    <Button variant="outline" size="sm" onClick={() => navigateMonth("prev")} className="h-8 w-8 p-0 cursor-pointer">
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
 
@@ -90,7 +90,7 @@ export default function CustomCalendar({ selectedDate, onDateSelect, availabilit
                         {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
                     </h3>
 
-                    <Button variant="outline" size="sm" onClick={() => navigateMonth("next")} className="h-8 w-8 p-0">
+                    <Button variant="outline" size="sm" onClick={() => navigateMonth("next")} className="h-8 w-8 p-0 cursor-pointer">
                         <ChevronRight className="h-4 w-4" />
                     </Button>
                 </div>
