@@ -12,6 +12,7 @@ export const createVendorSlice = (
     servicePackage: {} as IServicePackage,
     concept: {} as IServiceConcept,
     reviews: {} as IReviewPaginationResponse,
+    addressLocation: '' as string,
 
     setVendor(vendor) {
         return set(() => ({
@@ -46,6 +47,12 @@ export const createVendorSlice = (
     setReviews(reviews) {
         return set(() => ({
             reviews: reviews,
+        }))
+    },
+
+    setAddressLocation(addressLocation) {
+        return set(() => ({
+            addressLocation: addressLocation,
         }))
     },
 })

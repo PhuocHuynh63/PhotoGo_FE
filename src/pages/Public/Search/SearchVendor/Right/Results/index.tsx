@@ -64,7 +64,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                 <p className="text-sm text-gray-500">Tìm thấy <span className="font-medium">{resultCount}</span> kết quả</p>
             </motion.div>
 
-            {vendors?.data.length === 0 ? (
+            {!vendors ? (
                 <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
                     {[...Array(6)].map((_, index) => (
                         <div key={index} className="border-3 rounded-lg overflow-hidden">
@@ -81,15 +81,17 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                         </div>
                     ))}
                 </div>
-            ) : vendors?.data.length === 0 ? (
+            ) : vendors.data.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">
                     <Image
                         src="/not-found.svg"
                         alt="Không tìm thấy kết quả"
                         width={200}
                         height={200}
+                        className="mb-4"
                     />
-                    <p className="mt-4 text-gray-500">Không tìm thấy kết quả phù hợp</p>
+                    <p className="text-gray-500 text-lg font-medium">Không tìm thấy kết quả phù hợp</p>
+                    <p className="text-gray-400 text-sm mt-2">Vui lòng thử lại với các bộ lọc khác</p>
                 </div>
             ) : (
                 <>

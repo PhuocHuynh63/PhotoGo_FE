@@ -54,6 +54,12 @@ const packageService = {
             next: { revalidate: 10 }
         })
     },
+
+    deleteServiceConcept: async (id: string) => {
+        return await http.delete(`/service-packages/service-concept/${id}`, {
+            cache: 'no-store'
+        })
+    }
 }
 
 export default packageService

@@ -10,6 +10,7 @@ import ActionBar from "./components/ActionBar"
 import locationAvailabilityService from "@services/locationAvailability"
 import { toast } from "react-hot-toast"
 import { IUpdateAvailabilityResponse } from "@models/locationAvailability/response.model"
+import { getMonthFromDate, getWeekFromDate } from "@utils/helpers/Date"
 
 export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSettingsProps) {
     const [selectedLocation, setSelectedLocation] = useState<string>(vendor?.locations[0]?.id || "") // Default location
@@ -17,6 +18,13 @@ export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSett
     const [showActionBar, setShowActionBar] = useState(false)
     const [selectedWorkingDateId, setSelectedWorkingDateId] = useState<string>("")
     const [selectedWorkingDateAvailability, setSelectedWorkingDateAvailability] = useState<boolean>(true)
+    const [lastSelection, setLastSelection] = useState<{
+        month: number,
+        week: number,
+        workingHoursId: string,
+        workingDateId: string,
+        date: string
+    } | null>(null)
 
     // Sử dụng custom hook để fetch working hours
     const {
@@ -32,10 +40,31 @@ export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSett
         try {
             const response = await locationAvailabilityService.updateAvailability({ isAvailable }, workingDateId) as IUpdateAvailabilityResponse
             if (response.statusCode === 200) {
-                setShowActionBar(false)
-                setSelectedWorkingDateAvailability(isAvailable)
-                fetchWorkingHours() // Refresh data after update
-                toast.success("Cập nhật thành công")
+                // Tìm thông tin ngày đang chọn trước khi fetch dữ liệu mới
+                const workingHours = workingHoursList.find(wh =>
+                    wh.workingDates.some(wd => wd.id === workingDateId)
+                );
+                const workingDate = workingHours?.workingDates.find(wd => wd.id === workingDateId);
+
+                if (workingDate) {
+                    const month = getMonthFromDate(workingDate.date);
+                    const week = getWeekFromDate(workingDate.date);
+
+                    // Set lastSelection trước
+                    setLastSelection({
+                        month,
+                        week,
+                        workingHoursId: workingHours?.id || "",
+                        workingDateId,
+                        date: workingDate.date
+                    });
+
+                    // Sau đó mới ẩn action bar và fetch dữ liệu mới
+                    setShowActionBar(false);
+                    setSelectedWorkingDateAvailability(isAvailable);
+                    fetchWorkingHours();
+                    toast.success("Cập nhật thành công");
+                }
             } else {
                 toast.error("Cập nhật thất bại")
             }
@@ -64,6 +93,8 @@ export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSett
                         setShowActionBar={setShowActionBar}
                         setSelectedWorkingDateId={setSelectedWorkingDateId}
                         setSelectedWorkingDateAvailability={setSelectedWorkingDateAvailability}
+                        lastSelection={lastSelection}
+                        setLastSelection={setLastSelection}
                     />
                 </div>
                 {showActionBar && (

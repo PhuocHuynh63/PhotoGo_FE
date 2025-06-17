@@ -90,7 +90,7 @@ const TimeSlotCard = ({
                             size="sm"
                             onClick={onUpdate}
                             disabled={isUpdatingSlot}
-                            className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                            className="h-7 w-7 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 cursor-pointer"
                         >
                             {isUpdatingSlot ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -102,7 +102,7 @@ const TimeSlotCard = ({
                             variant="ghost"
                             size="sm"
                             onClick={onCancel}
-                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
                         >
                             <X className="h-3 w-3" />
                         </Button>

@@ -8,6 +8,7 @@ import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGr
 import Booking from "../Booking";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
+import EnhancedBookingPopup from "../EnhancedBookingPopup";
 
 type ConceptProps = {
     isOpen: boolean;
@@ -22,7 +23,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedConcept, setSelectedConcept] = useState(0);
-    
+
     useEffect(() => {
         if (initialConceptId && servicePackage?.serviceConcepts) {
             const conceptIndex = servicePackage.serviceConcepts.findIndex(concept => concept.id === initialConceptId);
@@ -244,8 +245,8 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                 </div>
 
             </DialogContent>
-            <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} concept={selectedConceptObject
-            } />
+            {/* <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} concept={selectedConceptObject} /> */}
+            <EnhancedBookingPopup isOpen={isOpenBooking} onClose={handleDialogBooking} />
         </Dialog>
     );
 }
