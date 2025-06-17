@@ -1,24 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Calendar, Clock, Package, Users, MapPin } from "lucide-react"
+import { Calendar, Clock, Package, MapPin } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Atoms/ui/dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Separator } from "@components/Atoms/ui/separator"
 import CustomCalendar from "@components/Molecules/Canlender"
 import { Button } from "@components/Atoms/ui/button"
 import { Badge } from "@components/Atoms/ui/badge"
-
-// Mock data
-const mockServicePackage = {
-    id: 1,
-    name: "Gói chụp ảnh cưới cơ bản",
-    price: "5,000,000 VNĐ",
-    duration: "4 giờ",
-    description: "Bao gồm: 100 ảnh đã chỉnh sửa, 1 album ảnh, trang phục cô dâu chú rể",
-    maxGuests: 20,
-    location: "Studio ABC, Quận 1, TP.HCM",
-}
+import { useAddressLocation } from "@stores/vendor/selectors"
+import { IServiceConcept } from "@models/serviceConcepts/common.model"
 
 const mockTimeSlots = [
     { id: 1, time: "08:00 - 12:00", available: true, price: "5,000,000 VNĐ" },
@@ -56,14 +47,23 @@ const generateMockAvailability = () => {
 interface EnhancedBookingPopupProps {
     isOpen: boolean
     onClose: () => void
-    servicePackage?: typeof mockServicePackage
+    serviceConcept?: IServiceConcept;
 }
 
 export default function EnhancedBookingPopup({
     isOpen,
     onClose,
-    servicePackage = mockServicePackage,
+    serviceConcept,
 }: EnhancedBookingPopupProps) {
+    /**
+     * Define data from store
+     * - AddressLocation: Used to display vendor's address in the booking popup
+     */
+    const addressLocation = useAddressLocation();
+    //----------------------End----------------------//
+
+    console.log("Service Concept:", serviceConcept);
+
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
     const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
     const [timeSlots, setTimeSlots] = useState(mockTimeSlots)
@@ -90,7 +90,7 @@ export default function EnhancedBookingPopup({
         if (selectedDate && selectedSlot) {
             const selectedSlotData = timeSlots.find((slot) => slot.id === selectedSlot)
             alert(
-                `Đặt lịch thành công!\nNgày: ${selectedDate.toLocaleDateString("vi-VN")}\nGiờ: ${selectedSlotData?.time}\nGói dịch vụ: ${servicePackage.name}`,
+                `Đặt lịch thành công!\nNgày: ${selectedDate.toLocaleDateString("vi-VN")}\nGiờ: ${selectedSlotData?.time}\nGói dịch vụ: ${serviceConcept?.name}`,
             )
             onClose()
         }
@@ -121,22 +121,18 @@ export default function EnhancedBookingPopup({
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <h3 className="font-semibold text-lg mb-2">{servicePackage.name}</h3>
-                                    <p className="text-sm text-muted-foreground mb-3">{servicePackage.description}</p>
+                                    <h3 className="font-semibold text-lg mb-2">{serviceConcept?.name}</h3>
+                                    {/* <p className="text-sm text-muted-foreground mb-3">{serviceConcept?.description}</p> */}
                                 </div>
 
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2 text-sm">
                                         <Clock className="h-4 w-4 text-muted-foreground" />
-                                        <span>Thời gian: {servicePackage.duration}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <span>Tối đa: {servicePackage.maxGuests} khách</span>
+                                        <span>Thời gian: {serviceConcept?.duration}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm">
                                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                                        <span>{servicePackage.location}</span>
+                                        <span>{addressLocation}</span>
                                     </div>
                                 </div>
 
@@ -144,7 +140,7 @@ export default function EnhancedBookingPopup({
 
                                 <div className="text-right">
                                     <div className="text-sm text-muted-foreground">Giá từ</div>
-                                    <div className="text-xl font-bold text-primary">{servicePackage.price}</div>
+                                    <div className="text-xl font-bold text-primary">{Number(serviceConcept?.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -166,7 +162,7 @@ export default function EnhancedBookingPopup({
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-green-700">Dịch vụ:</span>
-                                        <span className="font-medium">{servicePackage.name}</span>
+                                        <span className="font-medium">{serviceConcept?.name}</span>
                                     </div>
                                     <Separator />
                                     <div className="flex justify-between">
