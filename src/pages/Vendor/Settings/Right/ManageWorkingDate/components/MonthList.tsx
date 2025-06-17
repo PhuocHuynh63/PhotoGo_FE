@@ -29,6 +29,13 @@ interface MonthListProps {
     setShowActionBar: (show: boolean) => void
     setSelectedWorkingDateId: (id: string) => void
     onResetSelectedDate: () => void
+    lastSelection: {
+        month: number,
+        week: number,
+        workingHoursId: string,
+        workingDateId: string,
+        date: string
+    } | null;
 }
 
 const MonthList = ({
@@ -54,7 +61,8 @@ const MonthList = ({
     getMonthName,
     setShowActionBar,
     setSelectedWorkingDateId,
-    onResetSelectedDate
+    onResetSelectedDate,
+    lastSelection
 }: MonthListProps) => {
     const [activeWeek, setActiveWeek] = useState<string | null>(null)
     const [prevSelectedDate, setPrevSelectedDate] = useState<string | null>(null)
@@ -90,6 +98,14 @@ const MonthList = ({
             setPrevSelectedDate(null)
         }
     }, [selectedDateForSlots])
+
+    // Effect để tự động mở tuần khi có lastSelection
+    useEffect(() => {
+        if (lastSelection && lastSelection.month === month) {
+            const weekKey = `week-${month}-${lastSelection.week}`;
+            setActiveWeek(weekKey);
+        }
+    }, [lastSelection, month]);
 
     if (!isMounted) {
         return null
@@ -189,6 +205,7 @@ const MonthList = ({
                                     editingSlot={editingSlot}
                                     editingMaxBookings={editingMaxBookings}
                                     isUpdatingSlot={isUpdatingSlot}
+                                    lastSelection={lastSelection}
                                 />
                             )
                         })}

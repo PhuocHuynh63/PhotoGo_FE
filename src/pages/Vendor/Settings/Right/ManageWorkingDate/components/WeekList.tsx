@@ -25,6 +25,13 @@ interface WeekListProps {
     getMonthFromDate: (date: string) => number
     getWeekFromDate: (date: string) => number
     getWeekdayLabel: (date: string) => string
+    lastSelection: {
+        month: number,
+        week: number,
+        workingHoursId: string,
+        workingDateId: string,
+        date: string
+    } | null;
 }
 
 const WeekHeader = memo(({ week, isActive, weekDataLength, onToggle }: {
@@ -84,7 +91,8 @@ const WeekList = memo(({
     formatTime,
     getMonthFromDate,
     getWeekFromDate,
-    getWeekdayLabel
+    getWeekdayLabel,
+    lastSelection
 }: WeekListProps) => {
     const workingHoursList = useMemo(() => (
         weekData?.map((workingHours) => (
@@ -110,6 +118,7 @@ const WeekList = memo(({
                 getWeekdayLabel={getWeekdayLabel}
                 month={month}
                 week={week}
+                lastSelection={lastSelection}
             />
         ))
     ), [
@@ -130,7 +139,8 @@ const WeekList = memo(({
         getWeekFromDate,
         getWeekdayLabel,
         month,
-        week
+        week,
+        lastSelection
     ])
 
     return (

@@ -15,7 +15,7 @@ import { Badge } from "@components/Atoms/ui/badge";
 import { ROUTES } from "@routes";
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import packageService from "@services/packageServices";
-import { IBackendResponse } from "@models/backend/backendResponse.model";
+import { IServicePackageResponse } from "@models/servicePackages/response.model";
 
 interface ServiceType {
     id: string;
@@ -92,28 +92,6 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     );
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    // useEffect(() => {
-    //     const validate = () => {
-    //         if (!serviceData.name || !serviceData.description) {
-    //             toast.error("Vui lòng điền đầy đủ thông tin dịch vụ");
-    //             return false;
-    //         }
-    //         const invalidConcepts = concepts.filter(
-    //             (c) => !c.name || !c.description || c.price <= 0 || c.serviceTypeIds.length === 0
-    //         );
-    //         if (invalidConcepts.length > 0) {
-    //             toast.error("Vui lòng điền đầy đủ thông tin cho tất cả các gói dịch vụ");
-    //             return false;
-    //         }
-    //         return true;
-    //     };
-
-    //     // Thêm validation realtime
-    //     const timer = setTimeout(() => {
-    //         validate();
-    //     }, 500);
-    //     return () => clearTimeout(timer);
-    // }, [serviceData, concepts]);
 
     const handleServiceImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -178,8 +156,31 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         setCurrentConceptIndex(concepts.length);
     };
 
-    const handleRemoveConcept = (index: number) => {
+    const handleRemoveConcept = async (index: number) => {
         if (concepts.length > 1) {
+            const conceptToRemove = concepts[index];
+            if (conceptToRemove.id) {
+                setIsLoading(true);
+                try {
+                    const response = await packageService.deleteServiceConcept(conceptToRemove.id) as IServicePackageResponse;
+                    if (response.statusCode === 200) {
+                        toast.success("Xóa gói dịch vụ thành công!");
+                    } else {
+                        toast.error("Có lỗi xảy ra khi xóa gói dịch vụ!");
+                        setIsLoading(false);
+                        return;
+                    }
+                } catch (error: unknown) {
+                    if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+                        toast.error((error.response.data as { message: string }).message);
+                    } else {
+                        toast.error("oh lỗi");
+                    }
+                    setIsLoading(false);
+                    return;
+                }
+                setIsLoading(false);
+            }
             setConcepts((prev) => prev.filter((_, i) => i !== index));
             setConceptImagePreviews((prev) => prev.filter((_, i) => i !== index));
             setCurrentConceptIndex(Math.max(0, index - 1));
@@ -220,7 +221,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             }
 
             // Gọi API cập nhật dịch vụ
-            const response = await packageService.updatePackage(initialService?.id || "", serviceFormData) as IBackendResponse<any>;
+            const response = await packageService.updatePackage(initialService?.id || "", serviceFormData) as IServicePackageResponse;
             if (response.statusCode === 200) {
                 toast.success("Cập nhật dịch vụ thành công!")
 
@@ -241,10 +242,10 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     let responseConcept;
                     if (concept?.id) {
                         // Nếu có ID thì cập nhật concept hiện có
-                        responseConcept = await packageService.updateServiceConcept(concept?.id, conceptFormData) as IBackendResponse<any>
+                        responseConcept = await packageService.updateServiceConcept(concept?.id, conceptFormData) as IServicePackageResponse
                     } else {
                         // Nếu không có ID thì tạo mới concept
-                        responseConcept = await packageService.createServiceConcept(conceptFormData) as IBackendResponse<any>
+                        responseConcept = await packageService.createServiceConcept(conceptFormData) as IServicePackageResponse
                     }
 
                     if (responseConcept.statusCode !== 200 && responseConcept.statusCode !== 201) {
@@ -272,7 +273,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
     const handleDeleteService = async () => {
         setIsLoading(true);
-        const response = await packageService.deletePackage(initialService?.id || "") as IBackendResponse<any>;
+        const response = await packageService.deletePackage(initialService?.id || "") as IServicePackageResponse;
         if (response.statusCode === 200) {
             setIsLoading(false);
             toast.success("Xóa dịch vụ thành công")
@@ -532,7 +533,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                         >
                             Gói tiếp theo
                         </Button>
-                        <Button variant="outline" onClick={() => handleRemoveConcept(currentConceptIndex)} disabled={concepts.length <= 1} className="cursor-pointer">
+                        <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} disabled={concepts.length <= 1} className="cursor-pointer">
                             Xóa gói này
                         </Button>
                     </div>

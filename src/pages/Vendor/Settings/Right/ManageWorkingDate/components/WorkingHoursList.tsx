@@ -28,6 +28,13 @@ interface WorkingHoursListProps {
     getWeekdayLabel: (date: string) => string
     month: number
     week: number
+    lastSelection: {
+        month: number,
+        week: number,
+        workingHoursId: string,
+        workingDateId: string,
+        date: string
+    } | null;
 }
 
 const WorkingHoursList = ({
@@ -50,7 +57,8 @@ const WorkingHoursList = ({
     getWeekFromDate,
     getWeekdayLabel,
     month,
-    week
+    week,
+    lastSelection
 }: WorkingHoursListProps) => {
     const [isMounted, setIsMounted] = useState(false)
 
@@ -58,10 +66,23 @@ const WorkingHoursList = ({
         setIsMounted(true)
     }, [])
 
+    // Effect để tự động chọn lại ngày khi có lastSelection
+    useEffect(() => {
+        if (lastSelection &&
+            lastSelection.month === month &&
+            lastSelection.week === week &&
+            lastSelection.workingHoursId === workingHours.id) {
+            const workingDate = workingHours.workingDates.find(wd => wd.id === lastSelection.workingDateId);
+            if (workingDate) {
+                onDateSelect(workingHours.id, workingDate.date, workingDate.id, workingDate.isAvailable);
+            }
+        }
+    }, [lastSelection, month, week, workingHours.id, workingHours.workingDates]);
+
     // Memoize filtered and sorted working dates
     const filteredWorkingDates = useMemo(() => {
         if (!workingHours.workingDates) return []
-        
+
         return workingHours.workingDates
             .filter(wd => getMonthFromDate(wd.date) === month && getWeekFromDate(wd.date) === week)
             .sort((a, b) => {

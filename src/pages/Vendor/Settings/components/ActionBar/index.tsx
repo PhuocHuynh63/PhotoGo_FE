@@ -12,7 +12,6 @@ interface ActionBarProps {
 
 export default function ActionBar({ workingDateId, isAvailable, onUpdateAvailability }: ActionBarProps) {
     const [enabled, setEnabled] = useState(isAvailable)
-
     useEffect(() => {
         setEnabled(isAvailable)
     }, [isAvailable])
