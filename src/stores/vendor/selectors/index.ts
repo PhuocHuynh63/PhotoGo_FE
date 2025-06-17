@@ -16,3 +16,6 @@ export const useSetServiceConcept = () => useStore((state: ZUSTAND.IVendorState)
 
 export const useReviews = () => useStore((state: ZUSTAND.IVendorState) => state.reviews)
 export const useSetReviews = () => useStore((state: ZUSTAND.IVendorState) => state.setReviews)
+
+export const useAddressLocation = () => useStore((state: ZUSTAND.IVendorState) => state.addressLocation)
+export const useSetAddressLocation = () => useStore((state: ZUSTAND.IVendorState) => state.setAddressLocation)

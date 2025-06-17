@@ -457,4 +457,18 @@ declare namespace ICOMPONENTS {
         subscriptions: any;
         numberOfPackages?: number;
     }
+
+    interface DayAvailability {
+        date: Date
+        totalSlots: number
+        availableSlots: number
+        isFullyBooked: boolean
+        isPastDate: boolean
+    }
+
+    interface CustomCalendarProps {
+        selectedDate?: Date
+        onDateSelect: (date: Date) => void
+        availability: DayAvailability[]
+    }
 }

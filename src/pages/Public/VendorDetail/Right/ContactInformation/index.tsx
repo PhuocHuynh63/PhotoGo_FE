@@ -1,19 +1,23 @@
 'use client'
 
-import { CalendarIcon, Clock, Globe, Mail, MapPin, Phone } from 'lucide-react'
-import React, { useState } from 'react'
+import { CalendarIcon, Clock, Mail, MapPin, Phone } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Button from '@components/Atoms/Button'
 import { ROUTES } from '@routes'
-import { useVendor } from '@stores/vendor/selectors'
+import { useAddressLocation, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/Atoms/ui/select'
-import { Badge } from '@components/Atoms/ui/badge'
+import { ILocation } from '@models/location/common.model'
 
 const VendorContactInformation = () => {
 
+    /**
+     * Define data from the store
+     */
     const vendorData = useVendor() as IVendor
-    // console.log('vendorData', vendorData);
+    const addressVendor = useAddressLocation() as string
+    //---------------------------End---------------------------//
 
     /**
      * Define params and router for navigation
@@ -44,12 +48,6 @@ const VendorContactInformation = () => {
         router.push(newUrl)
     }
     //---------------------------End---------------------------//
-
-    console.log(vendorData?.locations);
-
-    const addressVendor = vendorData?.locations?.length
-        ? `${vendorData.locations[0]?.address}, ${vendorData.locations[0]?.ward}, ${vendorData.locations[0]?.district}, ${vendorData.locations[0]?.city}, ${vendorData.locations[0]?.province}`
-        : ''
 
 
     return (

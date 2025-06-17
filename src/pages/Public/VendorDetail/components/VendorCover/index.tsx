@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
 import { useParams, useRouter } from 'next/navigation'
 import { ROUTES } from '@routes'
-import { useReviews, useVendor } from '@stores/vendor/selectors'
+import { useAddressLocation, useReviews, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Skeleton } from '@components/Atoms/ui/skeleton'
 import { Socket } from 'socket.io-client'
@@ -27,10 +27,14 @@ const VendorCover = () => {
     //-----------------------------End---------------------------------//
 
     /**
-     * Call vendor store to get vendor data
+     * Get data from stores
+     * - vendorData: Vendor information
+     * - reviews: Reviews for the vendor
+     * - addressLocation: Address location of the vendor
      */
     const vendorData = useVendor() as IVendor;
     const reviews = useReviews() as IReviewPaginationResponse;
+    const addressLocation = useAddressLocation() as string;
     const reviewCount = reviews.data?.data.length || 0;
     //-----------------------------End---------------------------------//
 
@@ -111,7 +115,7 @@ const VendorCover = () => {
                                     <span className="text-muted-foreground">•</span>
                                     <div className="flex items-center text-muted-foreground">
                                         <MapPin className="h-4 w-4 mr-1" />
-                                        {/* <span className="text-sm truncate max-w-[240px]">{vendorData?.location.address}</span> */}
+                                        <span className="text-sm truncate max-w-[240px]">{addressLocation}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-3">
