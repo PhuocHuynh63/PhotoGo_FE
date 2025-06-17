@@ -8,8 +8,9 @@ import VendorContactInformation from '@pages/Public/VendorDetail/Right/ContactIn
 import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
-import { useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
+import { useSetAddressLocation, useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
 import { useSetSession } from '@stores/user/selectors';
+import { useSearchParams } from 'next/navigation';
 
 const VendorDetailLayoutPage = ({
     children,
@@ -18,6 +19,25 @@ const VendorDetailLayoutPage = ({
     concept,
     review
 }: PAGES.IVendorDetailPageProps) => {
+
+    /**
+     * State to manage selected branch
+     */
+    const searchParams = useSearchParams()
+    const location = searchParams?.get('location') as string
+    const setAddressLocation = useSetAddressLocation();
+
+    useEffect(() => {
+        if (vendor?.locations && location) {
+            const filterLocation = vendor.locations.find(locationFilter =>
+                location === locationFilter.district
+            )
+            if (filterLocation) {
+                setAddressLocation(`${filterLocation.address}, ${filterLocation.ward}, ${filterLocation.district}, ${filterLocation.city}, ${filterLocation.province}`)
+            }
+        }
+    }, [location, vendor])
+    //---------------------------End---------------------------//
 
     /**
      * * Set the vendor in the global state
@@ -33,6 +53,7 @@ const VendorDetailLayoutPage = ({
         setVendor(null);
         setSession(null);
         setConceptImages([]);
+        setAddressLocation('');
     }
 
     useEffect(() => {
