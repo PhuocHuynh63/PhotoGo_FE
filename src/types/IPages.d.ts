@@ -116,6 +116,20 @@ declare namespace PAGES {
         setShowActionBar: (show: boolean) => void;
         setSelectedWorkingDateId: (id: string) => void;
         setSelectedWorkingDateAvailability: (isAvailable: boolean) => void;
+        lastSelection: {
+            month: number,
+            week: number,
+            workingHoursId: string,
+            workingDateId: string,
+            date: string
+        } | null;
+        setLastSelection: React.Dispatch<React.SetStateAction<{
+            month: number,
+            week: number,
+            workingHoursId: string,
+            workingDateId: string,
+            date: string
+        } | null>>;
     }
 
     interface IVendorProfileInfoProps {

@@ -14,7 +14,7 @@ import MonthList from './components/MonthList'
 import DeleteConfirmationDialog from './components/DeleteConfirmationDialog'
 import { formatTime, getAllYears, getMonthFromDate, getMonthName, getWeekdayLabel, getWeekFromDate, groupWorkingHoursByMonthAndWeek } from '@utils/helpers/Date'
 
-const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours, setShowActionBar, setSelectedWorkingDateId, setSelectedWorkingDateAvailability }: PAGES.IManageWorkingDateProps) => {
+const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours, setShowActionBar, setSelectedWorkingDateId, setSelectedWorkingDateAvailability, lastSelection, setLastSelection }: PAGES.IManageWorkingDateProps) => {
     const [selectedDateForSlots, setSelectedDateForSlots] = useState<{ [key: string]: string }>({})
     const [editingSlot, setEditingSlot] = useState<{ workingDateId: string, slotTimeId: string, selectedDate: string } | null>(null)
     const [editingMaxBookings, setEditingMaxBookings] = useState(1)
@@ -28,7 +28,6 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
     })
     const [activeMonth, setActiveMonth] = useState<string | null>(null)
     const [prevSelectedDate, setPrevSelectedDate] = useState<string | null>(null)
-
     const years = getAllYears(workingHoursList)
     const groupedData = groupWorkingHoursByMonthAndWeek(workingHoursList, selectedYear)
 
@@ -63,6 +62,31 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
             setPrevSelectedDate(currentSelectedDate)
         }
     }, [selectedDateForSlots])
+
+    // Effect để mở lại accordion sau khi fetch xong và có lastSelection
+    useEffect(() => {
+        if (!isLoadingData && lastSelection) {
+            // Đầu tiên set active month và selected date
+            setActiveMonth(`month-${lastSelection.month}`);
+
+            // Đợi một chút để đảm bảo accordion month đã mở
+            setTimeout(() => {
+                // Sau đó set selected date và prev selected date
+                setSelectedDateForSlots({ [lastSelection.workingHoursId]: lastSelection.date });
+                setPrevSelectedDate(lastSelection.date);
+
+                // Đợi một chút để UI cập nhật
+                setTimeout(() => {
+                    // Show action bar và set selected working date
+                    setShowActionBar(true);
+                    setSelectedWorkingDateId(lastSelection.workingDateId);
+
+                    // Cuối cùng mới reset lastSelection
+                    setLastSelection(null);
+                }, 100);
+            }, 100);
+        }
+    }, [isLoadingData, lastSelection]);
 
     // Hàm reset selectedDateForSlots và prevSelectedDate
     const handleResetSelectedDate = () => {
@@ -129,6 +153,25 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
             const result = await locationAvailabilityService.updateSlotTime(updateData, editingSlot.workingDateId, editingSlot.slotTimeId)
             console.log(result)
 
+            // Tìm thông tin ngày đang chọn trước khi fetch dữ liệu mới
+            const workingHours = workingHoursList.find(wh =>
+                wh.workingDates.some(wd => wd.id === editingSlot.workingDateId)
+            );
+
+            if (workingHours) {
+                const month = getMonthFromDate(editingSlot.selectedDate);
+                const week = getWeekFromDate(editingSlot.selectedDate);
+
+                // Set lastSelection trước
+                setLastSelection({
+                    month,
+                    week,
+                    workingHoursId: workingHours.id,
+                    workingDateId: editingSlot.workingDateId,
+                    date: editingSlot.selectedDate
+                });
+            }
+
             toast.success("Đã cập nhật slot thành công")
             setEditingSlot(null)
             fetchWorkingHours()
@@ -154,6 +197,11 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
             delete newState[workingHoursId]
             return newState
         })
+        // Hide ActionBar and reset related states
+        setShowActionBar(false)
+        setSelectedWorkingDateId("")
+        setSelectedWorkingDateAvailability(true)
+        setPrevSelectedDate(null)
     }
 
     return (
@@ -225,6 +273,7 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
                                         setShowActionBar={setShowActionBar}
                                         setSelectedWorkingDateId={setSelectedWorkingDateId}
                                         onResetSelectedDate={handleResetSelectedDate}
+                                        lastSelection={lastSelection}
                                     />
                                 )
                             })}

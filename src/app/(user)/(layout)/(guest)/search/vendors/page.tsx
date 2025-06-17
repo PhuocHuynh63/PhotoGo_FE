@@ -21,6 +21,7 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     if (resolvedParams.minRating) queryParams.append('minRating', resolvedParams.minRating as string);
     // if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
     if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
+    if (resolvedParams.category) queryParams.append('category', resolvedParams.category as string);
     queryParams.append('sortBy', sortBy as string);
     queryParams.append('sortDirection', sortDirection as string);
 

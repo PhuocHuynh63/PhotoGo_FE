@@ -97,7 +97,7 @@ export default function Left({ onReset, categories, onApply }: {
             params.set('current', "1");
         }
 
-        if (selectedCategories.length > 0) params.set("serviceType", selectedCategories.map(s => s.key).join(","));
+        if (selectedCategories.length > 0) params.set("category", selectedCategories.map(s => s.key).join(","));
         if (rating > 0) params.set("minRating", rating.toString());
         params.set("minPrice", selectPriceRange[0].toString());
         params.set("maxPrice", selectPriceRange[1].toString());
@@ -118,7 +118,7 @@ export default function Left({ onReset, categories, onApply }: {
             setSelectPriceRange([Number(minPrice[0]), Number(maxPrice[0])]);
         }
 
-        const servicesFromUrl = params.get("serviceType");
+        const servicesFromUrl = params.get("category");
         setSelectedCategories(categories?.data
             ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
             .map(category => ({ key: category.name })));
@@ -225,9 +225,9 @@ export default function Left({ onReset, categories, onApply }: {
 
             {/* Mobile Filter UI */}
             <div className="md:hidden w-full">
-                <Accordion type="single" defaultValue="serviceType" collapsible className="space-y-2">
+                <Accordion type="single" defaultValue="category" collapsible className="space-y-2">
                     {/* Service Type */}
-                    <AccordionItem value="serviceType" className="border rounded-lg px-3">
+                    <AccordionItem value="category" className="border rounded-lg px-3">
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox

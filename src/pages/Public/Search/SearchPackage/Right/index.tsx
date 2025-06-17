@@ -22,7 +22,6 @@ const cardVariants = {
 
 export default function Right({ packages, pagination }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'] }) {
     // const [sortBy, setSortBy] = useState("")
-    const [loading] = useState(false)
     const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -108,30 +107,23 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                 </div>
             </div> */}
 
-            {loading ? (
+            {!packages ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {Array.from({ length: 6 }).map((_, index) => (
                         <SkeletonCard key={index} />
                     ))}
                 </div>
-            ) : packages?.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="48"
-                        height="48"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-search-x"
-                    >
-                        <path d="M10 10 2 2m8 8 8-8M2 10l8-8m0 16 8-8" />
-                    </svg>
-                    <h3 className="mt-4 text-lg font-medium">Không tìm thấy kết quả</h3>
-                    <p className="mt-2 text-gray-500">Vui lòng thử lại với bộ lọc khác</p>
+            ) : packages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                    <Image
+                        src="/not-found.svg"
+                        alt="Không tìm thấy kết quả"
+                        width={200}
+                        height={200}
+                        className="mb-4"
+                    />
+                    <p className="text-gray-500 text-lg font-medium">Không tìm thấy kết quả phù hợp</p>
+                    <p className="text-gray-400 text-sm mt-2">Vui lòng thử lại với các bộ lọc khác</p>
                 </div>
             ) : (
                 <div
