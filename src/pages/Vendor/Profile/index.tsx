@@ -4,7 +4,6 @@ import { IVendor } from "@models/vendor/common.model";
 import ProfileInfo from "@pages/Vendor/Components/Profile/ProfileInfo"
 
 const VendorProfilePage = ({ vendorData }: { vendorData: IVendor }) => {
-    console.log(vendorData)
     return (
 
         <div className="space-y-4">

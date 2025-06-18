@@ -2,10 +2,9 @@ import { IBookingFormRequest } from "@models/booking/request.model";
 import { IServiceConcept, IServiceConceptImage } from "@models/serviceConcepts/common.model";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IUser } from "@models/user/common.model";
-import { ICartItem } from "@models/cart/common.model";
 import { IReviewPaginationResponse } from "@models/review/repsonse.model";
 
-declare module ZUSTAND {
+declare namespace ZUSTAND {
     export interface ICheckoutState {
         currentStep: number;
         selectedDepositAmount: number;
@@ -53,9 +52,9 @@ declare module ZUSTAND {
     }
 
     export interface ICartState {
-        cart: ICartItem[] | null
-        getCart: () => ICartItem[] | null
-        setCart: (cart: ICartItem[] | null) => void
+        cart: ICartResponse | null
+        getCart: () => ICartResponse | null
+        setCart: (cart: ICartResponse | null) => void
         addToCart: (serviceConceptId: string, cartId: string, userId: string) => Promise<void>
         removeItem: (itemId: string, cartId: string) => Promise<void>
         removeItems: (itemIds: string[], cartId: string) => Promise<void>
