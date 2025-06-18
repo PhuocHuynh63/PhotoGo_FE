@@ -15,6 +15,7 @@ declare namespace PAGES {
     interface IHeader {
         user: IUser | undefined;
         cart: ICartResponse;
+        servicePackages: IServicePackagesData;
     }
     interface IProfile {
         user: IUser | undefined;

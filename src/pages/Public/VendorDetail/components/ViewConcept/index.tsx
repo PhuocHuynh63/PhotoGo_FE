@@ -2,13 +2,16 @@
 
 import Button from "@components/Atoms/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
-import { Calendar } from "lucide-react";
+import { Calendar, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
-import Booking from "../Booking";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
 import EnhancedBookingPopup from "../EnhancedBookingPopup";
+import { useAddToCart, useCart } from "@stores/cart/selectors";
+import { useSession } from "@stores/user/selectors";
+import toast from "react-hot-toast";
+import { ICartItem } from "@models/cart/common.model";
 
 type ConceptProps = {
     isOpen: boolean;
@@ -19,7 +22,12 @@ type ConceptProps = {
 
 export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage, initialConceptId }: ConceptProps) {
     const [activeTab, setActiveTab] = useState<string>("Hình ảnh");
-
+    const addToCart = useAddToCart()
+    const session = useSession()
+    const cart = useCart()
+    const userId = session?.user?.id
+    const cartId = session?.user?.cartId
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedConcept, setSelectedConcept] = useState(0);
@@ -48,7 +56,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     //#endregion
 
 
-    //#region 
+    //#region
     const [isOpenBooking, setIsOpenBooking] = useState(false);
     const handleDialogBooking = () => {
         setIsOpenBooking(!isOpenBooking);
@@ -58,7 +66,41 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
 
     //#region selectConcept
     const selectedConceptObject = servicePackage?.serviceConcepts[selectedConcept] as IServiceConcept;
+    const isConceptInCart = cart?.data?.some((item: ICartItem) => item.serviceConceptId === selectedConceptObject?.id);
     //#endregion
+
+    const handleAddToCart = async () => {
+        try {
+            if (!userId) {
+                toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng")
+                return
+            }
+
+            const conceptToAdd = servicePackage?.serviceConcepts[selectedConcept]
+            if (!conceptToAdd?.id) {
+                toast.error("Không tìm thấy thông tin concept")
+                return
+            }
+
+            if (!cartId) {
+                toast.error("Không tìm thấy giỏ hàng")
+                return
+            }
+
+            if (isConceptInCart) {
+                toast.error("Sản phẩm đã được thêm vào giỏ hàng")
+                return
+            }
+
+            setIsAddingToCart(true)
+            await addToCart(conceptToAdd.id, cartId, userId)
+        } catch (error: unknown) {
+            console.error('Error in handleAddToCart:', error)
+            toast.error("Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng")
+        } finally {
+            setIsAddingToCart(false)
+        }
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -236,7 +278,13 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
 
                                     <div className="flex gap-4">
                                         <Button className="mt-6" onClick={handleDialogBooking} ><Calendar size={18} />Đặt lịch với concept này</Button>
-                                        <ButtonNoBackgroundVendorDetail className="mt-6">Thêm concept vào giỏ hàng</ButtonNoBackgroundVendorDetail>
+                                        <ButtonNoBackgroundVendorDetail
+                                            className="mt-6"
+                                            onClick={handleAddToCart}
+                                            disabled={isAddingToCart || isConceptInCart}
+                                        >
+                                            {isAddingToCart ? <><Loader2 size={18} className="animate-spin" /> đang thêm sản phẩm</> : isConceptInCart ? 'Sản phẩm đã được thêm vào giỏ hàng' : 'Thêm concept vào giỏ hàng'}
+                                        </ButtonNoBackgroundVendorDetail>
                                     </div>
                                 </div>
                             </div>

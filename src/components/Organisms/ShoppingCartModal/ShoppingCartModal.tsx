@@ -10,8 +10,9 @@ import SingleCheckbox from "@components/Atoms/Checkbox/SingleCheckBox"
 import { useCart, useRemoveItem, useRemoveItems } from "@stores/cart/selectors"
 import { ROUTES } from "@routes"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
-export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.ShoppingCartModalProps, 'cartItems'>) {
+export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: Omit<ICOMPONENTS.ShoppingCartModalProps, 'cartItems'>) {
     const [selectedItems, setSelectedItems] = useState<string[]>([])
     const [selectedVendor, setSelectedVendor] = useState<string | null>(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -19,25 +20,26 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     const [isBulkDelete, setIsBulkDelete] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
     const cart = useCart()
+    const cartItems = Array.isArray(cart?.data) ? cart?.data : []
     const removeItem = useRemoveItem()
     const removeItems = useRemoveItems()
     const router = useRouter()
 
-    // Đảm bảo cartItems luôn là array và không null/undefined
-    const cartItems = Array.isArray(cart) ? cart : []
+    const vendorGroups = cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item: ICOMPONENTS.CartItem) => {
+        const vendorId = item.serviceConcept.servicePackageId;
+        const existingGroup = groups.find(group => group.servicePackageId === vendorId);
 
-    const vendorGroups: ICOMPONENTS.VendorGroup[] = cartItems.length > 0
-        ? cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item) => {
-            const existingGroup = groups.find((group) => group.vendor_id === item.serviceConcept.servicePackageId)
-            if (existingGroup) {
-                existingGroup.items.push(item)
-            } else {
-                groups.push({ vendor_id: item.serviceConcept.servicePackageId, items: [item] })
-            }
-            return groups
-        }, [])
-        : []
+        if (existingGroup) {
+            existingGroup.items.push(item);
+        } else {
+            groups.push({
+                servicePackageId: vendorId,
+                items: [item]
+            });
+        }
 
+        return groups;
+    }, []);
     useEffect(() => {
         if (!isOpen) {
             setSelectedItems([])
@@ -45,6 +47,13 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
         }
     }, [isOpen])
 
+    const getServicePackageName = (servicePackageId: string) => {
+        if (!servicePackages?.data || !Array.isArray(servicePackages.data)) {
+            return `Gói dịch vụ ${servicePackageId}`;
+        }
+        const servicePackage = servicePackages.data.find((pkg: { id: string; name: string }) => pkg.id === servicePackageId);
+        return servicePackage?.name || `Gói dịch vụ ${servicePackageId}`;
+    }
 
     if (!isOpen) return null
 
@@ -53,8 +62,8 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
             setSelectedItems(selectedItems.filter((id) => id !== itemId))
 
             const vendorItemsStillSelected = cartItems
-                .filter((item) => item.serviceConcept.servicePackageId === vendorId && selectedItems.includes(item.id))
-                .filter((item) => item.id !== itemId)
+                .filter((item: ICOMPONENTS.CartItem) => item.serviceConcept.servicePackageId === vendorId && selectedItems.includes(item.id))
+                .filter((item: ICOMPONENTS.CartItem) => item.id !== itemId)
 
             if (vendorItemsStillSelected.length === 0) {
                 setSelectedVendor(null)
@@ -69,8 +78,8 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     }
 
     const handleSelectAllVendor = (vendorId: string, vendorItems: ICOMPONENTS.CartItem[]) => {
-        const vendorItemIds = vendorItems.map((item) => item.id)
-        const allSelected = vendorItemIds.every((id) => selectedItems.includes(id))
+        const vendorItemIds = vendorItems.map((item: ICOMPONENTS.CartItem) => item.id)
+        const allSelected = vendorItemIds.every((id: string) => selectedItems.includes(id))
 
         if (allSelected) {
             setSelectedItems(selectedItems.filter((id) => !vendorItemIds.includes(id)))
@@ -78,7 +87,7 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
                 setSelectedVendor(null)
             }
         } else {
-            const newSelectedItems = [...selectedItems.filter((id) => !vendorItemIds.includes(id)), ...vendorItemIds]
+            const newSelectedItems = [...selectedItems.filter((id: string) => !vendorItemIds.includes(id)), ...vendorItemIds]
             setSelectedItems(newSelectedItems)
             setSelectedVendor(vendorId)
         }
@@ -99,21 +108,30 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     const confirmDelete = async () => {
         try {
             setIsDeleting(true)
+            const cartId = cart?.data?.[0]?.cartId
+            if (!cartId) {
+                toast.error("Không tìm thấy giỏ hàng")
+                return
+            }
+
             if (isBulkDelete) {
                 // Handle bulk delete through API
-                await removeItems(selectedItems, cartItems[0].cartId)
+                await removeItems(selectedItems, cartId)
                 setSelectedItems([])
                 setSelectedVendor(null)
             } else if (itemToDelete) {
                 // Handle single item delete through API
-                await removeItem(itemToDelete, cartItems[0].cartId)
+                await removeItem(itemToDelete, cartId)
+                // Reset selection states after single item delete
+                setSelectedItems([])
+                setSelectedVendor(null)
             }
             setShowDeleteConfirm(false)
             setItemToDelete(null)
             setIsBulkDelete(false)
         } catch (error) {
             console.error('Error deleting item:', error);
-            // You might want to show an error message to the user here
+            toast.error("Đã xảy ra lỗi khi xóa sản phẩm")
         } finally {
             setIsDeleting(false)
         }
@@ -134,11 +152,16 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
     }
 
     const calculateTotal = () => {
-        return cartItems.filter((item) => selectedItems.includes(item.id))?.reduce((total, item) => total + parseInt(item.serviceConcept.price), 0)
+        return cartItems
+            .filter((item: ICOMPONENTS.CartItem) => selectedItems.includes(item.id))
+            ?.reduce((total: number, item: ICOMPONENTS.CartItem) => {
+                const price = parseFloat(item.serviceConcept.price) || 0;
+                return total + price;
+            }, 0);
     }
 
     const calculateTotalDuration = () => {
-        return cartItems.filter((item) => selectedItems.includes(item.id))?.reduce((total, item) => total + item.serviceConcept.duration, 0)
+        return cartItems.filter((item: ICOMPONENTS.CartItem) => selectedItems.includes(item.id))?.reduce((total: number, item: ICOMPONENTS.CartItem) => total + item.serviceConcept.duration, 0)
     }
 
     const renderItemDetails = (item: ICOMPONENTS.CartItem) => (
@@ -198,26 +221,26 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            {vendorGroups.map((group) => {
-                                const isDisabled = !isVendorSelectable(group.vendor_id)
+                            {vendorGroups.map((group: ICOMPONENTS.VendorGroup) => {
+                                const isDisabled = !isVendorSelectable(group.servicePackageId)
                                 const allSelected = areAllVendorItemsSelected(group.items)
 
                                 return (
-                                    <div key={group.vendor_id} className={`border rounded-md overflow-hidden ${isDisabled ? "opacity-50" : ""}`}>
+                                    <div key={group.servicePackageId} className={`border rounded-md overflow-hidden ${isDisabled ? "opacity-50" : ""}`}>
                                         <div className="bg-gray-50 p-3 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <SingleCheckbox
                                                     checked={allSelected}
-                                                    onChange={() => !isDisabled && handleSelectAllVendor(group.vendor_id, group.items)}
+                                                    onChange={() => !isDisabled && handleSelectAllVendor(group.servicePackageId, group.items)}
                                                     disabled={isDisabled && !allSelected}
                                                 />
-                                                <h3 className="font-medium">Nhà cung cấp {group.vendor_id}</h3>
+                                                <h3 className="font-medium">Gói <span className="text-primary text-md">{getServicePackageName(group.servicePackageId)}</span></h3>
                                             </div>
                                             <span className="text-sm text-muted-foreground">{group.items.length} dịch vụ</span>
                                         </div>
 
                                         <div className="divide-y">
-                                            {group.items.map((item) => {
+                                            {group.items.map((item: ICOMPONENTS.CartItem) => {
                                                 const isSelected = selectedItems.includes(item.id)
 
                                                 return (
@@ -232,16 +255,23 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
                                                             onClick={() => !isDisabled && handleItemSelect(item.id, item.serviceConcept.servicePackageId)}
                                                         >
                                                             <div className="relative h-20 w-20 overflow-hidden rounded-md border">
-                                                                <Image src="/placeholder.svg" alt={item.serviceConcept.name} fill className="object-cover" />
+                                                                <Image
+                                                                    src={item.serviceConcept.images?.[0]?.imageUrl || '/placeholder-image.jpg'}
+                                                                    alt={item.serviceConcept.name || 'Service concept image'}
+                                                                    fill
+                                                                    sizes="80px"
+                                                                    className="object-cover"
+                                                                />
                                                             </div>
                                                             <div className="flex flex-1 flex-col justify-between text-lg">
                                                                 <div className="flex justify-between">
                                                                     <div>
                                                                         <h3 className="font-medium">{item.serviceConcept.name}</h3>
+                                                                        <p className="text-sm text-muted-foreground line-clamp-2">{item.serviceConcept.description}</p>
                                                                         {renderItemDetails(item)}
                                                                     </div>
                                                                     <div className="flex items-center gap-2 justify-center">
-                                                                        <div className="font-medium">{formatPrice(parseInt(item.serviceConcept.price))}</div>
+                                                                        <div className="font-medium">{formatPrice(parseFloat(item.serviceConcept.price))}</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -250,7 +280,7 @@ export default function ShoppingCartModal({ isOpen, onClose }: Omit<ICOMPONENTS.
                                                             <Button
                                                                 variant="ghost"
                                                                 className="text-red-500 hover:text-red-600 hover:bg-red-50 shadow-none"
-                                                                onClick={(e) => {
+                                                                onClick={(e: React.MouseEvent) => {
                                                                     e.stopPropagation();
                                                                     handleDeleteItem(item.id);
                                                                 }}
