@@ -1,4 +1,5 @@
 import http from "@configs/fetch"
+import { IServicePackagesListResponse } from "@models/servicePackages/response.model"
 
 const packageService = {
     getPackages: async () => {
@@ -58,6 +59,12 @@ const packageService = {
     deleteServiceConcept: async (id: string) => {
         return await http.delete(`/service-packages/service-concept/${id}`, {
             cache: 'no-store'
+        })
+    },
+
+    getAllServicePackage: async (): Promise<IServicePackagesListResponse> => {
+        return await http.get("/service-packages", {
+            next: { revalidate: 10 }
         })
     }
 }

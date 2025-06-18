@@ -59,13 +59,22 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
     const handleConfirmSubmit = async () => {
         if (!startDate || !endDate) return
 
+        // Validate time range
+        const startTimeMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1])
+        const endTimeMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1])
+        if (startTimeMinutes >= endTimeMinutes) {
+            toast.error('Giờ kết thúc phải sau giờ bắt đầu')
+            return
+        }
+
         setShowConfirmModal(false)
         setIsLoading(true)
         try {
             const formattedStartDate = format(startDate, "dd/MM/yyyy")
             const formattedEndDate = format(endDate, "dd/MM/yyyy")
             const numberOfDays = differenceInDays(endDate, startDate)
-            const result = await locationAvailabilityService.createLocationAvailability(
+
+            await locationAvailabilityService.createLocationAvailability(
                 {
                     startDate: formattedStartDate,
                     endDate: formattedEndDate,
@@ -73,12 +82,15 @@ const CreateWorkingDate = ({ locations, selectedLocation, setSelectedLocation, f
                     endTime,
                     isAvailable,
                 }, selectedLocation)
-            console.log(result)
             toast.success(`Đã tạo lịch làm việc cho ${numberOfDays} ngày liên tục`)
             fetchWorkingHours() // Refresh data
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Error creating working hours:", error)
-            toast.error("Đã xảy ra lỗi khi tạo lịch làm việc")
+            const errorMessage = error && typeof error === 'object' && 'response' in error &&
+                error.response && typeof error.response === 'object' && 'data' in error.response &&
+                error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ?
+                String(error.response.data.message) : "Đã xảy ra lỗi khi tạo lịch làm việc"
+            toast.error(errorMessage)
         } finally {
             setIsLoading(false)
         }

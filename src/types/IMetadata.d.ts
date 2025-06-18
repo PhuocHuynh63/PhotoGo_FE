@@ -8,6 +8,7 @@ declare namespace METADATA {
                 name: string;
                 description: string;
             }
+            cartId: string;
         },
         accessToken: string;
     }

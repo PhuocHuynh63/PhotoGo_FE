@@ -1,3 +1,4 @@
+
 declare namespace ICOMPONENTS {
     // Common base props for reusable styles
     interface BaseProps {
@@ -377,8 +378,16 @@ declare namespace ICOMPONENTS {
         duration: number,
         status: string,
         createdAt: string,
-        updatedAt: string
+        updatedAt: string,
+        images: IServiceConceptImage[]
     }
+    interface IServiceConceptImage {
+        id: string,
+        imageUrl: string,
+        serviceConceptId: string,
+        created_at: string,
+    }
+
     interface CartItem {
         id: string,
         cartId: string,
@@ -388,7 +397,7 @@ declare namespace ICOMPONENTS {
         serviceConcept: ServiceConcept
     }
     interface VendorGroup {
-        vendor_id: string
+        servicePackageId: string
         items: CartItem[]
     }
 
@@ -396,6 +405,7 @@ declare namespace ICOMPONENTS {
         isOpen: boolean
         onClose: () => void
         cartItems: CartItem[]
+        servicePackages: IServicePackagesData
     }
     interface User {
         id: string | number;

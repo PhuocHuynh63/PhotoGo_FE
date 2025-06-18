@@ -21,7 +21,7 @@ import { formatRelativeTime } from "@utils/helpers/Date";
 import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
 
-export default function Header({ user, cart }: PAGES.IHeader) {
+export default function Header({ user, cart, servicePackages }: PAGES.IHeader) {
     //#region States
     const cartState = useCart()
     const setCart = useSetCart()
@@ -34,7 +34,7 @@ export default function Header({ user, cart }: PAGES.IHeader) {
     const pathname = usePathname();
     //#endregion
 
-    const cartItems = cartState || [];
+    const cartItems = cartState?.data || [];
     //#endregion
 
     //#region Effects
@@ -133,7 +133,7 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                 </div>
             </motion.div>
 
-            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} />
+            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} servicePackages={servicePackages} />
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -235,10 +235,10 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                             rank={user?.rank as Rank}
                         >
                             <Avatar
-                                className="cursor-pointer"
-                                src={user?.avatarUrl || "/default-avatar.png"}
                                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                src={user?.avatarUrl || "/default-avatar.png"}
                                 alt={user?.fullName || "User"}
+                                className="cursor-pointer"
                             />
                         </AvatarWithBorder>
                     </motion.div>
@@ -312,8 +312,8 @@ export default function Header({ user, cart }: PAGES.IHeader) {
                                     {user ? (
                                         <>
                                             <Avatar
-                                                src={user?.avatarUrl || "/default-avatar.png"}
                                                 alt={user?.fullName || "User"}
+                                                src={user?.avatarUrl || "/default-avatar.png"}
                                                 className="w-10 h-10"
                                             />
                                             <div>

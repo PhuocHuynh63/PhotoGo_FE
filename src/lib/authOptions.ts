@@ -54,6 +54,7 @@ export const authOptions: NextAuthOptions = {
                     email: res.data.user.email,
                     role: res.data.user.role,
                     accessToken: res.data.access_token,
+                    cartId: res.data.user.cartId,
                 }
 
                 return user;
@@ -66,12 +67,14 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.role = user.role;
                 token.accessToken = user.accessToken;
+                token.cartId = user.cartId;
             }
             return token;
         },
         async session({ session, token }: any) {
             session.user.id = token.id;
             session.user.role = token.role;
+            session.user.cartId = token.cartId;
             (session as any).accessToken = token.accessToken;
             return session;
         },

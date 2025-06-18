@@ -23,7 +23,7 @@ import { Rank } from "../AvatarBorder/rankStyles";
 
 
 
-export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
+export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IHeader) {
     // console.log(cart)
     const cartState = useCart()
     const setCart = useSetCart()
@@ -38,7 +38,7 @@ export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
     //#endregion
 
     //#region Mock Data
-    const cartItems = cartState || [];
+    const cartItems = cartState?.data || [];
     //#endregion
 
     //#region Effects
@@ -159,7 +159,7 @@ export default function HeaderHomePage({ user, cart }: PAGES.IHeader) {
                 </div>
             </motion.div>
 
-            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} />
+            <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} servicePackages={servicePackages} />
 
             {/* Notification Button */}
             <DropdownMenu>

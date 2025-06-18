@@ -44,7 +44,6 @@ export default async function VendorDetailLayout({
 
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
-
     const concept = await getConceptImgsByVendorId(vendor.data.id, '1', '10') as IServiceConceptImageResponseModel;
     const review = await getReviewByVendorId(vendor.data?.id || '') as IReviewPaginationResponse;
 

@@ -106,7 +106,6 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
         setIsDeletingWorkingHours(true)
         try {
             const result = await locationAvailabilityService.deleteLocationAvailability(workingHoursToDelete) as ILocationScheduleResponse
-            console.log(result)
             if (result.statusCode === 200) {
                 toast.success("Đã xóa lịch làm việc thành công")
                 fetchWorkingHours()
@@ -144,14 +143,12 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
 
         setIsUpdatingSlot(true)
         try {
-            console.log(editingMaxBookings === 1)
             const updateData = {
                 isStrictTimeBlocking: editingMaxBookings === 1,
                 maxParallelBookings: editingMaxBookings
             }
 
             const result = await locationAvailabilityService.updateSlotTime(updateData, editingSlot.workingDateId, editingSlot.slotTimeId)
-            console.log(result)
 
             // Tìm thông tin ngày đang chọn trước khi fetch dữ liệu mới
             const workingHours = workingHoursList.find(wh =>
