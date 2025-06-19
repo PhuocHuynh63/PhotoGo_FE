@@ -8,6 +8,8 @@ import vendorService from '@services/vendors';
 import { IVendor } from '@models/vendor/common.model';
 import { IServiceConceptImageResponseModel } from '@models/serviceConcepts/response.model';
 import ClearButton from '@components/Atoms/ClearButton';
+import Lightbox from 'yet-another-react-lightbox';
+import "yet-another-react-lightbox/styles.css"
 
 type PortfolioVendorProps = {
     isOverview?: boolean;
@@ -59,13 +61,34 @@ const PortfolioVendor = (
     // Only show 3 images in overview mode
     const displayedImages = isOverview ? images.slice(0, 3) : images;
 
+    /**
+     * Lightbox state and images
+     * This will be used to show the lightbox when an image is clicked
+     */
+    const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
+
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+    const lightBoxImages = displayedImages.map((item: IServiceConceptImageModel) => ({
+        src: item.image_url || '',
+        alt: item.id || 'Portfolio Image',
+    }));
+
+    const handleImageClick = (index: number) => {
+        console.log('Image clicked:', index, displayedImages[index]);
+
+        setCurrentImageIndex(index)
+        setLightboxOpen(true)
+    }
+    //----------------------------End-----------------------------//
+
     return (
         <>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {displayedImages?.map((item: IServiceConceptImageModel) => (
+                {displayedImages?.map((item: IServiceConceptImageModel, index: number) => (
                     <div key={item.id} className="relative group overflow-hidden rounded-lg">
                         {item.image_url ? (
                             <img
+                                key={item.id}
                                 src={item.image_url}
                                 alt="Portfolio"
                                 className="w-full h-64 object-contain transition-transform group-hover:scale-105"
@@ -73,7 +96,9 @@ const PortfolioVendor = (
                         ) : (
                             <Skeleton className="h-64 w-full" />
                         )}
-                        <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleImageClick(index)}
+                        >
                             {/* <h3 className="text-white font-semibold">{item?.title}</h3>
                             <p className="text-white/80 text-sm">{item?.category}</p> */}
                         </div>
@@ -93,6 +118,17 @@ const PortfolioVendor = (
                     </ClearButton>
                 </div>
             )}
+
+            {
+                lightBoxImages.length > 0 && (
+                    <Lightbox
+                        open={lightboxOpen}
+                        close={() => setLightboxOpen(false)}
+                        slides={lightBoxImages}
+                        index={currentImageIndex}
+                    />
+                )
+            }
         </>
     );
 };
