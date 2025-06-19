@@ -20,7 +20,7 @@ export default function WorkingHoursSettings({ vendor }: PAGES.IWorkingHoursSett
 
     // Sử dụng custom hook để fetch working hours
     const {
-        data: workingHoursList,
+        locationAvailability: workingHoursList,
         loading: isLoadingData,
         refetch: fetchWorkingHours
     } = useLocationAvailability({

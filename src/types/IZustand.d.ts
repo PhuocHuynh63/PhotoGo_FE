@@ -35,14 +35,14 @@ declare module ZUSTAND {
         servicePackage: IServicePackage;
         concept: IServiceConcept;
         reviews: IReviewPaginationResponse;
-        addressLocation: string;
+        addressLocation: { id: string, address: string } | null;
         setVendor: (vendor: IVendor) => void;
         setServiceImages: (serviceConceptImages: IServiceConceptImage) => void;
         addMoreConceptImages: (images: IServiceConceptImageModel[]) => void;
         setServicePackage: (servicePackage: IServicePackage) => void;
         setConcept: (concept: IServiceConcept) => void;
         setReviews: (reviews: IReviewPaginationResponse) => void;
-        setAddressLocation: (addressLocation: string) => void;
+        setAddressLocation: (addressLocation: { id: string, address: string }) => void;
     }
 
     export interface IUserState {

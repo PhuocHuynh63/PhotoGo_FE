@@ -15,19 +15,19 @@ const VendorContactInformation = () => {
     /**
      * Define data from the store
      */
-    const vendorData = useVendor() as IVendor
-    const addressVendor = useAddressLocation() as string
+    const vendorData = useVendor() as IVendor;
+    const addressVendor = useAddressLocation() as { id: string, address: string } | null;
     //---------------------------End---------------------------//
 
     /**
      * Define params and router for navigation
      */
-    const params = useParams()
-    const router = useRouter()
-    const searchParams = useSearchParams()
+    const params = useParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
-    const slug = params?.slug as string
-    const location = searchParams?.get('location') as string
+    const slug = params?.slug as string;
+    const location = searchParams?.get('location') as string;
     //---------------------------End---------------------------//
 
     /**
@@ -90,7 +90,7 @@ const VendorContactInformation = () => {
                         <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                             <p className="font-medium">Địa chỉ</p>
-                            <p className="text-sm text-muted-foreground">{addressVendor}</p>
+                            <p className="text-sm text-muted-foreground">{addressVendor?.address}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">

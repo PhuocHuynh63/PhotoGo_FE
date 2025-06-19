@@ -1,52 +1,20 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Calendar, Clock, Package, MapPin } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Atoms/ui/dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
-import { Separator } from "@components/Atoms/ui/separator"
-import CustomCalendar from "@components/Molecules/Canlender"
-import { Button } from "@components/Atoms/ui/button"
-import { Badge } from "@components/Atoms/ui/badge"
-import { useAddressLocation } from "@stores/vendor/selectors"
-import { IServiceConcept } from "@models/serviceConcepts/common.model"
-
-const mockTimeSlots = [
-    { id: 1, time: "08:00 - 12:00", available: true, price: "5,000,000 VNĐ" },
-    { id: 2, time: "09:00 - 13:00", available: false, price: "5,000,000 VNĐ" },
-    { id: 3, time: "10:00 - 14:00", available: true, price: "5,000,000 VNĐ" },
-    { id: 4, time: "13:00 - 17:00", available: true, price: "5,500,000 VNĐ" },
-    { id: 5, time: "14:00 - 18:00", available: false, price: "5,500,000 VNĐ" },
-    { id: 6, time: "15:00 - 19:00", available: true, price: "6,000,000 VNĐ" },
-]
-
-// Mock availability data for calendar
-const generateMockAvailability = () => {
-    const availability = []
-    const today = new Date()
-
-    for (let i = 0; i < 60; i++) {
-        const date = new Date(today)
-        date.setDate(today.getDate() + i)
-
-        const totalSlots = 6
-        const availableSlots = Math.floor(Math.random() * 7) // 0-6 available slots
-
-        availability.push({
-            date,
-            totalSlots,
-            availableSlots,
-            isFullyBooked: availableSlots === 0,
-            isPastDate: date < today,
-        })
-    }
-
-    return availability
-}
+import { useState, useEffect } from "react";
+import { Calendar, Clock, Package, MapPin } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Atoms/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card";
+import { Separator } from "@components/Atoms/ui/separator";
+import CustomCalendar from "@components/Molecules/Canlender";
+import { Button } from "@components/Atoms/ui/button";
+import { Badge } from "@components/Atoms/ui/badge";
+import { useLocationAvailability } from "@utils/hooks/useLocationAvailability";
+import { IServiceConcept } from "@models/serviceConcepts/common.model";
+import { useAddressLocation } from "@stores/vendor/selectors";
 
 interface EnhancedBookingPopupProps {
-    isOpen: boolean
-    onClose: () => void
+    isOpen: boolean;
+    onClose: () => void;
     serviceConcept?: IServiceConcept;
 }
 
@@ -55,49 +23,99 @@ export default function EnhancedBookingPopup({
     onClose,
     serviceConcept,
 }: EnhancedBookingPopupProps) {
-    /**
-     * Define data from store
-     * - AddressLocation: Used to display vendor's address in the booking popup
-     */
     const addressLocation = useAddressLocation();
-    //----------------------End----------------------//
 
-    console.log("Service Concept:", serviceConcept);
+    const [timeSlots, setTimeSlots] = useState<any[]>([]);
+    console.log(timeSlots);
 
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-    const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
-    const [timeSlots, setTimeSlots] = useState(mockTimeSlots)
-    const [isLoading, setIsLoading] = useState(false)
-    const [availability] = useState(generateMockAvailability())
+    const [isLoading, setIsLoading] = useState(false);
 
+    /**
+     * Hook to fetch location availability based on the selected address location.
+     * It retrieves the working dates and slot times for the specified location.
+     * The availability data is used to determine which dates and times are available for booking.
+     */
+    const { locationAvailability } = useLocationAvailability({
+        locationId: addressLocation?.id || "",
+        enabled: true,
+    });
+    //-----------------------------End---------------------------------//
+
+    // Tổng hợp availability từ tất cả các range
+    const availability = locationAvailability
+        ? locationAvailability.flatMap((loc: any) =>
+            loc.workingDates.map((wd: any) => {
+                const date = new Date(wd.date.split("/").reverse().join("-"));
+                const totalSlots = loc.slotTimes.length;
+                const availableSlots = loc.slotTimes.filter((slot: any) => slot.isAvailable).length;
+                return {
+                    date,
+                    totalSlots,
+                    availableSlots,
+                    isFullyBooked: availableSlots === 0,
+                    isPastDate: date < new Date(new Date().setHours(0, 0, 0, 0)),
+                };
+            }),
+        )
+        : [];
+
+
+    /**
+     * useState hooks to manage the selected date and time slot.
+     * - selectedDate: The date selected by the user for booking.
+     * - selectedSlot: The time slot selected by the user for booking.
+     */
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
     useEffect(() => {
-        if (selectedDate) {
-            setIsLoading(true)
-            setSelectedSlot(null)
+        if (selectedDate && locationAvailability) {
+            setIsLoading(true);
+            setSelectedSlot(null);
 
-            setTimeout(() => {
-                const updatedSlots = mockTimeSlots.map((slot) => ({
-                    ...slot,
-                    available: Math.random() > 0.3,
-                }))
-                setTimeSlots(updatedSlots)
-                setIsLoading(false)
-            }, 800)
+            // Định dạng ngày thành DD/MM/YYYY
+            const formattedDate = `${selectedDate.getDate().toString().padStart(2, "0")}/${(selectedDate.getMonth() + 1)
+                .toString()
+                .padStart(2, "0")}/${selectedDate.getFullYear()}`;
+
+            // Tìm range chứa ngày đã chọn
+            const matchingRange = locationAvailability.find((loc: any) =>
+                loc.workingDates.some((wd: any) => wd.date === formattedDate && wd.isAvailable),
+            );
+
+            if (matchingRange) {
+                // Map slotTimes của range đó
+                const updatedSlots = matchingRange.slotTimes.map((slot: any) => ({
+                    id: slot.id,
+                    time: `${slot.startSlotTime.slice(0, 5)} - ${slot.endSlotTime.slice(0, 5)}`,
+                    available: slot.isAvailable && slot.alreadyBooked < slot.maxParallelBookings,
+                    price: serviceConcept?.price
+                        ? Number(serviceConcept.price).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+                        : "Liên hệ",
+                }));
+                setTimeSlots(updatedSlots);
+            } else {
+                setTimeSlots([]);
+            }
+
+            setIsLoading(false);
         }
-    }, [selectedDate])
+    }, [locationAvailability, selectedDate, serviceConcept?.price]);
+    //-----------------------------End---------------------------------//
 
     const handleConfirmBooking = () => {
         if (selectedDate && selectedSlot) {
-            const selectedSlotData = timeSlots.find((slot) => slot.id === selectedSlot)
+            const selectedSlotData = timeSlots.find((slot) => slot.id === selectedSlot);
             alert(
                 `Đặt lịch thành công!\nNgày: ${selectedDate.toLocaleDateString("vi-VN")}\nGiờ: ${selectedSlotData?.time}\nGói dịch vụ: ${serviceConcept?.name}`,
-            )
-            onClose()
+            );
+            onClose();
         }
-    }
+    };
 
-    const isBookingValid = selectedDate && selectedSlot
-    const selectedSlotData = timeSlots.find((slot) => slot.id === selectedSlot)
+    const isBookingValid = selectedDate && selectedSlot;
+    const selectedSlotData = timeSlots.find((slot) => slot.id === selectedSlot);
+
+    console.log("Location Availability:", locationAvailability);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -110,7 +128,7 @@ export default function EnhancedBookingPopup({
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    {/* Service Package Info */}
+                    {/* Thông tin gói dịch vụ */}
                     <div className="xl:col-span-1 space-y-4">
                         <Card className="border-primary/20">
                             <CardHeader>
@@ -122,7 +140,6 @@ export default function EnhancedBookingPopup({
                             <CardContent className="space-y-4">
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">{serviceConcept?.name}</h3>
-                                    {/* <p className="text-sm text-muted-foreground mb-3">{serviceConcept?.description}</p> */}
                                 </div>
 
                                 <div className="space-y-2">
@@ -132,7 +149,7 @@ export default function EnhancedBookingPopup({
                                     </div>
                                     <div className="flex items-center gap-2 text-sm">
                                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                                        <span>{addressLocation}</span>
+                                        <span>{addressLocation?.address}</span>
                                     </div>
                                 </div>
 
@@ -140,12 +157,17 @@ export default function EnhancedBookingPopup({
 
                                 <div className="text-right">
                                     <div className="text-sm text-muted-foreground">Giá từ</div>
-                                    <div className="text-xl font-bold text-primary">{Number(serviceConcept?.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</div>
+                                    <div className="text-xl font-bold text-primary">
+                                        {Number(serviceConcept?.price).toLocaleString("vi-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                        })}
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Booking Summary */}
+                        {/* Tóm tắt đặt lịch */}
                         {isBookingValid && (
                             <Card className="border-green-200 bg-green-50">
                                 <CardHeader>
@@ -174,7 +196,7 @@ export default function EnhancedBookingPopup({
                         )}
                     </div>
 
-                    {/* Calendar */}
+                    {/* Lịch */}
                     <div className="xl:col-span-1">
                         <div className="space-y-4">
                             <div>
@@ -188,7 +210,7 @@ export default function EnhancedBookingPopup({
                         </div>
                     </div>
 
-                    {/* Time Slots */}
+                    {/* Khung giờ */}
                     <div className="xl:col-span-1">
                         <div className="space-y-4">
                             <div>
@@ -204,7 +226,12 @@ export default function EnhancedBookingPopup({
 
                             <Card>
                                 <CardContent className="p-4">
-                                    {!selectedDate ? (
+                                    {!locationAvailability ? (
+                                        <div className="text-center py-12 text-muted-foreground">
+                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                                            <p className="text-muted-foreground">Đang tải dữ liệu...</p>
+                                        </div>
+                                    ) : !selectedDate ? (
                                         <div className="text-center py-12 text-muted-foreground">
                                             <Clock className="h-16 w-16 mx-auto mb-4 opacity-30" />
                                             <p className="text-lg mb-2">Chọn ngày trước</p>
@@ -214,6 +241,11 @@ export default function EnhancedBookingPopup({
                                         <div className="text-center py-12">
                                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
                                             <p className="text-muted-foreground">Đang tải khung giờ...</p>
+                                        </div>
+                                    ) : timeSlots.length === 0 ? (
+                                        <div className="text-center py-12 text-muted-foreground">
+                                            <p className="text-lg mb-2">Không có khung giờ</p>
+                                            <p className="text-sm">Ngày này không có khung giờ nào khả dụng</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-3">
@@ -256,7 +288,7 @@ export default function EnhancedBookingPopup({
                     </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Nút hành động */}
                 <div className="flex justify-end gap-3 pt-6 border-t">
                     <Button variant="outline" onClick={onClose} size="lg">
                         Hủy bỏ
@@ -267,5 +299,5 @@ export default function EnhancedBookingPopup({
                 </div>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

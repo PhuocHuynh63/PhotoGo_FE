@@ -32,8 +32,13 @@ const VendorDetailLayoutPage = ({
             const filterLocation = vendor.locations.find(locationFilter =>
                 location === locationFilter.district
             )
+
             if (filterLocation) {
-                setAddressLocation(`${filterLocation.address}, ${filterLocation.ward}, ${filterLocation.district}, ${filterLocation.city}, ${filterLocation.province}`)
+                const address = `${filterLocation.address}, ${filterLocation.ward}, ${filterLocation.district}, ${filterLocation.city}, ${filterLocation.province}`
+                setAddressLocation({
+                    id: filterLocation.id,
+                    address: address
+                });
             }
         }
     }, [location, vendor])
@@ -53,7 +58,7 @@ const VendorDetailLayoutPage = ({
         setVendor(null);
         setSession(null);
         setConceptImages([]);
-        setAddressLocation('');
+        setAddressLocation({ id: '', address: '' });
     }
 
     useEffect(() => {
