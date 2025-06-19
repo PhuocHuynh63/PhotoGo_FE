@@ -29,3 +29,33 @@ export const ServiceConceptImageModel = z.object({
 });
 export type IServiceConceptImageModel = z.infer<typeof ServiceConceptImageModel>;
 //----------------------End----------------------//
+
+/**
+ * Model of ServiceConceptServiceType
+ */
+export const InvoiceServiceModel = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    images: z.array(z.object({
+        id: z.string(),
+        serviceConceptId: z.string(),
+        imageUrl: z.string(),
+        createdAt: z.string()
+    })),
+    price: z.string(),
+    duration: z.number(),
+    countConceptUsed: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    servicePackageId: z.string(),
+    status: z.string(),
+    serviceConceptServiceTypes: z.array(z.object({
+        serviceConceptId: z.string(),
+        serviceTypeId: z.string(),
+        createdAt: z.string(),
+        serviceType: ServiceTypeModel
+    })),
+});
+export type IInvoiceServiceModel = z.infer<typeof InvoiceServiceModel>;
+//----------------------End----------------------//
