@@ -34,7 +34,7 @@ const VendorCover = () => {
      */
     const vendorData = useVendor() as IVendor;
     const reviews = useReviews() as IReviewPaginationResponse;
-    const addressLocation = useAddressLocation() as string;
+    const addressLocation = useAddressLocation() as { id: string, address: string } | null;
     const reviewCount = reviews.data?.data.length || 0;
     //-----------------------------End---------------------------------//
 
@@ -115,7 +115,7 @@ const VendorCover = () => {
                                     <span className="text-muted-foreground">•</span>
                                     <div className="flex items-center text-muted-foreground">
                                         <MapPin className="h-4 w-4 mr-1" />
-                                        <span className="text-sm truncate max-w-[240px]">{addressLocation}</span>
+                                        <span className="text-sm truncate max-w-[240px]">{addressLocation?.address}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-3">

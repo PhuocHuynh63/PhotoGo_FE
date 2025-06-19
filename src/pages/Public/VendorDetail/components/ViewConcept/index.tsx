@@ -294,7 +294,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
 
             </DialogContent>
             {/* <Booking isOpen={isOpenBooking} onOpenChange={handleDialogBooking} concept={selectedConceptObject} /> */}
-            <EnhancedBookingPopup isOpen={isOpenBooking} onClose={handleDialogBooking} />
+            <EnhancedBookingPopup isOpen={isOpenBooking} onClose={handleDialogBooking} serviceConcept={selectedConceptObject} />
         </Dialog>
     );
 }
