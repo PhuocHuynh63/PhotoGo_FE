@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Mo
 import { Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
-import Booking from "../Booking";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
 import EnhancedBookingPopup from "../EnhancedBookingPopup";
