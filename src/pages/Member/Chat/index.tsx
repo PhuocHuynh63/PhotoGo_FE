@@ -26,8 +26,6 @@ export default function ChatPage(session: PAGES.IChatProps) {
     const [conversation, setConversation] = useState<any[]>([]);
     const [showSidebar, setShowSidebar] = useState(true);
 
-    // ✨ [REFACTOR] Suy luận `activeConversation` từ `activeConversationId` và `listChatOfUser`.
-    // Cách này giúp state luôn nhất quán và tránh được lỗi giao diện nhấp nháy.
     const [activeConversationId, setActiveConversationId] = useState<string>(chatId || '');
     const activeConversation = useMemo(() => {
         if (!activeConversationId || !listChatOfUser.length) return null;
@@ -70,20 +68,28 @@ export default function ChatPage(session: PAGES.IChatProps) {
         formatConversations();
     }, [chat, userId]);
 
-    const { message: fetchedMessages } = useMessageByChatId({
+    // ✨ [SỬA LỖI] Chỉ tìm nạp tin nhắn khi activeConversationId thay đổi
+    // Và quản lý trạng thái 'conversation' dựa trên điều này.
+    const { message: fetchedMessages, mutate: refetchMessages } = useMessageByChatId({
         chatId: activeConversationId,
         page: 1,
         pageSize: 15,
     });
 
+    // ✨ [SỬA LỖI] Khởi tạo conversation khi activeConversationId thay đổi hoặc fetchedMessages cập nhật cho chat *mới*.
+    // useEffect này giờ đây sẽ chỉ thiết lập 'conversation' khi 'fetchedMessages' thực sự được cập nhật cho một chat đang hoạt động mới,
+    // hoặc khi component được mount với một chatId ban đầu.
     useEffect(() => {
-        if (fetchedMessages?.length) {
-            setConversation([...fetchedMessages]);
-        } else {
-            // Đảm bảo `conversation` được reset khi không có tin nhắn (ví dụ: chat mới)
+        if (activeConversationId) {
+            // Khi activeConversationId thay đổi, đặt lại conversation và để useMessageByChatId điền vào.
+            // Điều này ngăn các tin nhắn cũ hiển thị trước khi tin nhắn mới được tìm nạp.
             setConversation([]);
+            // Các fetchedMessages sau đó sẽ cập nhật trạng thái này.
+            if (fetchedMessages?.length) {
+                setConversation(fetchedMessages);
+            }
         }
-    }, [fetchedMessages]);
+    }, [fetchedMessages, activeConversationId]); // Phụ thuộc vào cả hai để đảm bảo đặt lại rồi điền vào
 
     useEffect(() => {
         const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
@@ -94,8 +100,9 @@ export default function ChatPage(session: PAGES.IChatProps) {
         setSocket(socketInstance);
 
         socketInstance.on('newMessage', (newMessageData) => {
-            const { chatId: messageChatId, text } = newMessageData;
+            const { chatId: messageChatId, text, senderId } = newMessageData;
 
+            // Cập nhật danh sách các cuộc trò chuyện với tin nhắn cuối cùng mới và số lượng tin nhắn chưa đọc
             setListChatOfUser(prevList =>
                 prevList.map(conv => {
                     if (conv.id === messageChatId) {
@@ -103,13 +110,15 @@ export default function ChatPage(session: PAGES.IChatProps) {
                         return {
                             ...conv,
                             lastMessageText: text,
-                            unreadCount: isActive ? 0 : (conv.unreadCount || 0) + 1,
+                            // Chỉ tăng nếu không phải chat đang hoạt động hoặc không phải tin nhắn tự gửi
+                            unreadCount: isActive && senderId !== userId ? 0 : (conv.unreadCount || 0) + (isActive ? 0 : 1),
                         };
                     }
                     return conv;
                 })
             );
 
+            // Nếu tin nhắn dành cho cuộc trò chuyện đang hoạt động hiện tại, hãy thêm nó vào
             if (activeConversationRef.current?.id === messageChatId) {
                 setConversation(prev => [...prev, { ...newMessageData, read: true }]);
             }
@@ -122,15 +131,20 @@ export default function ChatPage(session: PAGES.IChatProps) {
         return () => {
             window.removeEventListener('resize', checkIsMobile);
             socketInstance.off('newMessage');
+            // Nên ngắt kết nối socket khi component unmount
+            socketInstance.disconnect();
         };
-    }, [token]);
+    }, [token, userId]); // Thêm userId vào dependencies vì nó được sử dụng trong logic unreadCount
 
-    // ✨ [REFACTOR] Hàm xử lý giờ chỉ cần cập nhật ID
     const handleSelectConversation = (conversationData: any) => {
         if (activeConversationId === conversationData.id) return;
 
+        // Rời khỏi cuộc trò chuyện trước đó (nếu có) và tham gia cuộc trò chuyện mới
+        if (socket && activeConversationId) { // Kiểm tra xem có cuộc trò chuyện đang hoạt động trước đó không
+            socket.emit('leaveChat', { chatId: activeConversationId });
+        }
         if (socket) {
-            socket.emit('joinChat', { memberId: conversationData.member });
+            socket.emit('joinChat', { memberId: conversationData.member, chatId: conversationData.id }); // Truyền chatId tới joinChat nếu backend của bạn hỗ trợ
         }
 
         setActiveConversationId(conversationData.id);
@@ -158,19 +172,24 @@ export default function ChatPage(session: PAGES.IChatProps) {
                 timestamp: new Date().toISOString(),
             };
             socket.emit('sendMessage', messagePayload);
+            // Cập nhật trạng thái cuộc trò chuyện một cách lạc quan cho người gửi
+            setConversation(prev => [...prev, { ...messagePayload, read: false }]); // Đánh dấu là chưa đọc ban đầu
         }
     };
 
     const handleLeaveChat = () => {
         if (socket && activeConversation) {
             socket.emit('leaveChat', { chatId: activeConversation.id });
+            // Tùy chọn xóa cuộc trò chuyện đang hoạt động trong UI
+            setActiveConversationId('');
+            setConversation([]);
+            // Điều hướng hoặc hiển thị tin nhắn mặc định
+            const newUrl = `${ROUTES.USER.CHAT.replace('/:id', '')}`; // Chuyển đến một tuyến chat chung
+            window.history.pushState({ path: newUrl }, '', newUrl);
         }
     };
 
     const toggleSidebar = () => setShowSidebar(prev => !prev);
-
-    // ✨ [REFACTOR] Kết hợp `activeConversation` và `conversation` trước khi truyền xuống ContentChat
-    console.log(conversation);
 
     const fullActiveConversation = useMemo(() => {
         if (!activeConversation) return null;
