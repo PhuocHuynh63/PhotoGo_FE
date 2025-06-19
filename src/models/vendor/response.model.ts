@@ -22,3 +22,12 @@ export type IVendorsData = z.infer<typeof VendorsDataModel>;
 export const VendorResponseModel = BackendResponseModel(VendorModel);
 export type IVendorResponse = z.infer<typeof VendorResponseModel>;
 //----------------------End----------------------//
+
+/**
+ * Model of VendorByIdResponse
+ */
+export const VendorByIdModel = VendorModel
+
+export const VendorByIdResponseModel = BackendResponseModel(VendorByIdModel);
+export type IVendorByIdResponse = z.infer<typeof VendorByIdResponseModel>;
+//----------------------End----------------------//

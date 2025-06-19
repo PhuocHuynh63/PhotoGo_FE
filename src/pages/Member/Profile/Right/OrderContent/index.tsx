@@ -2,8 +2,7 @@
 
 import Button from "@components/Atoms/Button";
 import { Card, CardContent } from "@components/Atoms/Card";
-// import { PAGES } from "../../../../../types/IPages";
-import { Badge, Calendar, Clock, MapPin, MoreHorizontal, Star } from "lucide-react";
+import { Badge, Calendar, Clock, MapPin, MoreHorizontal } from "lucide-react";
 import Input from "@components/Atoms/Input";
 import { Tabs, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { useState } from "react";
@@ -12,100 +11,54 @@ import { Separator } from "@components/Atoms/Seperator/Seperator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/Molecules/Dialog";
 import { Textarea } from "@components/Atoms/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/Atoms/ui/dropdown-menu";
-import StarRating from "@components/Molecules/StarRating";
 import Link from "next/link";
+import { IPagination } from "@models/metadata";
+import { useConcept } from "@utils/hooks/useConcept/useConcept";
+import Pagination from "@components/Organisms/Pagination/Pagination";
+import { useRouter } from "next/navigation";
+import { useVendor } from "@utils/hooks/useVendor/useVendor";
+import { IInvoice } from "@models/invoice/common.model";
+import { useBooking } from "@utils/hooks/useBooking";
+import { IBooking } from "@models/booking/common.model";
 
-const bookings = [
-    {
-        id: "B001",
-        studioName: "Elegant Studio",
-        studioLocation: "123 Photography Lane, District 1, HCMC",
-        packageName: "Wedding Photoshoot Premium",
-        date: "2024-05-15",
-        time: "10:00 - 14:00",
-        price: 5500000,
-        status: "upcoming",
-        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1745146736/chup-anh-cuoi-sai-gon-8_hx9x36.png",
-        description: "Premium wedding photoshoot package including 100 edited photos, 2 outfit changes, and 1 album.",
-        photographer: "Nguyen Van A",
-        rating: null,
-    },
-    {
-        id: "B002",
-        studioName: "Vintage Lens",
-        studioLocation: "45 Art Street, District 3, HCMC",
-        packageName: "Family Portrait Session",
-        date: "2024-04-28",
-        time: "15:00 - 17:00",
-        price: 2800000,
-        status: "upcoming",
-        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1745146736/studio-family-and-first-year-portrait-session_0008_vlzhzl.jpg",
-        description: "Family portrait session with 50 edited photos and 1 large framed print.",
-        photographer: "Tran Thi B",
-        rating: null,
-    },
-    {
-        id: "B003",
-        studioName: "Natural Light Photography",
-        studioLocation: "78 Garden Road, District 2, HCMC",
-        packageName: "Outdoor Couple Shoot",
-        date: "2024-03-10",
-        time: "16:00 - 18:00",
-        price: 1800000,
-        status: "completed",
-        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1745146734/94223047_1947606018706491_7290452465198039040_o_ww54yi.jpg",
-        description: "Romantic outdoor photoshoot for couples with 30 edited photos.",
-        photographer: "Le Van C",
-        rating: 4.5,
-    },
-    {
-        id: "B004",
-        studioName: "Modern Captures",
-        studioLocation: "22 Tech Boulevard, District 7, HCMC",
-        packageName: "Professional Headshots",
-        date: "2024-02-20",
-        time: "09:00 - 10:00",
-        price: 1200000,
-        status: "completed",
-        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1745146926/anh-4-mobile-1704096689174-1704127440096_k81sbn.webp",
-        description: "Professional headshots for business profiles and resumes.",
-        photographer: "Pham Thi D",
-        rating: 5,
-    },
-    {
-        id: "B005",
-        studioName: "Artistic Visions",
-        studioLocation: "55 Creative Avenue, District 10, HCMC",
-        packageName: "Fashion Portfolio",
-        date: "2024-01-15",
-        time: "13:00 - 17:00",
-        price: 3500000,
-        status: "cancelled",
-        image: "https://res.cloudinary.com/dodtzdovx/image/upload/v1745146423/Screenshot_2025-04-20_175148_xoemjp.png",
-        description: "Fashion portfolio shoot with 5 outfit changes and 80 edited photos.",
-        photographer: "Hoang Van E",
-        rating: null,
-    },
-]
 
-const OrdersContent = (/*{ userOrders }: any*/) => {
+interface OrdersContentProps {
+    invoices: IInvoice[];
+    pagination: IPagination;
+}
+
+const OrdersContent = ({ invoices, pagination }: OrdersContentProps) => {
     const [activeTab, setActiveTab] = useState("all")
     const [searchQuery, setSearchQuery] = useState("")
+    const router = useRouter();
+    const { bookings, loading } = useBooking(invoices);
+    const handlePageChange = (page: number) => {
+        router.push(`?page=${page}`);
+    };
 
     // Filter bookings based on active tab and search query
     const filteredBookings = bookings.filter((booking) => {
         const matchesTab =
             activeTab === "all" ||
-            (activeTab === "upcoming" && booking.status === "upcoming") ||
-            (activeTab === "completed" && booking.status === "completed") ||
-            (activeTab === "cancelled" && booking.status === "cancelled")
+            (activeTab === "upcoming" && booking.status === "chờ xử lý") ||
+            (activeTab === "pending" && booking.status === "chờ thanh toán") ||
+            (activeTab === "completed" && booking.status === "đã hoàn thành") ||
+            (activeTab === "cancelled" && booking.status === "đã hủy")
 
         const matchesSearch =
-            booking.studioName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            booking.packageName.toLowerCase().includes(searchQuery.toLowerCase())
+            booking?.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            booking?.email?.toLowerCase().includes(searchQuery.toLowerCase())
 
         return matchesTab && matchesSearch
     })
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto">
@@ -113,18 +66,18 @@ const OrdersContent = (/*{ userOrders }: any*/) => {
                 <h1 className="text-2xl font-bold mb-4 md:mb-0">Quản lý đơn hàng chụp ảnh</h1>
                 <Input
                     icon="Search"
-                    placeholder="Tìm kiếm đơn hàng theo tên, ID..."
+                    placeholder="Tìm kiếm đơn hàng theo tên, email..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-[300px]"
                 />
             </div>
 
-
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
+                <TabsList className="grid grid-cols-4 gap-2 bg-orange-100 p-1 rounded-xl max-w-xl mx-auto mb-6">
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
-                    <TabsTrigger value="upcoming">Sắp tới</TabsTrigger>
+                    <TabsTrigger value="upcoming">Chờ xử lý</TabsTrigger>
+                    <TabsTrigger value="pending">Chờ thanh toán</TabsTrigger>
                     <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
                     <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
                 </TabsList>
@@ -141,178 +94,156 @@ const OrdersContent = (/*{ userOrders }: any*/) => {
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-6">
-                    {filteredBookings.map((booking) => (
-                        <BookingCard key={booking.id} booking={booking} />
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 gap-6">
+                        {filteredBookings.map((booking) => (
+                            <BookingCard key={booking.id} booking={booking as unknown as IBooking & { invoice: IInvoice } } />
+                        ))}
+                    </div>
+
+                    <div className="mt-6 flex justify-center">
+                        <Pagination
+                            total={pagination.totalPage}
+                            current={pagination.current}
+                            onChange={handlePageChange}
+                        />
+                    </div>
+                </>
             )}
         </div>
     )
 }
 
-// Define the type for a booking
-type Booking = {
-    id: string;
-    studioName: string;
-    studioLocation: string;
-    packageName: string;
-    date: string;
-    time: string;
-    price: number;
-    status: string;
-    image: string;
-    description: string;
-    photographer: string;
-    rating: number | null;
-};
-
-function BookingCard({ booking }: { booking: Booking }) {
+function BookingCard({ booking }: { booking: IBooking & { invoice: IInvoice } }) {
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showReportDialog, setShowReportDialog] = useState(false)
-    const [showReviewDialog, setShowReviewDialog] = useState(false)
-    const [rating, setRating] = useState(5)
-
+    const { concept, loading: conceptLoading } = useConcept(booking.serviceConceptId);
+    const { vendor, loading: vendorLoading } = useVendor(booking.vendorId);
     // Format price to VND
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price).replace("₫", "đ")
+    const formatPrice = (price: number | string) => {
+        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(price)).replace("₫", "đ")
     }
-
-    // Format date to display in Vietnamese format
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return date.toLocaleDateString("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        })
-    }
-
     // Get status badge color
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "upcoming":
-                return <Badge className="text-blue-500 border-blue-200">Sắp tới</Badge>
-            case "completed":
+            case "chờ xử lý":
+                return <Badge className="text-blue-500 border-blue-200">Chờ xử lý</Badge>
+            case "đã hoàn thành":
                 return <Badge className="text-green-500 border-green-200">Hoàn thành</Badge>
-            case "cancelled":
+            case "đã hủy":
                 return (
                     <Badge className="text-red-500 border-red-200">
                         Đã hủy
                     </Badge>
                 )
+            case "đã xác nhận":
+                return <Badge className="text-yellow-500 border-yellow-200">Đã xác nhận</Badge>
+            case "chờ thanh toán":
+                return <Badge className="text-orange-500 border-orange-200">Chờ thanh toán</Badge>
             default:
                 return <Badge>{status}</Badge>
         }
     }
-
     return (
         <Card className="overflow-hidden">
             <div className="flex flex-col md:flex-row">
                 <div className="relative md:w-1/3 h-48 md:h-auto">
-                    <Image src={booking.image || "/placeholder.svg"} alt={booking.packageName} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" priority={true}
-                        loading="eager" className="object-cover" />
+                    <Image
+                        src={concept?.images?.[0]?.imageUrl || "/placeholder.svg"}
+                        alt={`Booking ${concept?.name}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        priority={true}
+                        loading="eager"
+                        className="object-cover"
+                    />
                 </div>
                 <CardContent className="flex-1 p-6">
                     <div className="flex flex-col md:flex-row justify-between p-3">
                         <div>
-                            <h3 className="text-xl font-bold flex items-center gap-2">{booking.packageName}
+                            <h3 className="text-xl font-bold flex items-center gap-2">
+                                {conceptLoading ? (
+                                    "Đang tải..."
+                                ) : concept ? (
+                                    concept.name
+                                ) : (
+                                    `Đơn hàng #${booking.id}`
+                                )}
                                 {getStatusBadge(booking.status)}
                             </h3>
                             <div className="flex items-center mt-2 text-muted-foreground">
                                 <MapPin className="h-4 w-4 mr-1" />
-                                <p className="text-sm">{booking.studioName}</p>
+                                <p className="text-sm">
+                                    {vendorLoading ? (
+                                        "Đang tải..."
+                                    ) : vendor ? (
+                                        vendor.name
+                                    ) : (
+                                        "Không tìm thấy thông tin studio"
+                                    )}
+                                </p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">{booking.studioLocation}</p>
+                            {vendor && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {vendor.locations[0]?.address || "Chưa có địa chỉ"}
+                                </p>
+                            )}
 
                             <div className="flex flex-wrap gap-4 mt-4">
                                 <div className="flex items-center">
                                     <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                                    <span className="text-sm">{formatDate(booking.date)}</span>
+                                    <span className="text-sm">{booking.date}</span>
                                 </div>
                                 <div className="flex items-center">
                                     <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
                                     <span className="text-sm">{booking.time}</span>
                                 </div>
                             </div>
-
-                            {booking.status === "completed" && booking.rating && (
-                                <div className="flex items-center mt-2">
-                                    <div className="flex">
-                                        <StarRating
-                                            stars={booking.rating}
-                                        />
-                                    </div>
-                                    <span className="text-sm ml-1">{booking.rating}/5</span>
-                                </div>
+                            {concept && (
+                                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                                    {concept.description || "Không có mô tả"}
+                                </p>
                             )}
                         </div>
 
                         <div className="mt-4 md:mt-0 text-right">
-                            <div className="text-lg font-bold">{formatPrice(booking.price)}</div>
-                            <div className="text-xs text-muted-foreground mt-1">Mã đơn: {booking.id}</div>
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="text-lg font-bold text-orange-600">{formatPrice(booking.invoice.remainingAmount)}</div>
+                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(booking.invoice.originalPrice)}</div>
+                                </div>
+                                {/* {booking.invoice.discountAmount > 0 && (
+                                    <div>
+                                        <div className="text-sm text-muted-foreground">Giảm giá:</div>
+                                        <div className="text-green-600">-{formatPrice(booking.invoice.discountAmount)}</div>
+                                    </div>
+                                )}
+                                <div>
+                                    <div className="text-sm text-muted-foreground">Thuế (VAT):</div>
+                                    <div>{formatPrice(booking.invoice.taxAmount)}</div>
+                                </div>
+                                <div>
+                                    <div className="text-sm text-muted-foreground">Đã đặt cọc:</div>
+                                    <div className="text-blue-600">{formatPrice(booking.invoice.depositAmount)}</div>
+                                </div> */}
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-4">Loại: {booking.sourceType}</div>
+                            {concept && (
+                                <div className="text-xs text-muted-foreground mt-1">
+                                    Thời gian: {concept.duration} phút
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     <Separator className="my-4" />
 
                     <div className="flex flex-wrap gap-2 justify-end">
-                        {/* <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="outline">Xem chi tiết</Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[600px]">
-                                <DialogHeader>
-                                    <DialogTitle>Chi tiết đơn hàng</DialogTitle>
-                                    <DialogDescription>Mã đơn: {booking.id}</DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    <div className="relative  h-64 w-full">
-                                        <Image
-                                            src={booking.image || "/placeholder.svg"}
-                                            alt={booking.packageName}
-                                            fill
-                                            className="object-scale-down rounded-md"
-                                        />
-                                    </div>
-                                    <h3 className="text-lg font-bold flex items-center gap-2">{booking.packageName}
-                                        <p>{getStatusBadge(booking.status)}</p>
-                                    </h3>
-                                    <p className="text-sm">{booking.description}</p>
-
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <p className="font-medium">Studio</p>
-                                            <p>{booking.studioName}</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">Nhiếp ảnh gia</p>
-                                            <p>{booking.photographer}</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">Ngày chụp</p>
-                                            <p>{formatDate(booking.date)}</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">Thời gian</p>
-                                            <p>{booking.time}</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-medium">Giá</p>
-                                            <p className="font-bold">{formatPrice(booking.price)}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <Button onClick={() => setDialogOpen(false)}>Đóng</Button>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog> */}
                         <Link href={`/order/${booking.id}`}>
-                            <Button >Xem chi tiết</Button>
+                            <Button>Xem chi tiết</Button>
                         </Link>
 
-                        {booking.status === "upcoming" && (
+                        {booking.status === "chờ xử lý" && (
                             <>
                                 <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
                                     <DialogTrigger asChild>
@@ -343,41 +274,6 @@ function BookingCard({ booking }: { booking: Booking }) {
                                     </DialogContent>
                                 </Dialog>
                             </>
-                        )}
-
-                        {booking.status === "completed" && !booking.rating && (
-                            <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
-                                <DialogTrigger asChild>
-                                    <Button>Đánh giá</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Đánh giá dịch vụ</DialogTitle>
-                                        <DialogDescription>Hãy chia sẻ trải nghiệm của bạn về dịch vụ chụp ảnh này</DialogDescription>
-                                    </DialogHeader>
-                                    <div className="py-4">
-                                        <div className="flex justify-center mb-4">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <button key={star} type="button" onClick={() => setRating(star)} className="p-1">
-                                                    <Star
-                                                        className={`h-8 w-8 ${star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                                                    />
-                                                </button>
-                                            ))}
-                                        </div>
-                                        <Textarea
-                                            placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ chụp ảnh này..."
-                                            className="min-h-[100px]"
-                                        />
-                                    </div>
-                                    <DialogFooter>
-                                        <Button variant="outline" onClick={() => setShowReviewDialog(false)}>
-                                            Hủy
-                                        </Button>
-                                        <Button>Gửi đánh giá</Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
                         )}
 
                         <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
@@ -429,4 +325,6 @@ function BookingCard({ booking }: { booking: Booking }) {
             </div>
         </Card>
     )
-} export default OrdersContent
+}
+
+export default OrdersContent

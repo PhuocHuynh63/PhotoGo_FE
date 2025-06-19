@@ -1,7 +1,8 @@
+
 import { z } from "zod";
 
 /**
- * Model of User
+ * Model of Booking
  */
 export const BookingModel = z.object({
     id: z.string(),
@@ -10,12 +11,26 @@ export const BookingModel = z.object({
     serviceConceptId: z.string(),
     date: z.string(),
     time: z.string(),
-    status: z.enum(["Chờ xử lý", "Đã xác nhận", "Đã hoàn thành", "Đã hủy"]),
+    status: z.enum(["chờ xử lý", "đã xác nhận", "đã hoàn thành", "đã hủy", "chờ thanh toán"]),
     sourceType: z.enum(["trực tiếp", "chiến dịch", "giới thiệu", "nổi bật", "khuyến mãi", "khác"]),
-    depositAmount: z.number(),
+    sourceId: z.string().nullable(),
+    depositAmount: z.string(),
+    depositType: z.string(),
+    email: z.string().email(),
+    fullName: z.string(),
+    phone: z.string(),
+    histories: z.array(z.any()),
     userNote: z.string().optional(),
-    createdAt: z.string().datetime().optional(),
-    updatedAt: z.string().datetime().optional(),
+    created_at: z.string(),
+    updated_at: z.string(),
+    user: z.object({
+        id: z.string(),
+        email: z.string().email(),
+        passwordHash: z.string(),
+        oldPasswordHash: z.string(),
+        fullName: z.string(),
+    }).optional(),
 });
+
 export type IBooking = z.TypeOf<typeof BookingModel>
 //----------------------End----------------------//

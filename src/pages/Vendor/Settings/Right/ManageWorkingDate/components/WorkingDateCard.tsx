@@ -15,7 +15,7 @@ const WorkingDateCard = ({ date, isAvailable, isActive, weekdayLabel, onClick }:
             className={cn(
                 "flex flex-col items-center justify-center py-3 rounded-lg cursor-pointer border transition-all",
                 isActive
-                    ? "bg-primary text-white border-primary shadow-md"
+                    ? "bg-[#ffd7a8] text-white border-[#ffd7a8] shadow-md"
                     : "bg-white text-slate-800 border-slate-200 hover:border-primary hover:bg-primary/10",
             )}
             onClick={onClick}
