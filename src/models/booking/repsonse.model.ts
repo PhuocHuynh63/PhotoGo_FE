@@ -6,7 +6,7 @@ import { BookingModel } from "./common.model";
  * Model of BookingData
  */
 export const BookingDataModel = z.object({
-    data: z.array(BookingModel),
+    data: BookingModel,
 });
 
 export const BookingResponseModel = BackendResponseModel(BookingDataModel);

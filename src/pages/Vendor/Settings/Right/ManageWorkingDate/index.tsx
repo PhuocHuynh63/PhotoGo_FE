@@ -66,6 +66,10 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
     // Effect để mở lại accordion sau khi fetch xong và có lastSelection
     useEffect(() => {
         if (!isLoadingData && lastSelection) {
+            // Tìm workingHours và workingDate từ dữ liệu mới
+            const workingHours = workingHoursList.find(wh => wh.id === lastSelection.workingHoursId);
+            const workingDate = workingHours?.workingDates.find(wd => wd.id === lastSelection.workingDateId);
+
             // Đầu tiên set active month và selected date
             setActiveMonth(`month-${lastSelection.month}`);
 
@@ -77,16 +81,18 @@ const ManageWorkingDate = ({ workingHoursList, isLoadingData, fetchWorkingHours,
 
                 // Đợi một chút để UI cập nhật
                 setTimeout(() => {
-                    // Show action bar và set selected working date
+                    // Show action bar và set selected working date với trạng thái mới nhất
                     setShowActionBar(true);
                     setSelectedWorkingDateId(lastSelection.workingDateId);
+                    // Sử dụng trạng thái từ dữ liệu mới
+                    setSelectedWorkingDateAvailability(workingDate?.isAvailable ?? true);
 
                     // Cuối cùng mới reset lastSelection
                     setLastSelection(null);
                 }, 100);
             }, 100);
         }
-    }, [isLoadingData, lastSelection]);
+    }, [isLoadingData, lastSelection, workingHoursList]);
 
     // Hàm reset selectedDateForSlots và prevSelectedDate
     const handleResetSelectedDate = () => {
