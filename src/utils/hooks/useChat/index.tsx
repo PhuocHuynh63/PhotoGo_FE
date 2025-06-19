@@ -1,5 +1,5 @@
 import chatService from '@services/chat';
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 /**
  *  Custom hook to fetch messages by chat ID
@@ -24,38 +24,38 @@ export const useMessageByChatId = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const fetchMessages = useCallback(async () => {
+        if (!chatId) {
+            setMessage([]);
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response: any = await chatService.getMessageChatById(chatId, page, pageSize);
+            setMessage(response.data);
+        } catch (err: any) {
+            setError(err.message || 'Failed to fetch messages');
+        } finally {
+            setLoading(false);
+        }
+    }, [chatId, page, pageSize]);
+
     useEffect(() => {
         let isMounted = true;
-        setLoading(true);
-        chatService.getMessageChatById(chatId, page, pageSize)
-            .then((response: any) => {
-                if (isMounted) {
-                    setMessage(response.data);
-                    setLoading(false);
-                }
-            })
-            .catch((err) => {
-                if (isMounted) {
-                    setError(err.message || 'Failed to fetch messages');
-                    setLoading(false);
-                }
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            });
-
+        if (isMounted) {
+            fetchMessages();
+        }
         return () => {
             isMounted = false;
         }
-
-    }, [chatId, page, pageSize]);
+    }, [fetchMessages]);
 
     return {
         message,
         loading,
         error,
+        mutate: fetchMessages,
     }
 }
 //--------------------------End--------------------------//
@@ -86,6 +86,11 @@ export const useChatByUserId = ({
 
     useEffect(() => {
         let isMounted = true;
+        if (!userId) {
+            setChat([]);
+            return;
+        }
+
         setLoading(true);
         chatService.getChatList(userId, page, pageSize)
             .then((response: any) => {
@@ -110,7 +115,7 @@ export const useChatByUserId = ({
             isMounted = false;
         }
 
-    }, []);
+    }, [userId, page, pageSize]);
 
     return {
         chat,
