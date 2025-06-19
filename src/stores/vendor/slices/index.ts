@@ -12,7 +12,7 @@ export const createVendorSlice = (
     servicePackage: {} as IServicePackage,
     concept: {} as IServiceConcept,
     reviews: {} as IReviewPaginationResponse,
-    addressLocation: '' as string,
+    addressLocation: {} as { id: string, address: string } | null,
 
     setVendor(vendor) {
         return set(() => ({
