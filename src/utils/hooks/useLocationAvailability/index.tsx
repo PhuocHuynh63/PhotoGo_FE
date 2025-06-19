@@ -13,23 +13,25 @@ export function useLocationAvailability({
     locationId,
     enabled = true,
 }: UseLocationAvailabilityParams) {
-    const [data, setData] = useState<ILocationSchedule[]>([]);
+    const [locationAvailability, setLocationAvailability] = useState<ILocationSchedule[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     const fetchWorkingHours = async () => {
-        if (!locationId || !enabled) return;
+        if (!locationId) return;
+        console.log("Fetching working hours for locationId:", locationId);
 
         setLoading(true);
         setError(null);
 
         try {
             const result = await locationAvailabilityService.getLocationAvailabilityByLocationId(locationId) as ILocationScheduleResponse;
+            console.log('result', result);
 
             if (result.statusCode === 200 && result.data) {
-                setData(result.data.data);
+                setLocationAvailability(result.data.data);
             } else {
-                setData([]);
+                setLocationAvailability([]);
                 const errorMessage = "Không thể tải dữ liệu lịch làm việc";
                 setError(errorMessage);
                 toast.error(errorMessage);
@@ -53,7 +55,7 @@ export function useLocationAvailability({
     };
 
     return {
-        data,
+        locationAvailability,
         loading,
         error,
         refetch,
