@@ -190,7 +190,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             <h3 className="text-dark font-medium text-lg h-16 line-clamp-2">{vendor.name}</h3>
                                             <span className="text-dark text-xs flex">
                                                 <LucideIcon name="MapPin" iconSize={14} />
-                                                {vendor.locations[0]?.address}, {vendor.locations[0]?.city}
+                                                {vendor.locations[0]?.address}, {vendor.locations[0]?.district}, {vendor.locations[0]?.ward}, {vendor.locations[0]?.city}
                                             </span>
                                         </div>
                                         {vendor.distance && (

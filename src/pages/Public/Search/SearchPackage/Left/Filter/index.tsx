@@ -107,9 +107,9 @@ export default function Left({ onReset, onApply, serviceTypes }: { onReset: () =
                 </div>
                 <Accordion type="single" defaultValue="serviceType" collapsible>
                     {/* Service Type */}
-                    <AccordionItem value="serviceType">
-                        <AccordionTrigger className="py-2 cursor-pointer">Loại dịch vụ</AccordionTrigger>
-                        <AccordionContent>
+                    <AccordionItem value="serviceType" className="border rounded-lg px-3 mb-2">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4">
                             <div className="space-y-2">
                                 <Checkbox
                                     options={serviceTypes?.map(service => ({ key: service.name })) || []}
@@ -138,18 +138,20 @@ export default function Left({ onReset, onApply, serviceTypes }: { onReset: () =
                     />
                 </div> */}
                 {/* Price Range */}
-                <div className="mb-4 border-t pt-4">
-                    <h3 className="font-medium text-sm mb-2">Khoảng giá</h3>
-                    <div className="px-1 py-4">
-                        <PriceRangeSlider
-                            min={300000}
-                            max={70000000}
-                            step={500000}
-                            value={selectPriceRange}
-                            onValueChange={setSelectPriceRange}
-                        />
-                    </div>
-                </div>
+                <Accordion type="single" defaultValue="price" collapsible>
+                    <AccordionItem value="price" className="border rounded-lg px-3 mb-2">
+                        <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Khoảng giá</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-9">
+                            <PriceRangeSlider
+                                min={300000}
+                                max={70000000}
+                                step={500000}
+                                value={selectPriceRange}
+                                onValueChange={setSelectPriceRange}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
                 {/* Duration Range
                 <div className="mb-4 border-t pt-4">
                     <h3 className="font-medium text-sm mb-2">Thời lượng</h3>
@@ -171,10 +173,10 @@ export default function Left({ onReset, onApply, serviceTypes }: { onReset: () =
                         Áp dụng bộ lọc
                     </button>
                 </div>
-            </div>
+            </div >
 
             {/* Mobile Filter UI */}
-            <div className="md:hidden w-full">
+            <div className="md:hidden w-full" >
                 <Accordion type="single" defaultValue="serviceType" collapsible className="space-y-2">
                     {/* Service Type */}
                     <AccordionItem value="serviceType" className="border rounded-lg px-3">
@@ -209,7 +211,7 @@ export default function Left({ onReset, onApply, serviceTypes }: { onReset: () =
                     {/* Price Range */}
                     <AccordionItem value="price" className="border rounded-lg px-3">
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Khoảng giá</AccordionTrigger>
-                        <AccordionContent className="pt-2 pb-4">
+                        <AccordionContent className="pt-2 pb-9">
                             <PriceRangeSlider
                                 min={300000}
                                 max={70000000}

@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Search from "@components/Molecules/Search/Search"
 import Select from "@components/Atoms/Select"
 import { motion, AnimatePresence } from "framer-motion";
-import Left from "./Left"
-import Right from "./Right"
+import Left from "./Left/Filter"
+import Right from "./Right/Result"
 import LucideIcon from "@components/Atoms/LucideIcon";
 import Button from "@components/Atoms/Button";
 import { IServicePackage } from "@models/servicePackages/common.model";
