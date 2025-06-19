@@ -1,8 +1,6 @@
-import { authOptions } from "@lib/authOptions";
 import { IReviewPaginationResponse, IReviewPaginationResponseModel } from "@models/review/repsonse.model";
 import ReviewsPage from "@pages/Member/Profile/Right/Reviews"
 import reviewService from "@services/review";
-import { getServerSession } from "next-auth";
 
 async function getReviews(userId: string, current: string, pageSize: string, sortBy: string, sortDirection: string) {
     return await reviewService.getReviewByUserId(userId, current, pageSize, sortBy, sortDirection)

@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react'
 import { renderStars } from '@components/Atoms/Star';
 import { Card, CardContent } from '@components/Atoms/ui/card'
 import { Separator } from '@components/Atoms/ui/separator';
@@ -8,7 +9,9 @@ import ReviewSkeleton from '@components/Molecules/ReviewSkeleton';
 import { IReviewVendorDetailModel } from '@models/review/common.model';
 import { formatDateAgo } from '@utils/helpers/Date';
 import { Clock, MessageCircle } from 'lucide-react';
-import React, { useState } from 'react'
+import "yet-another-react-lightbox/styles.css"
+import Lightbox from 'yet-another-react-lightbox';
+
 
 type ReviewsListProps = {
     activeTab?: string;
@@ -26,6 +29,23 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: Revi
     const reviewsToDisplay = isOverview
         ? reviewsFromMember?.slice(0, 1)
         : reviewsFromMember;
+    //-----------------------------End---------------------------------//
+
+    console.log('reviewsToDisplay', reviewsToDisplay);
+
+    /**
+     * Lightbox for images in reviews
+     * We use a lightbox to display images when clicked
+     */
+
+    const [lightboxOpen, setLightboxOpen] = useState<boolean>(false)
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
+    const [lightboxImages, setLightboxImages] = useState<{ src: string }[]>([])
+    const handleImageClick = (images: string[], index: number) => {
+        setLightboxImages(images?.map(img => ({ src: img })))
+        setCurrentImageIndex(index)
+        setLightboxOpen(true)
+    }
     //-----------------------------End---------------------------------//
 
     /**
@@ -84,8 +104,11 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: Revi
                                     {r?.images && r.images?.length > 0 && (
                                         <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                                             {r?.images?.map((img: string, index: number) => (
-                                                <div key={index} className="aspect-square overflow-hidden rounded">
-                                                    <img src={img} alt={`Review image ${index}`} className="w-full h-full object-cover" />
+                                                <div key={index} className="cursor-pointer aspect-square overflow-hidden rounded"
+                                                    onClick={() => handleImageClick(r.images ?? [], index)}
+                                                >
+                                                    <img src={img} alt={`Review image ${index}`} className="w-full h-full object-cover"
+                                                    />
                                                 </div>
                                             ))}
                                         </div>
@@ -94,7 +117,16 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: Revi
                             </div>
                         </CardContent>
                     </Card>
-                ))
+                )
+                ))}
+            {/* Lightbox */}
+            {lightboxImages.length > 0 && (
+                <Lightbox
+                    open={lightboxOpen}
+                    close={() => setLightboxOpen(false)}
+                    slides={lightboxImages}
+                    index={currentImageIndex}
+                />
             )}
         </div>
     )
