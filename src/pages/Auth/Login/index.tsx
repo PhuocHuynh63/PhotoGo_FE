@@ -15,10 +15,11 @@ import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
-import { signIn } from "next-auth/react"
+import { getSession, signIn } from "next-auth/react"
 import authService from "@services/auth"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { AuthError } from "@constants/errors"
+import { ROLE } from "@constants/common"
 
 const LoginPage = () => {
     //#region define variables
@@ -63,6 +64,9 @@ const LoginPage = () => {
                 ...data,
             });
 
+            console.log("Login response:", res);
+
+
             //#region Handle response
             const status = res?.status;
             const error = res?.error;
@@ -70,7 +74,12 @@ const LoginPage = () => {
 
             //#region Handle success
             if (status === 200) {
-                router.push(ROUTES.PUBLIC.HOME);
+                const session = await getSession() as unknown as METADATA.ISession;
+                if (session?.user?.role?.name === ROLE.MEMBER) {
+                    router.push(ROUTES.PUBLIC.HOME);
+                } else if (session?.user?.role?.name === ROLE.ADMIN) {
+                    router.push(ROUTES.ADMIN.DASHBOARD);
+                }
                 router.refresh();
                 return;
             }

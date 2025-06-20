@@ -5,7 +5,7 @@ import { Calendar, Clock, Package, MapPin } from "lucide-react";
 import { useSession } from "@stores/user/selectors";
 import { useRouter } from "next/navigation";
 import { useAddressLocation } from "@stores/vendor/selectors";
-import { useLocationAvailability } from "@utils/hooks/useLocationAvailability";
+import { useLocationAvailability, useLocationAvailabilityByLocationIdAndDate } from "@utils/hooks/useLocationAvailability";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -48,9 +48,12 @@ export default function EnhancedBookingPopup({
     const session = useSession() as METADATA.ISession;
     const router = useRouter();
     const addressLocation = useAddressLocation();
+    //---------------------------End-----------------------------//
 
     // State for managing loading indicator during API calls
     const [isLoading, setIsLoading] = useState(false);
+    // State for loading time slots specifically
+    const [isTimeSlotsLoading, setIsTimeSlotsLoading] = useState(false);
 
     /**
      * React Hook Form initialization
@@ -68,46 +71,59 @@ export default function EnhancedBookingPopup({
         formState: { errors },
     } = useForm<BookingFormData>({
         defaultValues: {
-            conceptId: serviceConcept?.id || '', // Initialize with service concept ID
-            date: undefined, // No date selected initially
-            time: null, // No time slot selected initially
+            conceptId: serviceConcept?.id || '',
+            date: undefined,
+            time: null,
         }
     });
 
     // Watch form values for dynamic rendering and validation checks
     const watchedDate = watch('date');
     const watchedTime = watch('time');
+    //---------------------------End-----------------------------//
 
     // State to hold available time slots for the selected date
     const [timeSlots, setTimeSlots] = useState<any[]>([]);
 
+    const { locationAvailabilitySelectDate } = useLocationAvailabilityByLocationIdAndDate({
+        locationId: addressLocation?.id || "",
+        date: watchedDate ? format(watchedDate, 'dd/MM/yyyy') : "",
+    });
+
+    console.log("Location Availability Select Date:", locationAvailabilitySelectDate);
+
     /**
      * Hook to fetch location availability based on the selected address location.
-     * It retrieves the working dates and slot times for the specified location.
-     * The availability data is used to determine which dates and times are available for booking.
+     * It retrieves the general working dates and slot time definitions for the specified location.
+     * Specific slot availability per date will be fetched separately.
      */
     const { locationAvailability } = useLocationAvailability({
         locationId: addressLocation?.id || "",
-        enabled: true, // Enable the hook if locationId is available
+        enabled: false,
     });
 
-    // Aggregate availability from all ranges to pass to the calendar
+
+    /**
+     * Transform the fetched location availability data into a format suitable for calendar display.
+     * This includes filtering out past dates and marking dates as fully booked based on the initial payload.
+     * Note: Actual slot availability will be determined when a date is selected.
+     */
     const availability = locationAvailability
         ? locationAvailability.flatMap((loc: any) =>
-            loc.workingDates.map((wd: any) => {
-                const date = new Date(wd.date.split("/").reverse().join("-"));
-                const totalSlots = loc.slotTimes.length;
-                const availableSlots = loc.slotTimes.filter((slot: any) => slot.isAvailable).length;
-                return {
-                    date,
-                    totalSlots,
-                    availableSlots,
-                    isFullyBooked: availableSlots === 0,
-                    isPastDate: date < new Date(new Date().setHours(0, 0, 0, 0)),
-                };
-            }),
+            loc.workingDates
+                .filter((wd: any) => wd.isAvailable)
+                .map((wd: any) => {
+                    const date = new Date(wd.date.split("/").reverse().join("-"));
+                    return {
+                        date,
+                        isPastDate: date < new Date(new Date().setHours(0, 0, 0, 0)),
+                        isFullyBooked: false,
+                    };
+                }),
         )
         : [];
+    //---------------------------End-----------------------------//
+
 
     /**
      * Effect hook to set the initial `conceptId` when `serviceConcept` is available.
@@ -121,44 +137,85 @@ export default function EnhancedBookingPopup({
 
     /**
      * Effect hook to update `timeSlots` when `locationAvailability` or `watchedDate` changes.
-     * This logic fetches and processes available time slots for the currently selected date.
+     * This logic will now *simulate* an API call to fetch time slots for the selected date.
+     * In a real application, you would replace the simulated data with an actual API fetch.
      */
     useEffect(() => {
-        if (watchedDate && locationAvailability) {
-            setIsLoading(true);
-            // Reset the time slot selection when the date changes
-            setValue('time', null);
+        const fetchTimeSlotsForDate = async () => {
+            if (!watchedDate || !locationAvailability) {
+                setTimeSlots([]);
+                return;
+            }
 
-            // Format the watched date to DD/MM/YYYY for matching with availability data
-            const formattedDate = `${watchedDate.getDate().toString().padStart(2, "0")}/${(watchedDate.getMonth() + 1)
-                .toString()
-                .padStart(2, "0")}/${watchedDate.getFullYear()}`;
+            setIsTimeSlotsLoading(true);
+            setValue('time', null); // Reset the time slot selection when the date changes
 
-            // Find the matching availability range for the selected date
-            const matchingRange = locationAvailability.find((loc: any) =>
-                loc.workingDates.some((wd: any) => wd.date === formattedDate && wd.isAvailable),
+            const formattedDate = format(watchedDate, 'dd/MM/yyyy');
+
+            // Find the general availability object for the selected location
+            const currentLocAvailability = locationAvailability.find(
+                (loc: any) => loc.id === addressLocation?.id
             );
 
-            if (matchingRange) {
-                // Map the slotTimes of the matching range to the component's state
-                const updatedSlots = matchingRange.slotTimes.map((slot: any) => ({
+            if (!currentLocAvailability) {
+                setTimeSlots([]);
+                setIsTimeSlotsLoading(false);
+                return;
+            }
+
+            // Check if the selected date is marked as available in workingDates
+            const dateIsAvailable = currentLocAvailability.workingDates.some(
+                (wd: any) => wd.date === formattedDate && wd.isAvailable
+            );
+
+            if (!dateIsAvailable) {
+                setTimeSlots([]);
+                setIsTimeSlotsLoading(false);
+                return;
+            }
+
+            // --- Simulate API call for slot times for the selected date ---
+            // In a real app, this would be an actual API call, e.g.:
+            // const response = await yourApiService.fetchSlotsByDate(addressLocation.id, formattedDate);
+            // const fetchedSlots = response.data.slots; // Assuming response structure
+
+            // For this example, we'll use the 'slotTimes' from the initial locationAvailability
+            // and assume all of them are available for the selected available date.
+            // If `slotTimeWorkingDates` was populated, you'd use that here to determine `available` status.
+            const simulatedFetchedSlots = currentLocAvailability.slotTimes.map((slot: any) => {
+                // Here's where you'd integrate real-time booking data if `slotTimeWorkingDates`
+                // contained `alreadyBooked` or `maxParallelBookings` for this specific date.
+                // For now, we'll assume they are available if the date is available.
+                const isSlotCurrentlyAvailable = true; // Placeholder for actual availability check
+
+                // Check if the slot time is in the past for the current date
+                const [startHour, startMinute] = slot.startSlotTime.split(':').map(Number);
+                const slotDateTime = new Date(watchedDate);
+                slotDateTime.setHours(startHour, startMinute, 0, 0);
+
+                const now = new Date();
+                const isPastSlot = slotDateTime < now;
+
+                return {
                     id: slot.id,
                     time: `${slot.startSlotTime.slice(0, 5)} - ${slot.endSlotTime.slice(0, 5)}`,
-                    available: slot.isAvailable && slot.alreadyBooked < slot.maxParallelBookings,
+                    available: isSlotCurrentlyAvailable && !isPastSlot, // A slot is available if it's generally available and not in the past
                     price: serviceConcept?.price
                         ? Number(serviceConcept.price).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
                         : "Liên hệ",
-                }));
-                setTimeSlots(updatedSlots);
-            } else {
-                setTimeSlots([]); // No slots available for the selected date
-            }
+                };
+            });
 
-            setIsLoading(false);
-        } else if (!watchedDate) {
-            setTimeSlots([]); // Clear time slots if no date is selected
-        }
-    }, [locationAvailability, watchedDate, serviceConcept?.price, setValue]);
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            setTimeSlots(simulatedFetchedSlots);
+            setIsTimeSlotsLoading(false);
+        };
+
+        fetchTimeSlotsForDate();
+    }, [locationAvailability, watchedDate, serviceConcept?.price, setValue, addressLocation?.id]); // Re-run when these dependencies change
+
 
     // Find the selected slot's data for display in the summary
     const selectedSlotData = timeSlots.find((slot) => slot.id === watchedTime);
@@ -346,7 +403,7 @@ export default function EnhancedBookingPopup({
                                             <p className="text-lg mb-2">Chọn ngày trước</p>
                                             <p className="text-sm">Vui lòng chọn ngày để xem các khung giờ có sẵn</p>
                                         </div>
-                                    ) : isLoading ? (
+                                    ) : isTimeSlotsLoading ? ( // Use new loading state for slots
                                         <div className="text-center py-12">
                                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
                                             <p className="text-muted-foreground">Đang tải khung giờ...</p>
@@ -354,7 +411,7 @@ export default function EnhancedBookingPopup({
                                     ) : timeSlots.length === 0 ? (
                                         <div className="text-center py-12 text-muted-foreground">
                                             <p className="text-lg mb-2">Không có khung giờ</p>
-                                            <p className="text-sm">Ngày này không có khung giờ nào khả dụng</p>
+                                            <p className="text-sm">Ngày này không có khung giờ nào khả dụng hoặc đã hết.</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-3">
@@ -369,7 +426,7 @@ export default function EnhancedBookingPopup({
                                                             setValue('time', slot.id); // Update react-hook-form time field
                                                         }
                                                     }}
-                                                    disabled={!slot.available || isLoading}
+                                                    disabled={!slot.available || isLoading || isTimeSlotsLoading} // Disable if overall form is submitting or slots are loading
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <Clock className="h-4 w-4" />
@@ -408,7 +465,7 @@ export default function EnhancedBookingPopup({
                     </Button>
                     <Button
                         onClick={handleSubmit(onSubmit)}
-                        disabled={!watchedDate || !watchedTime || isLoading}
+                        disabled={!watchedDate || !watchedTime || isLoading || isTimeSlotsLoading}
                         size="lg"
                         className="min-w-[180px]"
                     >
