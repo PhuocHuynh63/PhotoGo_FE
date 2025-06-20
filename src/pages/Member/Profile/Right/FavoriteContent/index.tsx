@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@components/Atoms/Button";
@@ -12,13 +12,22 @@ import Pagination from "@components/Organisms/Pagination/Pagination";
 import { IFavoriteDetailModel } from "@models/favorite/common.model";
 import favoritesService from "@services/favorites";
 import toast from "react-hot-toast";
+import { IPagination } from "@models/metadata";
 
-export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDetailModel[] }) {
+export default function FavoritesContent({ itemsData, favoritePagination }: { itemsData: IFavoriteDetailModel[], favoritePagination: IPagination }) {
     const router = useRouter();
-    const [favorites, setFavorites] = useState(itemsData)
-    const [currentPage, setCurrentPage] = useState(1);
+    const searchParams = useSearchParams();
+    const [favorites, setFavorites] = useState<IFavoriteDetailModel[]>(() => {
+        return itemsData || [];
+    });
     const [removingItems, setRemovingItems] = useState<string[]>([]);
-    const itemsPerPage = 6;
+    const [isChangingPage, setIsChangingPage] = useState(false);
+
+    // Reset loading state and update favorites when new data arrives
+    useEffect(() => {
+        setFavorites(itemsData);
+        setIsChangingPage(false);
+    }, [itemsData]);
 
     const handleRemove = async (item: IFavoriteDetailModel) => {
         try {
@@ -62,7 +71,7 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
 
             if (!vendorSlug) {
                 console.error('Could not get vendor slug for concept:', item.serviceConcept.id);
-                // TODO: Show user error message
+                toast.error('Không tìm thấy nhà cung cấp');
                 return;
             }
 
@@ -70,7 +79,7 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
             router.push(`/${vendorSlug}/packages?conceptId=${item.serviceConcept.id}`);
         } catch (error) {
             console.error('Error navigating to vendor detail:', error);
-            // TODO: Show user error message
+            toast.error('Lỗi khi xem chi tiết');
         }
     };
 
@@ -80,10 +89,16 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
         exit: { opacity: 0, scale: 0.9, y: 20, transition: { duration: 0.3 } },
     };
 
-    // Calculate pagination
-    const totalPages = Math.ceil(favorites?.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedFavorites = favorites?.slice(startIndex, startIndex + itemsPerPage);
+    const handlePageChange = (page: number) => {
+        setIsChangingPage(true);
+        // Create new URLSearchParams object
+        const params = new URLSearchParams(searchParams?.toString() || '');
+        // Update the page parameter
+        params.set('page', page.toString());
+
+        // Update URL with new search params, without forcing a navigation
+        router.replace(`/profile/favorites?${params.toString()}`, { scroll: false });
+    };
 
     return (
         <div className="px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
@@ -91,11 +106,15 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
                 Danh sách yêu thích
             </h1>
 
-            {favorites?.length > 0 ? (
+            {isChangingPage ? (
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+            ) : favorites?.length > 0 ? (
                 <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         <AnimatePresence>
-                            {paginatedFavorites?.map((item) => (
+                            {favorites?.map((item) => (
                                 <motion.div
                                     key={item.id}
                                     variants={cardVariants}
@@ -124,7 +143,7 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
 
                                         <div className="p-4 space-y-1">
                                             <h3 className="font-semibold text-lg truncate">{item.serviceConcept.name}</h3>
-                                            <p className="text-sm text-gray-500 line-clamp-2">
+                                            <p className="text-sm text-gray-500 line-clamp-2 text-ellipsis h-10">
                                                 {item.serviceConcept.description}
                                             </p>
 
@@ -159,12 +178,12 @@ export default function FavoritesContent({ itemsData }: { itemsData: IFavoriteDe
                     </div>
 
                     {/* Pagination */}
-                    {totalPages > 1 && (
+                    {favoritePagination.totalPage > 1 && (
                         <div className="mt-8">
                             <Pagination
-                                total={totalPages}
-                                current={currentPage}
-                                onChange={setCurrentPage}
+                                total={favoritePagination.totalPage}
+                                current={favoritePagination.current}
+                                onChange={handlePageChange}
                             />
                         </div>
                     )}

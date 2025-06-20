@@ -17,7 +17,7 @@ export const rankConfigs: Record<Rank, {
         color: '#ffd700',
     },
     'Kim Cương': {
-        className: 'glowing',
+        className: 'pulsing',
         color: '#00ffff',
     },
 };
