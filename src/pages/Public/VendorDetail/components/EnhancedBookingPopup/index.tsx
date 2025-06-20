@@ -48,6 +48,7 @@ export default function EnhancedBookingPopup({
     const session = useSession() as METADATA.ISession;
     const router = useRouter();
     const addressLocation = useAddressLocation();
+    //---------------------------End-----------------------------//
 
     // State for managing loading indicator during API calls
     const [isLoading, setIsLoading] = useState(false);
@@ -70,26 +71,26 @@ export default function EnhancedBookingPopup({
         formState: { errors },
     } = useForm<BookingFormData>({
         defaultValues: {
-            conceptId: serviceConcept?.id || '', // Initialize with service concept ID
-            date: undefined, // No date selected initially
-            time: null, // No time slot selected initially
+            conceptId: serviceConcept?.id || '',
+            date: undefined,
+            time: null,
         }
     });
 
     // Watch form values for dynamic rendering and validation checks
     const watchedDate = watch('date');
     const watchedTime = watch('time');
+    //---------------------------End-----------------------------//
 
     // State to hold available time slots for the selected date
     const [timeSlots, setTimeSlots] = useState<any[]>([]);
 
     const { locationAvailabilitySelectDate } = useLocationAvailabilityByLocationIdAndDate({
-        locationId: "9a179d53-8907-49e9-b3b4-161bb4603c3",
+        locationId: addressLocation?.id || "",
         date: watchedDate ? format(watchedDate, 'dd/MM/yyyy') : "",
     });
 
     console.log("Location Availability Select Date:", locationAvailabilitySelectDate);
-
 
     /**
      * Hook to fetch location availability based on the selected address location.
@@ -101,25 +102,28 @@ export default function EnhancedBookingPopup({
         enabled: false,
     });
 
-    // Aggregate availability for the calendar (only dates, not specific slot counts initially)
+
+    /**
+     * Transform the fetched location availability data into a format suitable for calendar display.
+     * This includes filtering out past dates and marking dates as fully booked based on the initial payload.
+     * Note: Actual slot availability will be determined when a date is selected.
+     */
     const availability = locationAvailability
         ? locationAvailability.flatMap((loc: any) =>
             loc.workingDates
-                .filter((wd: any) => wd.isAvailable) // Only include working dates that are marked as available
+                .filter((wd: any) => wd.isAvailable)
                 .map((wd: any) => {
                     const date = new Date(wd.date.split("/").reverse().join("-"));
-                    // For calendar display, we only need to know if the date itself is available.
-                    // Actual slot availability will be fetched when a date is selected.
                     return {
                         date,
                         isPastDate: date < new Date(new Date().setHours(0, 0, 0, 0)),
-                        // We don't have totalSlots or availableSlots from this initial payload for granular calendar markings
-                        // You might mark a date as fully booked if a separate API call reveals no slots for that day.
-                        isFullyBooked: false, // Default to false, will be determined after date selection
+                        isFullyBooked: false,
                     };
                 }),
         )
         : [];
+    //---------------------------End-----------------------------//
+
 
     /**
      * Effect hook to set the initial `conceptId` when `serviceConcept` is available.
