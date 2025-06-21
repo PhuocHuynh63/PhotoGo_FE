@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+/**
+ * Booking form request schema
+ * This schema defines the structure of the booking form request.
+ */
 export const BookingFormRequest = z.object({
     userId: z.string(),
     serviceConceptId: z.string(),
@@ -18,3 +22,35 @@ export const BookingFormRequest = z.object({
     userNote: z.string().optional(),
 })
 export type IBookingFormRequest = z.TypeOf<typeof BookingFormRequest>;
+//----------------------------End-----------------------------//
+
+
+/**
+ * Checkout session request schema
+ * This schema defines the structure of the checkout session request.
+ * It includes details about the price, vendor, location, concept, and booking details.
+ */
+export const CheckoutSessionRequest = z.object({
+    price: z.number(),
+    vendorDetails: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
+    locationDetails: z.object({
+        id: z.string(),
+        address: z.string(),
+    }),
+    concept: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
+    bookingDetails: z.object({
+        working_date_id: z.string(),
+        slot_time_id: z.string(),
+        date: z.string(),
+        time: z.string(),
+        duration: z.number(),
+    }),
+});
+export type ICheckoutSessionRequest = z.TypeOf<typeof CheckoutSessionRequest>;
+//----------------------------End-----------------------------//
