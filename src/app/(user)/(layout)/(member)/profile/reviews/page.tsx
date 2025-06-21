@@ -1,6 +1,9 @@
+import { authOptions } from "@lib/authOptions";
 import { IReviewPaginationResponse, IReviewPaginationResponseModel } from "@models/review/repsonse.model";
 import ReviewsPage from "@pages/Member/Profile/Right/Reviews"
 import reviewService from "@services/review";
+import { getServerSession } from "next-auth";
+
 
 async function getReviews(userId: string, current: string, pageSize: string, sortBy: string, sortDirection: string) {
     return await reviewService.getReviewByUserId(userId, current, pageSize, sortBy, sortDirection)
@@ -11,7 +14,7 @@ interface ReviewsPageProps {
 }
 
 export default async function Reviews({ searchParams }: ReviewsPageProps) {
-    // const session = await getServerSession(authOptions) as METADATA.ISession;
+    const session = await getServerSession(authOptions) as METADATA.ISession;
 
     // Resolve the searchParams promise
     const resolvedParams = await searchParams;
@@ -22,12 +25,9 @@ export default async function Reviews({ searchParams }: ReviewsPageProps) {
     const sortBy = typeof resolvedParams.sortBy === 'string' ? resolvedParams.sortBy : 'created_at'
     const sortDirection = typeof resolvedParams.sortDirection === 'string' ? resolvedParams.sortDirection : 'desc'
 
-    // Use session user ID or fallback to hardcoded ID
-    const userId = "5f0667d7-1d15-48df-bc32-0970bb26c840"
 
-    const reviews = await getReviews(userId, page, pageSize, sortBy, sortDirection) as IReviewPaginationResponse
+    const reviews = await getReviews(session.user.id, page, pageSize, sortBy, sortDirection) as IReviewPaginationResponse
     const reviewsData = reviews.data as IReviewPaginationResponseModel
-
     return (
         <>
             <ReviewsPage

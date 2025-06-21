@@ -97,7 +97,7 @@ const BenefitsList = () => {
                         </div>
                         <div className="mb-4">
                             <p className="text-sm">
-                                Nhận ưu đãi dành riêng cho thành viên Vàng khi đặt khách sạn, thuê xe hay mua bảo hiểm du lịch
+                               Nhận ưu đãi dành riêng cho thành viên Vàng khi đặt các dịch vụ chụp ảnh, makeup, làm đẹp, ...
                             </p>
                             <a href="#" className="text-sm text-blue-500 flex items-center mt-2">
                                 Tìm hiểu thêm <ChevronRight size={14} />

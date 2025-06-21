@@ -1,4 +1,5 @@
 import http from "@configs/fetch"
+import { IEditReviewModel } from "@models/review/request.model"
 
 const reviewService = {
     getReviewByVendorId: async (
@@ -29,6 +30,14 @@ const reviewService = {
         return await http.get(`/reviews/user/${userId}?current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`, {
             next: { revalidate: 10 },
         })
+    },
+
+    editReview: async (reviewId: string, review: IEditReviewModel) => {
+        return await http.put(`/reviews/${reviewId}`, review)
+    },
+
+    deleteReview: async (reviewId: string) => {
+        return await http.delete(`/reviews/${reviewId}`, {})
     }
 }
 
