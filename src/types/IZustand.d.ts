@@ -3,6 +3,7 @@ import { IServiceConcept, IServiceConceptImage } from "@models/serviceConcepts/c
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IUser } from "@models/user/common.model";
 import { IReviewPaginationResponse } from "@models/review/repsonse.model";
+import { ICheckoutSession } from "@models/checkoutSession/common.model";
 
 declare namespace ZUSTAND {
     export interface ICheckoutState {
@@ -12,6 +13,7 @@ declare namespace ZUSTAND {
         formBooking: IBookingFormRequest;
         step: number;
         isValidStep: Record<number, boolean>;
+        checkoutSession: ICheckoutSession | null;
         setStep: (step: number) => void;
         nextStep: () => void;
         prevStep: () => void;
@@ -19,6 +21,7 @@ declare namespace ZUSTAND {
         selectCheckoutMethod: (method: string | null) => void;
         setFormBooking: (data: IBookingFormRequest) => void;
         setIsValidStep: (step: number, isValid: boolean) => void;
+        setCheckoutSession: (session: ICheckoutSession | null) => void;
         // reset: () => void
     }
 

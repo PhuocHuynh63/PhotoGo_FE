@@ -6,6 +6,7 @@ import { IReviewPaginationResponse } from '@models/review/repsonse.model';
 import { IVendorResponse } from '@models/vendor/response.model';
 import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
 import { ILocationSchedule } from '@models/locationAvailability/common.model';
+import { ICheckoutSession } from '@models/checkoutSession/common.model';
 
 declare namespace PAGES {
     interface ILogin {
@@ -83,7 +84,7 @@ declare namespace PAGES {
     interface ICheckoutLayoutProps {
         children: React.ReactNode;
         user: IUserResponse;
-        checkoutSession?: ICheckoutSessionResponseModel;
+        checkoutSession?: ICheckoutSession;
         concept?: IServiceConceptResponse;
         servicePackage?: IServicePackageResponse;
     }
