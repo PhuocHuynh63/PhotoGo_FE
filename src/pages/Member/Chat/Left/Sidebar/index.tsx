@@ -68,7 +68,6 @@ export default function SidebarChat({
         onSelectConversation(conversation);
     };
     //---------------------End---------------------//
-    console.log('Filtered Conversations:', filteredConversations);
 
 
     return (
