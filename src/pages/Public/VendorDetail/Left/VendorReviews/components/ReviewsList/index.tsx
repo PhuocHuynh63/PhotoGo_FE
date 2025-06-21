@@ -31,8 +31,6 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: Revi
         : reviewsFromMember;
     //-----------------------------End---------------------------------//
 
-    console.log('reviewsToDisplay', reviewsToDisplay);
-
     /**
      * Lightbox for images in reviews
      * We use a lightbox to display images when clicked

@@ -8,7 +8,6 @@ import { ROUTES } from '@routes'
 import { useAddressLocation, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/Atoms/ui/select'
-import { ILocation } from '@models/location/common.model'
 
 const VendorContactInformation = () => {
 
