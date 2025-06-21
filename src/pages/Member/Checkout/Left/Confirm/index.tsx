@@ -12,8 +12,6 @@ const Confirm = () => {
     const formBooking = useFormBooking();
     const servicePackage = useServicePackage() as IServicePackage
     const checkoutSession = useCheckoutSession();
-    console.log("Checkout Session: ", checkoutSession);
-
     //-----------------------------End-----------------------------//
 
     return (

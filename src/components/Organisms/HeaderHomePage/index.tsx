@@ -24,7 +24,6 @@ import { Rank } from "../AvatarBorder/rankStyles";
 
 
 export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IHeader) {
-    // console.log(cart)
     const cartState = useCart()
     const setCart = useSetCart()
     //#region States

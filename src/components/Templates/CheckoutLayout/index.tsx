@@ -116,7 +116,6 @@ export default function CheckoutLayoutClient({
         }
     }, [checkoutSession]);
     //----------------------End----------------------//
-    console.log("Form Booking: ", formBooking);
 
     return (
         <div className="bg-gradient-primary" style={{ background: '' }}>

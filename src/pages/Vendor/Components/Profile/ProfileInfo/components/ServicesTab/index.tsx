@@ -8,11 +8,11 @@ interface ServicesTabProps {
     onLoadMore: () => void
 }
 
-export default function ServicesTab({ 
-    profileData, 
-    visibleServicesCount, 
-    isLoadingMore, 
-    onLoadMore 
+export default function ServicesTab({
+    profileData,
+    visibleServicesCount,
+    isLoadingMore,
+    onLoadMore
 }: ServicesTabProps) {
     return (
         <div className="space-y-4">
@@ -20,7 +20,7 @@ export default function ServicesTab({
                 <>
                     {profileData.servicePackages.slice(0, visibleServicesCount).map((servicePackage, index) => {
                         // Calculate min/max price for this specific package
-                        const packagePrices = servicePackage.serviceConcepts?.map(concept => parseFloat(concept.price)).filter(price => !isNaN(price)) || []
+                        const packagePrices = servicePackage.serviceConcepts?.map(concept => (concept.price)).filter(price => !isNaN(price)) || []
                         const packageMinPrice = packagePrices.length > 0 ? Math.min(...packagePrices) : null
                         const packageMaxPrice = packagePrices.length > 0 ? Math.max(...packagePrices) : null
 
@@ -30,7 +30,7 @@ export default function ServicesTab({
                                 <p className="text-sm text-gray-600 mt-1">{servicePackage.description}</p>
                                 {packageMinPrice && packageMaxPrice && (
                                     <p className="text-sm font-medium mt-2">
-                                        {packageMinPrice === packageMaxPrice 
+                                        {packageMinPrice === packageMaxPrice
                                             ? `${packageMinPrice.toLocaleString()} VNĐ`
                                             : `${packageMinPrice.toLocaleString()} - ${packageMaxPrice.toLocaleString()} VNĐ`
                                         }
@@ -42,7 +42,7 @@ export default function ServicesTab({
                                         <ul className="text-xs text-gray-600 space-y-1">
                                             {servicePackage.serviceConcepts.map((concept, conceptIndex) => (
                                                 <li key={conceptIndex}>
-                                                    • {concept.name} - {parseFloat(concept.price).toLocaleString()} VNĐ
+                                                    • {concept.name} - {(concept.price).toLocaleString()} VNĐ
                                                 </li>
                                             ))}
                                         </ul>

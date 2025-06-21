@@ -59,7 +59,6 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
 
             //get vendor slug from concept
             const vendor = await packageService.getPackageById(concept?.servicePackageId) as IServicePackageResponse;
-            console.log(vendor)
             return 'maboo-studio';
         } catch (error) {
             console.error('Error fetching vendor slug:', error);

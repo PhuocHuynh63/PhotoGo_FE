@@ -205,7 +205,6 @@ export default function EnhancedBookingPopup({
      */
     const onSubmit = async (data: ICheckoutSessionRequest) => {
         const { bookingDetails, conceptId, price, locationDetails, vendorDetails } = data;
-        console.log("conceptId: ", conceptId);
 
         const selectedDate = new Date(bookingDetails.date);
         const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '';
