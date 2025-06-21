@@ -58,9 +58,9 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                serviceConceptId: checkoutSession.data?.data.conceptId || "",
-                date: checkoutSession.data?.data.date || "",
-                time: checkoutSession.data?.data.time || "",
+                serviceConceptId: checkoutSession.data?.conceptId || "",
+                date: checkoutSession.data?.bookingDetails?.date || "",
+                time: checkoutSession.data?.bookingDetails?.time || "",
             });
         }
 
@@ -79,32 +79,33 @@ export default function CheckoutLayoutClient({
                 email: "",
                 userNote: "",
             });
-            setServicePackage({
-                id: "",
-                name: "",
-                description: "",
-                image: "",
-                status: "",
-                // vendorId: "",
-                serviceConcepts: [],
-                minPrice: 0,
-                maxPrice: 0,
-                // duration: 0,
-                created_at: "",
-                updated_at: ""
-            });
-            setConcept({
-                id: "",
-                name: "",
-                description: "",
-                images: [],
-                price: "",
-                duration: 0,
-                serviceTypes: []
-            });
+            //     setServicePackage({
+            //         id: "",
+            //         name: "",
+            //         description: "",
+            //         image: "",
+            //         status: "",
+            //         // vendorId: "",
+            //         serviceConcepts: [],
+            //         minPrice: 0,
+            //         maxPrice: 0,
+            //         // duration: 0,
+            //         created_at: "",
+            //         updated_at: ""
+            //     });
+            //     setConcept({
+            //         id: "",
+            //         name: "",
+            //         description: "",
+            //         images: [],
+            //         price: "",
+            //         duration: 0,
+            //         serviceTypes: []
+            //     });
         }
     }, [checkoutSession]);
     //----------------------End----------------------//
+    console.log("Form Booking: ", formBooking);
 
     return (
         <div className="bg-gradient-primary" style={{ background: '' }}>

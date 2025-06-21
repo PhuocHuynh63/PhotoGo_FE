@@ -40,10 +40,7 @@ export const CheckoutSessionRequest = z.object({
         id: z.string(),
         address: z.string(),
     }),
-    concept: z.object({
-        id: z.string(),
-        name: z.string(),
-    }),
+    conceptId: z.string(),
     bookingDetails: z.object({
         working_date_id: z.string(),
         slot_time_id: z.string(),
