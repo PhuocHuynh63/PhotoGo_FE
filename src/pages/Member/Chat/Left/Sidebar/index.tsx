@@ -98,8 +98,8 @@ export default function SidebarChat({
                             >
                                 <div className="relative">
                                     <Avatar className="h-12 w-12 mr-3"
-                                        src={conversation.user.avatarUrl}
-                                        alt={conversation.user.fullName}
+                                        src={conversation?.user.avatarUrl}
+                                        alt={conversation?.user.fullName}
                                     />
                                     {conversation.user.status === 'online' && (
                                         <span className="absolute bottom-0 right-3 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>

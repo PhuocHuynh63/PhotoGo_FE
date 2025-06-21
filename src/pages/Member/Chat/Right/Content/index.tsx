@@ -154,121 +154,109 @@ export default function ContentChat({
 
     return (
         <>
-            {activeConversation ? (
-                <>
-                    <div
-                        className="flex items-center justify-between p-3 border-b"
-                        style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
-                    >
-                        <div className="flex items-center">
-                            {isMobile && (
-                                <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2">
-                                    <MoreVertical className="h-5 w-5" />
-                                </Button>
-                            )}
-                            <Avatar className="h-12 w-12 mr-3"
-                                src={activeConversation.user.avatarUrl}
-                                alt={activeConversation.user.fullName}
-                            />
-                            <div>
-                                <h2 className="font-semibold">{activeConversation.user.fullName}</h2>
-                                <p className="text-xs text-gray-500">
-                                    {activeConversation.user.status === 'online'
-                                        ? 'Đang hoạt động'
-                                        : activeConversation.user.lastSeen
-                                            ? `Hoạt động ${formatTime(activeConversation.user.lastSeen)}`
-                                            : 'Không hoạt động'}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex space-x-2">
-                            <Button variant="ghost" size="icon" onClick={onLeaveChat}>
-                                <Info className="h-5 w-5" />
-                            </Button>
-                        </div>
+            <div
+                className="flex items-center justify-between p-3 border-b"
+                style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
+            >
+                <div className="flex items-center">
+                    {isMobile && (
+                        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="mr-2">
+                            <MoreVertical className="h-5 w-5" />
+                        </Button>
+                    )}
+                    <Avatar className="h-12 w-12 mr-3"
+                        src={activeConversation?.user.avatarUrl}
+                        alt={activeConversation?.user.fullName}
+                    />
+                    <div>
+                        <h2 className="font-semibold">{activeConversation?.user.fullName}</h2>
+                        <p className="text-xs text-gray-500">
+                            {activeConversation?.user.status === 'online'
+                                ? 'Đang hoạt động'
+                                : activeConversation?.user.lastSeen
+                                    ? `Hoạt động ${formatTime(activeConversation?.user.lastSeen)}`
+                                    : 'Không hoạt động'}
+                        </p>
                     </div>
+                </div>
+                <div className="flex space-x-2">
+                    <Button variant="ghost" size="icon" onClick={onLeaveChat}>
+                        <Info className="h-5 w-5" />
+                    </Button>
+                </div>
+            </div>
 
-                    <ScrollArea className="flex-1 p-4"
-                        viewportRef={scrollAreaViewportRef}
-                        onScroll={handleScroll}
-                    >
-                        <div className="space-y-3">
-                            {messagesLoading && (
-                                <div className="flex justify-center py-2">
-                                    <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
-                                </div>
-                            )}
-                            {!hasMoreMessages && (
+            <ScrollArea className="flex-1 p-4"
+                viewportRef={scrollAreaViewportRef}
+                onScroll={handleScroll}
+            >
+                <div className="space-y-3">
+                    {messagesLoading && (
+                        <div className="flex justify-center py-2">
+                            <Loader2 className="h-5 w-5 animate-spin text-gray-500" />
+                        </div>
+                    )}
+                    {/* {!hasMoreMessages && (
                                 <div className="text-center text-gray-500 text-sm py-2">
                                     Đã tải tất cả tin nhắn.
                                 </div>
-                            )}
-                            {activeConversation?.messages?.map((message: any) => (
-                                <div
-                                    key={message.senderId + message.timestamp}
-                                    className={cn('flex', message.senderId === userId ? 'justify-end' : 'justify-start')}
-                                >
-                                    {message.senderId !== userId && (
-                                        <Avatar className="h-12 w-12 mr-3"
-                                            src={activeConversation.user.avatarUrl}
-                                            alt={activeConversation.user.fullName}
-                                        />
-                                    )}
-                                    <div
-                                        className={cn(
-                                            'max-w-[70%] rounded-2xl p-3',
-                                            message.senderId === userId
-                                                ? 'bg-blue-500 text-white rounded-tr-none'
-                                                : 'bg-gray-200 rounded-tl-none'
-                                        )}
-                                    >
-                                        <p>{message.text}</p>
-                                        <div className=" makeover flex items-center justify-end mt-1">
-                                            <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
-                                            {message.senderId === userId && (
-                                                <span className="ml-1 text-xs">{message.read ? '✓✓' : '✓'}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
-
-                    <div
-                        className="p-3 border-t flex items-center"
-                        style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
-                    >
-                        <Input
-                            value={inputValue}
-                            onChange={(e: any) => setInputValue(e.target.value)}
-                            placeholder="Aa"
-                            className="flex-1 mr-2 rounded-full"
-                            onKeyDown={(e: any) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSendMessage();
-                                }
-                            }}
-                        />
-                        <Button
-                            onClick={handleSendMessage}
-                            size="icon"
-                            className="rounded-full cursor-pointer bg-primary"
+                            )} */}
+                    {activeConversation?.messages?.map((message: any) => (
+                        <div
+                            key={message.senderId + message.timestamp}
+                            className={cn('flex', message.senderId === userId ? 'justify-end' : 'justify-start')}
                         >
-                            <Send className="h-5 w-5" />
-                        </Button>
-                    </div>
-                </>
-            ) : (
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center">
-                        <h2 className="text-xl font-semibold mb-2">Chọn một cuộc trò chuyện</h2>
-                        <p className="text-gray-500">Chọn một người bạn từ danh sách để bắt đầu trò chuyện</p>
-                    </div>
+                            {message.senderId !== userId && (
+                                <Avatar className="h-12 w-12 mr-3"
+                                    src={activeConversation?.user.avatarUrl}
+                                    alt={activeConversation?.user.fullName}
+                                />
+                            )}
+                            <div
+                                className={cn(
+                                    'max-w-[70%] rounded-2xl p-3',
+                                    message.senderId === userId
+                                        ? 'bg-blue-500 text-white rounded-tr-none'
+                                        : 'bg-gray-200 rounded-tl-none'
+                                )}
+                            >
+                                <p>{message.text}</p>
+                                <div className=" makeover flex items-center justify-end mt-1">
+                                    <span className="text-xs opacity-70">{formatTime(message.timestamp)}</span>
+                                    {message.senderId === userId && (
+                                        <span className="ml-1 text-xs">{message.read ? '✓✓' : '✓'}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            )
-            }
+            </ScrollArea>
+
+            <div
+                className="p-3 border-t flex items-center"
+                style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}
+            >
+                <Input
+                    value={inputValue}
+                    onChange={(e: any) => setInputValue(e.target.value)}
+                    placeholder="Aa"
+                    className="flex-1 mr-2 rounded-full"
+                    onKeyDown={(e: any) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSendMessage();
+                        }
+                    }}
+                />
+                <Button
+                    onClick={handleSendMessage}
+                    size="icon"
+                    className="rounded-full cursor-pointer bg-primary"
+                >
+                    <Send className="h-5 w-5" />
+                </Button>
+            </div>
         </>
     );
 }
