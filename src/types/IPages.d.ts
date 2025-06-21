@@ -136,4 +136,9 @@ declare namespace PAGES {
     interface IVendorProfileInfoProps {
         profileData: IVendor;
     }
+
+    interface IPromotionPageProps {
+        promotionFromPoint: IVoucher[];
+        promotionFromCampaign: IVoucher[];
+    }
 }

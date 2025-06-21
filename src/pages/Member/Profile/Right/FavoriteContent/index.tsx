@@ -13,6 +13,11 @@ import { IFavoriteDetailModel } from "@models/favorite/common.model";
 import favoritesService from "@services/favorites";
 import toast from "react-hot-toast";
 import { IPagination } from "@models/metadata";
+import conceptService from "@services/concept";
+import { IInvoiceServiceModel, IServiceConcept } from "@models/serviceConcepts/common.model";
+import { IServiceConceptResponseModel } from "@models/serviceConcepts/response.model";
+import packageService from "@services/packageServices";
+import { IServicePackageResponse } from "@models/servicePackages/response.model";
 
 export default function FavoritesContent({ itemsData, favoritePagination }: { itemsData: IFavoriteDetailModel[], favoritePagination: IPagination }) {
     const router = useRouter();
@@ -49,16 +54,13 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
         try {
             // TODO: Implement API call để lấy vendor slug từ service concept ID
             // Ví dụ:
-            // const response = await fetch(`/api/service-concepts/${serviceConceptId}/vendor`);
-            // const vendor = await response.json();
-            // return vendor.slug;
+            const response = await conceptService.getAServiceConceptById(serviceConceptId) as IServiceConceptResponseModel;
+            const concept = response.data as unknown as IInvoiceServiceModel;
 
-            // Temporarily suppress unused parameter warning
-            console.log('Service concept ID:', serviceConceptId);
-
-            // Tạm thời return default vendor slug
-            console.warn('Vendor slug fetch not implemented yet. Using default slug.');
-            return "maboo-studio";
+            //get vendor slug from concept
+            const vendor = await packageService.getPackageById(concept?.servicePackageId) as IServicePackageResponse;
+            console.log(vendor)
+            return 'maboo-studio';
         } catch (error) {
             console.error('Error fetching vendor slug:', error);
             return null;
@@ -76,7 +78,7 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
             }
 
             // Navigate đến trang packages với concept ID
-            router.push(`/${vendorSlug}/packages?conceptId=${item.serviceConcept.id}`);
+            router.push(`/${vendorSlug}/packages?conceptId=${item.serviceConcept.id}&location=${'Quận 3'}`);
         } catch (error) {
             console.error('Error navigating to vendor detail:', error);
             toast.error('Lỗi khi xem chi tiết');
@@ -148,13 +150,13 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
                                             </p>
 
                                             <div className="flex items-center justify-between mt-2 flex-wrap gap-1">
-                                                <div className="flex items-center text-yellow-500">
+                                                {/* <div className="flex items-center text-yellow-500">
                                                     <Star className="h-4 w-4 fill-current" />
                                                     <span className="ml-1 text-sm">4.8</span>
                                                     <span className="ml-2 text-xs text-gray-400">
                                                         (120 đánh giá)
                                                     </span>
-                                                </div>
+                                                </div> */}
                                                 <p className="font-semibold text-primary text-sm">
                                                     {Number(item.serviceConcept.price).toLocaleString()}đ
                                                 </p>

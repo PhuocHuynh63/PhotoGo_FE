@@ -28,6 +28,7 @@ export default async function Favorites({ searchParams }: FavoritesPageProps) {
     const resolvedParams = await searchParams;
 
     const favorites = await getFavorites(session.user.id, resolvedParams) as IFavoriteListResponse;
+    console.log(favorites)
     const itemsData = (favorites.data?.data[0]?.items || []) as unknown as IFavoriteDetailModel[];
     const favoritePagination = favorites.data?.pagination || { current: 1, pageSize: 6, totalPage: 1, totalItem: 0 };
 
