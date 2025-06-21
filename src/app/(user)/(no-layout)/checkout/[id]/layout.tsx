@@ -43,14 +43,11 @@ export default async function CheckoutLayout({
      * Get session
      */
     const session = await getServerSession(authOptions) as METADATA.ISession;
-    console.log("Session: ", session);
 
     if (!session) {
         redirect(`${ROUTES.AUTH.LOGIN}?error=Bạn cần đăng nhập để thực hiện thao tác này.`);
     }
     const checkoutSession = await getCheckoutSession(id, session.user.id) as ICheckoutSessionResponseModel;
-    console.log("Checkout Session: ", checkoutSession);
-
 
     if (checkoutSession.statusCode !== 200 && checkoutSession.statusCode !== 201) {
         errorMessage = checkoutSession.message || "Không tìm thấy thông tin thanh toán.";
