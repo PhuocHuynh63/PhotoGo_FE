@@ -26,6 +26,7 @@ export const createCheckoutSlice = (
         2: false,
         3: true,
     },
+    checkoutSession: null,
 
     setStep: (step) => {
         return set(() => ({ currentStep: step }))
@@ -69,6 +70,10 @@ export const createCheckoutSlice = (
                 [step]: isValid,
             }
         }));
+    },
+
+    setCheckoutSession: (session) => {
+        return set(() => ({ checkoutSession: session }))
     },
 })
 

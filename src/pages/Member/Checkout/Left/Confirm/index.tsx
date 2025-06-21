@@ -1,4 +1,6 @@
-import { useFormBooking } from '@stores/checkout/selectors';
+import { IServicePackage } from '@models/servicePackages/common.model';
+import { useCheckoutSession, useFormBooking } from '@stores/checkout/selectors';
+import { useServicePackage } from '@stores/vendor/selectors';
 import { Calendar, Clock, Heart, MapPin } from 'lucide-react'
 import React from 'react'
 
@@ -8,6 +10,10 @@ const Confirm = () => {
      * Define variables zustand store
      */
     const formBooking = useFormBooking();
+    const servicePackage = useServicePackage() as IServicePackage
+    const checkoutSession = useCheckoutSession();
+    console.log("Checkout Session: ", checkoutSession);
+
     //-----------------------------End-----------------------------//
 
     return (
@@ -31,26 +37,26 @@ const Confirm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h3 className="text-gray-500 text-sm mb-1">Dịch vụ</h3>
-                                <p className="font-medium">Gói chụp ảnh cưới cao cấp</p>
+                                <p className="font-medium">{servicePackage.name}</p>
                             </div>
                             <div>
                                 <h3 className="text-gray-500 text-sm mb-1">Nhà cung cấp</h3>
-                                <p className="font-medium">Studio Ánh Dương</p>
+                                <p className="font-medium">{checkoutSession?.vendorDetails.name}</p>
                             </div>
                         </div>
 
                         <div className="mt-6 space-y-3">
                             <div className="flex items-center gap-2">
                                 <Calendar className="h-5 w-5 text-[#f0a06a]" />
-                                <span>{formBooking.date || NaN}</span>
+                                <span>{formBooking.date || 'NaN'}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Clock className="h-5 w-5 text-[#f0a06a]" />
-                                <span>{formBooking.time || NaN}</span>
+                                <span>{formBooking.time || 'NaN'}</span>
                             </div>
                             <div className="flex items-start gap-2">
                                 <MapPin className="h-5 w-5 text-[#f0a06a] mt-0.5" />
-                                <span></span>
+                                <span>{checkoutSession?.locationDetails.address}</span>
                             </div>
                         </div>
                     </div>

@@ -79,10 +79,7 @@ export default function EnhancedBookingPopup({
                 slot_time_id: "",
                 duration: serviceConcept?.duration || 0,
             },
-            concept: {
-                id: serviceConcept?.id || "",
-                name: serviceConcept?.name || "",
-            },
+            conceptId: serviceConcept?.id || "",
             price: serviceConcept?.price || 0,
             vendorDetails: {
                 id: serviceConcept?.id || "",
@@ -150,8 +147,7 @@ export default function EnhancedBookingPopup({
      * - Runs when serviceConcept, addressLocation, or vendor changes
      */
     useEffect(() => {
-        setValue('concept.id', serviceConcept?.id || "");
-        setValue('concept.name', serviceConcept?.name || "");
+        setValue('conceptId', serviceConcept?.id || "");
         setValue('price', serviceConcept?.price || 0);
         setValue('bookingDetails.duration', serviceConcept?.duration || 0);
         setValue('locationDetails.id', addressLocation?.id || "");
@@ -208,7 +204,8 @@ export default function EnhancedBookingPopup({
      * 3. Creating a booking data object 
      */
     const onSubmit = async (data: ICheckoutSessionRequest) => {
-        const { bookingDetails, concept, price, locationDetails, vendorDetails } = data;
+        const { bookingDetails, conceptId, price, locationDetails, vendorDetails } = data;
+        console.log("conceptId: ", conceptId);
 
         const selectedDate = new Date(bookingDetails.date);
         const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '';
@@ -234,10 +231,7 @@ export default function EnhancedBookingPopup({
                 slot_time_id: selectedSlotId,
                 duration: bookingDetails.duration,
             },
-            concept: {
-                id: concept.id,
-                name: concept.name,
-            },
+            conceptId: conceptId,
             price: price,
             vendorDetails: {
                 id: vendorDetails.id,
