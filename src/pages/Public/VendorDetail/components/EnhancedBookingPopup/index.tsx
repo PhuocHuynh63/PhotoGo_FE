@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Calendar, Clock, Package, MapPin } from "lucide-react";
 import { useSession } from "@stores/user/selectors";
 import { useRouter } from "next/navigation";
-import { useAddressLocation } from "@stores/vendor/selectors";
+import { useAddressLocation, useVendor } from "@stores/vendor/selectors";
 import { useLocationAvailability, useLocationAvailabilityByLocationIdAndDate } from "@utils/hooks/useLocationAvailability";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
@@ -20,12 +20,7 @@ import CustomCalendar from "@components/Molecules/Canlender";
 import { Button } from "@components/Atoms/ui/button";
 import { Badge } from "@components/Atoms/ui/badge";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
-
-interface BookingFormData {
-    conceptId: string;
-    date: Date | undefined;
-    time: string | null;
-}
+import { ICheckoutSessionRequest } from "@models/booking/request.model";
 
 interface EnhancedBookingPopupProps {
     isOpen: boolean;
@@ -55,6 +50,7 @@ export default function EnhancedBookingPopup({
     const session = useSession() as METADATA.ISession;
     const router = useRouter();
     const addressLocation = useAddressLocation();
+    const vendor = useVendor();
     //--------------------------End--------------------------//
 
     const [isLoading, setIsLoading] = useState(false);
@@ -74,16 +70,33 @@ export default function EnhancedBookingPopup({
         setValue,
         watch,
         formState: { errors },
-    } = useForm<BookingFormData>({
+    } = useForm<ICheckoutSessionRequest>({
         defaultValues: {
-            conceptId: serviceConcept?.id || '',
-            date: undefined,
-            time: null,
+            bookingDetails: {
+                date: "",
+                time: "",
+                working_date_id: "",
+                slot_time_id: "",
+                duration: serviceConcept?.duration || 0,
+            },
+            concept: {
+                id: serviceConcept?.id || "",
+                name: serviceConcept?.name || "",
+            },
+            price: serviceConcept?.price || 0,
+            vendorDetails: {
+                id: serviceConcept?.id || "",
+                name: serviceConcept?.name || "",
+            },
+            locationDetails: {
+                id: addressLocation?.id || "",
+                address: addressLocation?.address || "",
+            },
         }
     });
 
-    const watchedDate = watch('date');
-    const watchedTime = watch('time');
+    const watchedDate = watch('bookingDetails.date');
+    const watchedTime = watch('bookingDetails.slot_time_id');
     //--------------------------End--------------------------//
 
 
@@ -97,7 +110,6 @@ export default function EnhancedBookingPopup({
         enabled: !!addressLocation?.id,
     });
 
-
     const availability = locationAvailability
         ? locationAvailability.flatMap((loc: any) =>
             loc.workingDates
@@ -105,6 +117,7 @@ export default function EnhancedBookingPopup({
                 .map((wd: any) => {
                     const date = new Date(wd.date.split("/").reverse().join("-"));
                     return {
+                        id: wd.id,
                         date,
                         isPastDate: date < new Date(new Date().setHours(0, 0, 0, 0)),
                         isFullyBooked: false,
@@ -125,18 +138,38 @@ export default function EnhancedBookingPopup({
         loading: isTimeSlotsLoading,
     } = useLocationAvailabilityByLocationIdAndDate({
         locationId: addressLocation?.id || "",
-        date: watchedDate ? format(watchedDate, 'dd/MM/yyyy') : "",
+        date: watchedDate ? format(new Date(watchedDate), 'dd/MM/yyyy') : "",
         // enabled: !!watchedDate && !!addressLocation?.id // Only fetch when date and location are available
     });
     //--------------------------End--------------------------//
 
 
-    // Set initial conceptId
+    /**
+     * Effect to set initial form values based on serviceConcept and addressLocation    
+     * - Sets values for concept, price, booking details, and location details
+     * - Runs when serviceConcept, addressLocation, or vendor changes
+     */
     useEffect(() => {
-        if (serviceConcept?.id) {
-            setValue('conceptId', serviceConcept.id);
-        }
-    }, [serviceConcept?.id, setValue]);
+        setValue('concept.id', serviceConcept?.id || "");
+        setValue('concept.name', serviceConcept?.name || "");
+        setValue('price', serviceConcept?.price || 0);
+        setValue('bookingDetails.duration', serviceConcept?.duration || 0);
+        setValue('locationDetails.id', addressLocation?.id || "");
+        setValue('locationDetails.address', addressLocation?.address || "");
+        setValue('vendorDetails.id', vendor?.id || "");
+        setValue('vendorDetails.name', vendor?.name || "");
+    }, [
+        serviceConcept?.id,
+        serviceConcept?.name,
+        serviceConcept?.price,
+        serviceConcept?.duration,
+        addressLocation?.id,
+        addressLocation?.address,
+        vendor?.id,
+        vendor?.name,
+        setValue,
+    ]);
+    //--------------------------End--------------------------//
 
     // Update timeSlots when locationAvailabilitySelectDate changes
     useEffect(() => {
@@ -145,7 +178,7 @@ export default function EnhancedBookingPopup({
             const availableSlots = firstLocationAvailability.slotTimeWorkingDates.map((slotDetail: any) => {
                 const startTime = slotDetail.startSlotTime.substring(0, 5);
                 const endTime = slotDetail.endSlotTime.substring(0, 5);
-                const price = Number(serviceConcept?.price || 0); // Use serviceConcept price as per your current logic
+                const price = Number(serviceConcept?.price || 0);
 
                 return {
                     id: slotDetail.id,
@@ -156,11 +189,8 @@ export default function EnhancedBookingPopup({
             });
             setTimeSlots(availableSlots);
         } else if (watchedDate && !isTimeSlotsLoading) {
-            // If a date is watched but no specific availability data comes back (and not loading),
-            // it implies no slots are available for that day.
             setTimeSlots([]);
         } else if (!watchedDate) {
-            // Clear time slots if no date is selected
             setTimeSlots([]);
         }
     }, [locationAvailabilitySelectDate, watchedDate, isTimeSlotsLoading, serviceConcept?.price]);
@@ -177,31 +207,46 @@ export default function EnhancedBookingPopup({
      * 2. Formatting the date for submission
      * 3. Creating a booking data object 
      */
-    const onSubmit = async (data: BookingFormData) => {
-        console.log("Form data submitted:", data);
+    const onSubmit = async (data: ICheckoutSessionRequest) => {
+        const { bookingDetails, concept, price, locationDetails, vendorDetails } = data;
 
-        const selectedDate = data.date;
+        const selectedDate = new Date(bookingDetails.date);
         const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '';
-        const selectedSlotId = data.time;
+        const selectedSlotId = bookingDetails.slot_time_id;
 
         if (!selectedDate || !selectedSlotId) {
             toast.error('Vui lòng chọn ngày và khung giờ để đặt lịch hẹn.');
             return;
         }
 
-        const slotDetails = timeSlots.find(s => s.id === selectedSlotId);
-        if (!slotDetails) {
+        if (!selectedSlotId) {
             toast.error('Không tìm thấy thông tin khung giờ đã chọn.');
             return;
         }
 
         const id = generateUUIDV4();
 
-        const bookingData = {
-            conceptId: data.conceptId,
-            date: formattedDate,
-            time: slotDetails.time,
-            slotId: selectedSlotId,
+        const bookingData: ICheckoutSessionRequest = {
+            bookingDetails: {
+                date: formattedDate,
+                time: bookingDetails.time,
+                working_date_id: bookingDetails.working_date_id,
+                slot_time_id: selectedSlotId,
+                duration: bookingDetails.duration,
+            },
+            concept: {
+                id: concept.id,
+                name: concept.name,
+            },
+            price: price,
+            vendorDetails: {
+                id: vendorDetails.id,
+                name: vendorDetails.name,
+            },
+            locationDetails: {
+                id: locationDetails.id,
+                address: locationDetails.address,
+            },
         };
 
         const userId = session?.user?.id || '';
@@ -289,7 +334,7 @@ export default function EnhancedBookingPopup({
                                 <CardContent className="space-y-3">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-green-700">Ngày:</span>
-                                        <span className="font-medium">{watchedDate?.toLocaleDateString("vi-VN")}</span>
+                                        <span className="font-medium">{watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className="text-green-700">Giờ:</span>
@@ -320,14 +365,15 @@ export default function EnhancedBookingPopup({
                             <div>
                                 <h3 className="text-lg font-semibold mb-2">Chọn ngày</h3>
                                 <CustomCalendar
-                                    selectedDate={watchedDate}
-                                    onDateSelect={(date) => {
-                                        setValue('date', date);
-                                        setValue('time', null); // Reset time when date changes
+                                    selectedDate={watchedDate ? new Date(watchedDate) : undefined}
+                                    onDateSelect={(date: { date: Date, id: string }) => {
+                                        setValue('bookingDetails.date', date.date ? date.date.toISOString() : "");
+                                        setValue('bookingDetails.working_date_id', date.id);
+                                        setValue('bookingDetails.time', "");
                                     }}
                                     availability={availability}
                                 />
-                                {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>}
+                                {errors.bookingDetails?.date && <p className="text-red-500 text-sm mt-1">{errors.bookingDetails.date.message}</p>}
                             </div>
                         </div>
                     </div>
@@ -340,7 +386,7 @@ export default function EnhancedBookingPopup({
                                     Chọn khung giờ
                                     {watchedDate && (
                                         <span className="text-sm font-normal text-muted-foreground ml-2">
-                                            - {watchedDate.toLocaleDateString("vi-VN")}
+                                            - {watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}
                                         </span>
                                     )}
                                 </h3>
@@ -374,7 +420,8 @@ export default function EnhancedBookingPopup({
                                                         }`}
                                                     onClick={() => {
                                                         if (slot.available) {
-                                                            setValue('time', slot.id);
+                                                            setValue('bookingDetails.slot_time_id', slot.id);
+                                                            setValue('bookingDetails.time', slot.time);
                                                         }
                                                     }}
                                                     disabled={!slot.available || isLoading || isTimeSlotsLoading}

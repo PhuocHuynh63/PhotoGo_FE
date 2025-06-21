@@ -76,7 +76,13 @@ export default function CustomCalendar({ selectedDate, onDateSelect, availabilit
     }
 
     const days = getDaysInMonth(currentMonth)
-
+    const handleDateSelect = (date: Date,) => {
+        const avail = getDateAvailability(date) as any;
+        onDateSelect({
+            date,
+            id: avail?.id || "",
+        });
+    };
     return (
         <Card className="w-full">
             <CardContent className="p-4">
@@ -107,6 +113,7 @@ export default function CustomCalendar({ selectedDate, onDateSelect, availabilit
                 {/* Calendar grid */}
                 <div className="grid grid-cols-7 gap-1">
                     {days.map((date, index) => {
+
                         if (!date) {
                             return <div key={index} className="h-16" />
                         }
@@ -126,7 +133,7 @@ export default function CustomCalendar({ selectedDate, onDateSelect, availabilit
                   ${availability?.isFullyBooked ? "bg-red-50 border-red-200" : ""}
                   ${isToday(date) && !isSelected(date) ? "border-primary border-2" : ""}
                 `}
-                                onClick={() => canSelect && onDateSelect(date)}
+                                onClick={() => canSelect && handleDateSelect(date)}
                             >
                                 <div className="p-1 h-full flex flex-col justify-between">
                                     {/* Date number */}
