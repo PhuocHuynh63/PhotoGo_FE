@@ -5,7 +5,7 @@ import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
+import { useCheckoutStep, useFormBooking, useSetCheckoutSession, useSetFormBooking } from "@stores/checkout/selectors";
 import { useSetUser } from "@stores/user/selectors";
 import { PAGES } from "../../../types/IPages";
 import { useEffect } from "react";
@@ -28,6 +28,17 @@ export default function CheckoutLayoutClient({
         setUser(user.data ?? null);
     }, [user]);
     //----------------------End----------------------//
+
+
+    /**
+     * Set checkout session when available
+     */
+    const setCheckoutSession = useSetCheckoutSession();
+    useEffect(() => {
+        setCheckoutSession(checkoutSession ?? null);
+    }, [checkoutSession]);
+    //----------------------End----------------------//
+
 
     /**
      *  Set service package when available
@@ -58,9 +69,9 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                serviceConceptId: checkoutSession.data?.conceptId || "",
-                date: checkoutSession.data?.bookingDetails?.date || "",
-                time: checkoutSession.data?.bookingDetails?.time || "",
+                serviceConceptId: checkoutSession.conceptId || "",
+                date: checkoutSession.bookingDetails?.date || "",
+                time: checkoutSession.bookingDetails?.time || "",
             });
         }
 
@@ -79,29 +90,29 @@ export default function CheckoutLayoutClient({
                 email: "",
                 userNote: "",
             });
-            //     setServicePackage({
-            //         id: "",
-            //         name: "",
-            //         description: "",
-            //         image: "",
-            //         status: "",
-            //         // vendorId: "",
-            //         serviceConcepts: [],
-            //         minPrice: 0,
-            //         maxPrice: 0,
-            //         // duration: 0,
-            //         created_at: "",
-            //         updated_at: ""
-            //     });
-            //     setConcept({
-            //         id: "",
-            //         name: "",
-            //         description: "",
-            //         images: [],
-            //         price: "",
-            //         duration: 0,
-            //         serviceTypes: []
-            //     });
+            setServicePackage({
+                id: "",
+                name: "",
+                description: "",
+                image: "",
+                status: "",
+                // vendorId: "",
+                serviceConcepts: [],
+                minPrice: 0,
+                maxPrice: 0,
+                // duration: 0,
+                created_at: "",
+                updated_at: ""
+            });
+            setConcept({
+                id: "",
+                name: "",
+                description: "",
+                images: [],
+                price: 0,
+                duration: 0,
+                serviceTypes: []
+            });
         }
     }, [checkoutSession]);
     //----------------------End----------------------//

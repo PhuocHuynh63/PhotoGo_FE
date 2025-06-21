@@ -69,7 +69,7 @@ export default async function CheckoutLayout({
 
 
     return (
-        <CheckoutLayoutClient checkoutSession={checkoutSession} user={user} concept={concept} servicePackage={servicePackage}>
+        <CheckoutLayoutClient checkoutSession={checkoutSession.data} user={user} concept={concept} servicePackage={servicePackage}>
             {children}
         </CheckoutLayoutClient>
     );
