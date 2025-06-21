@@ -13,12 +13,13 @@ interface ReviewsPageProps {
     pagination: IPagination
 }
 
-export default function ReviewsPage({ reviews, pagination }: ReviewsPageProps) {
-
+export default function ReviewsPage({ reviews: initialReviews, pagination: initialPagination }: ReviewsPageProps) {
     //#region define variables
     const router = useRouter()
     const searchParams = useSearchParams()
-    const [currentPage, setCurrentPage] = useState(pagination?.current || 1)
+    const [currentPage, setCurrentPage] = useState(initialPagination?.current || 1)
+    const [reviews, setReviews] = useState(initialReviews || [])
+    const [pagination, setPagination] = useState(initialPagination)
     //#endregion
 
     //#region data processing
@@ -37,6 +38,32 @@ export default function ReviewsPage({ reviews, pagination }: ReviewsPageProps) {
 
         // Navigate to new URL which will trigger server-side re-render
         router.push(`/profile/reviews?${params.toString()}`)
+    }
+    //#endregion
+
+    //#region handle review updates
+    const handleReviewUpdate = (deletedReviewId?: string) => {
+        if (deletedReviewId) {
+            // Update local state immediately
+            const updatedReviews = reviews.filter(review => review.id !== deletedReviewId)
+            setReviews(updatedReviews)
+
+            // Update pagination
+            setPagination(prev => ({
+                ...prev,
+                totalItem: (prev?.totalItem || 0) - 1
+            }))
+
+            // If the current page is empty after deletion and it's not the first page,
+            // navigate to the previous page
+            if (updatedReviews.length === 0 && currentPage > 1) {
+                handlePageChange(currentPage - 1)
+                return
+            }
+        }
+
+        // Optionally refresh the page to ensure sync with server
+        router.refresh()
     }
     //#endregion
 
@@ -61,7 +88,11 @@ export default function ReviewsPage({ reviews, pagination }: ReviewsPageProps) {
                     <div className="grid gap-6">
                         {allReviews.length > 0 ? (
                             allReviews.map((review) => (
-                                <ReviewCard key={review.id} reviewData={review} />
+                                <ReviewCard
+                                    key={review.id}
+                                    reviewData={review}
+                                    onSuccess={() => handleReviewUpdate(review.id)}
+                                />
                             ))
                         ) : (
                             <div className="text-center py-8">
@@ -87,7 +118,11 @@ export default function ReviewsPage({ reviews, pagination }: ReviewsPageProps) {
                     <div className="grid gap-6">
                         {pendingReviews.length > 0 ? (
                             pendingReviews.map((review) => (
-                                <ReviewCard key={review.id} reviewData={review} />
+                                <ReviewCard
+                                    key={review.id}
+                                    reviewData={review}
+                                    onSuccess={() => handleReviewUpdate(review.id)}
+                                />
                             ))
                         ) : (
                             <div className="text-center py-8">
@@ -102,7 +137,11 @@ export default function ReviewsPage({ reviews, pagination }: ReviewsPageProps) {
                     <div className="grid gap-6">
                         {completedReviews.length > 0 ? (
                             completedReviews.map((review) => (
-                                <ReviewCard key={review.id} reviewData={review} />
+                                <ReviewCard
+                                    key={review.id}
+                                    reviewData={review}
+                                    onSuccess={() => handleReviewUpdate(review.id)}
+                                />
                             ))
                         ) : (
                             <div className="text-center py-8">

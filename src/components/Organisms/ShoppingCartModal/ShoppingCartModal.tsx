@@ -8,9 +8,8 @@ import { Separator } from "@components/Atoms/Seperator/Seperator"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import SingleCheckbox from "@components/Atoms/Checkbox/SingleCheckBox"
 import { useCart, useRemoveItem, useRemoveItems } from "@stores/cart/selectors"
-import { ROUTES } from "@routes"
-import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import EnhancedBookingPopup from "@pages/Public/VendorDetail/components/EnhancedBookingPopup"
 
 export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: Omit<ICOMPONENTS.ShoppingCartModalProps, 'cartItems'>) {
     const [selectedItems, setSelectedItems] = useState<string[]>([])
@@ -19,11 +18,11 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
     const [itemToDelete, setItemToDelete] = useState<string | null>(null)
     const [isBulkDelete, setIsBulkDelete] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
+    const [showBookingPopup, setShowBookingPopup] = useState(false)
     const cart = useCart()
     const cartItems = Array.isArray(cart?.data) ? cart?.data : []
     const removeItem = useRemoveItem()
     const removeItems = useRemoveItems()
-    const router = useRouter()
 
     const vendorGroups = cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item: ICOMPONENTS.CartItem) => {
         const vendorId = item.serviceConcept.servicePackageId;
@@ -178,6 +177,21 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
         </div>
     )
 
+    const handleCheckout = () => {
+        if (selectedItems.length === 0) {
+            toast.error("Vui lòng chọn dịch vụ để thanh toán");
+            return;
+        }
+
+        const selectedItem = cartItems.find((item: ICOMPONENTS.CartItem) => item.id === selectedItems[0]);
+        if (!selectedItem) {
+            toast.error("Không tìm thấy dịch vụ đã chọn");
+            return;
+        }
+
+        setShowBookingPopup(true);
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
             <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
@@ -327,12 +341,11 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                                 </Button>
                                 <Button
                                     className="flex-1 bg-primary text-white"
-                                    onClick={() => router.push(ROUTES.USER.CHECKOUT.replace(":id", selectedItems[0]))}
+                                    onClick={handleCheckout}
                                     disabled={selectedItems.length === 0}
                                 >
                                     Thanh toán
                                 </Button>
-
                             </div>
                         </div>
                     </>
@@ -380,6 +393,15 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Booking Popup */}
+            {showBookingPopup && (
+                <EnhancedBookingPopup
+                    isOpen={showBookingPopup}
+                    onClose={() => setShowBookingPopup(false)}
+                    serviceConcept={cartItems.find((item: ICOMPONENTS.CartItem) => item.id === selectedItems[0])?.serviceConcept}
+                />
             )}
         </div>
     )
