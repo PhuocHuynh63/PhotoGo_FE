@@ -1,24 +1,53 @@
 'use client';
 
 import { ROUTES } from '@routes';
+import paymentService from '@services/payment';
+import { usePaymentError } from '@utils/hooks/usePayment';
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { use, useEffect } from 'react';
 
 const PaymentErrorPage = () => {
-    const handleTryAgain = () => {
-        // Xử lý thử lại đặt lịch
-        console.log('Thử lại đặt lịch');
-    };
+    const router = useRouter();
 
-    const handleGoHome = () => {
-        // Xử lý điều hướng về trang chủ
-        console.log('Điều hướng về trang chủ');
-    };
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const paymentId = params.get("paymentId");
+        const status = params.get("status");
+        const code = params.get("code");
+        const payosId = params.get("id");
+        const cancel = params.get("cancel");
+        const orderCode = params.get("orderCode");
 
-    const handleContact = () => {
-        // Xử lý liên hệ hỗ trợ
-        console.log('Liên hệ hỗ trợ');
-    };
+        if (!paymentId || !status || !code || !payosId || !cancel || !orderCode) {
+            router.push(ROUTES.PUBLIC.HOME);
+            return;
+        }
+
+        const data = {
+            paymentId,
+            status,
+            code,
+            id: payosId,
+            cancel,
+            orderCode
+        };
+
+        const res = paymentService.paymentError(data) as any;
+        console.log('Payment Error Response:', res);
+
+
+
+        console.log(`Payment Error Page Loaded with params:
+        Payment ID: ${paymentId}
+        Status: ${status}
+        Code: ${code}
+        PayOS ID: ${payosId}
+        Cancel: ${cancel}
+        Order Code: ${orderCode}`);
+
+    }, [router]);
+
 
     return (
         <div
