@@ -18,3 +18,6 @@ export const useSetFormBooking = () => useStore((state: ZUSTAND.ICheckoutState) 
 
 export const useIsValidStep = () => useStore((state: ZUSTAND.ICheckoutState) => state.isValidStep)
 export const useSetIsValidStep = () => useStore((state: ZUSTAND.ICheckoutState) => state.setIsValidStep)
+
+export const useCheckoutSession = () => useStore((state: ZUSTAND.ICheckoutState) => state.checkoutSession)
+export const useSetCheckoutSession = () => useStore((state: ZUSTAND.ICheckoutState) => state.setCheckoutSession)

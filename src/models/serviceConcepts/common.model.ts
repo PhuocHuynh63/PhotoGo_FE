@@ -9,7 +9,7 @@ export const ServiceConceptModel = z.object({
     name: z.string(),
     description: z.string(),
     images: z.array(z.string()),
-    price: z.string(),
+    price: z.number(),
     duration: z.number(),
     serviceTypes: z.array(ServiceTypeModel),
 });

@@ -30,7 +30,7 @@ export default function PricingTab({
                             <tbody>
                                 {profileData.servicePackages.slice(0, visibleServicesCount).map((servicePackage, index) => {
                                     // Calculate min/max price for this specific package
-                                    const packagePrices = servicePackage.serviceConcepts?.map(concept => parseFloat(concept.price)).filter(price => !isNaN(price)) || []
+                                    const packagePrices = servicePackage.serviceConcepts?.map(concept => (concept.price)).filter(price => !isNaN(price)) || [];
                                     const packageMinPrice = packagePrices.length > 0 ? Math.min(...packagePrices) : null
                                     const packageMaxPrice = packagePrices.length > 0 ? Math.max(...packagePrices) : null
 

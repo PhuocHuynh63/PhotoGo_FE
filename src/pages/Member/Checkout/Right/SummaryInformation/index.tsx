@@ -53,10 +53,10 @@ const SummaryInformation = () => {
                             height={64}
                         />
                         <div className="flex-1">
-                            <h3 className="font-medium">{servicePackage.name || NaN}</h3>
+                            <h3 className="font-medium">{servicePackage?.name || 'NaN'}</h3>
                             <div className="flex items-center text-sm text-gray-500 mb-1">
                                 <Star className="h-4 w-4 text-[#f0a06a] mr-1" />
-                                {serviceConcept.name || NaN}
+                                {serviceConcept.name || 'NaN'}
                             </div>
                             <div className="flex gap-4 text-xs text-gray-500">
                                 <div className="flex items-center gap-1">

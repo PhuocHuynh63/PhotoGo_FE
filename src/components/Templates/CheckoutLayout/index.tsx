@@ -5,7 +5,7 @@ import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { useCheckoutStep, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors";
+import { useCheckoutStep, useFormBooking, useSetCheckoutSession, useSetFormBooking } from "@stores/checkout/selectors";
 import { useSetUser } from "@stores/user/selectors";
 import { PAGES } from "../../../types/IPages";
 import { useEffect } from "react";
@@ -28,6 +28,17 @@ export default function CheckoutLayoutClient({
         setUser(user.data ?? null);
     }, [user]);
     //----------------------End----------------------//
+
+
+    /**
+     * Set checkout session when available
+     */
+    const setCheckoutSession = useSetCheckoutSession();
+    useEffect(() => {
+        setCheckoutSession(checkoutSession ?? null);
+    }, [checkoutSession]);
+    //----------------------End----------------------//
+
 
     /**
      *  Set service package when available
@@ -58,9 +69,10 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
-                serviceConceptId: checkoutSession.data?.data.conceptId || "",
-                date: checkoutSession.data?.data.date || "",
-                time: checkoutSession.data?.data.time || "",
+                serviceConceptId: checkoutSession.conceptId || "",
+                locationId: checkoutSession.locationDetails?.id || "",
+                date: checkoutSession.bookingDetails?.date || "",
+                time: checkoutSession.bookingDetails?.time || "",
             });
         }
 
@@ -71,6 +83,7 @@ export default function CheckoutLayoutClient({
                 serviceConceptId: "",
                 date: "",
                 time: "",
+                locationId: "",
                 sourceType: "trực tiếp",
                 depositAmount: 30,
                 // method: 'payos',
@@ -101,7 +114,7 @@ export default function CheckoutLayoutClient({
                 name: "",
                 description: "",
                 images: [],
-                price: "",
+                price: 0,
                 duration: 0,
                 serviceTypes: []
             });

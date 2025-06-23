@@ -478,7 +478,7 @@ declare namespace ICOMPONENTS {
 
     interface CustomCalendarProps {
         selectedDate?: Date
-        onDateSelect: (date: Date) => void
+        onDateSelect: (date: { date: Date, id: string }) => void
         availability: DayAvailability[]
     }
 }

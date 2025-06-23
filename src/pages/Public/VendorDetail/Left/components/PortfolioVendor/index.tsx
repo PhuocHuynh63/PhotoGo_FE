@@ -74,8 +74,6 @@ const PortfolioVendor = (
     }));
 
     const handleImageClick = (index: number) => {
-        console.log('Image clicked:', index, displayedImages[index]);
-
         setCurrentImageIndex(index)
         setLightboxOpen(true)
     }

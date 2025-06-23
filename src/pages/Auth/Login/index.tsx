@@ -64,9 +64,6 @@ const LoginPage = () => {
                 ...data,
             });
 
-            console.log("Login response:", res);
-
-
             //#region Handle response
             const status = res?.status;
             const error = res?.error;

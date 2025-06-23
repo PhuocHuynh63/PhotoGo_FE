@@ -5,10 +5,7 @@ import { CheckoutSessionModel } from "./common.model";
 /**
  * Model of CheckoutSessionData
  */
-export const CheckoutSessionDataModel = z.object({
-    data: CheckoutSessionModel,
-    checkoutSessionId: z.string(),
-});
+export const CheckoutSessionDataModel = CheckoutSessionModel;
 
 export const CheckoutSessionResponseModel = BackendResponseModel(CheckoutSessionDataModel);
 export type ICheckoutSessionResponseModel = z.infer<typeof CheckoutSessionResponseModel>;

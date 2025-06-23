@@ -51,7 +51,7 @@ export default async function CheckoutLayout({
 
     if (checkoutSession.statusCode !== 200 && checkoutSession.statusCode !== 201) {
         errorMessage = checkoutSession.message || "Không tìm thấy thông tin thanh toán.";
-        redirect(`${ROUTES.AUTH.LOGIN}?error=${errorMessage}`);
+        redirect(`${ROUTES.PUBLIC.HOME}?error=${errorMessage}`);
     }
     //----------------------End----------------------//
 
@@ -60,13 +60,13 @@ export default async function CheckoutLayout({
     /**
      *  Get concept and service package by conceptId from checkout session
      */
-    const concept = await getConceptById(checkoutSession.data?.data.conceptId || "") as IServiceConceptResponse;
+    const concept = await getConceptById(checkoutSession.data?.conceptId || "") as IServiceConceptResponse;
     const servicePackage = await getPackageById(concept.data.servicePackageId || "");
     //-----------------------End----------------------//
 
 
     return (
-        <CheckoutLayoutClient checkoutSession={checkoutSession} user={user} concept={concept} servicePackage={servicePackage}>
+        <CheckoutLayoutClient checkoutSession={checkoutSession.data} user={user} concept={concept} servicePackage={servicePackage}>
             {children}
         </CheckoutLayoutClient>
     );
