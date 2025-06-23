@@ -1,15 +1,11 @@
-export type Rank = 'Đồng' | 'Bạc' | 'Vàng' | 'Bạch Kim' | 'Kim Cương';
+export type Rank = 'Bạc' | 'Vàng' | 'Bạch Kim' | 'Kim Cương';
 
 export const rankConfigs: Record<Rank, {
     className?: string;
     color?: string;
     icon?: string;
 }> = {
-    'Đồng': {
-        className: 'rank-glow-slow',
-        color: '#cd7f32',
-        icon: 'Medal'
-    },
+
     'Bạc': {
         className: 'rank-glow-medium',
         color: '#a7a7ad',

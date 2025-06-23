@@ -17,7 +17,7 @@ const VendorDetailLayoutPage = ({
     vendor,
     session,
     concept,
-    review
+    review,
 }: PAGES.IVendorDetailPageProps) => {
 
     /**
@@ -53,7 +53,6 @@ const VendorDetailLayoutPage = ({
     const setSession = useSetSession();
     const setConceptImages = useSetServiceConceptImages();
     const setReviews = useSetReviews();
-
     const reset = () => {
         setVendor(null);
         setSession(null);
@@ -66,7 +65,6 @@ const VendorDetailLayoutPage = ({
         setSession(session);
         setConceptImages(concept.data?.data || []);
         setReviews(review);
-
         return () => {
             reset();
         }

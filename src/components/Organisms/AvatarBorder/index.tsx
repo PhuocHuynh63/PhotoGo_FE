@@ -19,12 +19,12 @@ interface AvatarWithBorderProps {
     children: React.ReactNode
 }
 
-export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Đồng", children }) => {
+export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Bạc", children }) => {
     const avatarRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState<number>(0)
 
     // Get rank config with fallback to default values
-    const rankConfig = rankConfigs[rank as Rank] || rankConfigs["Đồng"]
+    const rankConfig = rankConfigs[rank as Rank] || rankConfigs["Bạc"]
     const { className = "", color = "#cd7f32", icon } = rankConfig
 
     useLayoutEffect(() => {
@@ -76,7 +76,6 @@ export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Đ�
                     <IconComponent
                         size={iconSize}
                         className={clsx("drop-shadow-[0_0_8px_rgba(0,0,0,0.3)]", {
-                            "text-[#cd7f32]": rank === "Đồng",
                             "text-[#a7a7ad]": rank === "Bạc",
                             "text-[#ffd700]": rank === "Vàng",
                             "text-[#E5E4E2] drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] stroke-[1.5]": rank === "Bạch Kim",

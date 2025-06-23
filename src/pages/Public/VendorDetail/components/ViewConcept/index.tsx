@@ -12,6 +12,8 @@ import { useAddToCart, useCart } from "@stores/cart/selectors";
 import { useSession } from "@stores/user/selectors";
 import toast from "react-hot-toast";
 import { ICartItem } from "@models/cart/common.model";
+import { useFavorites } from "@utils/hooks/useFavorites";
+
 
 type ConceptProps = {
     isOpen: boolean;
@@ -28,6 +30,16 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     const userId = session?.user?.id
     const cartId = session?.user?.cartId
     const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+    // Use the custom favorites hook
+    const {
+        isConceptInFavorites,
+        toggleFavorite,
+        isAddingToFavorite,
+        isRemovingFromFavorite,
+        isLoadingFavorites
+    } = useFavorites();
+
     //#region handle action img
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedConcept, setSelectedConcept] = useState(0);
@@ -67,6 +79,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     //#region selectConcept
     const selectedConceptObject = servicePackage?.serviceConcepts[selectedConcept] as IServiceConcept;
     const isConceptInCart = cart?.data?.some((item: ICartItem) => item.serviceConceptId === selectedConceptObject?.id);
+    const isCurrentConceptInFavorites = isConceptInFavorites(selectedConceptObject?.id);
     //#endregion
 
     const handleAddToCart = async () => {
@@ -102,6 +115,10 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
         }
     }
 
+    const handleAddToFavorite = async () => {
+        await toggleFavorite(selectedConceptObject.id);
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogTitle />
@@ -109,10 +126,28 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                 <DialogHeader className="font-bold text-xl border-b border-gray-200 pb-4 flex flex-row justify-between items-center">
                     <span>Xem Concept - {servicePackage?.name}</span>
                     <div className="flex space-x-2">
-                        <button className="cursor-pointer p-2 rounded-full hover:bg-gray-100">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
+                        <button
+                            className="cursor-pointer p-2 rounded-full hover:bg-gray-100"
+                            onClick={handleAddToFavorite}
+                            disabled={isAddingToFavorite || isRemovingFromFavorite || isLoadingFavorites}
+                        >
+                            {isAddingToFavorite || isRemovingFromFavorite ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : (
+                                <svg
+                                    className={`w-5 h-5 ${isCurrentConceptInFavorites ? 'text-red-500' : ''}`}
+                                    fill={isCurrentConceptInFavorites ? "currentColor" : "none"}
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                    />
+                                </svg>
+                            )}
                         </button>
                         <button className="cursor-pointer p-2 rounded-full hover:bg-gray-100">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
