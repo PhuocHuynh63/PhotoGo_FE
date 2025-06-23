@@ -12,6 +12,7 @@ export const BookingFormRequest = z.object({
     sourceType: z.enum(["trực tiếp", "chiến dịch", "giới thiệu", "nổi bật", "khuyến mãi", "khác"], {
         errorMap: () => ({ message: "Source type must be one of web, app, facebook, or titok" }),
     }),
+    locationId: z.string(),
     depositAmount: z.number(),
     // method: z.enum(["payos"], {
     //     errorMap: () => ({ message: "Payment method is required" }),

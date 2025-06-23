@@ -70,6 +70,7 @@ export default function CheckoutLayoutClient({
                 ...formBooking,
                 userId: user.data?.id || "",
                 serviceConceptId: checkoutSession.conceptId || "",
+                locationId: checkoutSession.locationDetails?.id || "",
                 date: checkoutSession.bookingDetails?.date || "",
                 time: checkoutSession.bookingDetails?.time || "",
             });
@@ -82,6 +83,7 @@ export default function CheckoutLayoutClient({
                 serviceConceptId: "",
                 date: "",
                 time: "",
+                locationId: "",
                 sourceType: "trực tiếp",
                 depositAmount: 30,
                 // method: 'payos',
