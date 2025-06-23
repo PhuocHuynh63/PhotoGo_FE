@@ -25,7 +25,6 @@ export function useLocationAvailability({
 
         try {
             const result = await locationAvailabilityService.getLocationAvailabilityByLocationId(locationId) as ILocationScheduleResponse;
-            console.log('result', result);
 
             if (result.statusCode === 200 && result.data) {
                 setLocationAvailability(result.data.data);
@@ -88,7 +87,6 @@ export function useLocationAvailabilityByLocationIdAndDate({
 
         try {
             const result = await locationAvailabilityService.getLocationAvailabilityByIdAndDate(locationId, date) as ILocationScheduleResponse;
-            console.log('result', result);
 
             if (result.statusCode === 200 && result.data) {
                 setLocationAvailabilitySelectDate(result.data.data);

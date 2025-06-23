@@ -21,23 +21,27 @@ export const useMessageByChatId = ({
     pageSize = 15,
 }: MessageByChatIdParams) => {
     const [message, setMessage] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loadingMessageByChatId, setLoadingMessageByChatId] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const fetchMessages = useCallback(async () => {
+        console.log('useMessageByChatId - Calling fetchMessages for chatId:', chatId); // <-- THÊM LOG NÀY
+
         if (!chatId) {
             setMessage([]);
             return;
         }
-        setLoading(true);
+        setLoadingMessageByChatId(true);
         setError(null);
         try {
             const response: any = await chatService.getMessageChatById(chatId, page, pageSize);
+            console.log('useMessageByChatId - Fetched messages:', response.data); // <-- THÊM LOG NÀY
+
             setMessage(response.data);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch messages');
         } finally {
-            setLoading(false);
+            setLoadingMessageByChatId(false);
         }
     }, [chatId, page, pageSize]);
 
@@ -53,7 +57,7 @@ export const useMessageByChatId = ({
 
     return {
         message,
-        loading,
+        loadingMessageByChatId,
         error,
         mutate: fetchMessages,
     }

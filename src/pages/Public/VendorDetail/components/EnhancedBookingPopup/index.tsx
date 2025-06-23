@@ -173,12 +173,11 @@ export default function EnhancedBookingPopup({
             const firstLocationAvailability = locationAvailabilitySelectDate[0] as any;
             const availableSlots = firstLocationAvailability.slotTimeWorkingDates.map((slotDetail: any) => {
                 const startTime = slotDetail.startSlotTime.substring(0, 5);
-                const endTime = slotDetail.endSlotTime.substring(0, 5);
                 const price = Number(serviceConcept?.price || 0);
 
                 return {
                     id: slotDetail.id,
-                    time: `${startTime} - ${endTime}`,
+                    time: `${startTime}`,
                     price: price,
                     available: slotDetail.isAvailable && (slotDetail.maxParallelBookings - slotDetail.alreadyBooked) > 0,
                 };
@@ -205,7 +204,6 @@ export default function EnhancedBookingPopup({
      */
     const onSubmit = async (data: ICheckoutSessionRequest) => {
         const { bookingDetails, conceptId, price, locationDetails, vendorDetails } = data;
-        console.log("conceptId: ", conceptId);
 
         const selectedDate = new Date(bookingDetails.date);
         const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '';

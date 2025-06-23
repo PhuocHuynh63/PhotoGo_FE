@@ -71,7 +71,7 @@ export default function ProfileInfo({ profileData }: PAGES.IVendorProfileInfoPro
 
         profileData.servicePackages.forEach(servicePackage => {
             servicePackage.serviceConcepts?.forEach(concept => {
-                const price = parseFloat(concept.price)
+                const price = (concept.price)
                 if (!isNaN(price)) {
                     allPrices.push(price)
                 }
