@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@components/Atoms/Button";
 import { Card } from "@components/Atoms/Card";
-import { Heart, Star } from "lucide-react";
+import { Heart } from "lucide-react";
 
 import Pagination from "@components/Organisms/Pagination/Pagination";
 import { IFavoriteDetailModel } from "@models/favorite/common.model";
@@ -14,10 +14,11 @@ import favoritesService from "@services/favorites";
 import toast from "react-hot-toast";
 import { IPagination } from "@models/metadata";
 import conceptService from "@services/concept";
-import { IInvoiceServiceModel, IServiceConcept } from "@models/serviceConcepts/common.model";
+import { IInvoiceServiceModel } from "@models/serviceConcepts/common.model";
 import { IServiceConceptResponseModel } from "@models/serviceConcepts/response.model";
 import packageService from "@services/packageServices";
 import { IServicePackageResponse } from "@models/servicePackages/response.model";
+import { IVendor } from "@models/vendor/common.model";
 
 export default function FavoritesContent({ itemsData, favoritePagination }: { itemsData: IFavoriteDetailModel[], favoritePagination: IPagination }) {
     const router = useRouter();
@@ -50,7 +51,7 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
     };
 
     // Function để lấy vendor slug - bạn cần implement logic này
-    const getVendorSlug = async (serviceConceptId: string): Promise<string | null> => {
+    const getVendorSlug = async (serviceConceptId: string): Promise<{ slug: string, location: string } | null> => {
         try {
             // TODO: Implement API call để lấy vendor slug từ service concept ID
             // Ví dụ:
@@ -58,9 +59,13 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
             const concept = response.data as unknown as IInvoiceServiceModel;
 
             //get vendor slug from concept
-            const vendor = await packageService.getPackageById(concept?.servicePackageId) as IServicePackageResponse;
-            console.log(vendor)
-            return 'maboo-studio';
+            const servicePackage = await packageService.getPackageById(concept?.servicePackageId) as IServicePackageResponse;
+            const vendor = (servicePackage?.data?.vendor ?? {}) as IVendor;
+            const vendorData = {
+                slug: vendor?.slug,
+                location: vendor?.locations[0].district
+            }
+            return vendorData;
         } catch (error) {
             console.error('Error fetching vendor slug:', error);
             return null;
@@ -69,16 +74,16 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
 
     const handleViewDetail = async (item: IFavoriteDetailModel) => {
         try {
-            const vendorSlug = await getVendorSlug(item.serviceConcept.id);
+            const vendorData = await getVendorSlug(item.serviceConcept.id);
 
-            if (!vendorSlug) {
+            if (!vendorData) {
                 console.error('Could not get vendor slug for concept:', item.serviceConcept.id);
                 toast.error('Không tìm thấy nhà cung cấp');
                 return;
             }
 
             // Navigate đến trang packages với concept ID
-            router.push(`/${vendorSlug}/packages?conceptId=${item.serviceConcept.id}&location=${'Quận 3'}`);
+            router.push(`/${vendorData.slug}/packages?conceptId=${item.serviceConcept.id}&location=${vendorData.location}`);
         } catch (error) {
             console.error('Error navigating to vendor detail:', error);
             toast.error('Lỗi khi xem chi tiết');

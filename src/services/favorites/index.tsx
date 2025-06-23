@@ -1,14 +1,14 @@
 import http from "@configs/fetch"
 
 const favoritesService = {
-    getFavoriteList: async (userId: string, queryParams: URLSearchParams) => {
+    getFavoriteList: async (userId: string, queryParams: URLSearchParams = new URLSearchParams()) => {
         return await http.get(`/wishlists/${userId}?${queryParams.toString()}`, {
             next: { tags: [`wishlist-${userId}`] }
         })
     },
 
-    addFavorite: async (id: string, data: { serviceConceptId: string }) => {
-        return await http.post(`/wishlists/${id}/items`, data, { next: { tags: [`wishlist-${id}`] } })
+    addFavorite: async (wishlistId: string, serviceConceptId: string) => {
+        return await http.post(`/wishlists/items`, { wishlistId, serviceConceptId })
     },
 
     removeFavorite: async (id: string, itemId: string) => {
