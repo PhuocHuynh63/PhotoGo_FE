@@ -27,6 +27,7 @@
       "@configs/*": ["./src/configs/*"],
       "@constants/*": ["./src/constants/*"],
       "@libs/*": ["./src/libs/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
       "@pages/*": ["./src/pages/*"],
       "@redux/*": ["./src/redux/*"],
       "@routes/*": ["./src/routes/*"],
