@@ -55,6 +55,7 @@ export const authOptions: NextAuthOptions = {
                     role: res.data.user.role,
                     accessToken: res.data.access_token,
                     cartId: res.data.user.cartId,
+                    wishlistId: res.data.user.wishlistId,
                 }
 
                 return user;
@@ -68,6 +69,7 @@ export const authOptions: NextAuthOptions = {
                 token.role = user.role;
                 token.accessToken = user.accessToken;
                 token.cartId = user.cartId;
+                token.wishlistId = user.wishlistId;
             }
             return token;
         },
@@ -75,6 +77,7 @@ export const authOptions: NextAuthOptions = {
             session.user.id = token.id;
             session.user.role = token.role;
             session.user.cartId = token.cartId;
+            session.user.wishlistId = token.wishlistId;
             (session as any).accessToken = token.accessToken;
             return session;
         },

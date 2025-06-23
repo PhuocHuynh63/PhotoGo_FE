@@ -98,13 +98,16 @@ export default function CheckoutLayoutClient({
                 description: "",
                 image: "",
                 status: "",
-                // vendorId: "",
+                vendorId: "",
                 serviceConcepts: [],
                 minPrice: 0,
                 maxPrice: 0,
-                // duration: 0,
                 created_at: "",
-                updated_at: ""
+                updated_at: "",
+                vendor: {
+                    slug: "",
+                    locations: []
+                }
             });
             setConcept({
                 id: "",
