@@ -1,5 +1,7 @@
 'use client';
 
+import { ROUTES } from '@routes';
+import Link from 'next/link';
 import React from 'react';
 
 const PaymentErrorPage = () => {
@@ -97,30 +99,21 @@ const PaymentErrorPage = () => {
 
                     {/* Action Buttons */}
                     <div className="space-y-3">
-                        <button
-                            onClick={handleTryAgain}
-                            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg"
-                            style={{
-                                animation: 'pulse 2s infinite'
-                            }}
-                        >
-                            Thử Lại
-                        </button>
 
                         <div className="flex space-x-3">
-                            <button
-                                onClick={handleGoHome}
+                            <Link
+                                href={ROUTES.PUBLIC.HOME}
                                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-all duration-200"
                             >
                                 Về Trang Chủ
-                            </button>
+                            </Link>
 
-                            <button
-                                onClick={handleContact}
+                            <Link
+                                href={ROUTES.PUBLIC.CONTACT}
                                 className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-3 px-4 rounded-xl transition-all duration-200"
                             >
                                 Liên Hệ
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
