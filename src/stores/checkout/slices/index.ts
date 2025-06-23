@@ -12,6 +12,7 @@ export const createCheckoutSlice = (
         serviceConceptId: "",
         date: "",
         time: "",
+        locationId: "",
         sourceType: "trực tiếp",
         depositAmount: 30,
         // method: 'payos',
