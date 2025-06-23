@@ -16,6 +16,8 @@ const PUBLIC = {
     SEARCH_PACKAGES: '/search/packages',
     VENDOR_DETAIL: '/:slug/:page',
     ABOUT: '/about',
+    SUPPORT: '/support',
+    PAYMENT_ERROR: '/payment/error',
 };
 
 const USER = {
