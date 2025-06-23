@@ -173,12 +173,11 @@ export default function EnhancedBookingPopup({
             const firstLocationAvailability = locationAvailabilitySelectDate[0] as any;
             const availableSlots = firstLocationAvailability.slotTimeWorkingDates.map((slotDetail: any) => {
                 const startTime = slotDetail.startSlotTime.substring(0, 5);
-                const endTime = slotDetail.endSlotTime.substring(0, 5);
                 const price = Number(serviceConcept?.price || 0);
 
                 return {
                     id: slotDetail.id,
-                    time: `${startTime} - ${endTime}`,
+                    time: `${startTime}`,
                     price: price,
                     available: slotDetail.isAvailable && (slotDetail.maxParallelBookings - slotDetail.alreadyBooked) > 0,
                 };
