@@ -1,4 +1,4 @@
-import PaymentSuccessPage from "@pages/Status/Payment/Success";
+import PaymentSuccessPage from "@pages/Status/Payment/Successful";
 
 export default async function PaymentSuccess() {
 
