@@ -7,7 +7,7 @@ const paymentService = {
     },
 
     paymentSuccess: async (paymentId: string, data: IPaymentRequest) => {
-        return await http.put(`/payments/success?paymentId=${paymentId}`, data)
+        return await http.put(`/payments/successful?paymentId=${paymentId}`, data)
     }
 }
 
