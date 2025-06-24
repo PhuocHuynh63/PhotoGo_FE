@@ -19,7 +19,7 @@ interface AvatarWithBorderProps {
     children: React.ReactNode
 }
 
-export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Bạc", children }) => {
+export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Đồng", children }) => {
     const avatarRef = useRef<HTMLDivElement>(null)
     const [size, setSize] = useState<number>(0)
 
@@ -64,6 +64,17 @@ export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Bạ
         width: iconSize,
         height: iconSize,
         zIndex: 20,
+    }
+
+    // Nếu là Đồng thì không áp dụng className, không style border, không render icon
+    if (rank === "Đồng") {
+        return (
+            <div className="relative flex items-center justify-center rounded-full">
+                <div ref={avatarRef} className="relative z-10 rounded-full overflow-hidden">
+                    {children}
+                </div>
+            </div>
+        )
     }
 
     return (

@@ -1,9 +1,13 @@
 import http from "@configs/fetch";
-import { IPaymentErrorRequest } from "@models/payment/request.model";
+import { IPaymentRequest } from "@models/payment/request.model";
 
 const paymentService = {
-    paymentError: (data: IPaymentErrorRequest) => {
-        return http.post("/payments/error", data)
+    paymentError: async (paymentId: string, data: IPaymentRequest) => {
+        return await http.put(`/payments/error?paymentId=${paymentId}`, data)
+    },
+
+    paymentSuccess: async (paymentId: string, data: IPaymentRequest) => {
+        return await http.put(`/payments/success?paymentId=${paymentId}`, data)
     }
 }
 

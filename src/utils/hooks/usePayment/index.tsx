@@ -1,28 +1,28 @@
-import { IPaymentErrorRequest } from "@models/payment/request.model";
-import paymentService from "@services/payment";
-import { useState } from "react";
+// import { IPaymentErrorRequest } from "@models/payment/request.model";
+// import paymentService from "@services/payment";
+// import { useState } from "react";
 
-export async function usePaymentError(data: IPaymentErrorRequest) {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [dataPaymentError, setDataPaymentError] = useState<IPaymentErrorRequest | null>(null);
+// export async function usePaymentError(data: IPaymentErrorRequest) {
+//     const [loading, setLoading] = useState<boolean>(false);
+//     const [dataPaymentError, setDataPaymentError] = useState<IPaymentErrorRequest | null>(null);
 
-    try {
-        setLoading(true);
-        const res = await paymentService.paymentError(data) as any;
+//     try {
+//         setLoading(true);
+//         const res = await paymentService.paymentError(data) as any;
 
-        if (res.status === 200) {
+//         if (res.status === 200) {
             
-        }
-    } catch (error) {
+//         }
+//     } catch (error) {
 
-    } finally {
-        setLoading(false);
-    }
+//     } finally {
+//         setLoading(false);
+//     }
 
 
 
-    return {
-        data,
-        loading,
-    };
-}
+//     return {
+//         data,
+//         loading,
+//     };
+// }

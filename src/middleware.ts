@@ -23,6 +23,6 @@ const fullMiddleware = withAuth(mainMiddleware, authConfig);
 export default fullMiddleware;
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|auth/login/google).*)'
     ],
 };

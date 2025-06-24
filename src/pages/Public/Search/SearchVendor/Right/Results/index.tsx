@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import LucideIcon from "@components/Atoms/LucideIcon"
-import Button from "@components/Atoms/Button"
 import { ROUTES } from "@routes"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import Image from "next/image"
@@ -130,15 +129,9 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                 transition={{ duration: 0.5, ease: "easeOut" }}
                                 onClick={() => handleNavigationVendorDetail(vendor.slug, vendor.locations[0]?.district || "")}
                             >
-                                <div className="absolute top-2 right-2 z-10">
-                                    <Button className="shadow-none hover:bg-none flex items-center justify-center">
-                                        <LucideIcon name="Heart" iconSize={18} fill={vendor?.isRemarkable ? "red" : "none"} iconColor={vendor?.isRemarkable ? "red" : "black"} />
-                                    </Button>
-                                </div>
-
                                 {vendor?.isRemarkable && (
                                     <div className="absolute top-2 left-2 z-10">
-                                        <span className="bg-gray-200 text-dark text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
+                                        <span className="box bg-orange-300 text-white text-sm font-semibold px-2 py-1 rounded-full shadow-lg">
                                             Nổi bật
                                         </span>
                                     </div>
@@ -227,17 +220,6 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                                 {vendor.minPrice && vendor.maxPrice ? `${vendor.minPrice?.toLocaleString()}đ - ${vendor.maxPrice?.toLocaleString()}đ` : "Vui lòng liên hệ nhà cung cấp"}
                                             </span>
                                         </div>
-                                        <Button
-                                            width={80}
-                                            disabled={!vendor.status}
-                                            className="z-10 bg-primary text-white text-sm px-3 py-1 rounded-md"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                router.push(`/book/${vendor.id}`);
-                                            }}
-                                        >
-                                            Đặt lịch
-                                        </Button>
                                     </div>
                                 </div>
                             </motion.div>

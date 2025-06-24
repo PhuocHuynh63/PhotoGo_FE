@@ -7,7 +7,6 @@ export const useVendor = (vendorId: string | undefined) => {
     const [vendor, setVendor] = useState<IVendor | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-
     useEffect(() => {
         const fetchVendor = async () => {
             if (!vendorId) {

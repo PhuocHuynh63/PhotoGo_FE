@@ -22,7 +22,8 @@ export const InvoiceModel = z.object({
     updatedAt: z.string(),
     payments: z.array(PaymentModel),
     refunds: z.array(z.object({})), // You might want to define a detailed refund model
-    booking: BookingModel
+    booking: BookingModel,
+    vendorId: z.string()
 });
 
 export type IInvoice = z.TypeOf<typeof InvoiceModel>
