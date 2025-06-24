@@ -6,48 +6,32 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
-const  PaymentErrorPage = () => {
+const PaymentErrorPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        const handlePaymentError = async () => {
-            const params = new URLSearchParams(window.location.search);
-            const paymentId = params.get("paymentId");
-            const status = params.get("status");
-            const code = params.get("code");
-            const payosId = params.get("id");
-            const cancel = params.get("cancel");
-            const orderCode = params.get("orderCode");
+        const params = new URLSearchParams(window.location.search);
+        const paymentId = params.get("paymentId");
+        const status = params.get("status");
+        const code = params.get("code");
+        const payosId = params.get("id");
+        const cancel = params.get("cancel");
+        const orderCode = params.get("orderCode");
 
-            if (!paymentId || !status || !code || !payosId || !cancel || !orderCode) {
-                router.push(ROUTES.PUBLIC.HOME);
-                return;
-            }
+        if (!paymentId || !status || !code || !payosId || !cancel || !orderCode) {
+            router.push(ROUTES.PUBLIC.HOME);
+            return;
+        }
 
-            const data = {
-                paymentId,
-                status,
-                code,
-                id: payosId,
-                cancel: Boolean(cancel),
-                orderCode
-            };
-
-            const res = await paymentService.paymentError(data) as any;
-            console.log('Payment Error Response:', res);
-
-
-
-            console.log(`Payment Error Page Loaded with params:
-            Payment ID: ${paymentId}
-            Status: ${status}
-            Code: ${code}
-            PayOS ID: ${payosId}
-            Cancel: ${cancel}
-            Order Code: ${orderCode}`);
+        const data = {
+            status,
+            code,
+            id: payosId,
+            cancel: Boolean(cancel),
+            orderCode
         };
 
-        handlePaymentError();
+        paymentService.paymentError(paymentId, data);
     }, [router]);
 
 

@@ -6,7 +6,6 @@ import { z } from "zod";
  * @param password - Password of user
  */
 export const PaymentErrorRequest = z.object({
-    paymentId: z.string().min(1, "Payment ID là bắt buộc"),
     status: z.string().min(1, "Status là bắt buộc"),
     code: z.string().min(1, "Code là bắt buộc"),
     id: z.string().min(1, "PayOS ID là bắt buộc"),
