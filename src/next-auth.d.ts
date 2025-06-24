@@ -1,7 +1,7 @@
-// import 'next-auth/jwt';
+import 'next-auth/jwt';
 
-// declare module 'next-auth/jwt' {
-//     interface JWT {
-//         role?: string;
-//     }
-// }
+declare module 'next-auth/jwt' {
+    interface JWT {
+        role?: string;
+    }
+}
