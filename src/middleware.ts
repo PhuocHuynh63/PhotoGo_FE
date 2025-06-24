@@ -1,26 +1,18 @@
-import { authConfig, authMatcher } from "@middlewares/auth";
-import { handleStatus, handleStatusSuccess, paymentErrorMatcher, paymentSuccessMatcher } from "@middlewares/status";
+// File: src/middleware.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
+import { authConfig } from "@middlewares/auth";
+import { ROUTES } from "./routes";
 
 function mainMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    /**
-     * Check payment status
-     * - Payment error page
-     */
-    if (paymentErrorMatcher.includes(pathname)) {
-        const response = handleStatus(request);
-        if (response) return response;
-    }
-    /**
-     * Check payment status
-     * - Payment success page
-     */
-    if (paymentSuccessMatcher.includes(pathname)) {
-        const response = handleStatusSuccess(request);
-        if (response) return response;
+    if (pathname === ROUTES.PUBLIC.PAYMENT_ERROR) {
+        const paymentId = request.nextUrl.searchParams.get('paymentId');
+        if (!paymentId) {
+            return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, request.url));
+        }
     }
 
     return NextResponse.next();
@@ -29,11 +21,8 @@ function mainMiddleware(request: NextRequest) {
 const fullMiddleware = withAuth(mainMiddleware, authConfig);
 
 export default fullMiddleware;
-
 export const config = {
     matcher: [
-        ...paymentErrorMatcher,
-        ...authMatcher,
-        ...paymentSuccessMatcher
+        '/((?!api|_next/static|_next/image|favicon.ico|auth/login/google).*)'
     ],
 };

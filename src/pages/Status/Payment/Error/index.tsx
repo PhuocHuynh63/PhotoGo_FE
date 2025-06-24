@@ -2,10 +2,9 @@
 
 import { ROUTES } from '@routes';
 import paymentService from '@services/payment';
-import { usePaymentError } from '@utils/hooks/usePayment';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { use, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 const PaymentErrorPage = () => {
     const router = useRouter();
@@ -25,27 +24,14 @@ const PaymentErrorPage = () => {
         }
 
         const data = {
-            paymentId,
             status,
             code,
             id: payosId,
-            cancel,
+            cancel: Boolean(cancel),
             orderCode
         };
 
-        const res = paymentService.paymentError(data) as any;
-        console.log('Payment Error Response:', res);
-
-
-
-        console.log(`Payment Error Page Loaded with params:
-        Payment ID: ${paymentId}
-        Status: ${status}
-        Code: ${code}
-        PayOS ID: ${payosId}
-        Cancel: ${cancel}
-        Order Code: ${orderCode}`);
-
+        paymentService.paymentError(paymentId, data);
     }, [router]);
 
 
