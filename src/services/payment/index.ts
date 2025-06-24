@@ -3,7 +3,7 @@ import { IPaymentErrorRequest } from "@models/payment/request.model";
 
 const paymentService = {
     paymentError: (data: IPaymentErrorRequest) => {
-        return http.post("/payments/error", data)
+        return http.put("/payments/error", data)
     }
 }
 
