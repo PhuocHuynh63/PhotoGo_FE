@@ -10,7 +10,7 @@ export const PaymentErrorRequest = z.object({
     status: z.string().min(1, "Status là bắt buộc"),
     code: z.string().min(1, "Code là bắt buộc"),
     id: z.string().min(1, "PayOS ID là bắt buộc"),
-    cancel: z.string().min(1, "Cancel là bắt buộc"),
+    cancel: z.boolean(),
     orderCode: z.string().min(1, "Order Code là bắt buộc"),
 })
 export type IPaymentErrorRequest = z.TypeOf<typeof PaymentErrorRequest>;

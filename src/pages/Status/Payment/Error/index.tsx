@@ -28,7 +28,7 @@ const PaymentErrorPage = () => {
             status,
             code,
             id: payosId,
-            cancel,
+            cancel: Boolean(cancel),
             orderCode
         };
 
