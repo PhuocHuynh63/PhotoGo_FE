@@ -246,7 +246,7 @@ export default function Header({ user, cart, servicePackages }: PAGES.IHeader) {
                 <DropdownMenuContent>
                     <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <Link href={ROUTES.USER.PROFILE}>
+                    <Link href={ROUTES.USER.PROFILE.INFO}>
                         <DropdownMenuItem icon="UserCircle">
                             <span>Thông tin cá nhân</span>
                         </DropdownMenuItem>
@@ -348,11 +348,11 @@ export default function Header({ user, cart, servicePackages }: PAGES.IHeader) {
                                 <div className="p-4 border-b">
                                     <div className="grid grid-cols-4 gap-4">
                                         <Link
-                                            href={ROUTES.USER.PROFILE}
+                                            href={ROUTES.USER.PROFILE.INFO}
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`flex flex-col items-center gap-1 ${pathname === ROUTES.USER.PROFILE ? "text-primary" : ""}`}
+                                            className={`flex flex-col items-center gap-1 ${pathname === ROUTES.USER.PROFILE.INFO ? "text-primary" : ""}`}
                                         >
-                                            <div className={`w-12 h-12 rounded-full ${pathname === ROUTES.USER.PROFILE ? "bg-primary/10" : "bg-gray-100"} flex items-center justify-center`}>
+                                            <div className={`w-12 h-12 rounded-full ${pathname === ROUTES.USER.PROFILE.INFO ? "bg-primary/10" : "bg-gray-100"} flex items-center justify-center`}>
                                                 <LucideIcon name="UserCircle" iconSize={24} />
                                             </div>
                                             <span className="text-xs">Tài khoản</span>

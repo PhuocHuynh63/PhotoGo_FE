@@ -64,7 +64,16 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     const pathname = usePathname();
     const currentTab = pathname?.split('/').pop() || 'profile';
     const userRank = user?.rank || ''; // Use empty string if no rank
-    const gradientClass = getRankGradient(userRank);
+    const gradientClass = getRankGradient(userRank);    const profileRoutes: { [key: string]: string } = {
+        'promotions': ROUTES.USER.PROFILE.PROMOTIONS,
+        'change-password': ROUTES.USER.PROFILE.CHANGE_PASSWORD,
+        'rewards': ROUTES.USER.PROFILE.REWARDS,
+        'favorites': ROUTES.USER.PROFILE.FAVORITES,
+        'orders': ROUTES.USER.PROFILE.ORDERS,
+        'reviews': ROUTES.USER.PROFILE.REVIEWS,
+        'points': '/profile/points', // Add missing routes
+        'attendance': '/profile/attendance', // Add missing routes
+    };
 
     return (
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
@@ -145,9 +154,13 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                             }}
                             transition={{ duration: 1 }}
                             className={["orders", "reviews", "favorites", "change-password"].includes(tab) && tab === "orders" ? "pt-3 border-t" : ""}
-                        >
-                            <Button
-                                onClick={() => router.push(`${ROUTES.USER.PROFILE}/${tab}`)}
+                        >                            <Button
+                                onClick={() => {
+                                    const route = profileRoutes[tab];
+                                    if (route) {
+                                        router.push(route);
+                                    }
+                                }}
                                 className={`bg-none shadow-none hover:bg-none ${
                                     currentTab === tab
                                         ? "text-primary font-medium"

@@ -1,5 +1,5 @@
 import { authConfig, authMatcher } from "@middlewares/auth";
-import { handleStatus, paymentErrorMatcher } from "@middlewares/status";
+import { handleStatus, handleStatusSuccess, paymentErrorMatcher, paymentSuccessMatcher } from "@middlewares/status";
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 
@@ -14,6 +14,14 @@ function mainMiddleware(request: NextRequest) {
         const response = handleStatus(request);
         if (response) return response;
     }
+    /**
+     * Check payment status
+     * - Payment success page
+     */
+    if (paymentSuccessMatcher.includes(pathname)) {
+        const response = handleStatusSuccess(request);
+        if (response) return response;
+    }
 
     return NextResponse.next();
 }
@@ -26,5 +34,6 @@ export const config = {
     matcher: [
         ...paymentErrorMatcher,
         ...authMatcher,
+        ...paymentSuccessMatcher
     ],
 };

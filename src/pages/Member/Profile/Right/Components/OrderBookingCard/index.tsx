@@ -16,12 +16,11 @@ import { Textarea } from "@components/Atoms/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/Atoms/ui/dialog";
 import { useVendor } from "@utils/hooks/useVendor/useVendor";
 
-export default function BookingCard({ booking }: { booking: IBooking & { invoice: IInvoice } }) {
+export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showReportDialog, setShowReportDialog] = useState(false)
     const { concept, loading: conceptLoading } = useConcept(booking?.serviceConceptId);
-    const { vendor, loading: vendorLoading } = useVendor(booking?.vendorId);
-
+    const { vendor, loading: vendorLoading } = useVendor(invoice?.vendorId);
     if (conceptLoading || vendorLoading) {
         return <BookingCardSkeleton />;
     }
@@ -52,7 +51,7 @@ export default function BookingCard({ booking }: { booking: IBooking & { invoice
         }
     }
     return (
-        <Card className="overflow-hidden">
+        <Card className={`overflow-hidden ${isNew ? 'ring-2 ring-orange-400 scale-[1.01] transition-all duration-300 animate-new-pulse shadow-orange border-orange-400 border-2 animate-spin' : ''}`}>
             <div className="flex flex-col md:flex-row">
                 <div className="relative md:w-1/3 h-48 md:h-auto">
                     <Image
@@ -116,8 +115,8 @@ export default function BookingCard({ booking }: { booking: IBooking & { invoice
                         <div className="mt-4 md:mt-0 text-right">
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <div className="text-lg font-bold text-orange-600">{formatPrice(booking.invoice.remainingAmount)}</div>
-                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(booking.invoice.originalPrice)}</div>
+                                    <div className="text-lg font-bold text-orange-600">{formatPrice(invoice.remainingAmount)}</div>
+                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(invoice.payablePrice)}</div>
                                 </div>
                                 {/* {booking.invoice.discountAmount > 0 && (
                                     <div>

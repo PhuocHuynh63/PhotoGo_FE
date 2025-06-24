@@ -499,6 +499,52 @@
     animation: pulse-glow 2s ease-in-out infinite alternate;
 }
 
+.box {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid transparent;
+    border-radius: 9999px;
+    background:
+        linear-gradient(orange, orange) padding-box,
+        conic-gradient(from var(--angle),
+            rgba(255, 165, 0, 0.5) 0deg 12deg,
+            orange 12deg 36deg,
+            transparent 36deg 360deg) border-box;
+    animation: rotate-snake 2s linear infinite;
+}
+
+.box::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 9999px;
+    background: conic-gradient(from var(--angle),
+            rgba(255, 165, 0, 0.5) 0deg 12deg,
+            orange 12deg 36deg,
+            transparent 36deg 360deg);
+    filter: blur(12px);
+    z-index: 0;
+    pointer-events: none;
+    animation: rotate-snake 2s linear infinite;
+    transition: filter 0.2s;
+}
+
+@keyframes rotate-snake {
+    to {
+        --angle: 360deg;
+    }
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+
 /* Speed modifier classes */
 .slow::before,
 .pulsing.slow {
@@ -583,33 +629,51 @@
 }
 
 @keyframes diamond-glow {
-    0% {
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.6),
-            inset 0 0 15px rgba(0, 255, 255, 0.6);
-        border-color: rgba(0, 255, 255, 0.8);
-    }
-
-    50% {
-        box-shadow: 0 0 25px rgba(0, 255, 255, 0.8),
-            inset 0 0 20px rgba(0, 255, 255, 0.8);
-        border-color: rgba(255, 255, 255, 0.9);
-    }
-
-    100% {
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.6),
-            inset 0 0 15px rgba(0, 255, 255, 0.6);
-        border-color: rgba(0, 255, 255, 0.8);
+    to {
+        --angle: 360deg;
     }
 }
 
 .diamond-border {
     position: relative;
-    border: 3px solid rgba(0, 255, 255, 0.8);
-    animation: diamond-glow 2s ease-in-out infinite;
-    background: linear-gradient(45deg,
-            rgba(0, 255, 255, 0.1),
-            rgba(255, 255, 255, 0.3),
-            rgba(0, 255, 255, 0.1));
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1.5px solid transparent;
+    border-radius: 9999px;
+    background:
+        linear-gradient(rgba(0, 255, 255, 0.5), rgba(0, 255, 255, 0.5)) padding-box,
+        conic-gradient(from var(--angle),
+            rgba(0, 255, 255, 0.5) 0deg 12deg,
+            rgba(0, 255, 255, 0.5) 12deg 36deg,
+            transparent 36deg 360deg) border-box;
+    animation: diamond-glow 2s linear infinite;
+}
+
+.diamond-border::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 9999px;
+    z-index: 0;
+    pointer-events: none;
+    background: conic-gradient(from 0deg,
+            rgba(0, 255, 255, 0.7) 0deg 40deg,
+            transparent 40deg 360deg);
+    filter: blur(12px);
+    animation: diamond-glow-rotate 2s linear infinite;
+    transition: filter 0.2s;
+}
+
+@keyframes diamond-glow-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes platinum-glow {
@@ -619,12 +683,14 @@
         border-color: rgba(229, 228, 226, 0.8);
         background-position: 0% 50%;
     }
+
     50% {
         box-shadow: 0 0 25px rgba(255, 255, 255, 0.9),
             inset 0 0 20px rgba(255, 255, 255, 0.9);
         border-color: rgba(255, 255, 255, 1);
         background-position: 100% 50%;
     }
+
     100% {
         box-shadow: 0 0 15px rgba(229, 228, 226, 0.6),
             inset 0 0 15px rgba(229, 228, 226, 0.6);
@@ -638,11 +704,36 @@
     border: 3px solid rgba(229, 228, 226, 0.8);
     animation: platinum-glow 3s ease-in-out infinite;
     background: linear-gradient(45deg,
-        rgba(229, 228, 226, 0.3),
-        rgba(255, 255, 255, 0.8),
-        rgba(229, 228, 226, 0.3),
-        rgba(255, 255, 255, 0.8),
-        rgba(229, 228, 226, 0.3)
-    );
+            rgba(229, 228, 226, 0.3),
+            rgba(255, 255, 255, 0.8),
+            rgba(229, 228, 226, 0.3),
+            rgba(255, 255, 255, 0.8),
+            rgba(229, 228, 226, 0.3));
     background-size: 200% 200%;
+}
+
+@keyframes new-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.5);
+    }
+
+    40% {
+        box-shadow: 0 0 0 10px rgba(251, 146, 60, 0.2);
+    }
+
+    60% {
+        box-shadow: 0 0 0 10px rgba(251, 146, 60, 0.1);
+    }
+
+    80% {
+        box-shadow: 0 0 0 6px rgba(251, 146, 60, 0.15);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(251, 146, 60, 0);
+    }
+}
+
+.animate-new-pulse {
+    animation: new-pulse 1.2s infinite;
 }
