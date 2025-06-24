@@ -23,8 +23,5 @@ const fullMiddleware = withAuth(mainMiddleware, authConfig);
 export default fullMiddleware;
 
 export const config = {
-    matcher: [
-        ...paymentErrorMatcher,
-        ...authMatcher,
-    ],
+    matcher: paymentErrorMatcher.concat(authMatcher),
 };
