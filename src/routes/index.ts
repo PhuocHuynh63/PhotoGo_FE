@@ -18,37 +18,22 @@ const PUBLIC = {
     ABOUT: '/about',
     SUPPORT: '/support',
     PAYMENT_ERROR: '/payment/error',
+    PAYMENT_SUCCESS: '/payment/successful',
 };
 
 const USER = {
     DASHBOARD: '/user',
-    PROFILE: '/profile',
+    PROFILE: {
+        INFO: '/profile',
+        PROMOTIONS: '/profile/promotions',
+        CHANGE_PASSWORD: '/profile/change-password',
+        REWARDS: '/profile/rewards',
+        FAVORITES: '/profile/favorites',
+        ORDERS: '/profile/orders',
+        REVIEWS: '/profile/reviews',
+    },
     CHECKOUT: '/checkout/:id',
     CHAT: '/chat/:id',
-    BOOKINGS: {
-
-    },
-    CART: {
-
-    },
-    WISHLIST: {
-
-    },
-    WALLET: {
-
-    },
-    LOYALTY: {
-
-    },
-    PROMOTION: {
-
-    },
-    REVIEWS: {
-
-    },
-    SUPPORT: {
-
-    },
 };
 
 const VENDOR = {

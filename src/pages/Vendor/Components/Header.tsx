@@ -50,7 +50,7 @@ export default function Header({ userData }: { userData: IUser }) {
                         <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem icon="User" onClick={() => {
-                            router.push(ROUTES.USER.PROFILE)
+                            router.push(ROUTES.USER.PROFILE.INFO)
                         }}>
                             Hồ sơ
                         </DropdownMenuItem>

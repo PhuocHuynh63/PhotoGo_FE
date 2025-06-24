@@ -17,6 +17,12 @@ const BookingService = {
         })
     },
 
+    getBookingByPaymentOSId: async (paymentOSId: string) => {
+        return await http.get(`/bookings/paymentOSId/${paymentOSId}`, {
+            next: { revalidate: 10 }
+        })
+    }
+
 }
 
 export default BookingService;

@@ -272,7 +272,7 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
                 <DropdownMenuContent>
                     <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <Link href={ROUTES.USER.PROFILE}>
+                    <Link href={ROUTES.USER.PROFILE.INFO}>
                         <DropdownMenuItem icon="UserCircle">
                             <span>Thông tin cá nhân</span>
                         </DropdownMenuItem>
@@ -370,7 +370,7 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
                             {user && (
                                 <div className="p-4 border-b">
                                     <div className="grid grid-cols-4 gap-4">
-                                        <Link href={ROUTES.USER.PROFILE} onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center gap-1">
+                                        <Link href={ROUTES.USER.PROFILE.INFO} onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center gap-1">
                                             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                                                 <LucideIcon name="UserCircle" iconSize={24} />
                                             </div>

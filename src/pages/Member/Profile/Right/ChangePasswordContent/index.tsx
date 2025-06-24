@@ -38,7 +38,7 @@ export default function ChangePasswordForm({ userId }: { userId: string }) {
 
         if (response.statusCode === 200) {
             toast.success("Cập nhật mật khẩu thành công");
-            router.push(ROUTES.USER.PROFILE);
+            router.push(ROUTES.USER.PROFILE.ORDERS);
         } else {
             toast.error(response.message || "Cập nhật mật khẩu thất bại");
         }
