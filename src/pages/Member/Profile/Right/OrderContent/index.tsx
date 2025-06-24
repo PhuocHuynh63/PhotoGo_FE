@@ -26,7 +26,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
         router.push(`?page=${page}`);
     };
     // Filter bookings based on active tab and search query
-    let filteredBookings = invoices.map((invoice) => invoice.booking).filter((booking) => {
+    let filteredBookings = invoices?.map((invoice) => invoice.booking).filter((booking) => {
         const matchesTab =
             activeTab === "all" ||
             (activeTab === "upcoming" && booking.status === "chờ xử lý") ||
@@ -36,12 +36,12 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
         return matchesTab
     })
     // Đưa booking mới lên đầu nếu có trong danh sách
-    if (newBooking && filteredBookings.some(b => b.id === newBooking.id)) {
-        const newBookingItem = filteredBookings.find(b => b.id === newBooking.id)
+    if (newBooking && filteredBookings?.some(b => b.id === newBooking.id)) {
+        const newBookingItem = filteredBookings?.find(b => b.id === newBooking.id)
         if (newBookingItem) {
             filteredBookings = [
                 newBookingItem,
-                ...filteredBookings.filter(b => b.id !== newBooking.id)
+                ...filteredBookings?.filter(b => b.id !== newBooking.id)
             ]
         }
     }
@@ -69,7 +69,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                 </TabsList>
             </Tabs>
 
-            {filteredBookings.length === 0 ? (
+            {filteredBookings?.length === 0 ? (
                 <div className="text-center py-12">
                     <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                         <Calendar className="h-8 w-8 text-muted-foreground" />
@@ -82,8 +82,8 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             ) : (
                 <>
                     <div className="grid grid-cols-1 gap-6">
-                        {filteredBookings.map((booking) => {
-                            const invoice = invoices.find((invoice) => invoice.booking.id === booking.id) as IInvoice;
+                        {filteredBookings?.map((booking) => {
+                            const invoice = invoices?.find((invoice) => invoice.booking.id === booking.id) as IInvoice;
                             const isNew = !!(newBooking && booking.id === newBooking.id);
                             if (!booking) return null;
                             return (
@@ -99,8 +99,8 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
 
                     <div className="mt-6 flex justify-center">
                         <Pagination
-                            total={pagination.totalPage}
-                            current={pagination.current}
+                            total={pagination?.totalPage}
+                            current={pagination?.current}
                             onChange={handlePageChange}
                         />
                     </div>

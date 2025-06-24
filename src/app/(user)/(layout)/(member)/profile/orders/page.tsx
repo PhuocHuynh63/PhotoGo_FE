@@ -19,7 +19,12 @@ async function getBookingByPaymentOSId(paymentOSId: string) {
     const booking = await BookingService.getBookingByPaymentOSId(paymentOSId)
     return booking
 }
-export default async function Orders({ searchParams }: { searchParams: { paymentId: string, id: string } }) {
+
+interface OrdersProps {
+    searchParams: Promise<{ id: string }>
+}
+
+export default async function Orders({ searchParams }: OrdersProps) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const invoices = await getInvoices(session.user.id) as IInvoiceListResponse
     const invoicesData = invoices.data?.data as IInvoice[]
