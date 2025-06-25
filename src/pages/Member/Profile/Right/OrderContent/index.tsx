@@ -45,7 +45,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             ]
         }
     }
-    console.log(newBooking)
+    console.log(invoices)
     return (
         <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">

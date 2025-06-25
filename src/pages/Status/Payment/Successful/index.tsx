@@ -9,7 +9,8 @@ import paymentService from "@services/payment";
 const PaymentSuccessPage = () => {
     const router = useRouter();
 
-    useEffect(() => {
+
+    const handlePaymentSuccess = async () => {
         const params = new URLSearchParams(window.location.search);
         const paymentId = params.get("paymentId");
         const status = params.get("status");
@@ -31,9 +32,21 @@ const PaymentSuccessPage = () => {
             orderCode
         };
 
-        const a = paymentService.paymentSuccess(paymentId, data);
-        console.log(a)
+        const response = await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
+        if (response.statusCode === 200) {
+            const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
+            router.push(ordersUrl);
+            return;
+        } else {
+            router.push(ROUTES.PUBLIC.HOME);
+            return;
+        }
+    }
+
+    useEffect(() => {
+        handlePaymentSuccess();
     }, [router]);
+
 
     return (
         <LoadingPage />
