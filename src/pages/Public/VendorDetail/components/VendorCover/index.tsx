@@ -69,7 +69,7 @@ const VendorCover = () => {
 
     return (
         <section className="relative">
-            <div className="h-[300px] md:h-[400px] w-full relative">
+            <div className="h-[160px] md:h-[300px] xl:h-[400px] w-full relative">
                 {vendorData?.banner ?
                     <img
                         src={vendorData?.banner}
@@ -102,20 +102,22 @@ const VendorCover = () => {
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                             <div>
                                 {vendorData?.name ?
-                                    <h1 className="text-2xl md:text-3xl font-bold">{vendorData?.name}</h1>
+                                    <h1 className="text-2xl lg:text-3xl text-center sm:text-center font-bold">{vendorData?.name}</h1>
                                     : (
                                         <Skeleton className='h-8 w-50 rounded bg-grey' />
                                     )}
-                                <div className="flex items-center gap-2 mt-1">
-                                    <div className="flex items-center">
+                                <div className="flex flex-col items-center gap-2 mt-1 lg:flex-row lg:items-center">
+                                    <div className="flex items-center justify-center">
                                         <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                                         <span className="ml-1 font-medium">{(vendorData?.averageRating)?.toFixed(1) ?? 'N/A'}</span>
                                         <span className="text-muted-foreground ml-1">({reviewCount} đánh giá)</span>
                                     </div>
-                                    <span className="text-muted-foreground">•</span>
+                                    <div className='hidden items-center lg:flex'>
+                                        <span className="text-muted-foreground">•</span>
+                                    </div>
                                     <div className="flex items-center text-muted-foreground">
-                                        <MapPin className="h-4 w-4 mr-1" />
-                                        <span className="text-sm truncate max-w-[240px]">{addressLocation?.address}</span>
+                                        <MapPin className="md:h-4 md:w-4 h-10 w-10 mr-1" />
+                                        <span className="text-sm ">{addressLocation?.address}</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-3">
