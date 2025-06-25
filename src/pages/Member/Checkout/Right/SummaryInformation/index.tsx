@@ -10,7 +10,7 @@ import { useFormBooking, useSelectedDeposit } from '@stores/checkout/selectors'
 import { useServiceConcept, useServicePackage } from '@stores/vendor/selectors'
 import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 
 const SummaryInformation = () => {
     /**
@@ -34,6 +34,9 @@ const SummaryInformation = () => {
     const depositAmount = Number(serviceConcept.price) * (selectedDeposit) / 100;
     const remainingAmount = Number(serviceConcept.price) - depositAmount;
     //----------------------End----------------------//
+
+    const [selectedVoucher, setSelectedVoucher] = useState<any>(null)
+
     return (
         <>
             {/* Right Column - Order Summary */}
