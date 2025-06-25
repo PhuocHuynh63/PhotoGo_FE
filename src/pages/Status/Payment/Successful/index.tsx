@@ -32,8 +32,15 @@ const PaymentSuccessPage = () => {
             orderCode
         };
 
-        const a = await paymentService.paymentSuccess(paymentId, data);
-        console.log(a)
+        const response = await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
+        if (response.statusCode === 200) {
+            const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
+            router.push(ordersUrl);
+            return;
+        } else {
+            router.push(ROUTES.PUBLIC.HOME);
+            return;
+        }
     }
 
     useEffect(() => {
