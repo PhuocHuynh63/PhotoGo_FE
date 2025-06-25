@@ -145,7 +145,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                     <Separator className="my-4" />
 
                     <div className="flex flex-wrap gap-2 justify-end">
-                        <Link href={`/order/${booking.id}`}>
+                        <Link href={`/profile/orders/${booking.id}`}>
                             <Button>Xem chi tiết</Button>
                         </Link>
 
