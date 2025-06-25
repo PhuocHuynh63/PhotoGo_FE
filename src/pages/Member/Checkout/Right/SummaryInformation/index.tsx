@@ -11,6 +11,7 @@ import { useServiceConcept, useServicePackage } from '@stores/vendor/selectors'
 import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
+import VoucherPopup from '../VoucherPopup'
 
 const SummaryInformation = () => {
     /**
@@ -96,19 +97,8 @@ const SummaryInformation = () => {
 
                     <Separator className="my-6" />
 
-                    <div className="mb-6">
-                        <div className="flex items-center gap-2 mb-4">
-                            <Star className="h-5 w-5 text-[#f0a06a]" />
-                            <h3 className="font-medium">Mã giảm giá</h3>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Input placeholder="Nhập mã giảm giá" className="flex-1" />
-                            <Button variant="outline" className="whitespace-nowrap">
-                                Áp dụng
-                            </Button>
-                        </div>
-                    </div>
+                    {/* Voucher */}
+                    <VoucherPopup onVoucherSelect={setSelectedVoucher} />
 
                     <Separator className="my-6" />
 

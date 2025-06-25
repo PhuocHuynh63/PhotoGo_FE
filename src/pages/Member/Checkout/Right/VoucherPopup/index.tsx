@@ -172,7 +172,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
 
     const VoucherCard = ({ voucher }: { voucher: VoucherDetail }) => (
         <div
-            className={`relative border rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg ${voucher.isUsable
+            className={`relative border rounded-xl p-5  cursor-pointer transition-all duration-200 hover:shadow-lg ${voucher.isUsable
                 ? selectedVoucher?.id === voucher.id
                     ? "border-orange-400 bg-gradient-to-br from-orange-50 to-orange-100 shadow-md"
                     : "border-gray-200 hover:border-orange-300 bg-white hover:shadow-md"
@@ -447,7 +447,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                     </div>
                 </DialogTrigger>
 
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0">
+                <DialogContent className="xl:max-w-[800px] max-h-[90vh] overflow-hidden p-0">
                     <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 border-b">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-3 text-2xl">
@@ -460,7 +460,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                         </DialogHeader>
                     </div>
 
-                    <div className="p-6 space-y-6">
+                    <div className="xl:p-6 p-4 space-y-6">
                         {/* Search */}
                         <div className="relative">
                             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -474,31 +474,31 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
 
                         {/* Voucher Tabs */}
                         <Tabs defaultValue="points" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 h-12 bg-gray-100 p-1">
+                            <TabsList className="grid w-full grid-cols-2 h-auto bg-gray-100 p-1 rounded-lg">
                                 <TabsTrigger
                                     value="points"
-                                    className="flex items-center gap-2 h-10 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                                    className="flex items-center justify-center gap-2 h-12 px-3 text-sm font-medium rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 transition-all"
                                 >
-                                    <Star className="w-4 h-4" />
-                                    Voucher theo điểm
-                                    <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
+                                    <Star className="w-4 h-4 flex-shrink-0" />
+                                    <span className="truncate">Voucher điểm</span>
+                                    <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs ml-1 px-1.5 py-0.5 rounded-md">
                                         {pointVouchers.length}
                                     </Badge>
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="campaign"
-                                    className="flex items-center gap-2 h-10 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                                    className="flex items-center justify-center gap-2 h-12 px-3 text-sm font-medium rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 transition-all"
                                 >
-                                    <Gift className="w-4 h-4" />
-                                    Voucher khuyến mãi
-                                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs">
+                                    <Gift className="w-4 h-4 flex-shrink-0" />
+                                    <span className="truncate">Khuyến mãi</span>
+                                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs ml-1 px-1.5 py-0.5 rounded-md">
                                         {campaignVouchers.length}
                                     </Badge>
                                 </TabsTrigger>
                             </TabsList>
 
                             <TabsContent value="points" className="mt-6">
-                                <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                     {filterVouchers(pointVouchers).length > 0 ? (
                                         filterVouchers(pointVouchers).map((voucher) => <VoucherCard key={voucher.id} voucher={voucher} />)
                                     ) : (
@@ -512,7 +512,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             </TabsContent>
 
                             <TabsContent value="campaign" className="mt-6">
-                                <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                                     {filterVouchers(campaignVouchers).length > 0 ? (
                                         filterVouchers(campaignVouchers).map((voucher) => (
                                             <VoucherCard key={voucher.id} voucher={voucher} />
@@ -529,14 +529,14 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                         </Tabs>
 
                         {/* Action Buttons */}
-                        <div className="flex gap-4 pt-6 border-t bg-gray-50 -mx-6 px-6 -mb-6 pb-6">
-                            <Button variant="outline" onClick={() => setIsOpen(false)} className="flex-1 h-12 text-base">
+                        <div className="flex gap-3 pt-4 border-t bg-white sticky bottom-0 -mx-4 px-4 pb-4">
+                            <Button variant="outline" onClick={() => setIsOpen(false)} className="flex-1 h-12 text-base font-medium">
                                 Hủy bỏ
                             </Button>
                             <Button
                                 onClick={handleApplyVoucher}
                                 disabled={!selectedVoucher}
-                                className="flex-1 h-12 text-base bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50"
+                                className="flex-1 h-12 text-base font-medium bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {selectedVoucher ? `Áp dụng ${selectedVoucher.code}` : "Chọn voucher"}
                             </Button>
