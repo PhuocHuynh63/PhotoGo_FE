@@ -1,31 +1,33 @@
+// src/app/pricing/components/SelectionPricing.tsx
 'use client'
-
-import { useSelectMethod, useSetSelectedMethod } from '@stores/pricing/selectors'
 import React from 'react'
 
-const SelectionPricing = () => {
-    const selected = useSelectMethod()
-    const setSelected = useSetSelectedMethod()
+// Định nghĩa kiểu cho props
+type SelectionPricingProps = {
+    selected: 'month' | 'session';
+    setSelected: (value: 'month' | 'session') => void;
+}
 
+const SelectionPricing = ({ selected, setSelected }: SelectionPricingProps) => {
     return (
-        <div className='flex justify-center items-center gap-4 mb-10'>
-            <div className='relative border border-gray-300 rounded-md flex items-center w-fit px-1 py-1'>
+        <div className='flex justify-center items-center gap-4 mb-12'>
+            <div className='relative bg-slate-200 rounded-full flex items-center w-fit p-1'>
                 <div
-                    className={`absolute top-0 bottom-0 w-1/2 rounded-md bg-primary transition-all duration-300 ease-in-out
-                        ${selected === 'month' ? 'left-0' : 'left-1/2'}
+                    className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-primary shadow-md transition-all duration-300 ease-in-out
+                        ${selected === 'month' ? 'left-1' : 'left-[calc(50%+1px)]'}
                     `}
                 />
                 <button
-                    className={`relative cursor-pointer z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
-                        ${selected === 'month' ? 'text-white' : 'text-description'}
+                    className={`relative cursor-pointer z-10 px-6 py-2.5 rounded-full transition-colors duration-300 font-semibold text-sm
+                        ${selected === 'month' ? 'text-white' : 'text-slate-700 hover:text-slate-900'}
                     `}
                     onClick={() => setSelected('month')}
                 >
                     Theo tháng
                 </button>
                 <button
-                    className={`relative cursor-pointer z-10 px-5 py-2.5 rounded-md transition-colors duration-300 font-semibold
-                        ${selected === 'session' ? 'text-white' : 'text-description'}
+                    className={`relative cursor-pointer z-10 px-6 py-2.5 rounded-full transition-colors duration-300 font-semibold text-sm
+                        ${selected === 'session' ? 'text-white' : 'text-slate-700 hover:text-slate-900'}
                     `}
                     onClick={() => setSelected('session')}
                 >
