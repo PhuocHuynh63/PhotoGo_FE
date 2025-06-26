@@ -57,7 +57,7 @@ export default function Select({
                     </RadixSelect.Icon>
                 </RadixSelect.Trigger>
 
-                <RadixSelect.Content className="z-20 mt-12 rounded-md border bg-white shadow-lg">
+                <RadixSelect.Content position="popper" sideOffset={8} align="start" className="z-[120] max-w-[95vw] sm:max-w-[400px] rounded-md border bg-white shadow-lg p-0">
                     <RadixSelect.Viewport className="p-1 z-40 ">
                         {options.map((opt, index) => (
                             <RadixSelect.Item
@@ -68,7 +68,7 @@ export default function Select({
                                 {opt.icon && (
                                     <LucideIcon name={opt.icon as keyof typeof Icons} className="w-4 h-4" />
                                 )}
-                                <RadixSelect.ItemText>{opt.value}</RadixSelect.ItemText>
+                                <RadixSelect.ItemText>{opt.label ?? opt.value}</RadixSelect.ItemText>
                                 <RadixSelect.ItemIndicator className="ml-auto">
                                     <Check className="w-4 h-4 text-blue-600" />
                                 </RadixSelect.ItemIndicator>

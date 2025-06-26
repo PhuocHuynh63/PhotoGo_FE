@@ -83,3 +83,52 @@ export const UserChangePasswordRequest = z.object({
 })
 export type IUserChangePasswordRequest = z.TypeOf<typeof UserChangePasswordRequest>;
 //----------------------End----------------------//
+
+/**
+ * AdminModel is a Model for Admin Create User request
+ * @param fullName - Full name of user
+ * @param email - Email of user
+ * @param passwordHash - Password hash of user
+ * @param phoneNumber - Phone number of user
+ * @param avatarUrl - Avatar url of user
+ * @param roleId - Role id of user
+ * @param status - Status of user
+ */
+export const AdminCreateUserRequest = z.object({
+    fullName: z.string().min(1, 'Họ tên không được để trống'),
+    email: z.string().min(1, 'Email không được để trống').email('Email không đúng định dạng'),
+    passwordHash: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    phoneNumber: z.string().min(10, 'Số điện thoại không hợp lệ').max(11, 'Số điện thoại không hợp lệ'),
+    avatarUrl: z.any().optional(), 
+    roleId: z.string().optional(),
+    status: z.string().optional(),
+});
+export type IAdminCreateUserRequest = z.TypeOf<typeof AdminCreateUserRequest>;
+//----------------------End----------------------//
+
+/**
+ * AdminModel is a Model for Admin Get Users request
+ * @param term - Search term
+ * @param status - Status of user
+ * @param rank - Rank of user
+ * @param roleId - Role id of user
+ * @param auth - Auth of user
+ * @param current - Current page
+ * @param pageSize - Page size
+ * @param sortBy - Sort by
+ * @param sortDirection - Sort direction
+ */
+export const AdminGetUsersRequest = z.object({
+    term: z.string().optional(),
+    status: z.string().optional(),
+    rank: z.string().optional(),
+    role: z.string().optional(),
+    auth: z.string().optional(),
+    current: z.number().optional(),
+    pageSize: z.number().optional(),
+    sortBy: z.string().optional(),
+    sortDirection: z.enum(['asc', 'desc']).optional(),
+});
+
+export type IAdminGetUsersRequest = z.TypeOf<typeof AdminGetUsersRequest>;
+//----------------------End----------------------//

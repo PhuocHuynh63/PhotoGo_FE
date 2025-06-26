@@ -84,85 +84,44 @@ const VENDOR = {
 
 const ADMIN = {
     DASHBOARD: '/admin/dashboard',
-    USER_MANAGEMENT: {
-        CUSTOMER_LIST: '/admin/user-management/customer-list',
-        STAFF_LIST: '/admin/user-management/staff-list'
+    USERS: {
+        LIST: '/admin/users',
+        DETAIL: '/admin/users/:slug',
     },
-    VENDOR_MANAGEMENT: {
-        LIST: '/admin/vendor-management/list',
+    VENDORS: {
+        LIST: '/admin/vendors',
+        DETAIL: '/admin/vendors/:slug',
     },
-    SERVICE_PACKAGE_MANAGEMENT: {
-        LIST: '/admin/service-package-management/list',
-        APPROVAL: '/admin/service-package-management/approval',
-        CONCEPTS: '/admin/service-package-management/concepts',
-        STYLE_TAGS: '/admin/service-package-management/style-tags',
-        VENDOR_CATEGORIES: '/admin/service-package-management/vendor-categories'
+    CAMPAIGNS: {
+        LIST: '/admin/campaigns',
+        DETAIL: '/admin/campaigns/:slug',
     },
-    BOOKING_MANAGEMENT: {
-        LIST: '/admin/booking-management/list',
-        DISPUTES: '/admin/booking-management/disputes',
+    VOUCHERS: {
+        LIST: '/admin/vouchers',
+        DETAIL: '/admin/vouchers/:slug',
     },
     FINANCE: {
-        OVERVIEW: '/admin/finance/overview',
-        TRANSACTIONS: '/admin/finance/transactions',
-        VENDOR_PAYMENTS: '/admin/finance/vendor-payments',
-        REFUNDS: '/admin/finance/refunds',
-        WALLET: '/admin/finance/wallet',
-        SETTINGS: '/admin/finance/settings'
+        ROOT: '/admin/finance',
+        PAYMENTS: {
+            LIST: '/admin/finance/payments',
+            DETAIL: '/admin/finance/payments/:slug',
+        },
+        TRANSACTIONS: {
+            LIST: '/admin/finance/transactions',
+            DETAIL: '/admin/finance/transactions/:slug',
+        },
     },
-    MARKETING: {
-        CAMPAIGNS: '/admin/marketing/campaigns',
-        VOUCHERS: '/admin/marketing/vouchers',
-        SEASONAL_PROMOS: '/admin/marketing/seasonal-promos',
-        FEATURED_VENDORS: '/admin/marketing/featured-vendors',
-        LOYALTY: '/admin/marketing/loyalty'
+    SETTINGS: {
+        ROOT: '/admin/settings',
+        POLICIES: '/admin/settings/policies',
+        LOYALTY: '/admin/settings/loyalty',
+        SUBSCRIPTIONS: '/admin/settings/subscriptions',
+        COMMISSION: '/admin/settings/commission',
     },
-    SUBSCRIPTIONS: {
-        CUSTOMER_PLANS: '/admin/subscriptions/customer-plans',
-        VENDOR_PLANS: '/admin/subscriptions/vendor-plans',
-        PAYMENT_HISTORY: '/admin/subscriptions/payment-history'
-    },
-    REPORTS: {
-        PERFORMANCE: '/admin/reports/performance',
-    },
-    CUSTOMER_SUPPORT: {
-        REQUESTS: '/admin/customer-support/requests',
-        HISTORY: '/admin/customer-support/history'
-    },
-    CONTENT_MANAGEMENT: {
-        BLOG: '/admin/content-management/blog',
-        BANNERS: '/admin/content-management/banners'
-    }
 };
 
 const STAFF = {
     DASHBOARD: '/staff/dashboard',
-    SUPPORT: {
-        TICKETS: '/staff/support/tickets',
-        CHATS: '/staff/support/chats',
-    },
-    BOOKINGS: {
-        LIST: '/staff/bookings/list',
-    },
-    DISPUTES: {
-        LIST: '/staff/disputes/list',
-    },
-    VENDORS: {
-        SERVICE_ASSIST: '/staff/vendors/service-assist',
-    },
-    FINANCE: {
-        PAYMENT_ISSUES: '/staff/finance/payment-issues',
-        DEPOSIT_CONFIRM: '/staff/finance/deposit-confirmation',
-        REFUND_PROCESS: '/staff/finance/refund-process',
-    },
-    PROMOTION: {
-        VOUCHER_ASSIGN: '/staff/promotion/voucher-assign',
-        CAMPAIGN_TRACKING: '/staff/promotion/campaign-tracking',
-    },
-    CONTENT: {
-        BLOG: '/staff/content/blog',
-    }
-
 };
 
 export const ROUTES = {

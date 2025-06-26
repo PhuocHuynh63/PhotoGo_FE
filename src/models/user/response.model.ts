@@ -41,3 +41,27 @@ export const UserUpdateModelResponse = z.object({
 export const UserUpdate = BackendResponseModel(UserUpdateModelResponse);
 export type IUserUpdateResponse = z.TypeOf<typeof UserUpdate>
 //----------------------End----------------------//
+
+
+/**
+ * AdminModel is a Model for Admin Create User response
+ */
+export const AdminCreateUser = BackendResponseModel(UserModel);
+export type IAdminCreateUserResponse = z.TypeOf<typeof AdminCreateUser>;
+//----------------------End----------------------//
+
+
+/**
+ * AdminGetUsersResponseModel is a Model for Admin Get Users response
+ */
+export const AdminGetUsersResponse = z.object({
+    statusCode: z.number(),
+    message: z.string(),
+    data: z.object({
+      data: z.array(UserModel),
+      pagination: PaginationModel,
+    }),
+  });
+  
+  export type IAdminGetUsersResponse = z.TypeOf<typeof AdminGetUsersResponse>;
+//----------------------End----------------------//
