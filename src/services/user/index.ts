@@ -1,12 +1,9 @@
 import http from "@configs/fetch"
-import { IUserChangePasswordRequest, IUserUpdateProfileRequest } from "@models/user/request.model"
+import { IAdminGetUsersRequest, IUserChangePasswordRequest, IUserUpdateProfileRequest, IAdminCreateUserRequest } from "@models/user/request.model"
+import { IAdminGetUsersResponse } from "@models/user/response.model"
+
 
 const userService = {
-    getUser: async () => {
-        return await http.get("/users", {
-            next: { revalidate: 10 }
-        })
-    },
     getAUser: async (id: string) => {
         return await http.get(`/users/${id}`, {
             next: { tags: [`user${id}`] }
@@ -23,6 +20,15 @@ const userService = {
     },
     changePassword: async (userId: string, data: IUserChangePasswordRequest) => {
         return await http.put(`/users/${userId}`, data)
+    },
+
+    adminCreateUser: async (data: IAdminCreateUserRequest) => {
+        return await http.post("/users/create/user", data)
+    },
+
+    getUsers: async (params: IAdminGetUsersRequest) => {
+        const query = params ? `?${new URLSearchParams(params as any).toString()}` : '';
+        return await http.get<IAdminGetUsersResponse>(`/users${query}`);
     }
 }
 
