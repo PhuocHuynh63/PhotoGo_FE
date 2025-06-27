@@ -4,7 +4,7 @@ import Button from '@components/Atoms/Button'
 import { Heart, MapPin, Star, MessageCircle } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ROUTES } from '@routes'
 import { useAddressLocation, useReviews, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
@@ -24,6 +24,9 @@ const VendorCover = () => {
     const slug = params?.slug as string;
     const session = useSession();
     const token = session?.accessToken || '';
+
+    const searchParams = useSearchParams();
+    const location = searchParams?.get('location') as string;
     //-----------------------------End---------------------------------//
 
     /**
