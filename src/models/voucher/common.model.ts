@@ -1,3 +1,4 @@
+import { UserModel } from "@models/user/common.model";
 import { z } from "zod";
 
 export const VoucherModel = z.object({
@@ -21,3 +22,37 @@ export const VoucherModel = z.object({
 
 
 export type IVoucher = z.TypeOf<typeof VoucherModel>;
+
+
+export const VoucherFromPointModel = z.object({
+
+    assigned_at: z.string(),
+    is_valid: z.boolean(),
+    status: z.string(),
+    used_at: z.string(),
+    user: UserModel,
+    user_id: z.string(),
+    voucher: VoucherModel,
+    voucher_id: z.string(),
+});
+
+export type IVoucherFromPoint = z.TypeOf<typeof VoucherFromPointModel>;
+
+export const VoucherFromCampaignModel = z.object({
+
+    assigned_at: z.string(),
+    is_valid: z.boolean(),
+    status: z.string(),
+    used_at: z.string(),
+    user: UserModel,
+    user_id: z.string(),
+    voucher: VoucherModel,
+    voucher_id: z.string(),
+});
+
+export type IVoucherFromCampaign = z.TypeOf<typeof VoucherFromCampaignModel>;
+
+
+
+
+

@@ -10,10 +10,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { ICategoriesData } from "@models/category/response.model"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Atoms/ui/accordion"
 import toast from "react-hot-toast"
+import { IAllLocation } from "@models/location/common.model"
 
-export default function Left({ onReset, categories, onApply }: {
+export default function Left({ onReset, categories, locations, onApply }: {
     onReset: () => void,
     categories: ICategoriesData,
+    locations: IAllLocation,
     onApply: () => void
 }) {
     const router = useRouter();
@@ -24,12 +26,7 @@ export default function Left({ onReset, categories, onApply }: {
     const [rating, setRating] = useState(0);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
 
-    const address = [
-        { key: "HCM" },
-        { key: "Hà Nội" },
-        { key: "Đà Nẵng" },
-        { key: "Tỉnh thành khác" },
-    ];
+
 
     // function updateQueryParam(key: string, value: string | number | string[] | number[]) {
     //     if (!searchParams) return;
@@ -94,11 +91,11 @@ export default function Left({ onReset, categories, onApply }: {
             params.set('current', "1");
         }
 
-        if (selectedCategories.length > 0) params.set("category", selectedCategories.map(s => s.key).join(","));
+        if (selectedCategories?.length > 0) params.set("category", selectedCategories?.map(s => s.key).join(","));
         if (rating > 0) params.set("minRating", rating.toString());
         params.set("minPrice", selectPriceRange[0].toString());
         params.set("maxPrice", selectPriceRange[1].toString());
-        if (addresses.length > 0) params.set("address", addresses.map(a => a.key).join(","));
+        if (addresses?.length > 0) params.set("address", addresses?.map(a => a.key).join(","));
 
         router.push(`?${params.toString()}`);
         toast.success('Áp dụng bộ lọc thành công!');
@@ -117,10 +114,10 @@ export default function Left({ onReset, categories, onApply }: {
         const servicesFromUrl = params.get("category");
         setSelectedCategories(categories?.data
             ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
-            .map(category => ({ key: category.name })));
+            ?.map(category => ({ key: category.name })));
 
         const addressesFromUrl = params.get("address");
-        setAddresses(address.filter(a => addressesFromUrl?.includes(a.key) ?? false));
+        setAddresses(locations?.filter(a => addressesFromUrl?.includes(a) ?? false)?.map(a => ({ key: a })) ?? []);
 
         const ratingFromUrl = params.get("rating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
@@ -146,8 +143,8 @@ export default function Left({ onReset, categories, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={categories?.data.map(category => ({ key: category.name }))}
-                                value={selectedCategories.map(category => category.key) as string[]}
+                                options={categories?.data?.map(category => ({ key: category.name })) ?? []}
+                                value={selectedCategories?.map(category => category.key) as string[]}
                                 onChange={(e, key) => handleCategoryChange(key)}
                             />
                         </AccordionContent>
@@ -158,8 +155,8 @@ export default function Left({ onReset, categories, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Địa điểm</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={address}
-                                value={addresses.map(service => service.key)}
+                                options={locations?.map(location => ({ key: location }))}
+                                value={addresses?.map(service => service.key)}
                                 onChange={(e, key) => handleAddressChange(key)}
                             />
                         </AccordionContent>
@@ -215,8 +212,8 @@ export default function Left({ onReset, categories, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={categories?.data.map(category => ({ key: category.name }))}
-                                value={selectedCategories.map(category => category.key) as string[]}
+                                options={categories?.data?.map(category => ({ key: category.name })) ?? []}
+                                value={selectedCategories?.map(category => category.key) as string[]}
                                 onChange={(e, key) => handleCategoryChange(key)}
                             />
                         </AccordionContent>
@@ -227,8 +224,8 @@ export default function Left({ onReset, categories, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Địa điểm</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={address}
-                                value={addresses.map(service => service.key)}
+                                options={locations?.map(location => ({ key: location }))}
+                                value={addresses?.map(address => address.key)}
                                 onChange={(e, key) => handleAddressChange(key)}
                             />
                         </AccordionContent>
