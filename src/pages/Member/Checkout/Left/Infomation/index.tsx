@@ -40,6 +40,23 @@ const Infomation = () => {
      * Zustand store for booking form
      */
     const setIsValidStep = useSetIsValidStep();
+
+    //Form validation to check if all fields are filled
+    useEffect(() => {
+        const currentValues = {
+            fullName: formBooking.fullName || userStore?.fullName || '',
+            email: formBooking.email || userStore?.email || '',
+            phone: formBooking.phone || userStore?.phoneNumber?.toString() || '',
+        };
+
+        const isValid = currentValues.fullName.trim() !== '' &&
+            currentValues.email.trim() !== '' &&
+            currentValues.phone.trim() !== '';
+
+        setIsValidStep(2, isValid);
+    }, [formBooking, userStore, setIsValidStep]);
+
+    //Form watch to update booking form and validation state
     useEffect(() => {
         const subscription = watch((values: Partial<FormValues>) => {
             const isValid = (values.fullName?.trim() ?? '') !== '' &&
