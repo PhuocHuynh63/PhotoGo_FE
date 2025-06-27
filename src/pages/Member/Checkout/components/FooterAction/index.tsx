@@ -63,40 +63,38 @@ const FooterAction = () => {
         } finally {
             setLoading(false)
         }
-        //------------------------------End-----------------------------//
-
-        const handleBack = () => {
-            if (currentStep === 1) router.back()
-            else setCurrentStep(currentStep - 1)
-        }
-
-
-        return (
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex justify-between items-center mt-8">
-                    <button type="button" onClick={handleBack} className='cursor-pointer ml-2'>Quay lại</button>
-                    <Button
-                        className="bg-primary hover:bg-[#e8935d]"
-                        disabled={!isDisabled}
-                        type={currentStep === 3 ? 'submit' : 'button'}
-                        isLoading={currentStep === 3 && loading}
-                        loadingText="Đang xử lý thanh toán..."
-                        onClick={
-                            currentStep < 3
-                                ? (e) => {
-                                    e.preventDefault();
-                                    setCurrentStep(currentStep + 1);
-                                }
-                                : undefined
-                        }
-                    >
-                        {currentStep < 3 ? 'Tiếp tục' : 'Thanh toán'}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-            </form>
-        )
     }
+    //------------------------------End-----------------------------//
+
+    const handleBack = () => {
+        if (currentStep === 1) router.back()
+        else setCurrentStep(currentStep - 1)
+    }
+    return (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex justify-between items-center mt-8">
+                <button type="button" onClick={handleBack} className='cursor-pointer ml-2'>Quay lại</button>
+                <Button
+                    className="bg-primary hover:bg-[#e8935d]"
+                    disabled={!isDisabled}
+                    type={currentStep === 3 ? 'submit' : 'button'}
+                    isLoading={currentStep === 3 && loading}
+                    loadingText="Đang xử lý thanh toán..."
+                    onClick={
+                        currentStep < 3
+                            ? (e) => {
+                                e.preventDefault();
+                                setCurrentStep(currentStep + 1);
+                            }
+                            : undefined
+                    }
+                >
+                    {currentStep < 3 ? 'Tiếp tục' : 'Thanh toán'}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+            </div>
+        </form>
+    )
 }
 
 export default FooterAction
