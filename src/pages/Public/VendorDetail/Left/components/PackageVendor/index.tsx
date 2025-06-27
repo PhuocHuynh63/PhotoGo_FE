@@ -47,18 +47,18 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
     useEffect(() => {
         if (vendorData?.servicePackages && !isOverview) {
             const conceptId = searchParams?.get('conceptId')
-            
+
             if (conceptId) {
                 // Tìm package chứa concept với ID tương ứng
-                const targetPackage = vendorData.servicePackages.find(pkg => 
+                const targetPackage = vendorData.servicePackages.find(pkg =>
                     pkg.serviceConcepts?.some(concept => concept.id === conceptId)
                 )
-                
+
                 if (targetPackage) {
                     setSelectedPackage(targetPackage.id)
                     setInitialConceptId(conceptId)
                     setIsOpen(true)
-                    
+
                     // Optional: scroll to the package
                     setTimeout(() => {
                         const packageElement = document.getElementById(`package-${targetPackage.id}`)
@@ -145,13 +145,17 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
 
     return isOverview ? (
         <>
-            <div className="space-y-6">
-                {firstPackage && (
+            {firstPackage ? (
+                <div className="space-y-6">
                     <Card key={firstPackage.id} className="overflow-hidden border-grey">
                         {renderPackageContent(firstPackage)}
                     </Card>
-                )}
-            </div>
+                </div>
+            ) : (
+                <div className="text-center text-gray-500 py-8">
+                    Đối tác này hiện chưa cập nhật gói dịch vụ
+                </div>
+            )}
             <ViewConcept
                 isOpen={isOpen}
                 onOpenChange={() => selectedPackage && handleViewConcept(selectedPackage)}
@@ -161,18 +165,23 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
         </>
     ) : (
         <>
-            <div className="space-y-4">
-                {vendorData?.servicePackages?.map((pkg: IServicePackage) => (
-                    <Card 
-                        key={pkg.id} 
-                        id={`package-${pkg.id}`}
-                        className="overflow-hidden border-grey"
-                    >
-                        {renderPackageContent(pkg)}
-                    </Card>
-                ))}
-            </div>
-
+            {vendorData?.servicePackages?.length ? (
+                <div className="space-y-4">
+                    {vendorData.servicePackages.map((pkg: IServicePackage) => (
+                        <Card
+                            key={pkg.id}
+                            id={`package-${pkg.id}`}
+                            className="overflow-hidden border-grey"
+                        >
+                            {renderPackageContent(pkg)}
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center text-gray-500 py-8">
+                    Đối tác này hiện chưa cập nhật gói dịch vụ
+                </div>
+            )}
             <ViewConcept
                 isOpen={isOpen}
                 onOpenChange={() => selectedPackage && handleViewConcept(selectedPackage)}

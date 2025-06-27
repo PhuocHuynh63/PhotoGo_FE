@@ -294,11 +294,11 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                                     Đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp tại cùng một nơi.
                                 </p>
                                 <div className="flex gap-4">
-                                    <Link href="/booking" passHref>
+                                    {/* <Link href="/booking" passHref>
                                         <Button width={160} height={50} className="text-lg text-white w-full">Đặt lịch ngay</Button>
-                                    </Link>
+                                    </Link> */}
                                     <Link href="/search/vendors" passHref>
-                                        <ClearButton width={180} height={50} className="text-lg text-primary break-words whitespace-pre w-full">Khám phá dịch vụ</ClearButton>
+                                        <Button width={180} height={50} className="text-lg text-white break-words whitespace-pre w-full">Khám phá dịch vụ</Button>
                                     </Link>
                                 </div>
                             </div>
