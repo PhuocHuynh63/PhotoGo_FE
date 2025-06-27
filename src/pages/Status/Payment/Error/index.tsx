@@ -74,7 +74,7 @@ const PaymentErrorPage = () => {
 
                     {/* Failure Message */}
                     <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                        Đặt Lịch Không Thành Công
+                        Huỷ Lịch Thành Công
                     </h1>
 
                     <p className="text-gray-600 text-lg mb-6">
@@ -83,7 +83,7 @@ const PaymentErrorPage = () => {
 
                     {/* Error Details */}
                     <div className="space-y-3 mb-8">
-                        <div className="bg-red-50 rounded-xl p-4 flex items-center">
+                        {/* <div className="bg-red-50 rounded-xl p-4 flex items-center">
                             <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
                                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
@@ -95,7 +95,7 @@ const PaymentErrorPage = () => {
                                 </svg>
                             </div>
                             <span className="text-gray-700 font-medium">Lỗi kết nối mạng</span>
-                        </div>
+                        </div> */}
 
                         <div className="bg-orange-50 rounded-xl p-4 flex items-center">
                             <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mr-3">
