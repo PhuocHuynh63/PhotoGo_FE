@@ -10,6 +10,8 @@ import PaymentCard from "@/pages/Member/Profile/Right/OrderDetails/components/Pa
 import CustomerCard from "@/pages/Member/Profile/Right/OrderDetails/components/CustomerCard"
 import ServiceCard from "./components/ServiceCard"
 import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 
 const mockOrderData: IBookingDetail = {
@@ -121,9 +123,14 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
 
     const [isVisible, setIsVisible] = useState<Record<string, boolean>>({})
     const [showFullDescription, setShowFullDescription] = useState(false)
+    const router = useRouter()
 
     const invoice = data.invoices[0]
     const firstName = data.fullName.split(" ").pop() || data.fullName
+
+    const handleBack = () => {
+        router.back()
+    }
 
     useEffect(() => {
         // Convert DD/MM/YYYY to YYYY-MM-DD format for Date constructor
@@ -167,7 +174,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const completedStatuses = data.histories.map((h) => h.status.toLowerCase())
     const currentStatusIndex = completedStatuses.length - 1
 
-    const qrURL = 'photogo.id.vn/booking/' + data.code
+    const qrURL = 'https://photogo.id.vn/booking/' + data.code
 
     return (
         <motion.div
@@ -176,6 +183,18 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="max-w-5xl mx-auto p-4 md:p-8 bg-[#fdfdfd] text-[#1a202c]"
         >
+            {/* Back Button */}
+            <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+                onClick={handleBack}
+                className="cursor-pointer flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-6 group"
+            >
+                <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform duration-200" />
+                <span className="font-medium">Quay lại</span>
+            </motion.button>
+
             <HeroSection
                 isVisible={isVisible["hero-section"]}
                 image={data.serviceConcept.servicePackage.image}

@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-
+import { motion } from "framer-motion";
 const ICONS = {
     "chờ xử lý": (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,19 +65,32 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ isVisible, allPossibleStatu
                 return (
                     <div key={status} className="relative flex-1">
                         {index > 0 && (
-                            <div
-                                className={`absolute top-[22px] right-1/2 h-1 w-full bg-gray-200 -z-10 transition-all duration-800 ease-out ${isCompleted ? "bg-gradient-to-r from-yellow-400 to-amber-500" : ""}`}
-                                style={{
+                            <motion.div
+                                initial={{
+                                    transform: "scaleX(0)",
+                                    transformOrigin: "left",
+                                }}
+                                animate={{
                                     transform: isCompleted ? "scaleX(1)" : "scaleX(0)",
                                     transformOrigin: "left",
                                 }}
+                                transition={{
+                                    duration: 0.8,
+                                    ease: "easeInOut",
+                                }}
+                                className={`absolute top-[22px] right-1/2 h-1 w-full bg-gray-200 -z-10 transition-all duration-800 ease-out ${isCompleted ? "bg-gradient-to-r from-yellow-400 to-amber-500" : ""}`}
                             />
                         )}
                         <div className="flex flex-col items-center">
-                            <div
-                                className={`w-11 h-11 rounded-full flex items-center justify-center relative z-10 border-4 border-[#fdfdfd] transition-all duration-500 ${iconBg} ${isActive ? "ring-4 ring-yellow-200" : ""}`}
-                            >
-                                {ICONS[status as keyof typeof ICONS]}
+                            <div className="relative">
+                                {isActive && (
+                                    <div className="absolute inset-0 w-11 h-11 rounded-full ring-4 ring-yellow-200 animate-pulse transition-all duration-300 ease-out scale-110" />
+                                )}
+                                <div
+                                    className={`w-11 h-11 rounded-full flex items-center justify-center relative z-10 border-4 border-[#fdfdfd] transition-all duration-500 ${iconBg} ${isActive ? "ring-4 ring-yellow-200" : ""}`}
+                                >
+                                    {ICONS[status as keyof typeof ICONS]}
+                                </div>
                             </div>
                             <div className="mt-3 text-center">
                                 <p

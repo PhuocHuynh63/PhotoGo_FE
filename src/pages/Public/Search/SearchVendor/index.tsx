@@ -10,9 +10,10 @@ import { ICategoriesData } from "@models/category/response.model";
 import { useRouter, useSearchParams } from "next/navigation";
 import LucideIcon from "@components/Atoms/LucideIcon";
 import Button from "@components/Atoms/Button";
+import { IAllLocation } from "@models/location/common.model";
 
 
-export default function SearchVendor({ vendors, categories }: { vendors: IVendorsData, categories: ICategoriesData }) {
+export default function SearchVendor({ vendors, categories, locations }: { vendors: IVendorsData, categories: ICategoriesData, locations: IAllLocation }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('name') || "");
@@ -157,6 +158,7 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
                       <Left
                         onReset={handleResetAll}
                         categories={categories}
+                        locations={locations}
                         onApply={() => setIsFilterOpen(false)}
                       />
                     </div>
@@ -173,7 +175,7 @@ export default function SearchVendor({ vendors, categories }: { vendors: IVendor
             transition={{ duration: 0.5 }}
           >
             <div className="hidden md:block">
-              <Left onReset={handleResetAll} categories={categories} onApply={() => { }} />
+              <Left onReset={handleResetAll} categories={categories} locations={locations} onApply={() => { }} />
             </div>
             <Right vendors={vendors} />
           </motion.div>

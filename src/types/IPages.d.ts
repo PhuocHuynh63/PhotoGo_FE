@@ -139,7 +139,6 @@ declare namespace PAGES {
     }
 
     interface IPromotionPageProps {
-        promotionFromPoint: IVoucher[];
-        promotionFromCampaign: IVoucher[];
+        session: METADATA.ISession;
     }
 }

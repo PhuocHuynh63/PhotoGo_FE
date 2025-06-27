@@ -5,6 +5,8 @@ import categoryService from "@services/categories";
 import { ICategoriesResponse } from "@models/category/response.model";
 import { IVendorsData } from "@models/vendor/response.model";
 import { cookies } from "next/headers";
+import locationService from "@services/locations";
+import { IAllLocationResponse } from "@models/location/response.model";
 
 
 async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
@@ -45,13 +47,20 @@ async function getCategories() {
     const response = await categoryService.getCategories() as ICategoriesResponse;
     return response;
 }
+
+async function getLocations() {
+    const response = await locationService.getAllLocations() as IAllLocationResponse;
+    return response.data.data;
+}
+
 export default async function SearchVendorsPage({ searchParams }: SERVERS.SearchVendorPageProps) {
     const response = await getVendors({ searchParams })
     const vendorsData = response.data as IVendorsData;
     const categories = await getCategories();
+    const locations = await getLocations();
     return (
         <>
-            <SearchVendorPage vendors={vendorsData} categories={categories.data} />
+            <SearchVendorPage vendors={vendorsData} categories={categories.data} locations={locations} />
         </>
     );
 }
