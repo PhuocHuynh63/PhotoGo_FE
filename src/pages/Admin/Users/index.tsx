@@ -308,7 +308,7 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
   return (
     <div className="p-6 space-y-6">
       {/* Tiêu đề và nút thao tác */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h1>
           <p className="text-gray-600 mt-1">Quản lý danh sách người dùng trong hệ thống</p>
@@ -321,10 +321,10 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             <LucideIcon name="Download" className="mr-1" /> Download Excel
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Search và nút Filter */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <Search
           placeholder="Tìm kiếm người dùng..."
           value={searchValue}
@@ -341,10 +341,10 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
           Bộ lọc
           {showFilters ? <LucideIcon name="ChevronUp" iconSize={16} /> : <LucideIcon name="ChevronDown" iconSize={16} />}
         </Button>
-      </div>
+      </div> */}
 
       {/* Filter và Sort (ẩn/hiện) */}
-      {showFilters && (
+      {/* {showFilters && (
         <div className="bg-white p-4 rounded-xl border border-blue-100 shadow flex flex-wrap gap-4 justify-center items-center overflow-x-auto">
           <Select
             placeHolder="Trạng thái"
@@ -409,9 +409,9 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             </Button>
           </div>
         </div>
-      )}
+      )} */}
 
-      <Dialog open={openCreate} onOpenChange={handleCloseDialog}>
+      {/* <Dialog open={openCreate} onOpenChange={handleCloseDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tạo người dùng mới</DialogTitle>
@@ -468,22 +468,22 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {/* DataTable */}
-      <DataTable<IUser>
+      {/* <DataTable<IUser>
         columns={columns}
         data={users}
-        keyExtractor={(user) => user.id}
+        keyExtractor={(user) => user?.id}
         pagination={{
-          currentPage: pagination.current,
-          totalPages: pagination.totalPage,
-          totalItems: pagination.totalItem,
+          currentPage: pagination?.current,
+          totalPages: pagination?.totalPage,
+          totalItems: pagination?.totalItem,
           onPageChange: handlePageChange,
-          itemsPerPage: pagination.pageSize,
+          itemsPerPage: pagination?.pageSize,
         }}
         emptyState={<div>Không có người dùng nào</div>}
-      />
+      /> */}
     </div>
   );
 } 
