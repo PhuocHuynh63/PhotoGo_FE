@@ -14,7 +14,6 @@ interface OrdersProps {
 
 export default async function Orders({ params }: OrdersProps) {
     const { orderId } = await params || {};
-    console.log(orderId)
     let booking = null;
     if (orderId) {
         booking = await getBookingById(orderId) as IBookingResponseModel

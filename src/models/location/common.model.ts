@@ -17,3 +17,7 @@ export const LocationModel = z.object({
 });
 export type ILocation = z.TypeOf<typeof LocationModel>
 //----------------------End----------------------//
+
+
+export const AllLocationModel = z.array(z.string())
+export type IAllLocation = z.TypeOf<typeof AllLocationModel>
