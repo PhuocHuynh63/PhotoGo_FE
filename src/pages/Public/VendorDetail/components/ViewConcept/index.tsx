@@ -286,7 +286,11 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                 {/* Thông tin concept */}
                                 <div className="mt-6">
                                     <h3 className="text-xl font-bold uppercase">{servicePackage?.serviceConcepts[selectedConcept]?.name}</h3>
-                                    <p>{servicePackage?.serviceConcepts[selectedConcept]?.description}</p>
+                                    <div 
+                                        className="prose prose-sm max-w-none text-gray-700" 
+                                        dangerouslySetInnerHTML={{ __html: servicePackage?.serviceConcepts[selectedConcept]?.description || '' }}
+                                    />
+                                    
                                     <div className="flex items-center space-x-4 mt-2">
                                         <div className="flex items-center">
                                             <svg className="w-5 h-5 text-primary mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
