@@ -57,7 +57,7 @@ export default function Select({
                     </RadixSelect.Icon>
                 </RadixSelect.Trigger>
 
-                <RadixSelect.Content className="z-20 mt-12 rounded-md border bg-white shadow-lg">
+                <RadixSelect.Content position="popper" sideOffset={8} align="start" className="z-[120] max-w-[95vw] sm:max-w-[400px] rounded-md border bg-white shadow-lg p-0">
                     <RadixSelect.Viewport className="p-1 z-40 ">
                         {options.map((opt, index) => (
                             <RadixSelect.Item

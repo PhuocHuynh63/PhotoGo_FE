@@ -1,10 +1,5 @@
-'use client'
-import FinanceTransactionsPage from "@pages/Admin/Finance/Transactions"
+import AdminFinanceTransactionsPage from "@pages/Admin/Finance/Transactions";
 
-export default function FinanceTransactions() {
-  return (
-    <>
-      <FinanceTransactionsPage />
-    </>
-  )
+export default function Page() {
+    return <AdminFinanceTransactionsPage />;
 }

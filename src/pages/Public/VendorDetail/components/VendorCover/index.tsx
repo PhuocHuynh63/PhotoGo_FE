@@ -4,7 +4,7 @@ import Button from '@components/Atoms/Button'
 import { Heart, MapPin, Star, MessageCircle } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ButtonVendorDetail from '../ButtonVendorDetail'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ROUTES } from '@routes'
 import { useAddressLocation, useReviews, useVendor } from '@stores/vendor/selectors'
 import { IVendor } from '@models/vendor/common.model'
@@ -24,6 +24,9 @@ const VendorCover = () => {
     const slug = params?.slug as string;
     const session = useSession();
     const token = session?.accessToken || '';
+
+    const searchParams = useSearchParams();
+    const location = searchParams?.get('location') as string;
     //-----------------------------End---------------------------------//
 
     /**
@@ -65,7 +68,15 @@ const VendorCover = () => {
     };
     //-----------------------------End---------------------------------//
 
-
+    /**
+     * Handle booking action
+     * Redirects to the vendor's packages page with the selected location
+     */
+    const handleBookNow = () => {
+        const url = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}?location=${location}`;
+        router.push(url);
+    };
+    //-----------------------------End---------------------------------//
 
     return (
         <section className="relative">
@@ -142,7 +153,7 @@ const VendorCover = () => {
                                     <MessageCircle className="h-4 w-4" />
                                     <span className="hidden sm:inline">Liên hệ</span>
                                 </ButtonVendorDetail>
-                                <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)}>Đặt lịch ngay</Button>
+                                <Button onClick={handleBookNow}>Đặt lịch ngay</Button>
                             </div>
                         </div>
                     </div>

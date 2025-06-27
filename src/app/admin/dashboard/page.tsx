@@ -1,11 +1,9 @@
-'use client'
-import AdminDashboardPage from "@pages/Admin/Dashboard"
+import AdminDashboardPage from "@pages/Admin/Dashboard";
 
-
-export default function AdminDashboard() {
-  return (
-      <>
-        <AdminDashboardPage />
-      </>
-  )
+export default async function AdminDashboard() {
+    return (
+        <>
+            <AdminDashboardPage />
+        </>
+    );
 }
