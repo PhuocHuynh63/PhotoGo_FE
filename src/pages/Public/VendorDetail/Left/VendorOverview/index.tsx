@@ -54,7 +54,10 @@ const VendorOverviewPage = () => {
       <div>
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Giới thiệu</h2>
-          <p className="text-muted-foreground whitespace-pre-line">{vendorData?.description}</p>
+          <div 
+            className="text-muted-foreground prose prose-sm max-w-none" 
+            dangerouslySetInnerHTML={{ __html: vendorData?.description || '' }}
+          />
         </section>
 
 
