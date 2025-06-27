@@ -68,7 +68,7 @@ export default function Select({
                                 {opt.icon && (
                                     <LucideIcon name={opt.icon as keyof typeof Icons} className="w-4 h-4" />
                                 )}
-                                <RadixSelect.ItemText>{opt.label ?? opt.value}</RadixSelect.ItemText>
+                                <RadixSelect.ItemText>{opt.value}</RadixSelect.ItemText>
                                 <RadixSelect.ItemIndicator className="ml-auto">
                                     <Check className="w-4 h-4 text-blue-600" />
                                 </RadixSelect.ItemIndicator>
