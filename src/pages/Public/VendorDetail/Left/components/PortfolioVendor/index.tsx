@@ -81,40 +81,47 @@ const PortfolioVendor = (
 
     return (
         <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {displayedImages?.map((item: IServiceConceptImageModel, index: number) => (
-                    <div key={item.id} className="relative group overflow-hidden rounded-lg">
-                        {item.image_url ? (
-                            <img
-                                key={item.id}
-                                src={item.image_url}
-                                alt="Portfolio"
-                                className="w-full h-64 object-contain transition-transform group-hover:scale-105"
-                            />
-                        ) : (
-                            <Skeleton className="h-64 w-full" />
-                        )}
-                        <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleImageClick(index)}
-                        >
-                            {/* <h3 className="text-white font-semibold">{item?.title}</h3>
-                            <p className="text-white/80 text-sm">{item?.category}</p> */}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Only show "Xem thêm" button if not in overview mode */}
-            {!isOverview && hasMore && (
-                <div className="text-center mt-6">
-                    <ClearButton
-                        onClick={loadMore}
-                        disabled={isLoading}
-                        className='w-3xs border-primary border-1 hover:bg-orange-100 hover:text-white text-primary font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-                    >
-                        {isLoading ? 'Đang tải...' : 'Xem thêm'}
-                    </ClearButton>
+            {displayedImages.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                    Đối tác này hiện chưa có hình ảnh nào trong danh mục của họ.
                 </div>
+            ) : (
+                <>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {displayedImages?.map((item: IServiceConceptImageModel, index: number) => (
+                            <div key={item.id} className="relative group overflow-hidden rounded-lg">
+                                {item.image_url ? (
+                                    <img
+                                        key={item.id}
+                                        src={item.image_url}
+                                        alt="Portfolio"
+                                        className="w-full h-64 object-contain transition-transform group-hover:scale-105"
+                                    />
+                                ) : (
+                                    <Skeleton className="h-64 w-full" />
+                                )}
+                                <div className="cursor-pointer absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => handleImageClick(index)}
+                                >
+                                    {/* <h3 className="text-white font-semibold">{item?.title}</h3>
+                            <p className="text-white/80 text-sm">{item?.category}</p> */}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Only show "Xem thêm" button if not in overview mode */}
+                    {!isOverview && hasMore && (
+                        <div className="text-center mt-6">
+                            <ClearButton
+                                onClick={loadMore}
+                                disabled={isLoading}
+                                className='w-3xs border-primary border-1 hover:bg-orange-100 hover:text-white text-primary font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            >
+                                {isLoading ? 'Đang tải...' : 'Xem thêm'}
+                            </ClearButton>
+                        </div>
+                    )}
+                </>
             )}
 
             {
