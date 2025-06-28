@@ -2,11 +2,9 @@
 import { IVendorListItem } from "@models/vendor/common.model";
 import { IPagination } from "@models/metadata";
 import { DataTable, Column } from "@components/Organisms/Table/data-table";
-import Avatar from "@components/Atoms/AvatarImage";
 import { Badge } from "@components/Atoms/Badge";
 import Button from "@components/Atoms/Button";
 import LucideIcon from "@components/Atoms/LucideIcon";
-import Search from "@components/Molecules/Search/Search";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
@@ -124,7 +122,7 @@ export default function AdminVendorsPage({ vendors, pagination }: AdminVendorsPa
   // Date filter state
   const [joinDateFrom, setJoinDateFrom] = useState(searchParams.get('joinDateFrom') || '');
   const [joinDateTo, setJoinDateTo] = useState(searchParams.get('joinDateTo') || '');
-    const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleSuccess = () => {
     setOpenDialog(false);
@@ -374,11 +372,11 @@ export default function AdminVendorsPage({ vendors, pagination }: AdminVendorsPa
         data={vendors}
         keyExtractor={(vendor) => vendor.id}
         pagination={{
-          currentPage: pagination.current,
-          totalPages: pagination.totalPage,
-          totalItems: pagination.totalItem,
+          currentPage: pagination?.current,
+          totalPages: pagination?.totalPage,
+          totalItems: pagination?.totalItem,
           onPageChange: handlePageChange,
-          itemsPerPage: pagination.pageSize,
+          itemsPerPage: pagination?.pageSize,
         }}
         emptyState={<div>Không có nhà cung cấp nào</div>}
       />

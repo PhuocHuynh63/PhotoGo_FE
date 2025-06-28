@@ -102,10 +102,10 @@ export default function SearchPackage({ packages, pagination, serviceTypes }: { 
                 handleSort(value);
               }}
               options={[
-                { value: "Tất cả", icon: "ListFilter" },
-                { value: "Giá thấp đến cao", icon: "ArrowUpNarrowWide" },
-                { value: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
-                { value: "Đánh giá cao nhất", icon: "Stars" }
+                { value: "Tất cả", name: "Tất cả", icon: "ListFilter" },
+                { value: "Giá thấp đến cao", name: "Giá thấp đến cao", icon: "ArrowUpNarrowWide" },
+                { value: "Giá cao đến thấp", name: "Giá cao đến thấp", icon: "ArrowDownWideNarrow" },
+                { value: "Đánh giá cao nhất", name: "Đánh giá cao nhất", icon: "Stars" }
               ]}
               className="flex items-center gap-1 px-3 py-2 border rounded-md bg-white text-dark shadow-lg"
             />

@@ -90,22 +90,22 @@ export default function AdminCategoriesPage({ categories, pagination }: AdminCat
             id: 'id',
             header: 'ID',
             cell: (category) => (
-                <span className="font-mono text-sm text-gray-500">{category.id}</span>
+                <span className="font-mono text-sm text-gray-500">{category?.id}</span>
             )
         },
         {
             id: 'name',
             header: 'Tên danh mục',
             cell: (category) => (
-                <span className="font-medium">{category.name}</span>
+                <span className="font-medium">{category?.name}</span>
             )
         },
         {
             id: 'description',
             header: 'Mô tả',
             cell: (category) => (
-                <span className="text-gray-600 max-w-xs truncate" title={category.description}>
-                    {category.description}
+                <span className="text-gray-600 max-w-xs truncate" title={category?.description}>
+                    {category?.description}
                 </span>
             )
         },
@@ -114,8 +114,8 @@ export default function AdminCategoriesPage({ categories, pagination }: AdminCat
             header: 'Trạng thái',
             cell: (category) => (
                 <Switch
-                    checked={category.isPublic}
-                    onCheckedChange={() => handleToggleStatus(category.id)}
+                    checked={category?.isPublic}
+                    onCheckedChange={() => handleToggleStatus(category?.id)}
                 />
             )
         },
@@ -212,13 +212,13 @@ export default function AdminCategoriesPage({ categories, pagination }: AdminCat
             <DataTable<ICategory>
                 columns={columns}
                 data={localCategories}
-                keyExtractor={(category) => category.id}
+                keyExtractor={(category) => category?.id}
                 pagination={{
-                    currentPage: pagination.current,
-                    totalPages: pagination.totalPage,
-                    totalItems: pagination.totalItem,
+                    currentPage: pagination?.current,
+                    totalPages: pagination?.totalPage,
+                    totalItems: pagination?.totalItem,
                     onPageChange: () => { }, // Không cần xử lý pagination
-                    itemsPerPage: pagination.pageSize,
+                    itemsPerPage: pagination?.pageSize,
                 }}
                 emptyState={
                     <div className="text-center py-8">

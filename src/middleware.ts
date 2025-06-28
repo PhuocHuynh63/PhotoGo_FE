@@ -1,12 +1,13 @@
 // File: src/middleware.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { authConfig } from "@middlewares/auth";
 import { ROUTES } from "./routes";
 
-function mainMiddleware(request: NextRequest) {
+function mainMiddleware(request: NextRequestWithAuth) {
     const { pathname } = request.nextUrl;
+    console.log('Middleware running for:', pathname);
 
     if (pathname === ROUTES.PUBLIC.PAYMENT_ERROR) {
         const paymentId = request.nextUrl.searchParams.get('paymentId');
