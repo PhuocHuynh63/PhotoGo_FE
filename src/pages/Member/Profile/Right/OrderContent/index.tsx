@@ -9,7 +9,7 @@ import Pagination from "@components/Organisms/Pagination/Pagination";
 import { useRouter } from "next/navigation";
 import { IInvoice } from "@models/invoice/common.model";
 import { IBooking } from "@models/booking/common.model";
-import BookingCard from "../Components/OrderBookingCard";
+import BookingCard from "./Components/OrderBookingCard";
 
 
 interface OrdersContentProps {

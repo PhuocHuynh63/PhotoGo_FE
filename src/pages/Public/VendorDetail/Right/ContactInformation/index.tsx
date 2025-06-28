@@ -48,6 +48,15 @@ const VendorContactInformation = () => {
     }
     //---------------------------End---------------------------//
 
+    /**
+     * Handle booking action
+     * Redirects to the vendor's packages page with the selected location
+     */
+    const handleBookNow = () => {
+        const url = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}?location=${location}`;
+        router.push(url);
+    };
+    //---------------------------End---------------------------//
 
     return (
         <>
@@ -122,7 +131,7 @@ const VendorContactInformation = () => {
                 </div>
 
                 <div className="mt-6">
-                    <Button onClick={() => router.push(`${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', slug).replace(':page', 'packages')}`)} className="w-full flex justify-center items-center gap-2
+                    <Button onClick={handleBookNow} className="w-full flex justify-center items-center gap-2
                      rounded-md py-2 transition-all duration-200 ease-in-out">
                         <CalendarIcon className="h-4 w-4" />
                         Đặt lịch ngay

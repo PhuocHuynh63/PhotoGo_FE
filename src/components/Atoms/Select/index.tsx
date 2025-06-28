@@ -75,6 +75,7 @@ export default function Select({
                     </RadixSelect.Icon>
                 </RadixSelect.Trigger>
 
+
                 <RadixSelect.Content
                     position="popper"
                     sideOffset={8}
@@ -115,6 +116,7 @@ export default function Select({
                                 {searchTerm ? 'Không tìm thấy kết quả' : 'Không có dữ liệu'}
                             </div>
                         )}
+
                     </RadixSelect.Viewport>
                 </RadixSelect.Content>
             </RadixSelect.Root>

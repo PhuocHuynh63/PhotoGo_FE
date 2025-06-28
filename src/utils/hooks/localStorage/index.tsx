@@ -20,6 +20,16 @@ export const useGetLocalStorage = (key: string) => {
     return { value, isReady }
 }
 
+/**
+ * Custom hook to set a value in local storage.
+ * @param key - The key of the local storage item to set
+ * @param value - The value to store
+ */
+export const useSetLocalStorage = (key: string, value: string) => {
+    useEffect(() => {
+        localStorage.setItem(key, value)
+    }, [key, value])
+}
 
 /**
  *  Custom hook to remove a value in local storage.

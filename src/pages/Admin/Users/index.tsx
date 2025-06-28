@@ -213,7 +213,7 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
   return (
     <div className="p-6 space-y-6">
       {/* Tiêu đề và nút thao tác */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h1>
           <p className="text-gray-600 mt-1">Quản lý danh sách người dùng trong hệ thống</p>
@@ -226,10 +226,10 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             <LucideIcon name="Download" className="mr-1" /> Download Excel
           </Button>
         </div>
-      </div>
+      </div> */}
 
       {/* Search và nút Filter */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <Search
           placeholder="Tìm kiếm người dùng..."
           value={searchValue}
@@ -246,7 +246,7 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
           Bộ lọc
           {showFilters ? <LucideIcon name="ChevronUp" iconSize={16} /> : <LucideIcon name="ChevronDown" iconSize={16} />}
         </Button>
-      </div>
+      </div> */}
 
       {/* Filter và Sort (ẩn/hiện) */}
       {showFilters && (
@@ -318,6 +318,7 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
 
           {/* Action Buttons */}
           <div className="flex gap-2 items-center justify-end pt-4 border-t border-gray-200">
+     
             <Button
               variant="outline"
               className="bg-gray-100 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-200 border border-gray-300"
@@ -343,21 +344,20 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
           router.refresh();
         }}
       />
-
       {/* DataTable */}
-      <DataTable<IUser>
+      {/* <DataTable<IUser>
         columns={columns}
         data={users}
-        keyExtractor={(user) => user.id}
+        keyExtractor={(user) => user?.id}
         pagination={{
-          currentPage: pagination.current,
-          totalPages: pagination.totalPage,
-          totalItems: pagination.totalItem,
+          currentPage: pagination?.current,
+          totalPages: pagination?.totalPage,
+          totalItems: pagination?.totalItem,
           onPageChange: handlePageChange,
-          itemsPerPage: pagination.pageSize,
+          itemsPerPage: pagination?.pageSize,
         }}
         emptyState={<div>Không có người dùng nào</div>}
-      />
+      /> */}
     </div>
   );
 } 

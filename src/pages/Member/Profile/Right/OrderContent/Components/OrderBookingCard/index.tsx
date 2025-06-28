@@ -33,19 +33,19 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "chờ xử lý":
-                return <Badge className="text-blue-500 border-blue-200">Chờ xử lý</Badge>
+                return <Badge variant="outline" className="text-blue-500 border-blue-200">Chờ xử lý</Badge>
             case "đã hoàn thành":
-                return <Badge className="text-green-500 border-green-200">Hoàn thành</Badge>
+                return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
             case "đã hủy":
                 return (
-                    <Badge className="text-red-500 border-red-200">
+                    <Badge variant="outline" className="text-red-500 border-red-200">
                         Đã hủy
                     </Badge>
                 )
             case "đã xác nhận":
-                return <Badge className="text-yellow-500 border-yellow-200">Đã xác nhận</Badge>
+                return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Đã xác nhận</Badge>
             case "chờ thanh toán":
-                return <Badge className="text-orange-500 border-orange-200">Chờ thanh toán</Badge>
+                return <Badge variant="outline" className="text-orange-500 border-orange-200">Chờ thanh toán</Badge>
             default:
                 return <Badge>{status}</Badge>
         }

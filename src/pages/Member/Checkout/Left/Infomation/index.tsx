@@ -26,7 +26,7 @@ const Infomation = () => {
     /**
      * React Hook Form setup
      */
-    const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
+    const { control, handleSubmit, watch, reset } = useForm<FormValues>({
         defaultValues: {
             fullName: formBooking.fullName || userStore?.fullName || '',
             email: formBooking.email || userStore?.email || '',
@@ -34,27 +34,48 @@ const Infomation = () => {
             userNote: formBooking.userNote || '',
         },
     });
-    //-----------------------------End-----------------------------//
 
     /**
      * Zustand store for booking form
      */
     const setIsValidStep = useSetIsValidStep();
+
     useEffect(() => {
+        const newValues = {
+            fullName: formBooking.fullName || userStore?.fullName || '',
+            email: formBooking.email || userStore?.email || '',
+            phone: formBooking.phone || userStore?.phoneNumber?.toString() || '',
+            userNote: formBooking.userNote || '',
+        };
+        
+        reset(newValues);
+
+        const isValid = newValues.fullName.trim() !== '' &&
+            newValues.email.trim() !== '' &&
+            newValues.phone.trim() !== '';
+        
+        setIsValidStep(2, isValid);
+
+        setBookingForm({
+            ...formBooking,
+            ...newValues,
+        });
+
         const subscription = watch((values: Partial<FormValues>) => {
-            const isValid = (values.fullName?.trim() ?? '') !== '' &&
+            const watchIsValid = (values.fullName?.trim() ?? '') !== '' &&
                 (values.email?.trim() ?? '') !== '' &&
                 (values.phone?.trim() ?? '') !== '';
 
-            setIsValidStep(2, isValid);
+            setIsValidStep(2, watchIsValid);
 
             setBookingForm({
                 ...formBooking,
                 ...values,
             });
         });
+
         return () => subscription.unsubscribe();
-    }, [watch, setIsValidStep]);
+    }, [userStore?.id, formBooking.serviceConceptId, reset, watch, setIsValidStep, setBookingForm]); // Only re-run when essential data changes
     //-----------------------------End-----------------------------//
 
     return (
