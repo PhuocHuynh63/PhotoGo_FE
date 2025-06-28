@@ -8,43 +8,52 @@ import { format } from "date-fns";
 import { cn } from "@helpers/CN";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { motion, AnimatePresence } from "framer-motion";
-import { useVoucher } from "@utils/hooks/useVoucher";
 import { useSetLocalStorage } from "@utils/hooks/localStorage";
 import Link from "next/link";
 import { ROUTES } from "@routes";
 import { PAGES } from "../../../../../types/IPages";
 import { Skeleton } from "@components/Atoms/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@components/Atoms/ui/radio-group";
+import { useVoucherFromPoint } from "@utils/hooks/useVoucherFromPoint";
+import { useVoucherFromCampaign } from "@utils/hooks/useVoucherFromCampaign";
+import { IVoucherFromCampaign, IVoucherFromPoint } from "@models/voucher/common.model";
 
 export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     const [tab, setTab] = useState("all");
     const [statusTab, setStatusTab] = useState("hoạt động");
     const [selectedVoucherId, setSelectedVoucherId] = useState<string>("");
 
-    const {
-        loading,
-        vouchersFromPoint,
-        vouchersFromCampaign,
-        pointPagination,
-        campaignPagination,
-        fetchVouchersFromPoint,
-        fetchVouchersFromCampaign
-    } = useVoucher(session?.user?.id);
+    const { vouchers: vouchersFromPoint, loading: loadingPoint, fetchVouchers: fetchVouchersPoint, pagination: paginationPoint } = useVoucherFromPoint(session?.user?.id);
+    const { vouchers: vouchersFromCampaign, loading: loadingCampaign, fetchVouchers: fetchVouchersCampaign, pagination: paginationCampaign } = useVoucherFromCampaign(session?.user?.id);
 
     // Lưu voucher ID vào localStorage khi có thay đổi
     useSetLocalStorage("selectedVoucherId", selectedVoucherId);
 
     useEffect(() => {
-        fetchVouchersFromPoint(1, 6, statusTab === "hoạt động" ? "hoạt động" : "used");
-        fetchVouchersFromCampaign(1, 6, statusTab === "hoạt động" ? "hoạt động" : "used");
-    }, [fetchVouchersFromPoint, fetchVouchersFromCampaign, statusTab]);
+        const status = statusTab === "hoạt động" ? "hoạt động" : "used";
+
+        // Only fetch vouchers for the currently active tab
+        switch (tab) {
+            case 'point':
+                fetchVouchersPoint(1, 6, status);
+                break;
+            case 'campaign':
+                fetchVouchersCampaign(1, 6, status);
+                break;
+            case 'all':
+                // For "all" tab, fetch both types
+                fetchVouchersPoint(1, 6, status);
+                fetchVouchersCampaign(1, 6, status);
+                break;
+        }
+    }, [fetchVouchersPoint, fetchVouchersCampaign, statusTab, tab]);
 
     const handleUseVoucher = (voucherId: string) => {
         setSelectedVoucherId(voucherId);
     };
 
     // Transform vouchersFromPoint to match the expected structure
-    const transformedVouchersFromPoint = vouchersFromPoint?.map(item => ({
+    const transformedVouchersFromPoint = vouchersFromPoint?.map((item: IVoucherFromPoint) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
@@ -53,7 +62,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
         is_valid: item.is_valid
     })) || [];
 
-    const transformedVouchersFromCampaign = vouchersFromCampaign?.map(item => ({
+    const transformedVouchersFromCampaign = vouchersFromCampaign?.map((item: IVoucherFromCampaign) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
@@ -87,15 +96,15 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     // Get current pagination info
     const getCurrentPagination = () => {
         switch (tab) {
-            case 'point': return pointPagination;
-            case 'campaign': return campaignPagination;
+            case 'point': return paginationPoint;
+            case 'campaign': return paginationCampaign;
             case 'all': return {
                 currentPage: 1,
-                totalPages: Math.ceil((pointPagination.totalItems + campaignPagination.totalItems) / 6),
-                totalItems: pointPagination.totalItems + campaignPagination.totalItems,
+                totalPages: Math.ceil((paginationPoint.totalItems + paginationCampaign.totalItems) / 6),
+                totalItems: paginationPoint.totalItems + paginationCampaign.totalItems,
                 pageSize: 6
             };
-            default: return pointPagination;
+            default: return paginationPoint;
         }
     };
 
@@ -104,15 +113,15 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
 
         switch (tab) {
             case 'point':
-                fetchVouchersFromPoint(newPage, 6, status);
+                fetchVouchersPoint(newPage, 6, status);
                 break;
             case 'campaign':
-                fetchVouchersFromCampaign(newPage, 6, status);
+                fetchVouchersCampaign(newPage, 6, status);
                 break;
             case 'all':
                 // For "all" tab, we need to fetch both types
-                fetchVouchersFromPoint(newPage, 6, status);
-                fetchVouchersFromCampaign(newPage, 6, status);
+                fetchVouchersPoint(newPage, 6, status);
+                fetchVouchersCampaign(newPage, 6, status);
                 break;
         }
     };
@@ -124,14 +133,11 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
 
         switch (tab) {
             case 'point':
-                fetchVouchersFromPoint(1, 6, status);
-                break;
-            case 'campaign':
-                fetchVouchersFromCampaign(1, 6, status);
+                fetchVouchersPoint(1, 6, status);
                 break;
             case 'all':
-                fetchVouchersFromPoint(1, 6, status);
-                fetchVouchersFromCampaign(1, 6, status);
+                fetchVouchersPoint(1, 6, status);
+                fetchVouchersCampaign(1, 6, status);
                 break;
         }
     };
@@ -272,23 +278,23 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
                 <div className="text-center mb-4 text-sm text-gray-600">
                     {tab === "all" && (
                         <span>
-                            Tổng cộng: {pointPagination.totalItems + campaignPagination.totalItems} voucher
-                            {pointPagination.totalItems > 0 && ` (${pointPagination.totalItems} từ điểm, ${campaignPagination.totalItems} từ chiến dịch)`}
+                            Tổng cộng: {paginationPoint.totalItems + paginationCampaign.totalItems} voucher
+                            {paginationPoint.totalItems > 0 && ` (${paginationPoint.totalItems} từ điểm, ${paginationCampaign.totalItems} từ chiến dịch)`}
                         </span>
                     )}
                     {tab === "point" && (
-                        <span>Voucher từ điểm: {pointPagination.totalItems} voucher</span>
+                        <span>Voucher từ điểm: {paginationPoint.totalItems} voucher</span>
                     )}
                     {tab === "campaign" && (
-                        <span>Voucher từ chiến dịch: {campaignPagination.totalItems} voucher</span>
+                        <span>Voucher từ chiến dịch: {paginationCampaign.totalItems} voucher</span>
                     )}
                 </div>
 
                 {["all", "point", "campaign"].map((voucherType) => (
                     <TabsContent value={voucherType} key={voucherType}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">
-                            <AnimatePresence mode="wait">
-                                {loading ? (
+                            <AnimatePresence>
+                                {loadingPoint || loadingCampaign ? (
                                     // Hiển thị skeleton khi loading
                                     [...Array(4)].map((_, index) => (
                                         <motion.div
@@ -388,7 +394,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
                                 )}
                             </AnimatePresence>
 
-                            {!loading && getFilteredVouchers(voucherType as 'point' | 'campaign' | 'all').length === 0 && (
+                            {!loadingPoint && !loadingCampaign && getFilteredVouchers(voucherType as 'point' | 'campaign' | 'all').length === 0 && (
                                 <div className="text-center py-12 col-span-full">
                                     <Gift className="mx-auto h-12 w-12 text-gray-300" />
                                     <p className="mt-4 text-gray-500">Không có ưu đãi nào trong mục này</p>
