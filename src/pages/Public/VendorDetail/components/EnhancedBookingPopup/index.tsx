@@ -21,6 +21,7 @@ import { Button } from "@components/Atoms/ui/button";
 import { Badge } from "@components/Atoms/ui/badge";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
 import { ICheckoutSessionRequest } from "@models/booking/request.model";
+import { METADATA } from "../../../../../types/IMetadata";
 
 interface EnhancedBookingPopupProps {
     isOpen: boolean;

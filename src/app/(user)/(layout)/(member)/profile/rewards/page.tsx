@@ -3,6 +3,7 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import RewardsPage from "@pages/Member/Profile/Right/RewardsContent"
 import userService from "@services/user";
+import { METADATA } from "../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 async function getAUser(id: string) {

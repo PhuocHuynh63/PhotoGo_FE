@@ -1,5 +1,6 @@
 import { ZUSTAND } from "../../../types/IZustand"
 import { IUser } from "@models/user/common.model"
+import { METADATA } from "../../../types/IMetadata";
 
 export const createUserSlice = (
     set: any

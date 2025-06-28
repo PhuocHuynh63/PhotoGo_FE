@@ -3,6 +3,7 @@ import { authOptions } from "@lib/authOptions";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import userService from "@services/user";
+import { METADATA } from "../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 async function getAUser(id: string) {
@@ -27,7 +28,7 @@ export default async function VendorProfileLayout({
     }
 
     return (
-        <VendorProfileLayoutClient session={session} userData={userData }>
+        <VendorProfileLayoutClient session={session} userData={userData}>
             {children}
         </VendorProfileLayoutClient>
     )

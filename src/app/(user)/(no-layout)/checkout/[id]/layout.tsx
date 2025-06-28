@@ -8,6 +8,7 @@ import checkoutSessionService from "@services/checkoutSession";
 import conceptService from "@services/concept";
 import packageService from "@services/packageServices";
 import userService from "@services/user";
+import { METADATA } from "../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
