@@ -99,6 +99,11 @@ const adminNavItems: SidebarItem[] = [
         icon: "Settings2",
         children: [
             {
+                title: "Danh mục",
+                path: ROUTES.ADMIN.SETTINGS.CATEGORIES,
+                icon: "FolderOpen",
+            },
+            {
                 title: "Chính sách",
                 path: ROUTES.ADMIN.SETTINGS.POLICIES,
                 icon: "FileText",

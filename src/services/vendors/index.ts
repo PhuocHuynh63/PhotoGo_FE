@@ -1,4 +1,5 @@
 import http from "@configs/fetch"
+import { IVendorCreateRequest } from "@models/vendor/request.model"
 
 const vendorService = {
     getVendorsWithFilter: async (searchParams: URLSearchParams) => {
@@ -33,7 +34,18 @@ const vendorService = {
         return await http.get(`/vendors/concept_image?vendor_id=${vendorId}&current=${current}&pageSize=${pageSize}`, {
             next: { tags: [`vendor-concept-images-${vendorId}`] }
         })
-    }
+    },
+
+    createVendor: async (data: FormData) => {
+        return await http.post("/vendors", data)
+    },
+
+    getAdminVendors: async (searchParams: URLSearchParams) => {
+        return await http.get(`/vendors/admin/filter?${searchParams.toString()}`, {
+            next: { revalidate: 10 }
+        });
+    },
+
 }
 
 export default vendorService
