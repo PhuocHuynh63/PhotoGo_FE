@@ -2,6 +2,7 @@ import { z } from "zod";
 import { CategoryModel } from "./common.model";
 import { PaginationModel } from "@models/metadata";
 
+
 export const CategoriesDataModel = z.object({
     data: z.array(CategoryModel),
     message: z.string(),
@@ -16,3 +17,4 @@ export const CategoriesResponseModel = z.object({
 
 export type ICategoriesData = z.infer<typeof CategoriesDataModel>;
 export type ICategoriesResponse = z.infer<typeof CategoriesResponseModel>;
+

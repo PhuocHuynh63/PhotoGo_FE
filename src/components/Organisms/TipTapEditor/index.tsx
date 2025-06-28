@@ -49,6 +49,7 @@ export default function TipTapEditor({
     ],
     content: content,
     editable: !disabled,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
       setContent(html)
