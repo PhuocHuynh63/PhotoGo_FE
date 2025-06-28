@@ -10,8 +10,6 @@ export const authConfig = {
 
     callbacks: {
         authorized: ({ req, token }: { req: NextRequest; token: any | null }) => {
-            console.log("Auth Middleware - authorized callback", token?.role?.name);
-
             const { pathname } = req.nextUrl;
 
             const publicPaths = [
