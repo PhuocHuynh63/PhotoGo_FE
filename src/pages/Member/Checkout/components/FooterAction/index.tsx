@@ -5,7 +5,7 @@ import BookingService from '@services/booking'
 import { useCheckoutStep, useFormBooking, useIsValidStep, useSetCheckoutStep } from '@stores/checkout/selectors'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
@@ -35,6 +35,7 @@ const FooterAction = () => {
     /**
      * Handle form booking data
      */
+    const [loading, setLoading] = useState<boolean>(false)
     const formBooking = useFormBooking()
     const { handleSubmit } = useForm({
         defaultValues: formBooking,
@@ -44,6 +45,7 @@ const FooterAction = () => {
     const onSubmit = async () => {
         const { userId, serviceConceptId, ...spread } = formBooking
         try {
+            setLoading(true)
             const res = await BookingService.createBooking(
                 userId,
                 serviceConceptId,
@@ -58,6 +60,8 @@ const FooterAction = () => {
         } catch (error) {
             console.error('Error creating booking:', error)
             return
+        } finally {
+            setLoading(false)
         }
     }
     //------------------------------End-----------------------------//
@@ -66,8 +70,6 @@ const FooterAction = () => {
         if (currentStep === 1) router.back()
         else setCurrentStep(currentStep - 1)
     }
-
-
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex justify-between items-center mt-8">
@@ -76,6 +78,8 @@ const FooterAction = () => {
                     className="bg-primary hover:bg-[#e8935d]"
                     disabled={!isDisabled}
                     type={currentStep === 3 ? 'submit' : 'button'}
+                    isLoading={currentStep === 3 && loading}
+                    loadingText="Đang xử lý thanh toán..."
                     onClick={
                         currentStep < 3
                             ? (e) => {

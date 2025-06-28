@@ -1,6 +1,5 @@
 'use client'
 
-import FooterAction from "@pages/Member/Checkout/components/FooterAction";
 import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
@@ -10,6 +9,7 @@ import { useSetUser } from "@stores/user/selectors";
 import { PAGES } from "../../../types/IPages";
 import { useEffect } from "react";
 import { useSetServiceConcept, useSetServicePackage } from "@stores/vendor/selectors";
+import FooterAction from "@pages/Member/Checkout/components/FooterAction";
 
 export default function CheckoutLayoutClient({
     children,
