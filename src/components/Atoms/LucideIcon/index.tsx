@@ -10,6 +10,10 @@ export default function LucideIcon({
     spin = false,
     fill = 'none',
 }: ICOMPONENTS.LucideIconProps) {
+    if (!name || typeof name !== 'string') {
+        // Không render gì nếu không có tên icon hợp lệ
+        return null;
+    }
     const IconComponent = Icons[name as keyof typeof Icons] as React.FC<LucideProps>;
 
     if (!IconComponent) {

@@ -6,6 +6,14 @@ import { UserModel } from "@models/user/common.model";
 import { z } from "zod";
 
 /**
+ * Model của Contact
+ */
+export const ContactModel = z.object({
+    phone: z.string(),
+    email: z.string(),
+});
+
+/**
  * Model of Vendor
  */
 export const VendorModel = z.object({
@@ -31,6 +39,30 @@ export const VendorModel = z.object({
 });
 export type IVendor = z.TypeOf<typeof VendorModel>;
 
+/**
+ * Model of Vendor List Item 
+ */
+export const VendorListItemModel = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    logo: z.string().nullable(),
+    banner: z.string().nullable(),
+    status: z.string(),
+    slug: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    priority: z.number(),
+    averageRating: z.number(),
+    reviewCount: z.number(),
+    packageCount: z.number(),
+    branchCount: z.number(),
+    orderCount: z.number(),
+    category: CategoryModel.optional(),
+    contact: ContactModel,
+});
+export type IVendorListItem = z.TypeOf<typeof VendorListItemModel>;
+
 //----------------------End----------------------//
 
 /**
@@ -54,3 +86,4 @@ export const VendorByIdModel = z.object({
 
 export type IVendorById = z.TypeOf<typeof VendorByIdModel>;
 //----------------------End----------------------//
+

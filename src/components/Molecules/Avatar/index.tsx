@@ -50,13 +50,11 @@ const Avatar = forwardRef<
             style={{ width: size, height: size}}
             {...props}
         >
-            {src && (
-                <AvatarImage
-                    className={avatarStyles.avatar_image}
-                    src={src}
-                    alt={alt}
-                />
-            )}
+            <AvatarImage
+                className={avatarStyles.avatar_image}
+                src={src || ''}
+                alt={alt}
+            />
             <AvatarFallback className={fallbackStyles.avatar_fallback}>
                 {fallback || getInitials(alt)}
             </AvatarFallback>

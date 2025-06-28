@@ -1,5 +1,5 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
-import { VendorModel } from "./common.model";
+import { VendorModel, VendorListItemModel } from "./common.model";
 import { z } from "zod";
 import { PaginationModel } from "@models/metadata";
 
@@ -30,4 +30,26 @@ export const VendorByIdModel = VendorModel
 
 export const VendorByIdResponseModel = BackendResponseModel(VendorByIdModel);
 export type IVendorByIdResponse = z.infer<typeof VendorByIdResponseModel>;
+//----------------------End----------------------//
+
+/**
+ * Model cho data bên trong "data" của API filter admin
+ */
+export const AdminFilterVendorsDataModel = z.object({
+    message: z.string(),
+    data: z.array(VendorListItemModel),
+    pagination: PaginationModel
+});
+
+/**
+ * Model response tổng thể cho API filter admin
+ */
+export const AdminFilterVendorsResponseModel = z.object({
+    statusCode: z.number(),
+    message: z.string(),
+    data: AdminFilterVendorsDataModel
+});
+
+export type IAdminFilterVendorsData = z.infer<typeof AdminFilterVendorsDataModel>;
+export type IAdminFilterVendorsResponse = z.infer<typeof AdminFilterVendorsResponseModel>;
 //----------------------End----------------------//

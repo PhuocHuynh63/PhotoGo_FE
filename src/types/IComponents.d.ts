@@ -460,6 +460,7 @@ declare namespace ICOMPONENTS {
 
     interface SelectOption {
         value: string | number
+        name: string
         icon?: string
     }
 

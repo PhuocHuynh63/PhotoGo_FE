@@ -44,7 +44,25 @@ const request = async <Response>(
   });
 
 
-  return await res.json() as Response;
+  if (!res.ok) {
+    console.error(`HTTP error! status: ${res.status}, url: ${fullUrl}`);
+    // Throw an error or return a specific error object could be a better approach
+    // For now, returning null to align with previous behavior on failure.
+    return null as unknown as Response;
+  }
+
+  // Handle 204 No Content response
+  if (res.status === 204) {
+    return null as unknown as Response;
+  }
+
+  try {
+    const data = await res.json();
+    return data as Response;
+  } catch (error) {
+    console.error(`Failed to parse JSON response for url: ${fullUrl}`, error);
+    return null as unknown as Response;
+  }
 };
 
 const http = {
