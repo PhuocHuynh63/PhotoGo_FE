@@ -4,6 +4,7 @@ import Sidebar from "@pages/Vendor/Components/Sidebar";
 import Header from "@pages/Vendor/Components/Header";
 import { createContext, useContext } from "react";
 import { IUser } from "@models/user/common.model";
+import { METADATA } from "../../../types/IMetadata";
 
 // Create Session Context
 export const SessionContext = createContext<METADATA.ISession | null>(null);

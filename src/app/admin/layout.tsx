@@ -4,6 +4,7 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import userService from "@services/user";
 import { getServerSession } from "next-auth";
+import { METADATA } from "../../types/IMetadata";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);

@@ -45,6 +45,11 @@ const VENDOR = {
     SERVICES: '/vendor/services',
     BRANCHES: '/vendor/branches',
     SERVICE_STATISTICS: '/vendor/service-statistics',
+    SERVICE_PACKAGES: {
+        LIST: '/vendor/services/',
+        VIEW: '/vendor/services/:id',
+        EDIT: '/vendor/services/:id/edit',
+    },
     REVIEWS: {
         LIST: '/vendor/reviews',
     },

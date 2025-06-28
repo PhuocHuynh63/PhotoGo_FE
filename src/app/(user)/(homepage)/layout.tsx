@@ -11,6 +11,7 @@ import { ICartResponse } from "@models/cart/response.model";
 import cartService from "@services/cart";
 import packageServices from "@services/packageServices";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
+import { METADATA } from "../../../types/IMetadata";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);

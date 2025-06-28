@@ -6,6 +6,7 @@ import vendorService from "@services/vendors";
 import { IBackendResponse } from "@models/backend/backendResponse.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@lib/authOptions";
+import { METADATA } from "../../../../../types/IMetadata";
 
 async function getBranches() {
     // TODO: Replace with actual API call
