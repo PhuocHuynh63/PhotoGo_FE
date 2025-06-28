@@ -3,6 +3,7 @@ import { ROUTES } from "@routes";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { METADATA } from "../../../types/IMetadata";
 
 export const metadata: Metadata = {
     title: "Auth",

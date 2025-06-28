@@ -34,7 +34,7 @@
       "@services/*": ["./src/services/*"],
       "@themes/*": ["./src/themes/*"],
       "@stores/*": ["./src/stores/*"],
-      "@types/*": ["./src/types/*"],
+      // "@types/*": ["./src/types/*"],
       "@helpers/*": ["./src/utils/helpers/*"],
       "@hooks/*": ["./src/utils/hooks/*"]
     }

@@ -4,6 +4,7 @@ import ChatIndexPage from "@pages/Member/Chat/Right/ChatIndexPage";
 import { ROUTES } from "@routes";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { METADATA } from "../../../types/IMetadata";
 
 export default async function ChatNoChatId() {
 
