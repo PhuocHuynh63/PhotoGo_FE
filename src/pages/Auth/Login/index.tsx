@@ -20,6 +20,7 @@ import authService from "@services/auth"
 import { IBackendResponse } from "@models/backend/backendResponse.model"
 import { AuthError } from "@constants/errors"
 import { ROLE } from "@constants/common"
+import { METADATA } from "../../../types/IMetadata"
 
 const LoginPage = () => {
     //#region define variables
@@ -76,6 +77,10 @@ const LoginPage = () => {
                     router.push(ROUTES.PUBLIC.HOME);
                 } else if (session?.user?.role?.name === ROLE.ADMIN) {
                     router.push(ROUTES.ADMIN.DASHBOARD);
+                } else if (session?.user?.role?.name === ROLE.STAFF) {
+                    router.push(ROUTES.STAFF.DASHBOARD);
+                } else if (session?.user?.role?.name === ROLE.VENDOR_OWNER) {
+                    router.push(ROUTES.VENDOR.PROFILE);
                 }
                 router.refresh();
                 return;
