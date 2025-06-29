@@ -5,6 +5,7 @@ import Header from "@components/Organisms/AdminStaffHeader";
 import { createContext, useContext } from "react";
 import { IUser } from "@models/user/common.model";
 import { Toaster } from "@components/Atoms/ui/toaster";
+import { METADATA } from "../../../types/IMetadata";
 
 // Tạo Session Context
 export const SessionContext = createContext<METADATA.ISession | null>(null);

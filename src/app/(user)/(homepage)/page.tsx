@@ -8,6 +8,7 @@ import { IUser } from "@models/user/common.model";
 import attendanceService from "@services/attendance";
 import { IAttendance, ICheckAttendance } from "@models/attendance/common.model";
 import { IAttendanceResponseModel, ICheckAttendanceResponseModel } from "@models/attendance/response.model";
+import { METADATA } from "../../../types/IMetadata";
 
 async function getAttendance(userId: string) {
   return await attendanceService.getAttendance(userId);

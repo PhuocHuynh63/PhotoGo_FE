@@ -6,6 +6,7 @@ import { IUserResponse } from "@models/user/response.model";
 import AttendancePage from "@pages/Member/Profile/Right/AttendanceContent"
 import attendanceService from "@services/attendance";
 import userService from "@services/user";
+import { METADATA } from "../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 async function getAttendance(userId: string) {

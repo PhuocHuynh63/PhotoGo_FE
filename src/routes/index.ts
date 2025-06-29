@@ -37,35 +37,19 @@ const USER = {
 };
 
 const VENDOR = {
+    ROOT: '/vendor',
     DASHBOARD: '/vendor/dashboard',
-    PROFILE: {
-        INFO: '/vendor/profile/information',
-        LOCATIONS: '/vendor/profile/locations',
-        TEAM: '/vendor/profile/team',
-        PORTFOLIO: '/vendor/profile/portfolio',
-    },
+    PROFILE: '/vendor/profile',
+    STATISTICS: '/vendor/statistics',
+    CALENDAR: '/vendor/calendar',
+    FINANCE: '/vendor/finance',
+    SERVICES: '/vendor/services',
+    BRANCHES: '/vendor/branches',
+    SERVICE_STATISTICS: '/vendor/service-statistics',
     SERVICE_PACKAGES: {
         LIST: '/vendor/services/',
         VIEW: '/vendor/services/:id',
         EDIT: '/vendor/services/:id/edit',
-    },
-    AVAILABILITY: {
-        SCHEDULE: '/vendor/availability/schedule',
-        BLACKOUTS: '/vendor/availability/blackouts',
-    },
-    BOOKINGS: {
-        CALENDAR: '/vendor/bookings/calendar',
-        REQUESTS: '/vendor/bookings/requests',
-    },
-    FINANCE: {
-        WALLET: '/vendor/finance/wallet',
-        TRANSACTIONS: '/vendor/finance/transactions',
-        PAYOUTS: '/vendor/finance/payouts',
-    },
-    SUBSCRIPTION: {
-        CURRENT_PLAN: '/vendor/subscription/current',
-        UPGRADE: '/vendor/subscription/upgrade',
-        BILLING_HISTORY: '/vendor/subscription/history',
     },
     REVIEWS: {
         LIST: '/vendor/reviews',
@@ -79,10 +63,10 @@ const VENDOR = {
         MY_TICKETS: '/vendor/support/history',
         FAQ: '/vendor/support/faq',
     },
-    CALENDAR: "/vendor/settings"
 };
 
 const ADMIN = {
+    ROOT: '/admin',
     DASHBOARD: '/admin/dashboard',
     USERS: {
         LIST: '/admin/users',
@@ -122,6 +106,7 @@ const ADMIN = {
 };
 
 const STAFF = {
+    ROOT: '/staff',
     DASHBOARD: '/staff/dashboard',
 };
 

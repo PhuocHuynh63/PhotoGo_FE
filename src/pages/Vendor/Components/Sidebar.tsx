@@ -31,18 +31,18 @@ export default function Sidebar() {
     const pathname = usePathname()
 
     const menuItems: SidebarItem[] = [
-        { icon: User, label: "Hồ sơ", href: "/vendor/profile" },
-        { icon: BarChart, label: "Thống kê", href: "/vendor/statistics" },
-        { icon: Calendar, label: "Lịch", href: "/vendor/calendar" },
-        { icon: Wallet, label: "Tài chính", href: "/vendor/finance" },
+        { icon: User, label: "Hồ sơ", href: ROUTES.VENDOR.PROFILE },
+        { icon: BarChart, label: "Thống kê", href: ROUTES.VENDOR.STATISTICS },
+        { icon: Calendar, label: "Lịch", href: ROUTES.VENDOR.CALENDAR },
+        { icon: Wallet, label: "Tài chính", href: ROUTES.VENDOR.FINANCE },
         {
             type: "collapsible", icon: Store, label: "Quản lý dịch vụ", items: [
-                { icon: Store, label: "Dịch vụ", href: "/vendor/services" },
-                { icon: Building2, label: "Chi nhánh", href: "/vendor/branches" },
-                { icon: BarChart, label: "Thống kê", href: "/vendor/service-statistics" },
+                { icon: Store, label: "Dịch vụ", href: ROUTES.VENDOR.SERVICES },
+                { icon: Building2, label: "Chi nhánh", href: ROUTES.VENDOR.BRANCHES },
+                { icon: BarChart, label: "Thống kê", href: ROUTES.VENDOR.SERVICE_STATISTICS },
             ]
         },
-        { icon: MessageSquare, label: "Tin nhắn", href: "/vendor/messages" },
+        { icon: MessageSquare, label: "Tin nhắn", href: ROUTES.USER.CHAT },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
         { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.CALENDAR },
     ]
