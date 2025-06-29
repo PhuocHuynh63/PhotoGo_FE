@@ -53,7 +53,7 @@ export default function PointsPage({ point, pointTransaction, pagination, onPage
         const used: IPointTransaction[] = []
         const expired: IPointTransaction[] = []
 
-        pointTransaction.forEach(transaction => {
+        pointTransaction?.forEach(transaction => {
             if (transaction.amount > 0) {
                 received.push(transaction)
             } else if (transaction.amount < 0) {
