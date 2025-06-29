@@ -27,15 +27,15 @@ interface OrdersProps {
 export default async function Orders({ searchParams }: OrdersProps) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const invoices = await getInvoices(session.user.id) as IInvoiceListResponse
-    const invoicesData = invoices.data?.data as IInvoice[]
-    const paginationInvoices = invoices.data?.pagination as IPagination
+    const invoicesData = invoices?.data?.data as IInvoice[] || []
+    const paginationInvoices = invoices?.data?.pagination as IPagination || null
 
     const { id } = await searchParams || {};
     let booking = null;
     if (id) {
         booking = await getBookingByPaymentOSId(id) as IBookingResponseModel
     }
-    const bookingData = booking?.data as unknown as IBooking
+    const bookingData = booking?.data as unknown as IBooking || null
     return (
         <>
             <OrdersPage invoices={invoicesData} pagination={paginationInvoices} newBooking={bookingData} />

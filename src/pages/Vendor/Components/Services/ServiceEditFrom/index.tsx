@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/Atoms/ui/button";
 import { Input } from "@/components/Atoms/ui/input";
 import { Label } from "@/components/Atoms/ui/label";
-import { Textarea } from "@/components/Atoms/ui/textarea";
+import TipTapEditor from "@/components/Organisms/TipTapEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Atoms/ui/accordion";
 import { ImageIcon, Pencil, Trash, X } from "lucide-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -16,6 +17,7 @@ import { ROUTES } from "@routes";
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import packageService from "@services/packageServices";
 import { IServicePackageResponse } from "@models/servicePackages/response.model";
+import { useDropzone } from "react-dropzone";
 
 interface ServiceType {
     id: string;
@@ -72,66 +74,124 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         image: undefined as File | undefined,
         imagePreview: initialService?.image || "",
     });
-    const [concepts, setConcepts] = useState<ConceptFormData[]>(initialService?.serviceConcepts?.map((c) => {
-        return {
-            id: c.id || "",
-            name: c.name || "",
-            description: c.description || "",
-            price: c.price || 0,
-            duration: c.duration || 60,
-            serviceTypeIds:
-                // Prefer the new response shape first
-                (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
-                    // Fallback to the old shape if present
-                    .concat(c.serviceTypes?.map((t) => t.id) || []),
-            images: [],
-        };
-    }) || []);
-    const [conceptImagePreviews, setConceptImagePreviews] = useState<string[][]>(
-        initialService?.serviceConcepts?.map((c) => c.images?.map(img => img.imageUrl) || []) || []
-    );
+    const [concepts, setConcepts] = useState<ConceptFormData[]>(() => {
+        if (!initialService?.serviceConcepts || initialService.serviceConcepts.length === 0) {
+            // Nếu không có service concepts, tạo một concept mặc định
+            return [{
+                id: "",
+                name: "",
+                description: "",
+                price: 0,
+                duration: 60,
+                serviceTypeIds: [],
+                images: [],
+            }];
+        }
+
+        return initialService.serviceConcepts.map((c) => {
+            return {
+                id: c.id || "",
+                name: c.name || "",
+                description: c.description || "",
+                price: c.price || 0,
+                duration: c.duration || 60,
+                serviceTypeIds:
+                    // Prefer the new response shape first
+                    (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
+                        // Fallback to the old shape if present
+                        .concat(c.serviceTypes?.map((t) => t.id) || []),
+                images: [],
+            };
+        });
+    });
+    const [conceptImagePreviews, setConceptImagePreviews] = useState<string[][]>(() => {
+        if (!initialService?.serviceConcepts || initialService.serviceConcepts.length === 0) {
+            // Nếu không có service concepts, tạo một mảng rỗng cho image previews
+            return [[]];
+        }
+
+        return initialService.serviceConcepts.map((c) => c.images?.map(img => img.imageUrl) || []);
+    });
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleServiceImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setServiceData((prev) => ({ ...prev, image: file }));
-            const reader = new FileReader();
-            reader.onload = () => setServiceData((prev) => ({ ...prev, image: file, imagePreview: reader.result as string }));
-            reader.readAsDataURL(file);
+    // Dropzone for service image
+    const serviceImageDropzone = useDropzone({
+        accept: {
+            'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
+        },
+        maxFiles: 1,
+        onDrop: (acceptedFiles) => {
+            const file = acceptedFiles[0];
+            if (file) {
+                setServiceData((prev) => ({ ...prev, image: file }));
+                const reader = new FileReader();
+                reader.onload = () => setServiceData((prev) => ({ ...prev, image: file, imagePreview: reader.result as string }));
+                reader.readAsDataURL(file);
+            }
+        },
+        onDropRejected: () => {
+            toast.error("Chỉ chấp nhận file ảnh (JPEG, PNG, GIF, WebP)");
         }
-    };
+    });
 
-    const handleConceptImagesChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const files = Array.from(e.target.files || []);
-        const remainingSlots = 10 - concepts[index].images.length;
-        const filesToAdd = files.slice(0, remainingSlots);
+    // Dropzone for concept images
+    const conceptImageDropzone = useDropzone({
+        accept: {
+            'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
+        },
+        maxFiles: 10,
+        onDrop: (acceptedFiles) => {
+            const currentConcept = concepts[currentConceptIndex];
+            if (!currentConcept) {
+                toast.error("Không tìm thấy gói dịch vụ");
+                return;
+            }
 
-        if (files.length > remainingSlots) {
-            toast.error(`Chỉ có thể thêm ${remainingSlots} ảnh nữa (tối đa 10 ảnh)`);
+            const remainingSlots = 10 - currentConcept.images.length;
+            const filesToAdd = acceptedFiles.slice(0, remainingSlots);
+
+            if (acceptedFiles.length > remainingSlots) {
+                toast.error(`Chỉ có thể thêm ${remainingSlots} ảnh nữa (tối đa 10 ảnh)`);
+            }
+
+            const newImages = [...currentConcept.images, ...filesToAdd];
+            setConcepts((prev) => {
+                const newConcepts = [...prev];
+                newConcepts[currentConceptIndex] = { ...newConcepts[currentConceptIndex], images: newImages };
+                return newConcepts;
+            });
+
+            filesToAdd.forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = () =>
+                    setConceptImagePreviews((prev) => {
+                        const newPreviews = [...prev];
+                        newPreviews[currentConceptIndex] = [...(newPreviews[currentConceptIndex] || []), reader.result as string];
+                        return newPreviews;
+                    });
+                reader.readAsDataURL(file);
+            });
+        },
+        onDropRejected: () => {
+            toast.error("Chỉ chấp nhận file ảnh (JPEG, PNG, GIF, WebP)");
         }
+    });
 
-        const newImages = [...concepts[index].images, ...filesToAdd];
-        setConcepts((prev) => {
-            const newConcepts = [...prev];
-            newConcepts[index] = { ...newConcepts[index], images: newImages };
-            return newConcepts;
-        });
-
-        filesToAdd.forEach((file) => {
-            const reader = new FileReader();
-            reader.onload = () =>
-                setConceptImagePreviews((prev) => {
-                    const newPreviews = [...prev];
-                    newPreviews[index] = [...(newPreviews[index] || []), reader.result as string];
-                    return newPreviews;
-                });
-            reader.readAsDataURL(file);
-        });
-    };
+    useEffect(() => {
+        if (concepts.length > 0 && currentConceptIndex >= concepts.length) {
+            setCurrentConceptIndex(Math.max(0, concepts.length - 1));
+        }
+    }, [concepts.length, currentConceptIndex]);
 
     const removeConceptImage = (conceptIndex: number, imageIndex: number) => {
+        const currentConcept = concepts[conceptIndex];
+
+        if (!currentConcept) {
+            toast.error("Không tìm thấy gói dịch vụ");
+            return;
+        }
+
         setConcepts((prev) => {
             const newConcepts = [...prev];
             newConcepts[conceptIndex] = {
@@ -184,10 +244,29 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             setConcepts((prev) => prev.filter((_, i) => i !== index));
             setConceptImagePreviews((prev) => prev.filter((_, i) => i !== index));
             setCurrentConceptIndex(Math.max(0, index - 1));
+        } else {
+            // Nếu chỉ còn 1 concept, reset về trạng thái mặc định thay vì xóa
+            setConcepts([{
+                id: "",
+                name: "",
+                description: "",
+                price: 0,
+                duration: 60,
+                serviceTypeIds: [],
+                images: [],
+            }]);
+            setConceptImagePreviews([[]]);
+            setCurrentConceptIndex(0);
+            toast.success("Đã reset gói dịch vụ về trạng thái mặc định");
         }
     };
 
     const handleConceptChange = (index: number, field: string, value: unknown) => {
+        if (index < 0 || index >= concepts.length) {
+            toast.error("Chỉ mục gói dịch vụ không hợp lệ");
+            return;
+        }
+
         setConcepts((prev) => {
             const newConcepts = [...prev];
             newConcepts[index] = { ...newConcepts[index], [field]: value };
@@ -196,13 +275,18 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     };
 
     const handleServiceTypeToggle = (typeId: string, conceptIndex: number) => {
+        if (conceptIndex < 0 || conceptIndex >= concepts.length) {
+            toast.error("Chỉ mục gói dịch vụ không hợp lệ");
+            return;
+        }
+
         setConcepts((prev) => {
             const newConcepts = [...prev];
             newConcepts[conceptIndex] = {
                 ...newConcepts[conceptIndex],
-                serviceTypeIds: newConcepts[conceptIndex].serviceTypeIds.includes(typeId)
-                    ? newConcepts[conceptIndex].serviceTypeIds.filter((id) => id !== typeId)
-                    : [...newConcepts[conceptIndex].serviceTypeIds, typeId],
+                serviceTypeIds: (newConcepts[conceptIndex].serviceTypeIds || []).includes(typeId)
+                    ? (newConcepts[conceptIndex].serviceTypeIds || []).filter((id) => id !== typeId)
+                    : [...(newConcepts[conceptIndex].serviceTypeIds || []), typeId],
             };
             return newConcepts;
         });
@@ -233,7 +317,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     conceptFormData.append('price', concept?.price.toString());
                     conceptFormData.append('duration', concept?.duration.toString());
                     conceptFormData.append('servicePackageId', initialService?.id || "");
-                    conceptFormData.append('serviceTypeIds', concept?.serviceTypeIds.join(", "));
+                    conceptFormData.append('serviceTypeIds', (concept?.serviceTypeIds || []).join(", "));
                     conceptFormData.append('status', "hoạt động");
                     concept?.images.forEach((image, idx) => {
                         if (idx < 10) conceptFormData.append('images', image);
@@ -313,12 +397,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                     <div className="space-y-2">
                         <Label htmlFor="description">Mô tả dịch vụ *</Label>
-                        <Textarea
-                            id="description"
+                        <TipTapEditor
                             value={serviceData?.description}
-                            onChange={(e) => setServiceData((prev) => ({ ...prev, description: e.target.value }))}
-                            rows={3}
-                            required
+                            onChange={(value) => setServiceData((prev) => ({ ...prev, description: value }))}
                         />
                     </div>
 
@@ -342,7 +423,14 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                     <div className="space-y-2">
                         <Label>Ảnh đại diện dịch vụ</Label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                        <div 
+                            {...serviceImageDropzone.getRootProps()} 
+                            className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer ${
+                                serviceImageDropzone.isDragActive 
+                                    ? 'border-blue-500 bg-blue-50' 
+                                    : 'border-gray-300 hover:border-gray-400'
+                            }`}
+                        >
                             {serviceData?.imagePreview ? (
                                 <div className="relative flex justify-center items-center">
                                     <Image
@@ -356,9 +444,10 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                         variant="destructive"
                                         size="sm"
                                         className="absolute top-0 right-0 h-8 w-8 p-0 text-white bg-red-500 cursor-pointer"
-                                        onClick={() =>
-                                            setServiceData((prev) => ({ ...prev, image: undefined, imagePreview: "" }))
-                                        }
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setServiceData((prev) => ({ ...prev, image: undefined, imagePreview: "" }));
+                                        }}
                                     >
                                         <X className="h-4 w-4" />
                                     </Button>
@@ -366,16 +455,18 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             ) : (
                                 <div className="text-center">
                                     <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
-                                    <label htmlFor="service-image" className="cursor-pointer">
-                                        <span className="mt-2 block text-sm font-medium text-gray-900">Tải lên ảnh</span>
-                                        <input
-                                            id="service-image"
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={handleServiceImageChange}
-                                        />
-                                    </label>
+                                    <div className="mt-2">
+                                        <p className="text-sm font-medium text-gray-900">
+                                            {serviceImageDropzone.isDragActive 
+                                                ? "Thả ảnh vào đây..." 
+                                                : "Kéo thả ảnh vào đây hoặc click để chọn"
+                                            }
+                                        </p>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Chấp nhận: JPEG, PNG, GIF, WebP
+                                        </p>
+                                    </div>
+                                    <input {...serviceImageDropzone.getInputProps()} />
                                 </div>
                             )}
                         </div>
@@ -390,153 +481,176 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                         </Button>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
-                            <Input
-                                id="concept-name"
-                                value={concepts[currentConceptIndex]?.name || ""}
-                                onChange={(e) => handleConceptChange(currentConceptIndex, "name", e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
-                            <Textarea
-                                id="concept-description"
-                                value={concepts[currentConceptIndex]?.description || ""}
-                                onChange={(e) => handleConceptChange(currentConceptIndex, "description", e.target.value)}
-                                rows={3}
-                                required
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
+                    {concepts && concepts.length > 0 && concepts[currentConceptIndex] && (
+                        <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                                <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
                                 <Input
-                                    id="concept-price"
-                                    type="number"
-                                    value={concepts[currentConceptIndex]?.price || 0}
-                                    onChange={(e) => handleConceptChange(currentConceptIndex, "price", Number(e.target.value))}
+                                    id="concept-name"
+                                    value={concepts[currentConceptIndex]?.name || ""}
+                                    onChange={(e) => handleConceptChange(currentConceptIndex, "name", e.target.value)}
                                     required
                                 />
-                                {concepts[currentConceptIndex]?.price > 0 && (
-                                    <p className="text-sm text-gray-500">{formatPrice(concepts[currentConceptIndex]?.price)}</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
+                                <TipTapEditor
+                                    value={concepts[currentConceptIndex]?.description || ""}
+                                    onChange={(value) => handleConceptChange(currentConceptIndex, "description", value)}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                                    <Input
+                                        id="concept-price"
+                                        type="number"
+                                        value={concepts[currentConceptIndex]?.price || 0}
+                                        onChange={(e) => handleConceptChange(currentConceptIndex, "price", Number(e.target.value))}
+                                        required
+                                    />
+                                    {concepts[currentConceptIndex]?.price > 0 && (
+                                        <div className="flex flex-col items-start gap-2">
+                                            <p className="text-sm text-gray-500"><span className="font-bold">{formatPrice((concepts[currentConceptIndex]?.price) + (concepts[currentConceptIndex]?.price * 0.05))}</span> = {formatPrice(concepts[currentConceptIndex]?.price)} + {formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + {formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)</p>
+                                            <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
+                                    <Input
+                                        id="concept-duration"
+                                        type="number"
+                                        value={concepts[currentConceptIndex]?.duration || 60}
+                                        onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Loại dịch vụ *</Label>
+                                <Accordion type="single" collapsible>
+                                    <AccordionItem value="service-types">
+                                        <AccordionTrigger className="cursor-pointer">
+                                            <span className="text-sm font-medium leading-none">
+                                                {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
+                                                    ? `Đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại dịch vụ`
+                                                    : "Chọn loại dịch vụ"}
+                                            </span>
+                                        </AccordionTrigger>
+                                        <AccordionContent>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {serviceTypes?.map((type) => (
+                                                    <Card
+                                                        key={type?.id}
+                                                        className={`cursor-pointer transition-colors border-2 ${(concepts[currentConceptIndex]?.serviceTypeIds || []).includes(type?.id)
+                                                            ? "border-blue-500 bg-blue-50"
+                                                            : "hover:border-gray-300"
+                                                            }`}
+                                                        onClick={() => handleServiceTypeToggle(type?.id, currentConceptIndex)}
+                                                    >
+                                                        <CardContent className="p-3">
+                                                            <div className="flex items-center justify-between mt-6">
+                                                                <div>
+                                                                    <p className="font-medium text-sm">{type.name}</p>
+                                                                    <p className="text-xs text-gray-500">{type.description}</p>
+                                                                </div>
+                                                                {(concepts[currentConceptIndex]?.serviceTypeIds || []).includes(type?.id) && (
+                                                                    <Badge className="bg-blue-100 text-blue-800" variant={"outline"}>✓</Badge>
+                                                                )}
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            </div>
+                                            <p className="text-sm text-gray-500 mt-2">
+                                                Đã chọn: {(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại dịch vụ
+                                            </p>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                </Accordion>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
+                                {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
+                                    <div className="grid grid-cols-5 gap-10 my-4">
+                                        {conceptImagePreviews[currentConceptIndex].map((preview, index) => (
+                                            <div key={index} className="relative w-60 h-60">
+                                                <Image
+                                                    src={preview || "/placeholder.svg"}
+                                                    alt={`Preview ${index + 1}`}
+                                                    fill
+                                                    className=" object-cover rounded-lg"
+                                                />
+                                                <Button
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    className="absolute top-1 right-1 h-8 w-8 p-0 text-white bg-red-500 cursor-pointer"
+                                                    onClick={() => removeConceptImage(currentConceptIndex, index)}
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {conceptImagePreviews[currentConceptIndex]?.length < 10 && (
+                                    <div 
+                                        {...conceptImageDropzone.getRootProps()} 
+                                        className={`border-2 border-dashed rounded-lg p-4 transition-colors cursor-pointer ${
+                                            conceptImageDropzone.isDragActive 
+                                                ? 'border-blue-500 bg-blue-50' 
+                                                : 'border-gray-300 hover:border-gray-400'
+                                        }`}
+                                    >
+                                        <div className="text-center">
+                                            <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
+                                            <div className="mt-2">
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {conceptImageDropzone.isDragActive 
+                                                        ? "Thả ảnh vào đây..." 
+                                                        : `Thêm ảnh (${conceptImagePreviews[currentConceptIndex]?.length || 0}/10)`
+                                                    }
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    Kéo thả hoặc click để chọn - Chấp nhận: JPEG, PNG, GIF, WebP
+                                                </p>
+                                            </div>
+                                            <input {...conceptImageDropzone.getInputProps()} />
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
-                                <Input
-                                    id="concept-duration"
-                                    type="number"
-                                    value={concepts[currentConceptIndex]?.duration || 60}
-                                    onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
-                                    required
-                                />
-                            </div>
                         </div>
+                    )}
 
-                        <div className="space-y-2">
-                            <Label>Loại dịch vụ *</Label>
-                            <div className="grid grid-cols-2 gap-2">
-                                {serviceTypes?.map((type) => (
-                                    <Card
-                                        key={type?.id}
-                                        className={`cursor-pointer transition-colors border-2 ${concepts[currentConceptIndex]?.serviceTypeIds.includes(type?.id)
-                                            ? "border-blue-500 bg-blue-50"
-                                            : "hover:border-gray-300"
-                                            }`}
-                                        onClick={() => handleServiceTypeToggle(type?.id, currentConceptIndex)}
-                                    >
-                                        <CardContent className="p-3">
-                                            <div className="flex items-center justify-between mt-6">
-                                                <div>
-                                                    <p className="font-medium text-sm">{type.name}</p>
-                                                    <p className="text-xs text-gray-500">{type.description}</p>
-                                                </div>
-                                                {concepts[currentConceptIndex]?.serviceTypeIds.includes(type?.id) && (
-                                                    <Badge className="bg-blue-100 text-blue-800" variant={"outline"}>✓</Badge>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                            <p className="text-sm text-gray-500">
-                                Đã chọn: {concepts[currentConceptIndex]?.serviceTypeIds.length} loại dịch vụ
-                            </p>
+                    {concepts && concepts.length > 0 && (
+                        <div className="flex justify-between mt-4">
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
+                                disabled={currentConceptIndex === 0}
+                                className="cursor-pointer"
+                            >
+                                Gói trước
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
+                                disabled={currentConceptIndex === concepts.length - 1}
+                                className="cursor-pointer"
+                            >
+                                Gói tiếp theo
+                            </Button>
+                            <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} className="cursor-pointer">
+                                {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
+                            </Button>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
-                            {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
-                                <div className="grid grid-cols-5 gap-10 my-4">
-                                    {conceptImagePreviews[currentConceptIndex].map((preview, index) => (
-                                        <div key={index} className="relative w-60 h-60">
-                                            <Image
-                                                src={preview || "/placeholder.svg"}
-                                                alt={`Preview ${index + 1}`}
-                                                fill
-                                                className=" object-cover rounded-lg"
-                                            />
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                className="absolute top-1 right-1 h-8 w-8 p-0 text-white bg-red-500 cursor-pointer"
-                                                onClick={() => removeConceptImage(currentConceptIndex, index)}
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            {conceptImagePreviews[currentConceptIndex]?.length < 10 && (
-                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                                    <div className="text-center">
-                                        <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
-                                        <label htmlFor={`concept-images-${currentConceptIndex}`} className="cursor-pointer">
-                                            <span className="text-sm font-medium text-gray-900">
-                                                Thêm ảnh ({conceptImagePreviews[currentConceptIndex]?.length || 0}/10)
-                                            </span>
-                                            <input
-                                                id={`concept-images-${currentConceptIndex}`}
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                multiple
-                                                onChange={(e) => handleConceptImagesChange(e, currentConceptIndex)}
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between mt-4">
-                        <Button
-                            variant="outline"
-                            onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
-                            disabled={currentConceptIndex === 0}
-                            className="cursor-pointer"
-                        >
-                            Gói trước
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
-                            disabled={currentConceptIndex === concepts.length - 1}
-                            className="cursor-pointer"
-                        >
-                            Gói tiếp theo
-                        </Button>
-                        <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} disabled={concepts.length <= 1} className="cursor-pointer">
-                            Xóa gói này
-                        </Button>
-                    </div>
+                    )}
 
                     <div className="mt-6 flex justify-end gap-2">
                         <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService.id))} className="cursor-pointer">
