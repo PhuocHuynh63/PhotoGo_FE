@@ -7,22 +7,21 @@ import Button from "@components/Atoms/Button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs"
 import { motion } from 'framer-motion'
 import Pagination from "@components/Organisms/Pagination/Pagination"
-// Define the type for a transaction
-type Transaction = {
-    id: number;
-    amount: number;
-    description: string;
-    date: string;
-    expiryDate?: string; // Optional property
-    expiredDate?: string; // Optional property
+import { IPoint, IPointTransaction } from "@models/point/common.model"
+import { IPagination } from "@models/metadata"
+
+interface PointsPageProps {
+    point: IPoint
+    pointTransaction: IPointTransaction[]
+    pagination: IPagination
+    onPageChange?: (page: number) => void
 }
 
-export default function PointsPage() {
+export default function PointsPage({ point, pointTransaction, pagination, onPageChange }: PointsPageProps) {
     const [activeTab, setActiveTab] = useState("all")
-    const [points, setPoints] = useState(100)
+    const [points] = useState(point?.balance ?? 0)
     const [animatedPoints, setAnimatedPoints] = useState(0)
-    const [currentPage, setCurrentPage] = useState(1)
-    const itemsPerPage = 6
+    const [currentPage, setCurrentPage] = useState(pagination?.current || 1)
 
     useEffect(() => {
         let start: number | null = null
@@ -41,67 +40,70 @@ export default function PointsPage() {
         }
 
         requestAnimationFrame(step)
-    }, [points])
+    }, [points, animatedPoints])
 
-    // Update the xuTransactions object to use the new type
-    const xuTransactions: { received: Transaction[]; used: Transaction[]; expired: Transaction[] } = {
-        received: [
-            {
-                id: 1,
-                amount: 50,
-                description: "Hoàn tiền từ đơn hàng #ORD-2023-1205",
-                date: "05/12/2023",
-                expiryDate: "05/12/2024", // This property is now valid
-            },
-        ],
-        used: [
-            {
-                id: 3,
-                amount: -30,
-                description: "Sử dụng cho đơn hàng #ORD-2024-0215",
-                date: "15/02/2024",
-                // expiryDate and expiredDate are not required here
-            },
-        ],
-        expired: [
-            {
-                id: 5,
-                amount: 20,
-                description: "Khuyến mãi chào mừng",
-                date: "01/01/2023",
-                expiredDate: "01/01/2024", // This property is now valid
-            },
-            {
-                id: 2,
-                amount: 30,
-                description: "Khuyến mãi chào mừng",
-                date: "01/01/2023",
-                expiredDate: "01/01/2024", // This property is now valid
-            },
-        ],
+    // Update current page when pagination changes
+    useEffect(() => {
+        setCurrentPage(pagination?.current || 1)
+    }, [pagination?.current])
+
+    // Function to categorize transactions based on type
+    const categorizeTransactions = () => {
+        const received: IPointTransaction[] = []
+        const used: IPointTransaction[] = []
+        const expired: IPointTransaction[] = []
+
+        pointTransaction?.forEach(transaction => {
+            if (transaction.amount > 0) {
+                received.push(transaction)
+            } else if (transaction.amount < 0) {
+                used.push(transaction)
+            } else {
+                // For now, we'll put transactions with 0 amount in expired
+                // You might want to add a specific field for expired transactions
+                expired.push(transaction)
+            }
+        })
+
+        return { received, used, expired }
+    }
+
+    // Function to format date
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString)
+        return date.toLocaleDateString('vi-VN')
+    }
+
+    // Handle page change
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+        if (onPageChange) {
+            onPageChange(page)
+        }
     }
 
     // Function to render transactions based on active tab
     const renderTransactions = () => {
-        let transactions = []
+        const { received, used, expired } = categorizeTransactions()
+        let transactions: IPointTransaction[] = []
 
         switch (activeTab) {
             case "received":
-                transactions = xuTransactions.received
+                transactions = received
                 break
             case "used":
-                transactions = xuTransactions.used
+                transactions = used
                 break
             case "expired":
-                transactions = xuTransactions.expired
+                transactions = expired
                 break
             case "all":
             default:
-                transactions = [...xuTransactions.received, ...xuTransactions.used, ...xuTransactions.expired]
+                transactions = [...received, ...used, ...expired]
                 break
         }
 
-        if (transactions.length === 0) {
+        if (transactions?.length === 0) {
             return (
                 <div className="text-center py-12">
                     <div className="flex justify-center">
@@ -113,34 +115,26 @@ export default function PointsPage() {
                             className="opacity-70"
                         />
                     </div>
-                    <p className="mt-4 text-gray-500">Chưa có điểm</p>
+                    <p className="mt-4 text-gray-500">Chưa có giao dịch điểm</p>
                 </div>
             )
         }
 
-        // Calculate pagination
-        const totalPages = Math.ceil(transactions.length / itemsPerPage)
-        const startIndex = (currentPage - 1) * itemsPerPage
-        const paginatedTransactions = transactions.slice(startIndex, startIndex + itemsPerPage)
-
         return (
             <div className="space-y-4">
-                {paginatedTransactions.map((transaction) => (
+                {transactions?.map((transaction, index) => (
                     <motion.div
                         key={transaction.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: transaction.id * 0.05 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
                         className="border rounded-lg p-4"
                     >
                         <div className="flex justify-between items-center">
                             <div>
                                 <p className="font-medium">{transaction.description}</p>
-                                <p className="text-sm text-gray-500">{transaction.date}</p>
-                                {transaction?.expiryDate && <p className="text-xs text-gray-400">Hết hạn: {transaction?.expiryDate}</p>}
-                                {transaction?.expiredDate && (
-                                    <p className="text-xs text-red-500">Đã hết hạn: {transaction?.expiredDate}</p>
-                                )}
+                                <p className="text-sm text-gray-500">{formatDate(transaction.created_at)}</p>
+                                <p className="text-xs text-gray-400">Loại: {transaction.type}</p>
                             </div>
                             <div className={`font-bold ${transaction.amount > 0 ? "text-green-500" : "text-red-500"}`}>
                                 {transaction.amount > 0 ? "+" : ""}
@@ -150,13 +144,13 @@ export default function PointsPage() {
                     </motion.div>
                 ))}
 
-                {/* Pagination */}
-                {totalPages > 1 && (
+                {/* Server-side Pagination */}
+                {pagination && pagination.totalPage > 1 && (
                     <Pagination
                         className="mt-6"
-                        total={totalPages}
+                        total={pagination.totalPage}
                         current={currentPage}
-                        onChange={setCurrentPage}
+                        onChange={handlePageChange}
                     />
                 )}
             </div>
@@ -201,7 +195,12 @@ export default function PointsPage() {
                     <h1 className={`text-7xl font-bold mb-2`}>
                         {animatedPoints}
                     </h1>
-                    <p className="text-white/90">Có vẻ như bạn đã hết điểm. Hãy đặt hoạt động để nhận điểm nhé!</p>
+                    <p className="text-white/90">
+                        {points > 0
+                            ? `Bạn có ${points} PhotoGo Point để sử dụng!`
+                            : "Có vẻ như bạn đã hết điểm. Hãy đặt hoạt động để nhận điểm nhé!"
+                        }
+                    </p>
                 </div>
             </div>
 
@@ -210,7 +209,7 @@ export default function PointsPage() {
                 <h2 className="text-xl font-bold mb-4">Thông tin PhotoGo Point</h2>
 
                 <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
-                    <TabsList className="grid grid-cols-3 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
+                    <TabsList className="grid grid-cols-4 gap-2 bg-orange-100 p-1 rounded-xl max-w-md mx-auto mb-6">
                         <TabsTrigger
                             value="all"
                         >

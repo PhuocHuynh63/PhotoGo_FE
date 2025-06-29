@@ -90,7 +90,10 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                     Trạng thái: {service?.status === "hoạt động" ? "Đang hoạt động" : "Tạm dừng"}
                                 </p>
                             </div>
-                            <p className="text-md text-gray-700">{service?.description}</p>
+                            <div
+                                className="text-muted-foreground prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: service?.description || '' }}
+                            />
                         </div>
                         {service?.image && (
                             <div>
@@ -116,7 +119,10 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                         <CardTitle className="text-lg">{concept?.name}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
-                                        <p className="text-sm text-gray-600">{concept?.description}</p>
+                                        <div
+                                            className="text-muted-foreground prose prose-sm max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: concept?.description || '' }}
+                                        />
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             <div>
                                                 <p className="font-semibold">Giá: <span className="font-normal">{formatCurrency(concept?.price)}</span></p>
