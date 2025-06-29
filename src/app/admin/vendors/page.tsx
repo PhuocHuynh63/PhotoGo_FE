@@ -1,4 +1,6 @@
 import AdminVendorsPage from "@pages/Admin/Vendors";
+
+export const dynamic = 'force-dynamic';
 import vendorService from "@services/vendors";
 import { IAdminFilterVendorsResponse } from "@models/vendor/response.model";
 
