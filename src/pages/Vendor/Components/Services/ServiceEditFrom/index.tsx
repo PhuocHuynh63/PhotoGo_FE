@@ -513,7 +513,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     />
                                     {concepts[currentConceptIndex]?.price > 0 && (
                                         <div className="flex flex-col items-start gap-2">
-                                            <p className="text-sm text-gray-500"><span className="font-bold">{formatPrice((concepts[currentConceptIndex]?.price) + (concepts[currentConceptIndex]?.price * 0.05))}</span> = {formatPrice(concepts[currentConceptIndex]?.price)} + {formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + {formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)</p>
+                                            <p className="text-sm text-gray-500"><span className="font-bold">{formatPrice((concepts[currentConceptIndex]?.price) + (concepts[currentConceptIndex]?.price * 0.05) + (concepts[currentConceptIndex]?.price * 0.3))}</span>= {formatPrice(concepts[currentConceptIndex]?.price)} + {formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + {formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)</p>
                                             <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
                                         </div>
                                     )}
