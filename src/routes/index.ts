@@ -37,6 +37,7 @@ const USER = {
 };
 
 const VENDOR = {
+    ROOT: '/vendor',
     DASHBOARD: '/vendor/dashboard',
     PROFILE: '/vendor/profile',
     STATISTICS: '/vendor/statistics',
@@ -65,6 +66,7 @@ const VENDOR = {
 };
 
 const ADMIN = {
+    ROOT: '/admin',
     DASHBOARD: '/admin/dashboard',
     USERS: {
         LIST: '/admin/users',
@@ -104,6 +106,7 @@ const ADMIN = {
 };
 
 const STAFF = {
+    ROOT: '/staff',
     DASHBOARD: '/staff/dashboard',
 };
 
