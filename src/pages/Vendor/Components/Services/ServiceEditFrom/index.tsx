@@ -37,6 +37,7 @@ interface ServiceConcept {
     name: string;
     description: string;
     price: number;
+    finalPrice: number;
     duration: number;
     serviceTypes?: { id: string }[];
     serviceConceptServiceTypes?: { serviceTypeId: string; serviceType?: ServiceType }[];
@@ -48,6 +49,7 @@ interface ConceptFormData {
     name: string;
     description: string;
     price: number;
+    finalPrice: number;
     duration: number;
     serviceTypeIds: string[];
     images: File[];
@@ -82,6 +84,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 name: "",
                 description: "",
                 price: 0,
+                finalPrice: 0,
                 duration: 60,
                 serviceTypeIds: [],
                 images: [],
@@ -93,12 +96,11 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 id: c.id || "",
                 name: c.name || "",
                 description: c.description || "",
-                price: c.price || 0,
-                duration: c.duration || 60,
+                price: Number(c.price) || 0,
+                finalPrice: Number(c.finalPrice) || 0,
+                duration: Number(c.duration) || 60,
                 serviceTypeIds:
-                    // Prefer the new response shape first
                     (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
-                        // Fallback to the old shape if present
                         .concat(c.serviceTypes?.map((t) => t.id) || []),
                 images: [],
             };
@@ -114,6 +116,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     });
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPriceChanged, setIsPriceChanged] = useState(false);
 
     // Dropzone for service image
     const serviceImageDropzone = useDropzone({
@@ -210,7 +213,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     const handleAddConcept = () => {
         setConcepts((prev) => [
             ...prev,
-            { id: "", name: "", description: "", price: 0, duration: 60, serviceTypeIds: [], images: [] },
+            { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, serviceTypeIds: [], images: [] },
         ]);
         setConceptImagePreviews((prev) => [...prev, []]);
         setCurrentConceptIndex(concepts.length);
@@ -251,6 +254,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 name: "",
                 description: "",
                 price: 0,
+                finalPrice: 0,
                 duration: 60,
                 serviceTypeIds: [],
                 images: [],
@@ -508,12 +512,30 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                         id="concept-price"
                                         type="number"
                                         value={concepts[currentConceptIndex]?.price || 0}
-                                        onChange={(e) => handleConceptChange(currentConceptIndex, "price", Number(e.target.value))}
+                                        onChange={(e) => {
+                                            handleConceptChange(currentConceptIndex, "price", Number(e.target.value));
+                                            setIsPriceChanged(true);
+                                        }}
                                         required
                                     />
                                     {concepts[currentConceptIndex]?.price > 0 && (
                                         <div className="flex flex-col items-start gap-2">
-                                            <p className="text-sm text-gray-500"><span className="font-bold">{formatPrice((concepts[currentConceptIndex]?.price) + (concepts[currentConceptIndex]?.price * 0.05) + (concepts[currentConceptIndex]?.price * 0.3))}</span>= {formatPrice(concepts[currentConceptIndex]?.price)} + {formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + {formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)</p>
+                                            <p className="text-sm text-gray-500">
+                                                <span className="font-bold">
+                                                    {isPriceChanged
+                                                        ? formatPrice(
+                                                            concepts[currentConceptIndex]?.price +
+                                                            concepts[currentConceptIndex]?.price * 0.05 +
+                                                            concepts[currentConceptIndex]?.price * 0.3
+                                                        )
+                                                        : formatPrice(concepts[currentConceptIndex]?.price || 0)
+                                                    }
+                                                </span>
+                                                {isPriceChanged
+                                                    ? ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
+                                                    : " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
+                                                }
+                                            </p>
                                             <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
                                         </div>
                                     )}
@@ -638,6 +660,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             >
                                 Gói trước
                             </Button>
+                            <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} className="cursor-pointer">
+                                {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
+                            </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
@@ -645,9 +670,6 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 className="cursor-pointer"
                             >
                                 Gói tiếp theo
-                            </Button>
-                            <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} className="cursor-pointer">
-                                {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
                             </Button>
                         </div>
                     )}

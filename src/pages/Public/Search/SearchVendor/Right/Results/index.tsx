@@ -145,7 +145,7 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                                             </span>
                                         </div>
                                     )}
-                                    <div className="relative h-60">
+                                    <div className="relative h-60 border-b-2">
                                         {vendor.logo ? (
                                             <Image
                                                 src={vendor.logo || "data:image/svg+xml;base64," + btoa(`

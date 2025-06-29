@@ -1,4 +1,5 @@
 import { IVendor } from "@models/vendor/common.model"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 
 interface BasicInfoProps {
     profileData: IVendor
@@ -47,14 +48,17 @@ export default function BasicInfo({ profileData, conceptPriceRange }: BasicInfoP
 
             <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-1">Mô tả</h4>
-                <p className="text-sm">{profileData?.description}</p>
+                <div
+                    className="text-muted-foreground prose prose-sm max-w-none line-clamp-3"
+                    dangerouslySetInnerHTML={{ __html: profileData?.description || '' }}
+                />
             </div>
 
             <div>
                 <h4 className="text-sm font-medium text-gray-500 mb-1">Giá dịch vụ</h4>
                 <p className="text-sm">
                     {conceptPriceRange
-                        ? `${conceptPriceRange.minPrice.toLocaleString()} - ${conceptPriceRange.maxPrice.toLocaleString()} VNĐ`
+                        ? `${formatPrice(conceptPriceRange.minPrice)} - ${formatPrice(conceptPriceRange.maxPrice)}`
                         : "Chưa cập nhật"
                     }
                 </p>

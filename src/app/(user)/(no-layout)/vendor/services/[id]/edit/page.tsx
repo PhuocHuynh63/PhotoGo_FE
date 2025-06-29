@@ -14,8 +14,10 @@ interface ServiceConcept {
     name: string;
     description: string;
     price: number;
+    finalPrice: number;
     duration: number;
     serviceTypes?: { id: string }[];
+    serviceConceptServiceTypes?: { serviceTypeId: string; serviceType?: { id: string; name: string; description: string } }[];
     images?: ServiceConceptImage[];
 }
 
