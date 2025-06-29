@@ -256,7 +256,10 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                         </CardHeader>
 
                         <CardContent className="space-y-4">
-                            <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
+                            <div
+                                className="text-muted-foreground prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: service?.description || '' }}
+                            />
 
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-sm">
