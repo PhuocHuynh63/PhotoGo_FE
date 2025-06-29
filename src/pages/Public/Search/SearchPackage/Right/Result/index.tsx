@@ -13,6 +13,7 @@ import { Skeleton } from "@components/Atoms/ui/skeleton"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import ViewConcept from "@pages/Public/VendorDetail/components/ViewConcept"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/Atoms/ui/tooltip"
+import { ROUTES } from "@routes"
 
 const cardVariants = {
     hidden: { opacity: 0, scale: 1 },
@@ -35,6 +36,19 @@ export default function Right({ packages, pagination }: { packages: IServicePack
         setIsOpen(!isOpen)
     }
 
+    const handlePackageClick = (pkg: IServicePackage) => {
+        const vendorSlug = pkg.vendor?.slug;
+        const firstLocation = pkg.vendor?.locations?.[0];
+        const locationCity = firstLocation?.city;
+        
+        if (vendorSlug) {
+            let url = ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', vendorSlug).replace(':page', '');
+            if (locationCity) {
+                url += `?location=${encodeURIComponent(locationCity)}`;
+            }
+            router.push(url);
+        }
+    }
 
     useEffect(() => {
         const current = searchParams?.get('current');
@@ -132,15 +146,28 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                     {packages?.map((pkg, index) => (
                         <motion.div
                             key={pkg.id}
-                            className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300"
+                            className="border-3 rounded-lg overflow-hidden relative transition-transform duration-300 hover:border-orange-300 cursor-pointer hover:scale-105"
                             initial="hidden"
                             variants={cardVariants}
                             animate="visible"
                             exit="exit"
                             transition={{ duration: 0.5, delay: index * 0.2 }}
+                            onClick={() => handlePackageClick(pkg)}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Xem chi tiết gói dịch vụ ${pkg.name}`}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handlePackageClick(pkg);
+                                }
+                            }}
                         >
                             <div className="absolute top-2 right-2 z-10">
-                                <Button className="shadow-none hover:bg-none flex items-center justify-center">
+                                <Button 
+                                    className="shadow-none hover:bg-none flex items-center justify-center"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <LucideIcon name="Heart" iconSize={18} fill={pkg.status ? "red" : "none"} iconColor={pkg.status ? "red" : "black"} />
                                 </Button>
                             </div>
@@ -181,7 +208,10 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                     <span className="text-xs text-gray-500 ml-1">({pkg.vendor_reviews} đánh giá)</span> */}
                                 </div>
                                 <div className="flex items-center h-10">
-                                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{pkg.description}</p>
+                                    <div
+                                        className="text-muted-foreground prose prose-sm max-w-none line-clamp-2 mb-4"
+                                        dangerouslySetInnerHTML={{ __html: pkg.description || '' }}
+                                    />
                                 </div>
                                 <div className="flex flex-wrap gap-1 mb-2">
                                     {pkg.serviceConcepts.slice(0, 2).map((type, i) => (
@@ -222,7 +252,10 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                     </div>
 
                                     <Button
-                                        onClick={() => handleViewConcept(pkg.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleViewConcept(pkg.id);
+                                        }}
                                     >
                                         Xem concept
                                     </Button>
