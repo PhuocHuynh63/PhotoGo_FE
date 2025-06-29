@@ -1,5 +1,6 @@
 import { Button } from "@components/Atoms/ui/button"
 import { IVendor } from "@models/vendor/common.model"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 interface PricingTabProps {
     profileData: IVendor
@@ -39,14 +40,17 @@ export default function PricingTab({
                                             <td className="border border-gray-300 px-4 py-2">
                                                 <div>
                                                     <p className="font-medium">{servicePackage.name}</p>
-                                                    <p className="text-xs text-gray-500">{servicePackage.description}</p>
+                                                    <div
+                                                        className="text-muted-foreground prose prose-sm max-w-none line-clamp-3"
+                                                        dangerouslySetInnerHTML={{ __html: servicePackage.description || '' }}
+                                                    />
                                                 </div>
                                             </td>
                                             <td className="border border-gray-300 px-4 py-2">
                                                 {packageMinPrice && packageMaxPrice ? (
                                                     packageMinPrice === packageMaxPrice
-                                                        ? `${packageMinPrice.toLocaleString()} VNĐ`
-                                                        : `${packageMinPrice.toLocaleString()} - ${packageMaxPrice.toLocaleString()} VNĐ`
+                                                        ? `${formatPrice(packageMinPrice)}`
+                                                        : `${formatPrice(packageMinPrice)} - ${formatPrice(packageMaxPrice)}`
                                                 ) : (
                                                     "Chưa cập nhật"
                                                 )}

@@ -1,5 +1,6 @@
 import { Button } from "@components/Atoms/ui/button"
 import { IVendor } from "@models/vendor/common.model"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 interface ServicesTabProps {
     profileData: IVendor
@@ -27,12 +28,15 @@ export default function ServicesTab({
                         return (
                             <div key={index} className="p-4 border rounded-lg">
                                 <h5 className="font-medium">{servicePackage.name}</h5>
-                                <p className="text-sm text-gray-600 mt-1">{servicePackage.description}</p>
+                                <div
+                                    className="text-muted-foreground prose prose-sm max-w-none line-clamp-3"
+                                    dangerouslySetInnerHTML={{ __html: servicePackage.description || '' }}
+                                />
                                 {packageMinPrice && packageMaxPrice && (
                                     <p className="text-sm font-medium mt-2">
                                         {packageMinPrice === packageMaxPrice
-                                            ? `${packageMinPrice.toLocaleString()} VNĐ`
-                                            : `${packageMinPrice.toLocaleString()} - ${packageMaxPrice.toLocaleString()} VNĐ`
+                                            ? `${formatPrice(packageMinPrice)}`
+                                            : `${formatPrice(packageMinPrice)} - ${formatPrice(packageMaxPrice)}`
                                         }
                                     </p>
                                 )}
@@ -42,7 +46,7 @@ export default function ServicesTab({
                                         <ul className="text-xs text-gray-600 space-y-1">
                                             {servicePackage.serviceConcepts.map((concept, conceptIndex) => (
                                                 <li key={conceptIndex}>
-                                                    • {concept.name} - {(concept.price).toLocaleString()} VNĐ
+                                                    • {concept.name} - {formatPrice(concept.price)}
                                                 </li>
                                             ))}
                                         </ul>
