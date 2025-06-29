@@ -39,8 +39,8 @@ export default function Right({ packages, pagination }: { packages: IServicePack
     const handlePackageClick = (pkg: IServicePackage) => {
         const vendorSlug = pkg.vendor?.slug;
         const firstLocation = pkg.vendor?.locations?.[0];
-        const locationCity = firstLocation?.city;
-        
+        const locationCity = firstLocation?.district;
+
         if (vendorSlug) {
             let url = ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', vendorSlug).replace(':page', '');
             if (locationCity) {
@@ -164,7 +164,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                             }}
                         >
                             <div className="absolute top-2 right-2 z-10">
-                                <Button 
+                                <Button
                                     className="shadow-none hover:bg-none flex items-center justify-center"
                                     onClick={(e) => e.stopPropagation()}
                                 >
@@ -173,7 +173,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                             </div>
 
                             <div className="relative">
-                                <div className="relative h-60">
+                                <div className="relative h-60 border-b-2">
                                     <Image src={pkg.image || "/placeholder.svg"} fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         priority={index < 3}
@@ -191,7 +191,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                         {/* <span className="flex items-center">{pkg.vendor_name}</span> */}
                                     </div>
                                     <div className="flex items-center text-white text-xs mt-1">
-                                        {/* <span>{pkg.vendor_location}</span> */}
+                                        <span>{pkg.vendor.locations[0].district} - {pkg.vendor.locations[0].city}</span>
                                     </div>
                                 </div>
                             </div>

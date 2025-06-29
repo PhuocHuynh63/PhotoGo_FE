@@ -257,7 +257,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
 
                         <CardContent className="space-y-4">
                             <div
-                                className="text-muted-foreground prose prose-sm max-w-none"
+                                className="text-muted-foreground prose prose-sm max-w-none line-clamp-3"
                                 dangerouslySetInnerHTML={{ __html: service?.description || '' }}
                             />
 

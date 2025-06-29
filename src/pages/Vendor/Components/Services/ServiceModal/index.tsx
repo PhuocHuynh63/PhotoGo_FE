@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/Atoms/ui/button"
 import { Input } from "@/components/Atoms/ui/input"
 import { Label } from "@/components/Atoms/ui/label"
-import { Textarea } from "@/components/Atoms/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
 import { Badge } from "@/components/Atoms/ui/badge"
 import { Card, CardContent } from "@components/Atoms/ui/card"
@@ -21,6 +20,8 @@ import toast from "react-hot-toast"
 import packageService from "@services/packageServices"
 import Image from "next/image"
 import { useDropzone } from "react-dropzone"
+import TipTapEditor from "@components/Organisms/TipTapEditor"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 // Types
 interface ServiceType {
@@ -253,7 +254,7 @@ const ServiceForm = ({
     <div className="space-y-6">
         <div className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="service-name">Tên dịch vụ *</Label>
+                <Label htmlFor="service-name" className="text-xl font-medium">Tên dịch vụ *</Label>
                 <Input
                     id="service-name"
                     value={serviceData?.name}
@@ -263,18 +264,15 @@ const ServiceForm = ({
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="service-description">Mô tả dịch vụ *</Label>
-                <Textarea
-                    id="service-description"
+                <Label htmlFor="service-description" className="text-xl font-medium">Mô tả dịch vụ *</Label>
+                <TipTapEditor
                     value={serviceData?.description}
-                    onChange={(e) => setServiceData((prev: ServiceFormData) => ({ ...prev, description: e.target.value }))}
-                    placeholder="Mô tả chi tiết về dịch vụ của bạn"
-                    rows={3}
+                    onChange={(value) => setServiceData((prev: ServiceFormData) => ({ ...prev, description: value }))}
                 />
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="service-status">Trạng thái</Label>
+                <Label htmlFor="service-status" className="text-xl font-medium">Trạng thái</Label>
                 <Select
                     value={serviceData?.status}
                     onValueChange={(value: "hoạt động" | "không hoạt động") =>
@@ -292,7 +290,7 @@ const ServiceForm = ({
             </div>
 
             <div className="space-y-2">
-                <Label>Ảnh đại diện dịch vụ</Label>
+                <Label className="text-xl font-medium">Ảnh đại diện dịch vụ</Label>
                 <div {...getServiceImageRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition-colors">
                     {serviceImagePreview ? (
                         <div className="relative">
@@ -346,13 +344,7 @@ const ConceptForm = ({
     handleServiceTypeToggle,
     removeConceptImage
 }: ConceptFormProps) => {
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
-    }
+    const [isPriceChanged, setIsPriceChanged] = useState(false)
 
     return (
         <div className="space-y-6">
@@ -379,7 +371,7 @@ const ConceptForm = ({
 
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
+                    <Label htmlFor="concept-name" className="text-xl font-medium">Tên gói dịch vụ *</Label>
                     <Input
                         id="concept-name"
                         value={concepts[currentConceptIndex]?.name}
@@ -398,33 +390,31 @@ const ConceptForm = ({
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
-                    <Textarea
-                        id="concept-description"
+                    <Label htmlFor="concept-description" className="text-xl font-medium">Mô tả gói dịch vụ *</Label>
+                    <TipTapEditor
                         value={concepts[currentConceptIndex]?.description}
-                        onChange={(e) =>
+                        onChange={(value) =>
                             setConcepts((prev: ConceptFormData[]) => {
                                 const newConcepts = [...prev]
                                 newConcepts[currentConceptIndex] = {
                                     ...newConcepts[currentConceptIndex],
-                                    description: e.target.value,
+                                    description: value,
                                 }
                                 return newConcepts
                             })
                         }
                         placeholder="Mô tả chi tiết về gói dịch vụ này"
-                        rows={3}
                     />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                        <Label htmlFor="concept-price" className="text-xl font-medium">Giá (VNĐ) *</Label>
                         <Input
                             id="concept-price"
                             type="number"
                             value={concepts[currentConceptIndex]?.price}
-                            onChange={(e) =>
+                            onChange={(e) => {
                                 setConcepts((prev: ConceptFormData[]) => {
                                     const newConcepts = [...prev]
                                     newConcepts[currentConceptIndex] = {
@@ -433,16 +423,35 @@ const ConceptForm = ({
                                     }
                                     return newConcepts
                                 })
-                            }
+                                setIsPriceChanged(true)
+                            }}
                             placeholder="0"
                         />
                         {concepts[currentConceptIndex]?.price > 0 && (
-                            <p className="text-sm text-gray-500">{formatCurrency(concepts[currentConceptIndex]?.price)}</p>
+                            <div className="flex flex-col items-start gap-2">
+                                <p className="text-sm text-gray-500">
+                                    <span className="font-bold">
+                                        {isPriceChanged
+                                            ? formatPrice(
+                                                concepts[currentConceptIndex]?.price +
+                                                concepts[currentConceptIndex]?.price * 0.05 +
+                                                concepts[currentConceptIndex]?.price * 0.3
+                                            )
+                                            : formatPrice(concepts[currentConceptIndex]?.price || 0)
+                                        }
+                                    </span>
+                                    {isPriceChanged
+                                        ? ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
+                                        : " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
+                                    }
+                                </p>
+                                <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
+                            </div>
                         )}
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
+                        <Label htmlFor="concept-duration" className="text-xl font-medium">Thời gian (phút) *</Label>
                         <Input
                             id="concept-duration"
                             type="number"
@@ -463,7 +472,7 @@ const ConceptForm = ({
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Loại dịch vụ *</Label>
+                    <Label className="text-xl font-medium">Loại dịch vụ *</Label>
                     <div className="grid grid-cols-2 gap-2">
                         {serviceTypes?.map((type: ServiceType) => (
                             <Card
@@ -494,7 +503,7 @@ const ConceptForm = ({
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
+                    <Label className="text-xl font-medium">Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
 
                     {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
                         <div className="grid grid-cols-3 gap-2 mb-4">
