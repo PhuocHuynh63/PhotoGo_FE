@@ -12,7 +12,7 @@ import { IUserLoginRequest, UserLoginRequest } from "@models/user/request.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import TransitionWrapper from "@components/Atoms/TransitionWrapper"
 import { useRemoveLocalStorage } from "@utils/hooks/localStorage"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import toast from "react-hot-toast"
 import { useEffect, useState } from "react"
 import { getSession, signIn } from "next-auth/react"
@@ -73,14 +73,21 @@ const LoginPage = () => {
             //#region Handle success
             if (status === 200) {
                 const session = await getSession() as unknown as METADATA.ISession;
-                if (session?.user?.role?.name === ROLE.MEMBER) {
-                    router.push(ROUTES.PUBLIC.HOME);
-                } else if (session?.user?.role?.name === ROLE.ADMIN) {
-                    router.push(ROUTES.ADMIN.DASHBOARD);
-                } else if (session?.user?.role?.name === ROLE.STAFF) {
-                    router.push(ROUTES.STAFF.DASHBOARD);
-                } else if (session?.user?.role?.name === ROLE.VENDOR_OWNER) {
-                    router.push(ROUTES.VENDOR.PROFILE);
+                switch (session?.user?.role?.name) {
+                    case ROLE.CUSTOMER:
+                        router.push(ROUTES.PUBLIC.HOME);
+                        break;
+                    case ROLE.ADMIN:
+                        router.push(ROUTES.ADMIN.DASHBOARD);
+                        break;
+                    case ROLE.STAFF:
+                        router.push(ROUTES.STAFF.DASHBOARD);
+                        break;
+                    case ROLE.VENDOR_OWNER:
+                        router.push(ROUTES.VENDOR.PROFILE);
+                        break;
+                    default:
+                        break;
                 }
                 router.refresh();
                 return;
