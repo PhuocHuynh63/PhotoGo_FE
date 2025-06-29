@@ -33,11 +33,12 @@ export async function middleware(req: NextRequest) {
 
     if (!token) {
         const loginUrl = new URL(ROUTES.AUTH.LOGIN, req.url);
-        loginUrl.searchParams.set('callbackUrl', req.url);
         return NextResponse.redirect(loginUrl);
     }
 
-    const userRole = (token as any).role?.description;
+    const userRole = (token as any).role?.name;
+    console.log('userRole:', userRole);
+
 
     if ((pathname.startsWith(ROUTES.ADMIN.ROOT) && userRole !== ROLE.ADMIN) ||
         (pathname.startsWith(ROUTES.STAFF.ROOT) && userRole !== ROLE.STAFF)) {

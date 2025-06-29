@@ -5,7 +5,7 @@ const COOKIES = {
 const ROLE = {
     ADMIN: 'admin',
     STAFF: 'staff',
-    MEMBER: 'member',
+    CUSTOMER: 'customer',
     VENDOR_OWNER: 'vendor-owner',
 };
 
