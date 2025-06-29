@@ -20,7 +20,8 @@ export const ServicePackageModel = z.object({
     vendor: z.object({
         slug: z.string(),
         locations: z.array(z.object({
-            district: z.string()
+            district: z.string(),
+            city: z.string()
         }))
     })
 
