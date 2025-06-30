@@ -39,7 +39,17 @@ export default async function RootLayout({
     }
     const servicePackages = await getAllServicePackage();
     const servicePackagesData = servicePackages?.data as IServicePackagesData;
-    const cart = await getCartByUserId(userData?.id as string) as ICartResponse;
+    let cart: ICartResponse;
+    if (session?.user?.id) {
+        cart = await getCartByUserId(session?.user?.id as string) as ICartResponse;
+    } else {
+        // Provide default cart when no session
+        cart = {
+            statusCode: 200,
+            message: "No cart available",
+            data: []
+        };
+    }
     return (
         <>
             <HeaderHomePage user={userData} cart={cart} servicePackages={servicePackagesData} />
