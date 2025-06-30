@@ -1,21 +1,19 @@
+// File: src/middleware.ts (Phiên bản cuối cùng, xử lý được route động)
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { ROUTES } from './routes';
 import { ROLE } from '@constants/common';
 import { handleStatus } from '@middlewares/status';
 
-const PUBLIC_PATHS = [
-    ROUTES.AUTH.LOGIN,
-    ROUTES.AUTH.REGISTER,
-    ROUTES.AUTH.FORGOT_PASSWORD,
-    ROUTES.AUTH.RESET_PASSWORD,
-    ROUTES.AUTH.VERIFY_EMAIL,
-    ROUTES.AUTH.VERIFY_OTP,
-    ROUTES.PUBLIC.ABOUT,
-    ROUTES.PUBLIC.SEARCH_PACKAGES,
-    ROUTES.PUBLIC.SEARCH_VENDORS,
-    ROUTES.PUBLIC.SUPPORT,
-    ROUTES.PUBLIC.VENDOR_DETAIL,
+// DANH SÁCH CÁC TIỀN TỐ CẦN ĐƯỢC BẢO VỆ (YÊU CẦU ĐĂNG NHẬP)
+const PROTECTED_PREFIXES = [
+    ROUTES.ADMIN.ROOT,
+    ROUTES.STAFF.ROOT,
+    ROUTES.VENDOR.ROOT,
+    ROUTES.USER.PROFILE.INFO,
+    ROUTES.USER.CHAT_ROOT,
+    ROUTES.USER.CHECKOUT
 ];
 
 export async function middleware(req: NextRequest) {
@@ -24,12 +22,14 @@ export async function middleware(req: NextRequest) {
     const paymentErrorResponse = handleStatus(req);
     if (paymentErrorResponse) return paymentErrorResponse;
 
-    if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
+    const isProtectedRoute = PROTECTED_PREFIXES.some(prefix => pathname.startsWith(prefix));
+
+    if (!isProtectedRoute) {
         return NextResponse.next();
     }
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    console.log('token:', token);
+
 
     if (!token) {
         const loginUrl = new URL(ROUTES.AUTH.LOGIN, req.url);
@@ -37,11 +37,12 @@ export async function middleware(req: NextRequest) {
     }
 
     const userRole = (token as any).role?.name;
-    console.log('userRole:', userRole);
 
+    if (pathname.startsWith(ROUTES.ADMIN.ROOT) && userRole !== ROLE.ADMIN) {
+        return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
+    }
 
-    if ((pathname.startsWith(ROUTES.ADMIN.ROOT) && userRole !== ROLE.ADMIN) ||
-        (pathname.startsWith(ROUTES.STAFF.ROOT) && userRole !== ROLE.STAFF)) {
+    if (pathname.startsWith(ROUTES.STAFF.ROOT) && userRole !== ROLE.STAFF) {
         return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
     }
 
@@ -54,6 +55,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|auth/login/google).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|auth).*)',
     ],
 };

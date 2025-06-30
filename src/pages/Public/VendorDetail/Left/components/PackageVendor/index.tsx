@@ -105,7 +105,10 @@ const PackageVendor = ({ isOverview = false }: PackageVendorProps) => {
                 </div>
 
                 {pkg.description ? (
-                    <p className="text-sm md:text-base text-muted-foreground">{pkg.description}</p>
+                    <div
+                        className="text-muted-foreground prose prose-sm max-w-none line-clamp-4"
+                        dangerouslySetInnerHTML={{ __html: pkg?.description || '' }}
+                    />
                 ) : (
                     <Skeleton className="h-4 w-full rounded bg-greyed" />
                 )}
