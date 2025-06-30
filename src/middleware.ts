@@ -24,6 +24,10 @@ export async function middleware(req: NextRequest) {
     const paymentErrorResponse = handleStatus(req);
     if (paymentErrorResponse) return paymentErrorResponse;
 
+    if (pathname === ROUTES.PUBLIC.HOME) {
+        return NextResponse.next();
+    }
+
     if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
         return NextResponse.next();
     }
