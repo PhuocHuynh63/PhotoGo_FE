@@ -31,9 +31,6 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
     const cartId = session?.user?.cartId
     const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-
-    console.log("ConceptViewerPage - servicePackage:", servicePackage);
-
     // Use the custom favorites hook
     const {
         isConceptInFavorites,

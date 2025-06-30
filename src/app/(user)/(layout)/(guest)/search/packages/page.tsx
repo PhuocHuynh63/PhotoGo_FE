@@ -1,8 +1,11 @@
+import { authOptions } from "@lib/authOptions";
 import { IServicePackagesListResponse } from "@models/servicePackages/response.model";
 import { IServiceTypeModel } from "@models/serviceTypes/common.model";
 import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
 import SearchPackage from "@pages/Public/Search/SearchPackage";
 import packageServices from "@services/packageServices";
+import { METADATA } from "../../../../../../types/IMetadata";
+import { getServerSession } from "next-auth";
 
 async function getPackages({ searchParams, serviceTypes }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>, serviceTypes: IServiceTypeModel[] }) {
     const resolvedParams = await searchParams;
@@ -39,11 +42,12 @@ async function getServiceTypes() {
 }
 
 export default async function SearchPackagePage({ searchParams }: SERVERS.SearchPackagePageProps) {
+    const session = await getServerSession(authOptions) as METADATA.ISession
     const serviceTypes = await getServiceTypes();
     const packagesData = await getPackages({ searchParams, serviceTypes: serviceTypes?.data || [] });
     return (
         <>
-            <SearchPackage packages={packagesData.data} pagination={packagesData.pagination} serviceTypes={serviceTypes?.data} />
+            <SearchPackage packages={packagesData.data} pagination={packagesData.pagination} serviceTypes={serviceTypes?.data} session={session} />
         </>
     );
 }

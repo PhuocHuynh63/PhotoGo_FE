@@ -14,19 +14,20 @@ import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
 import { IServiceTypeModel } from "@models/serviceTypes/common.model"
 import toast from 'react-hot-toast'
+import { METADATA } from "../../../../types/IMetadata";
+import { useSetSession } from "@stores/user/selectors"
 
-export default function SearchPackage({ packages, pagination, serviceTypes }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'], serviceTypes: IServiceTypeModel[] | undefined }) {
+export default function SearchPackage({ packages, pagination, serviceTypes, session }: { packages: IServicePackage[], pagination: IServicePackagesData['pagination'], serviceTypes: IServiceTypeModel[] | undefined, session: METADATA.ISession }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams?.get('searchTerm') || "");
   const [filter, setFilter] = useState(searchParams?.get('sortBy') || "");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
   const handleResetAll = () => {
     setSearch(""); // Reset search input
     setFilter(""); // Reset filter select
   };
-
+  const setSession = useSetSession()
   const handleSearch = () => {
     const params = new URLSearchParams(searchParams?.toString());
     if (search) {
@@ -65,6 +66,7 @@ export default function SearchPackage({ packages, pagination, serviceTypes }: { 
   };
 
   useEffect(() => {
+    setSession(session)
     const timer = setTimeout(() => {
       handleSearch();
     }, 500);

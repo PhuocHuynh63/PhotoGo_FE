@@ -1,4 +1,3 @@
-
 declare namespace ICOMPONENTS {
     // Common base props for reusable styles
     interface BaseProps {
@@ -96,7 +95,7 @@ declare namespace ICOMPONENTS {
         checked?: boolean;
         direction?: "vertical" | "horizontal";
         onChange?: (event: React.ChangeEvent<HTMLInputElement>, key: string) => void;
-        options?: { key: string }[];
+        options?: { key: string; value?: string }[];
         value?: string[] | number[] | boolean[] | boolean;
         mode?: "single" | "multiple";
         groupValues?: string | number | boolean;
