@@ -97,6 +97,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                 isOpen={isOpen}
                 onOpenChange={() => handleViewConcept(selectedPackage || '')}
                 servicePackage={servicePackage}
+                initialConceptId={selectedPackage}
             />
             <motion.div
                 className="mb-6"
