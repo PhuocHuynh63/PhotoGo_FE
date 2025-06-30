@@ -33,6 +33,7 @@ const USER = {
         REVIEWS: '/profile/reviews',
     },
     CHECKOUT: '/checkout/:id',
+    CHAT_ROOT: '/chat',
     CHAT: '/chat/:id',
 };
 
