@@ -3,7 +3,7 @@ import { IUserLoginRequest, IUserRegisterRequest, IUserResetPasswordRequest } fr
 
 const authService = {
     login: async (data: IUserLoginRequest) => {
-        return await http.post("/auth/login", data)
+        return await http.post("/auth/login", data);
     },
     register: async (data: IUserRegisterRequest) => {
         return await http.post("/auth/register", data)

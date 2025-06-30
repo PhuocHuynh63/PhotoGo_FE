@@ -12,6 +12,7 @@ import cartService from "@services/cart";
 import packageServices from "@services/packageServices";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
 import { METADATA } from "../../../types/IMetadata";
+import Chatbot from "@components/Molecules/Chatbot";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
@@ -53,6 +54,7 @@ export default async function RootLayout({
         <>
             <HeaderHomePage user={userData} cart={cart} servicePackages={servicePackagesData} />
             {children}
+            <Chatbot />
             <Footer />
         </>
     );
