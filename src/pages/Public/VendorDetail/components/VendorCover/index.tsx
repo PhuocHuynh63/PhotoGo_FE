@@ -113,7 +113,7 @@ const VendorCover = () => {
                         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                             <div>
                                 {vendorData?.name ?
-                                    <h1 className="text-2xl lg:text-3xl text-center sm:text-center font-bold">{vendorData?.name}</h1>
+                                    <h1 className="text-2xl lg:text-3xl text-center sm:text-start font-bold">{vendorData?.name}</h1>
                                     : (
                                         <Skeleton className='h-8 w-50 rounded bg-grey' />
                                     )}
@@ -126,7 +126,7 @@ const VendorCover = () => {
                                     <div className='hidden items-center lg:flex'>
                                         <span className="text-muted-foreground">•</span>
                                     </div>
-                                    <div className="flex items-center text-muted-foreground">
+                                    <div className="flex items-center text-muted-foreground line-clamp-1">
                                         <MapPin className="md:h-4 md:w-4 h-10 w-10 mr-1" />
                                         <span className="text-sm ">{addressLocation?.address}</span>
                                     </div>
@@ -145,10 +145,6 @@ const VendorCover = () => {
                                 </div>
                             </div>
                             <div className="flex gap-2">
-                                <ButtonVendorDetail className="gap-1">
-                                    <Heart className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Lưu</span>
-                                </ButtonVendorDetail>
                                 <ButtonVendorDetail className="gap-1" onClick={handleSelectConversation}>
                                     <MessageCircle className="h-4 w-4" />
                                     <span className="hidden sm:inline">Liên hệ</span>
