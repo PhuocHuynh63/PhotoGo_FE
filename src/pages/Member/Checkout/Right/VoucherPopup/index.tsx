@@ -8,6 +8,7 @@ import { Input } from "@components/Atoms/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
 import VoucherDetailModal from "../components/VoucherDetail"
 import VoucherCard from "../components/VoucherCard"
+import { useVoucher } from "@utils/hooks/useVoucher"
 
 interface Voucher {
     id: string
@@ -175,6 +176,13 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         setDetailVoucher(voucher)
         setIsDetailOpen(true)
     }
+
+    const {} = useVoucher({
+        userId: ,
+        current: 1,
+        pageSize: 6,
+        status: "có sẵn", // Replace with actual status
+    })
 
     return (
         <>

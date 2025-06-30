@@ -14,16 +14,16 @@ import { ROUTES } from "@routes";
 import { PAGES } from "../../../../../types/IPages";
 import { Skeleton } from "@components/Atoms/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@components/Atoms/ui/radio-group";
-import { useVoucherFromPoint } from "@utils/hooks/useVoucherFromPoint";
 import { useVoucherFromCampaign } from "@utils/hooks/useVoucherFromCampaign";
 import { IVoucherFromCampaign, IVoucherFromPoint } from "@models/voucher/common.model";
+import { useVoucher } from "@utils/hooks/useVoucher";
 
 export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     const [tab, setTab] = useState("all");
     const [statusTab, setStatusTab] = useState("hoạt động");
     const [selectedVoucherId, setSelectedVoucherId] = useState<string>("");
 
-    const { vouchers: vouchersFromPoint, loading: loadingPoint, fetchVouchers: fetchVouchersPoint, pagination: paginationPoint } = useVoucherFromPoint(session?.user?.id);
+    const { vouchers: vouchersFromPoint, loading: loadingPoint, fetchVouchers: fetchVouchersPoint, pagination: paginationPoint } = useVoucher(session?.user?.id);
     const { vouchers: vouchersFromCampaign, loading: loadingCampaign, fetchVouchers: fetchVouchersCampaign, pagination: paginationCampaign } = useVoucherFromCampaign(session?.user?.id);
 
     // Lưu voucher ID vào localStorage khi có thay đổi
