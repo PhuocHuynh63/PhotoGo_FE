@@ -44,7 +44,7 @@ export default function Sidebar() {
         },
         { icon: MessageSquare, label: "Tin nhắn", href: ROUTES.USER.CHAT },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
-        { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.CALENDAR },
+        { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.SETTINGS },
     ]
 
     return (
