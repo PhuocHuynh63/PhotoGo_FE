@@ -11,6 +11,7 @@ import { PAGES } from '../../../types/IPages';
 import { useSetAddressLocation, useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
 import { useSetSession } from '@stores/user/selectors';
 import { useSearchParams } from 'next/navigation';
+import Chatbot from '@components/Molecules/Chatbot';
 
 const VendorDetailLayoutPage = ({
     children,
@@ -107,6 +108,8 @@ const VendorDetailLayoutPage = ({
                     </motion.div>
                 </div>
             </div>
+
+            <Chatbot />
         </>
     )
 }
