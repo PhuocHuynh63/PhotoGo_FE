@@ -44,8 +44,8 @@ interface VoucherPopupProps {
 export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
-    const [detailVoucher, setDetailVoucher] = useState<VoucherDetail | null>(null)
-    const [isDetailOpen, setIsDetailOpen] = useState(false)
+    // const [detailVoucher, setDetailVoucher] = useState<VoucherDetail | null>(null)
+    // const [isDetailOpen, setIsDetailOpen] = useState(false)
 
     const checkoutSessioin = useCheckoutSession();
     console.log("checkoutSessioin", checkoutSessioin);
@@ -67,11 +67,11 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         }
     }
 
-    const handleViewDetail = (voucherId: string, e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation()
-        if (!voucherId) return
-        setIsDetailOpen(true)
-    }
+    // const handleViewDetail = (voucherId: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    //     e.stopPropagation()
+    //     if (!voucherId) return
+    //     setIsDetailOpen(true)
+    // }
 
     /**
      * Fetch vouchers from the server based on user ID and status.
@@ -230,12 +230,12 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                 </DialogContent>
             </Dialog>
 
-            <VoucherDetailModal
+            {/* <VoucherDetailModal
                 open={isDetailOpen}
                 onOpenChange={setIsDetailOpen}
                 detailVoucher={detailVoucher}
                 onSelect={handleVoucherSelect}
-            />
+            /> */}
         </>
     )
 }
