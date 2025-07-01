@@ -17,7 +17,34 @@ interface ServicePackageSaveButtonProps {
 export default function ServicePackageSaveButton({ serviceId, serviceData, onSuccess, onError }: ServicePackageSaveButtonProps) {
     const { saveServicePackage, isLoading, error } = useSaveServicePackage();
 
+    const validateServiceData = (): { isValid: boolean; errors: string[] } => {
+        const errors: string[] = [];
+
+        // Validate required fields
+        if (!serviceData.name?.trim()) {
+            errors.push("Tên dịch vụ là bắt buộc");
+        }
+
+        if (!serviceData.description?.trim()) {
+            errors.push("Mô tả dịch vụ là bắt buộc");
+        }
+
+        return {
+            isValid: errors.length === 0,
+            errors
+        };
+    };
+
     const handleSave = async () => {
+        // Validate before saving
+        const validation = validateServiceData();
+        if (!validation.isValid) {
+            const errorMessage = validation.errors.join(", ");
+            toast.error(errorMessage);
+            if (onError) onError(errorMessage);
+            return;
+        }
+
         const formData = new FormData();
         formData.append("name", serviceData.name || "");
         formData.append("description", serviceData.description || "");
@@ -30,8 +57,20 @@ export default function ServicePackageSaveButton({ serviceId, serviceData, onSuc
             toast.success("Cập nhật dịch vụ thành công!");
             if (onSuccess) onSuccess();
         } else {
-            toast.error(error || "Có lỗi xảy ra khi cập nhật dịch vụ");
-            if (onError) onError(error || "Có lỗi xảy ra khi cập nhật dịch vụ");
+            let errorMessage = error || "Có lỗi xảy ra khi cập nhật dịch vụ";
+
+            if (result.response?.message) {
+                if (Array.isArray(result.response.message)) {
+                    errorMessage = result.response.message.join(", ");
+                } else {
+                    errorMessage = result.response.message;
+                }
+            } else if (result.response?.error) {
+                errorMessage = result.response.error;
+            }
+
+            toast.error(errorMessage);
+            if (onError) onError(errorMessage);
         }
     };
 
