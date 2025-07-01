@@ -339,7 +339,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 </CardHeader>
                 <div className="space-y-4 p-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name">Tên dịch vụ *</Label>
+                        <Label htmlFor="name" className="text-xl font-semibold text-gray-900">
+                            📝 Tên dịch vụ <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                             id="name"
                             value={serviceData?.name}
@@ -349,7 +351,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Mô tả dịch vụ *</Label>
+                        <Label htmlFor="description" className="text-xl font-semibold text-gray-900">
+                            📄 Mô tả dịch vụ <span className="text-red-500">*</span>
+                        </Label>
                         <TipTapEditor
                             value={serviceData?.description}
                             onChange={(value) => setServiceData((prev) => ({ ...prev, description: value }))}
@@ -357,30 +361,38 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="status">Trạng thái</Label>
+                        <Label htmlFor="status" className="text-xl font-semibold text-gray-900">
+                            🚦 Trạng thái
+                        </Label>
                         <Select
                             value={serviceData?.status}
                             onValueChange={(value: "hoạt động" | "không hoạt động") =>
                                 setServiceData((prev) => ({ ...prev, status: value }))
                             }
                         >
-                            <SelectTrigger>
+                            <SelectTrigger className="border-2 focus:border-blue-500">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="hoạt động">Hoạt động</SelectItem>
-                                <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
+                                <SelectItem value="hoạt động" className="text-green-700">
+                                    ✅ Hoạt động
+                                </SelectItem>
+                                <SelectItem value="không hoạt động" className="text-red-700">
+                                    ⏸️ Tạm dừng
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Ảnh đại diện dịch vụ</Label>
+                        <Label className="text-xl font-semibold text-gray-900">
+                            📸 Ảnh đại diện dịch vụ
+                        </Label>
                         <div
                             {...serviceImageDropzone.getRootProps()}
                             className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer ${serviceImageDropzone.isDragActive
-                                    ? 'border-blue-500 bg-blue-50'
-                                    : 'border-gray-300 hover:border-gray-400'
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-300 hover:border-gray-400'
                                 }`}
                         >
                             {serviceData?.imagePreview ? (
@@ -425,30 +437,49 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     </div>
 
                     {/* Nút lưu riêng cho Service Package */}
-                    <div className="flex justify-end">
-                        <ServicePackageSaveButton
-                            serviceId={initialService?.id}
-                            serviceData={serviceData}
-                            onSuccess={() => {
-                                router.refresh();
-                                router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""));
-                            }}
-                        />
+                    <div className="flex justify-end p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 text-yellow-800">
+                                <span className="text-lg">💾</span>
+                                <span className="text-sm font-medium">Lưu thông tin dịch vụ chính</span>
+                            </div>
+                            <ServicePackageSaveButton
+                                serviceId={initialService?.id}
+                                serviceData={serviceData}
+                                onSuccess={() => {
+                                    router.refresh();
+                                    router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""));
+                                }}
+                            />
+                        </div>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-medium">
-                            Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
-                        </h3>
-                        <Button variant="outline" onClick={handleAddConcept} className="gap-2 cursor-pointer">
-                            Thêm gói dịch vụ
+                    <div className='border-b border-gray-200'></div>
+
+                    <div className="flex justify-between items-center p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-xl font-bold text-blue-900">
+                                📦 Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
+                            </h1>
+                            <span className="text-sm text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+                                {concepts[currentConceptIndex]?.id ? "Chỉnh sửa" : "Tạo mới"}
+                            </span>
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={handleAddConcept}
+                            className="gap-2 cursor-pointer border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400"
+                        >
+                            ➕ Thêm gói dịch vụ
                         </Button>
                     </div>
 
                     {concepts && concepts.length > 0 && concepts[currentConceptIndex] && (
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
+                                <Label htmlFor="concept-name" className="text-xl font-semibold text-gray-900">
+                                    🏷️ Tên gói dịch vụ <span className="text-red-500">*</span>
+                                </Label>
                                 <Input
                                     id="concept-name"
                                     value={concepts[currentConceptIndex]?.name || ""}
@@ -458,7 +489,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
+                                <Label htmlFor="concept-description" className="text-xl font-semibold text-gray-900">
+                                    📋 Mô tả gói dịch vụ <span className="text-red-500">*</span>
+                                </Label>
                                 <TipTapEditor
                                     value={concepts[currentConceptIndex]?.description || ""}
                                     onChange={(value) => handleConceptChange(currentConceptIndex, "description", value)}
@@ -467,7 +500,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                                    <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900">
+                                        💰 Giá (VNĐ) <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="concept-price"
                                         type="number"
@@ -500,7 +535,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
+                                    <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900">
+                                        ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="concept-duration"
                                         type="number"
@@ -512,14 +549,16 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Loại dịch vụ *</Label>
-                                <Accordion type="single" collapsible>
+                                <Accordion type="single" collapsible >
                                     <AccordionItem value="service-types">
                                         <AccordionTrigger className="cursor-pointer">
-                                            <span className="text-sm font-medium leading-none">
-                                                {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
-                                                    ? `Đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại dịch vụ`
-                                                    : "Chọn loại dịch vụ"}
+                                            <span className="text-xl font-semibold text-gray-900">
+                                                🎯 Loại dịch vụ <span className="text-red-500">*</span>
+                                                <span className="text-sm font-medium text-gray-600 ml-2">
+                                                    {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
+                                                        ? `(đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length})`
+                                                        : "(Chưa chọn)"}
+                                                </span>
                                             </span>
                                         </AccordionTrigger>
                                         <AccordionContent>
@@ -556,7 +595,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
+                                <Label className="text-xl font-semibold text-gray-900">
+                                    🖼️ Ảnh gói dịch vụ <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
+                                </Label>
                                 {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
                                     <div className="grid grid-cols-5 gap-10 my-4">
                                         {conceptImagePreviews[currentConceptIndex].map((preview, index) => (
@@ -583,8 +624,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     <div
                                         {...conceptImageDropzone.getRootProps()}
                                         className={`border-2 border-dashed rounded-lg p-4 transition-colors cursor-pointer ${conceptImageDropzone.isDragActive
-                                                ? 'border-blue-500 bg-blue-50'
-                                                : 'border-gray-300 hover:border-gray-400'
+                                            ? 'border-blue-500 bg-blue-50'
+                                            : 'border-gray-300 hover:border-gray-400'
                                             }`}
                                     >
                                         <div className="text-center">
@@ -606,48 +647,72 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 )}
                             </div>
 
-                            {/* Nút lưu riêng cho từng concept */}
-                            <div className="flex justify-end mt-2">
-                                <ServiceConceptSaveButton
-                                    conceptData={concepts[currentConceptIndex]}
-                                    originalPrice={originalPrices[currentConceptIndex]}
-                                    servicePackageId={initialService?.id}
-                                    onSuccess={() => {
-                                        router.refresh();
-                                    }}
-                                />
+                        </div>
+                    )}
+
+                    {/* Nhóm nút điều hướng và thao tác concept */}
+                    {concepts && concepts.length > 0 && (
+                        <div className="flex justify-between items-center mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
+                                    disabled={currentConceptIndex === 0}
+                                    className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
+                                >
+                                    ⬅️ Gói trước
+                                </Button>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-green-800 bg-green-100 px-3 py-1 rounded-full">
+                                        📍 Gói {currentConceptIndex + 1} / {concepts.length}
+                                    </span>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
+                                    disabled={currentConceptIndex === concepts.length - 1}
+                                    className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
+                                >
+                                    Gói tiếp theo ➡️
+                                </Button>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    onClick={async () => await handleRemoveConcept(currentConceptIndex)}
+                                    className="cursor-pointer text-red-600 border-red-300 hover:bg-red-50 font-medium"
+                                >
+                                    🗑️ {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
+                                </Button>
+
+                                <div className="relative">
+                                    <ServiceConceptSaveButton
+                                        conceptData={concepts[currentConceptIndex]}
+                                        originalPrice={originalPrices[currentConceptIndex]}
+                                        servicePackageId={initialService?.id}
+                                        onSuccess={() => {
+                                            router.refresh();
+                                        }}
+                                    />
+                                    <div className="absolute -top-2 -right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                </div>
                             </div>
                         </div>
                     )}
 
-                    {concepts && concepts.length > 0 && (
-                        <div className="flex justify-between mt-4">
+                    {/* Nút hủy ở cuối */}
+                    <div className="mt-6 flex justify-end gap-2 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-gray-600">❌ Không lưu thay đổi</span>
                             <Button
                                 variant="outline"
-                                onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
-                                disabled={currentConceptIndex === 0}
-                                className="cursor-pointer"
+                                onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""))}
+                                className="cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-100"
                             >
-                                Gói trước
-                            </Button>
-                            <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} className="cursor-pointer">
-                                {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
-                                disabled={currentConceptIndex === concepts.length - 1}
-                                className="cursor-pointer"
-                            >
-                                Gói tiếp theo
+                                Hủy bỏ
                             </Button>
                         </div>
-                    )}
-
-                    <div className="mt-6 flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""))} className="cursor-pointer">
-                            Hủy
-                        </Button>
                     </div>
                 </div>
             </Card>
