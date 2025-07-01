@@ -79,7 +79,18 @@ export const AvatarWithBorder: React.FC<AvatarWithBorderProps> = ({ rank = "Đ�
 
     return (
         <div className={clsx("relative flex items-center justify-center rounded-full", className)} style={borderStyle}>
-            <div ref={avatarRef} className="relative z-10 rounded-full overflow-hidden">
+            <div
+                className="absolute inset-0 z-10 rounded-full avatar-mask"
+                style={{
+                    top: borderSize + 1,
+                    left: borderSize + 1,
+                    right: borderSize + 1,
+                    bottom: borderSize + 1,
+                    background: "white", // hoặc màu nền bạn muốn
+                    pointerEvents: "none",
+                }}
+            />
+            <div ref={avatarRef} className="relative z-20 rounded-full overflow-hidden">
                 {children}
             </div>
             {IconComponent && (

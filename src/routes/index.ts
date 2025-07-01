@@ -48,6 +48,7 @@ const VENDOR = {
     BRANCHES: '/vendor/branches',
     SERVICE_STATISTICS: '/vendor/service-statistics',
     SETTINGS: '/vendor/settings',
+    CHAT: '/chat',
     SERVICE_PACKAGES: {
         LIST: '/vendor/services/',
         VIEW: '/vendor/services/:id',
