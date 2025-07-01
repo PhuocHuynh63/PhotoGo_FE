@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Search, Ticket, Star, Gift } from "lucide-react"
 import { Button } from "@components/Atoms/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/Atoms/ui/dialog"
@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/t
 import VoucherDetailModal from "../components/VoucherDetail"
 import VoucherCard from "../components/VoucherCard"
 import { useVoucher } from "@utils/hooks/useVoucher"
+import { useCheckoutSession } from "@stores/checkout/selectors"
+import { VOUCHER } from "@constants/voucher"
 
 interface Voucher {
     id: string
@@ -143,6 +145,10 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     const [detailVoucher, setDetailVoucher] = useState<VoucherDetail | null>(null)
     const [isDetailOpen, setIsDetailOpen] = useState(false)
 
+    const checkoutSessioin = useCheckoutSession();
+    console.log("checkoutSessioin", checkoutSessioin);
+
+
     // Memoized filtered vouchers
     const filteredPointVouchers = React.useMemo(() => {
         return mockPointVouchers.filter(
@@ -177,12 +183,30 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         setIsDetailOpen(true)
     }
 
-    const {} = useVoucher({
-        userId: ,
+    /**
+     * Fetch vouchers from the server based on user ID and status.
+     * This hook is used to fetch available vouchers for the user.
+     * It uses the `useVoucher` hook to get vouchers, loading state, and pagination.
+     */
+    const [voucherType, setVoucherType] = useState(VOUCHER.TYPE.POINT);
+    console.log("voucherType", voucherType);
+
+    const { vouchers, loading, fetchVouchers: fetchVouchersPoint, pagination: paginationVoucher } = useVoucher({
+        userId: checkoutSessioin?.userId || "",
         current: 1,
         pageSize: 6,
-        status: "có sẵn", // Replace with actual status
-    })
+        status: voucherType,
+        term: searchTerm,
+        from: voucherType
+    });
+
+    useEffect(() => {
+        if (checkoutSessioin?.userId) {
+            fetchVouchersPoint(1, 6, voucherType);
+        }
+    }, [checkoutSessioin?.userId, voucherType, fetchVouchersPoint]);
+    console.log(vouchers)
+    //------------------------------End------------------------------//
 
     return (
         <>
@@ -242,6 +266,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                                 <TabsTrigger
                                     value="points"
                                     className="cursor-pointer flex items-center justify-center gap-1 sm:gap-2 h-10 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-medium rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 transition-all w-full max-w-full break-words"
+                                    onClick={() => setVoucherType(VOUCHER.TYPE.POINT)}
                                 >
                                     <Star className="w-4 h-4 flex-shrink-0 hidden sm:inline" />
                                     <span className="truncate break-words w-full max-w-full">Voucher điểm</span>
@@ -250,6 +275,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                                 <TabsTrigger
                                     value="campaign"
                                     className="cursor-pointer flex items-center justify-center gap-1 sm:gap-2 h-10 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-medium rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 transition-all w-full max-w-full break-words"
+                                    onClick={() => setVoucherType(VOUCHER.TYPE.CAMPAIGN)}
                                 >
                                     <Gift className="w-4 h-4 flex-shrink-0 hidden sm:inline" />
                                     <span className="truncate break-words w-full max-w-full">Khuyến mãi</span>

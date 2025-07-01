@@ -9,10 +9,4 @@ const ROLE = {
     VENDOR_OWNER: 'vendor-owner',
 };
 
-const VOUCHER = {
-    AVAILABLE: 'có sẵn',
-    USED: 'đã sử dụng',
-    EXPIRED: 'hết hạn',
-}
-
-export { COOKIES, ROLE, VOUCHER };
+export { COOKIES, ROLE };

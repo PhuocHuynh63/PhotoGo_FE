@@ -2,16 +2,18 @@ import { useState, useCallback } from 'react';
 import voucherService from '@services/voucher';
 import { IVoucherFromPoint } from '@models/voucher/common.model';
 import { IVoucherFromPointResponseModel } from '@models/voucher/response.model';
-import { VOUCHER } from '@constants/common';
+import { VOUCHER } from '@constants/voucher';
 
 type UseVoucherProps = {
     userId: string;
     current: number;
     pageSize: number;
     status: string;
+    term?: string;
+    from?: string;
 };
 
-export const useVoucher = ({ userId, current, pageSize, status }: UseVoucherProps) => {
+export const useVoucher = ({ userId, current, pageSize, status, from, term }: UseVoucherProps) => {
     const [vouchers, setVouchers] = useState<IVoucherFromPoint[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -26,7 +28,9 @@ export const useVoucher = ({ userId, current, pageSize, status }: UseVoucherProp
         async (
             fetchCurrent = current || 1,
             fetchPageSize = pageSize || 6,
-            fetchStatus = status || VOUCHER.AVAILABLE
+            fetchStatus = status || VOUCHER.STATUS.AVAILABLE,
+            fetchTerm = term || '',
+            fetchFrom = from || ''
         ) => {
             if (!userId) return;
 
@@ -34,14 +38,20 @@ export const useVoucher = ({ userId, current, pageSize, status }: UseVoucherProp
             setError(null);
 
             try {
-                const response = await voucherService.getVoucherFromPoint(
+                const response = await voucherService.getVoucher(
                     userId,
+                    fetchCurrent,
+                    fetchPageSize,
+                    fetchTerm,
+                    fetchFrom,
                     fetchStatus,
                     'maxPrice',
                     'asc',
-                    fetchCurrent,
-                    fetchPageSize
                 ) as IVoucherFromPointResponseModel;
+
+
+                console.log('fetch From', fetchFrom);
+                console.log('getVoucher response:', response);
 
                 const data = Array.isArray(response.data?.data)
                     ? (response.data.data as IVoucherFromPoint[])
