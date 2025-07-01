@@ -11,6 +11,7 @@ import VoucherCard from "../components/VoucherCard"
 import { useVoucher } from "@utils/hooks/useVoucher"
 import { useCheckoutSession } from "@stores/checkout/selectors"
 import { VOUCHER } from "@constants/voucher"
+import { IVoucherFilter } from "@models/voucher/common.model"
 
 interface Voucher {
     id: string
@@ -36,111 +37,12 @@ interface VoucherDetail extends Voucher {
     howToUse: string
 }
 
-const mockPointVouchers: VoucherDetail[] = [
-    {
-        id: "1",
-        code: "POINT10",
-        title: "Giảm 10% cho đơn hàng",
-        description: "Áp dụng cho đơn hàng từ 100,000đ",
-        discount: "10%",
-        minOrder: 100000,
-        maxDiscount: 50000,
-        expiryDate: "31/12/2024",
-        isUsable: true,
-        type: "points",
-        pointsRequired: 100,
-        termsAndConditions: [
-            "Áp dụng cho đơn hàng từ 100,000đ trở lên",
-            "Giảm tối đa 50,000đ",
-            "Không áp dụng cùng với các khuyến mãi khác",
-            "Chỉ sử dụng được 1 lần",
-        ],
-        usageLimit: 1,
-        usedCount: 0,
-        validFrom: "01/01/2024",
-        applicableProducts: ["Tất cả sản phẩm"],
-        howToUse: "Chọn voucher này và nhấn 'Áp dụng' khi thanh toán",
-    },
-    {
-        id: "2",
-        code: "POINT20",
-        title: "Giảm 20,000đ",
-        description: "Áp dụng cho đơn hàng từ 200,000đ",
-        discount: "20,000đ",
-        minOrder: 200000,
-        expiryDate: "30/11/2024",
-        isUsable: false,
-        type: "points",
-        pointsRequired: 200,
-        termsAndConditions: [
-            "Áp dụng cho đơn hàng từ 200,000đ trở lên",
-            "Không áp dụng cho sản phẩm đang giảm giá",
-            "Chỉ sử dụng được 1 lần",
-        ],
-        usageLimit: 1,
-        usedCount: 1,
-        validFrom: "01/01/2024",
-        applicableProducts: ["Sản phẩm thường"],
-        excludedProducts: ["Sản phẩm sale"],
-        howToUse: "Voucher đã được sử dụng hết lượt",
-    },
-]
-
-const mockCampaignVouchers: VoucherDetail[] = [
-    {
-        id: "3",
-        code: "SUMMER30",
-        title: "Khuyến mãi mùa hè",
-        description: "Giảm 30% tối đa 100,000đ",
-        discount: "30%",
-        minOrder: 150000,
-        maxDiscount: 100000,
-        expiryDate: "31/08/2024",
-        isUsable: true,
-        type: "campaign",
-        termsAndConditions: [
-            "Áp dụng cho đơn hàng từ 150,000đ",
-            "Giảm tối đa 100,000đ",
-            "Áp dụng cho tất cả sản phẩm mùa hè",
-            "Có thể sử dụng nhiều lần trong thời gian khuyến mãi",
-        ],
-        usageLimit: 5,
-        usedCount: 2,
-        validFrom: "01/06/2024",
-        applicableProducts: ["Sản phẩm mùa hè", "Đồ bơi", "Quần áo mùa hè"],
-        howToUse: "Thêm sản phẩm vào giỏ hàng và áp dụng mã này khi thanh toán",
-    },
-    {
-        id: "4",
-        code: "NEWUSER",
-        title: "Ưu đãi khách hàng mới",
-        description: "Giảm 50,000đ cho lần đầu mua hàng",
-        discount: "50,000đ",
-        minOrder: 300000,
-        expiryDate: "31/12/2024",
-        isUsable: false,
-        type: "campaign",
-        termsAndConditions: [
-            "Chỉ dành cho khách hàng mới",
-            "Áp dụng cho đơn hàng đầu tiên từ 300,000đ",
-            "Không áp dụng cùng voucher khác",
-            "Chỉ sử dụng được 1 lần",
-        ],
-        usageLimit: 1,
-        usedCount: 0,
-        validFrom: "01/01/2024",
-        applicableProducts: ["Tất cả sản phẩm"],
-        howToUse: "Bạn không đủ điều kiện sử dụng voucher này",
-    },
-]
-
 interface VoucherPopupProps {
-    onVoucherSelect?: (voucher: Voucher | null) => void
+    onVoucherSelect?: (voucher: IVoucherFilter | null) => void
 }
 
 export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
     const [searchTerm, setSearchTerm] = useState("")
     const [detailVoucher, setDetailVoucher] = useState<VoucherDetail | null>(null)
     const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -148,27 +50,15 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     const checkoutSessioin = useCheckoutSession();
     console.log("checkoutSessioin", checkoutSessioin);
 
-
-    // Memoized filtered vouchers
-    const filteredPointVouchers = React.useMemo(() => {
-        return mockPointVouchers.filter(
-            (voucher) =>
-                voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voucher.title.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-    }, [searchTerm])
-    const filteredCampaignVouchers = React.useMemo(() => {
-        return mockCampaignVouchers.filter(
-            (voucher) =>
-                voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                voucher.title.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-    }, [searchTerm])
-
-    const handleVoucherSelect = (voucher: VoucherDetail) => {
-        if (!voucher.isUsable) return
+    /**
+     * Handle voucher selection.
+     * This function sets the selected voucher state when a voucher is clicked.
+     */
+    const [selectedVoucher, setSelectedVoucher] = useState<any | null>(null)
+    const handleVoucherSelect = (voucher: any) => {
         setSelectedVoucher(voucher)
     }
+    //-------------------------------End------------------------------//
 
     const handleApplyVoucher = () => {
         if (selectedVoucher) {
@@ -177,9 +67,9 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         }
     }
 
-    const handleViewDetail = (voucher: VoucherDetail, e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleViewDetail = (voucherId: string, e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation()
-        setDetailVoucher(voucher)
+        if (!voucherId) return
         setIsDetailOpen(true)
     }
 
@@ -189,8 +79,6 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
      * It uses the `useVoucher` hook to get vouchers, loading state, and pagination.
      */
     const [voucherType, setVoucherType] = useState(VOUCHER.TYPE.POINT);
-    console.log("voucherType", voucherType);
-
     const { vouchers, loading, fetchVouchers: fetchVouchersPoint, pagination: paginationVoucher } = useVoucher({
         userId: checkoutSessioin?.userId || "",
         current: 1,
@@ -220,7 +108,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             <div className="text-sm font-semibold text-gray-900">Mã giảm giá</div>
                             {selectedVoucher ? (
                                 <div className="text-xs text-orange-600 font-medium">
-                                    {selectedVoucher.code} - {selectedVoucher.discount}
+                                    {selectedVoucher.code} - {selectedVoucher.discount_value}
                                 </div>
                             ) : (
                                 <div className="text-xs text-gray-500">Chọn hoặc nhập mã giảm giá</div>
@@ -284,14 +172,14 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             </TabsList>
                             <TabsContent value="points" className="mt-2 sm:mt-6 w-full max-w-full">
                                 <div className="space-y-2 sm:space-y-4 w-full max-w-full">
-                                    {filteredPointVouchers.length > 0 ? (
-                                        filteredPointVouchers.map((voucher) => (
+                                    {vouchers.length > 0 ? (
+                                        vouchers?.map((voucher) => (
                                             <VoucherCard
-                                                key={voucher.id}
+                                                key={voucher.voucher.id}
                                                 voucher={voucher}
                                                 selectedVoucher={selectedVoucher}
                                                 onSelect={handleVoucherSelect}
-                                                onViewDetail={handleViewDetail}
+                                            // onViewDetail={handleViewDetail(voucher.voucher.id)}
                                             />
                                         ))
                                     ) : (
@@ -305,14 +193,14 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             </TabsContent>
                             <TabsContent value="campaign" className="mt-2 sm:mt-6 w-full max-w-full">
                                 <div className="space-y-2 sm:space-y-4 w-full max-w-full">
-                                    {filteredCampaignVouchers.length > 0 ? (
-                                        filteredCampaignVouchers.map((voucher) => (
+                                    {vouchers.length > 0 ? (
+                                        vouchers.map((voucher: IVoucherFilter) => (
                                             <VoucherCard
-                                                key={voucher.id}
+                                                key={voucher.voucher.id}
                                                 voucher={voucher}
                                                 selectedVoucher={selectedVoucher}
                                                 onSelect={handleVoucherSelect}
-                                                onViewDetail={handleViewDetail}
+                                            // onViewDetail={handleViewDetail}
                                             />
                                         ))
                                     ) : (

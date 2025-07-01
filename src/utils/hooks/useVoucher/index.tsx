@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import voucherService from '@services/voucher';
-import { IVoucherFromPoint } from '@models/voucher/common.model';
-import { IVoucherFromPointResponseModel } from '@models/voucher/response.model';
+import { IVoucherResponseModel } from '@models/voucher/response.model';
 import { VOUCHER } from '@constants/voucher';
+import { IVoucherFilter } from '@models/voucher/common.model';
 
 type UseVoucherProps = {
     userId: string;
@@ -14,7 +14,7 @@ type UseVoucherProps = {
 };
 
 export const useVoucher = ({ userId, current, pageSize, status, from, term }: UseVoucherProps) => {
-    const [vouchers, setVouchers] = useState<IVoucherFromPoint[]>([]);
+    const [vouchers, setVouchers] = useState<IVoucherFilter[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const [pagination, setPagination] = useState({
@@ -47,14 +47,10 @@ export const useVoucher = ({ userId, current, pageSize, status, from, term }: Us
                     fetchStatus,
                     'maxPrice',
                     'asc',
-                ) as IVoucherFromPointResponseModel;
-
-
-                console.log('fetch From', fetchFrom);
-                console.log('getVoucher response:', response);
+                ) as IVoucherResponseModel;
 
                 const data = Array.isArray(response.data?.data)
-                    ? (response.data.data as IVoucherFromPoint[])
+                    ? (response.data.data as IVoucherFilter[])
                     : [];
 
                 setVouchers(data);

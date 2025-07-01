@@ -15,8 +15,8 @@ import { PAGES } from "../../../../../types/IPages";
 import { Skeleton } from "@components/Atoms/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@components/Atoms/ui/radio-group";
 import { useVoucherFromCampaign } from "@utils/hooks/useVoucherFromCampaign";
-import { IVoucherFromCampaign, IVoucherFromPoint } from "@models/voucher/common.model";
 import { useVoucher } from "@utils/hooks/useVoucher";
+import { IVoucherFilter } from "@models/voucher/common.model";
 
 export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     const [tab, setTab] = useState("all");
@@ -53,7 +53,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     };
 
     // Transform vouchersFromPoint to match the expected structure
-    const transformedVouchersFromPoint = vouchersFromPoint?.map((item: IVoucherFromPoint) => ({
+    const transformedVouchersFromPoint = vouchersFromPoint?.map((item: IVoucherFilter) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
@@ -62,7 +62,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
         is_valid: item.is_valid
     })) || [];
 
-    const transformedVouchersFromCampaign = vouchersFromCampaign?.map((item: IVoucherFromCampaign) => ({
+    const transformedVouchersFromCampaign = vouchersFromCampaign?.map((item: IVoucherFilter) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
