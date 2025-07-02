@@ -22,7 +22,7 @@ export default function Left({ onReset, categories, locations, onApply }: {
     const searchParams = useSearchParams();
 
     const [selectPriceRange, setSelectPriceRange] = useState<[number, number]>([0, 70000000]);
-    const [selectedCategories, setSelectedCategories] = useState<{ key: string }[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ key: string, id: string }[]>([]);
     const [rating, setRating] = useState(0);
     const [addresses, setAddresses] = useState<ICOMPONENTS.AddressType[]>([]);
 
@@ -40,16 +40,16 @@ export default function Left({ onReset, categories, locations, onApply }: {
     //     router.replace(`?${params.toString()}`);
     // }
 
-    function handleCategoryChange(key: string) {
+    function handleCategoryChange(id: string) {
         setSelectedCategories(prev => {
-            const isSelected = prev.some(category => category.key === key);
+            const isSelected = prev.some(category => category.id === id);
             let updated;
             if (isSelected) {
-                updated = prev.filter(category => category.key !== key);
+                updated = prev.filter(category => category.id !== id);
             } else {
-                updated = [...prev, { key }];
+                const category = categories?.data?.find(cat => cat.id === id);
+                updated = [...prev, { key: category?.name || '', id }];
             }
-            // updateQueryParam("service", String(updated.map(s => s.key)));
             return updated;
         });
     }
@@ -91,7 +91,10 @@ export default function Left({ onReset, categories, locations, onApply }: {
             params.set('current', "1");
         }
 
-        if (selectedCategories?.length > 0) params.set("category", selectedCategories?.map(s => s.key).join(","));
+        if (selectedCategories?.length > 0) {
+            params.set("category", selectedCategories?.map(s => s.id).join(","));
+        }
+
         if (rating > 0) params.set("minRating", rating.toString());
         params.set("minPrice", selectPriceRange[0].toString());
         params.set("maxPrice", selectPriceRange[1].toString());
@@ -111,19 +114,26 @@ export default function Left({ onReset, categories, locations, onApply }: {
             setSelectPriceRange([Number(minPrice[0]), Number(maxPrice[0])]);
         }
 
-        const servicesFromUrl = params.get("category");
-        setSelectedCategories(categories?.data
-            ?.filter(s => servicesFromUrl?.includes(s.name) ?? false)
-            ?.map(category => ({ key: category.name })));
+        const categoriesFromUrl = params.get("category");
+        if (categoriesFromUrl && categories?.data) {
+            const categoryIds = categoriesFromUrl.split(",");
+            setSelectedCategories(
+                categories.data
+                    .filter(category => categoryIds.includes(category.id))
+                    .map(category => ({ key: category.name, id: category.id }))
+            );
+        } else {
+            setSelectedCategories([]);
+        }
 
         const addressesFromUrl = params.get("address");
         setAddresses(locations?.filter(a => addressesFromUrl?.includes(a) ?? false)?.map(a => ({ key: a })) ?? []);
 
-        const ratingFromUrl = params.get("rating");
+        const ratingFromUrl = params.get("minRating");
         if (ratingFromUrl) setRating(Number(ratingFromUrl));
+        else setRating(0);
 
-
-    }, [searchParams])
+    }, [searchParams, categories?.data, locations])
 
 
     return (
@@ -143,9 +153,9 @@ export default function Left({ onReset, categories, locations, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={categories?.data?.map(category => ({ key: category.name })) ?? []}
-                                value={selectedCategories?.map(category => category.key) as string[]}
-                                onChange={(e, key) => handleCategoryChange(key)}
+                                options={categories?.data?.map(category => ({ key: category.name, value: category.id })) ?? []}
+                                value={selectedCategories?.map(category => category.id) as string[]}
+                                onChange={(e, id) => handleCategoryChange(id)}
                             />
                         </AccordionContent>
                     </AccordionItem>
@@ -212,9 +222,9 @@ export default function Left({ onReset, categories, locations, onApply }: {
                         <AccordionTrigger className="py-3 cursor-pointer text-base font-medium">Loại dịch vụ</AccordionTrigger>
                         <AccordionContent className="pt-2 pb-4">
                             <Checkbox
-                                options={categories?.data?.map(category => ({ key: category.name })) ?? []}
-                                value={selectedCategories?.map(category => category.key) as string[]}
-                                onChange={(e, key) => handleCategoryChange(key)}
+                                options={categories?.data?.map(category => ({ key: category.name, value: category.id })) ?? []}
+                                value={selectedCategories?.map(category => category.id) as string[]}
+                                onChange={(e, id) => handleCategoryChange(id)}
                             />
                         </AccordionContent>
                     </AccordionItem>

@@ -26,7 +26,6 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     if (resolvedParams.category) queryParams.append('category', resolvedParams.category as string);
     queryParams.append('sortBy', sortBy as string);
     queryParams.append('sortDirection', sortDirection as string);
-
     const userLocationCookie = (await cookies()).get("user_location")?.value;
     if (userLocationCookie) {
         try {

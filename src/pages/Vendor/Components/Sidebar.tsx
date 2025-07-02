@@ -42,9 +42,9 @@ export default function Sidebar() {
                 { icon: BarChart, label: "Thống kê", href: ROUTES.VENDOR.SERVICE_STATISTICS },
             ]
         },
-        { icon: MessageSquare, label: "Tin nhắn", href: ROUTES.USER.CHAT },
+        { icon: MessageSquare, label: "Tin nhắn", href: ROUTES.VENDOR.CHAT },
         { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
-        { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.CALENDAR },
+        { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.SETTINGS },
     ]
 
     return (

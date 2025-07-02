@@ -18,6 +18,8 @@ import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import packageService from "@services/packageServices";
 import { IServicePackageResponse } from "@models/servicePackages/response.model";
 import { useDropzone } from "react-dropzone";
+import ServicePackageSaveButton from "./ServicePackageSaveButton";
+import ServiceConceptSaveButton from "./ServiceConceptSaveButton";
 
 interface ServiceType {
     id: string;
@@ -116,7 +118,14 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     });
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [isPriceChanged, setIsPriceChanged] = useState(false);
+
+    // Lưu giá gốc từ DB để so sánh
+    const [originalPrices, setOriginalPrices] = useState<number[]>(() => {
+        if (!initialService?.serviceConcepts || initialService.serviceConcepts.length === 0) {
+            return [0];
+        }
+        return initialService.serviceConcepts.map((c) => Number(c.price) || 0);
+    });
 
     // Dropzone for service image
     const serviceImageDropzone = useDropzone({
@@ -216,6 +225,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, serviceTypeIds: [], images: [] },
         ]);
         setConceptImagePreviews((prev) => [...prev, []]);
+        setOriginalPrices((prev) => [...prev, 0]);
         setCurrentConceptIndex(concepts.length);
     };
 
@@ -229,7 +239,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     if (response.statusCode === 200) {
                         toast.success("Xóa gói dịch vụ thành công!");
                     } else {
-                        toast.error("Có lỗi xảy ra khi xóa gói dịch vụ!");
+                        toast.error(response.error || "Có lỗi xảy ra khi xóa gói dịch vụ!");
                         setIsLoading(false);
                         return;
                     }
@@ -237,7 +247,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
                         toast.error((error.response.data as { message: string }).message);
                     } else {
-                        toast.error("oh lỗi");
+                        toast.error((error as { message: string }).message || "Có lỗi xảy ra khi xóa gói dịch vụ!");
                     }
                     setIsLoading(false);
                     return;
@@ -246,6 +256,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             }
             setConcepts((prev) => prev.filter((_, i) => i !== index));
             setConceptImagePreviews((prev) => prev.filter((_, i) => i !== index));
+            setOriginalPrices((prev) => prev.filter((_, i) => i !== index));
             setCurrentConceptIndex(Math.max(0, index - 1));
         } else {
             // Nếu chỉ còn 1 concept, reset về trạng thái mặc định thay vì xóa
@@ -260,6 +271,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 images: [],
             }]);
             setConceptImagePreviews([[]]);
+            setOriginalPrices([0]);
             setCurrentConceptIndex(0);
             toast.success("Đã reset gói dịch vụ về trạng thái mặc định");
         }
@@ -296,69 +308,6 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         });
     };
 
-    const handleSubmit = async () => {
-        setIsLoading(true);
-        try {
-            // Tạo FormData cho dịch vụ
-            const serviceFormData = new FormData();
-            serviceFormData.append("name", serviceData?.name || "");
-            serviceFormData.append("description", serviceData?.description || "");
-            serviceFormData.append("status", serviceData?.status || "hoạt động");
-            if (serviceData?.image) {
-                serviceFormData.append("image", serviceData.image);
-            }
-
-            // Gọi API cập nhật dịch vụ
-            const response = await packageService.updatePackage(initialService?.id || "", serviceFormData) as IServicePackageResponse;
-            if (response.statusCode === 200) {
-                toast.success("Cập nhật dịch vụ thành công!")
-
-                // Xử lý từng concept
-                for (const concept of concepts) {
-                    const conceptFormData = new FormData();
-                    conceptFormData.append('name', concept?.name);
-                    conceptFormData.append('description', concept?.description);
-                    conceptFormData.append('price', concept?.price.toString());
-                    conceptFormData.append('duration', concept?.duration.toString());
-                    conceptFormData.append('servicePackageId', initialService?.id || "");
-                    conceptFormData.append('serviceTypeIds', (concept?.serviceTypeIds || []).join(", "));
-                    conceptFormData.append('status', "hoạt động");
-                    concept?.images.forEach((image, idx) => {
-                        if (idx < 10) conceptFormData.append('images', image);
-                    });
-
-                    let responseConcept;
-                    if (concept?.id) {
-                        // Nếu có ID thì cập nhật concept hiện có
-                        responseConcept = await packageService.updateServiceConcept(concept?.id, conceptFormData) as IServicePackageResponse
-                    } else {
-                        // Nếu không có ID thì tạo mới concept
-                        responseConcept = await packageService.createServiceConcept(conceptFormData) as IServicePackageResponse
-                    }
-
-                    if (responseConcept.statusCode !== 200 && responseConcept.statusCode !== 201) {
-                        toast.error(responseConcept.error || "Có lỗi xảy ra khi xử lý gói dịch vụ")
-                        return;
-                    }
-                }
-
-                toast.success("Cập nhật gói dịch vụ thành công");
-                router.refresh();
-                router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""));
-            } else {
-                toast.error(response.error || "Có lỗi xảy ra khi cập nhật dịch vụ")
-            }
-        } catch (error: unknown) {
-            if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-                toast.error((error.response.data as { message: string }).message);
-            } else {
-                toast.error("Có lỗi xảy ra khi cập nhật dịch vụ");
-            }
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     const handleDeleteService = async () => {
         setIsLoading(true);
         const response = await packageService.deletePackage(initialService?.id || "") as IServicePackageResponse;
@@ -390,7 +339,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 </CardHeader>
                 <div className="space-y-4 p-4">
                     <div className="space-y-2">
-                        <Label htmlFor="name">Tên dịch vụ *</Label>
+                        <Label htmlFor="name" className="text-xl font-semibold text-gray-900">
+                            📝 Tên dịch vụ <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                             id="name"
                             value={serviceData?.name}
@@ -400,7 +351,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Mô tả dịch vụ *</Label>
+                        <Label htmlFor="description" className="text-xl font-semibold text-gray-900">
+                            📄 Mô tả dịch vụ <span className="text-red-500">*</span>
+                        </Label>
                         <TipTapEditor
                             value={serviceData?.description}
                             onChange={(value) => setServiceData((prev) => ({ ...prev, description: value }))}
@@ -408,32 +361,39 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="status">Trạng thái</Label>
+                        <Label htmlFor="status" className="text-xl font-semibold text-gray-900">
+                            🚦 Trạng thái
+                        </Label>
                         <Select
                             value={serviceData?.status}
                             onValueChange={(value: "hoạt động" | "không hoạt động") =>
                                 setServiceData((prev) => ({ ...prev, status: value }))
                             }
                         >
-                            <SelectTrigger>
+                            <SelectTrigger className="border-2 focus:border-blue-500">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="hoạt động">Hoạt động</SelectItem>
-                                <SelectItem value="không hoạt động">Tạm dừng</SelectItem>
+                                <SelectItem value="hoạt động" className="text-green-700">
+                                    ✅ Hoạt động
+                                </SelectItem>
+                                <SelectItem value="không hoạt động" className="text-red-700">
+                                    ⏸️ Tạm dừng
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Ảnh đại diện dịch vụ</Label>
-                        <div 
-                            {...serviceImageDropzone.getRootProps()} 
-                            className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer ${
-                                serviceImageDropzone.isDragActive 
-                                    ? 'border-blue-500 bg-blue-50' 
-                                    : 'border-gray-300 hover:border-gray-400'
-                            }`}
+                        <Label className="text-xl font-semibold text-gray-900">
+                            📸 Ảnh đại diện dịch vụ
+                        </Label>
+                        <div
+                            {...serviceImageDropzone.getRootProps()}
+                            className={`border-2 border-dashed rounded-lg p-6 transition-colors cursor-pointer ${serviceImageDropzone.isDragActive
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-300 hover:border-gray-400'
+                                }`}
                         >
                             {serviceData?.imagePreview ? (
                                 <div className="relative flex justify-center items-center">
@@ -461,8 +421,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                                     <div className="mt-2">
                                         <p className="text-sm font-medium text-gray-900">
-                                            {serviceImageDropzone.isDragActive 
-                                                ? "Thả ảnh vào đây..." 
+                                            {serviceImageDropzone.isDragActive
+                                                ? "Thả ảnh vào đây..."
                                                 : "Kéo thả ảnh vào đây hoặc click để chọn"
                                             }
                                         </p>
@@ -476,19 +436,50 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                         </div>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-medium">
-                            Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
-                        </h3>
-                        <Button variant="outline" onClick={handleAddConcept} className="gap-2 cursor-pointer">
-                            Thêm gói dịch vụ
+                    {/* Nút lưu riêng cho Service Package */}
+                    <div className="flex justify-end p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 text-yellow-800">
+                                <span className="text-lg">💾</span>
+                                <span className="text-sm font-medium">Lưu thông tin dịch vụ chính</span>
+                            </div>
+                            <ServicePackageSaveButton
+                                serviceId={initialService?.id}
+                                serviceData={serviceData}
+                                onSuccess={() => {
+                                    router.refresh();
+                                    router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""));
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className='border-b border-gray-200'></div>
+
+                    <div className="flex justify-between items-center p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-xl font-bold text-blue-900">
+                                📦 Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
+                            </h1>
+                            <span className="text-sm text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+                                {concepts[currentConceptIndex]?.id ? "Chỉnh sửa" : "Tạo mới"}
+                            </span>
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={handleAddConcept}
+                            className="gap-2 cursor-pointer border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400"
+                        >
+                            ➕ Thêm gói dịch vụ
                         </Button>
                     </div>
 
                     {concepts && concepts.length > 0 && concepts[currentConceptIndex] && (
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="concept-name">Tên gói dịch vụ *</Label>
+                                <Label htmlFor="concept-name" className="text-xl font-semibold text-gray-900">
+                                    🏷️ Tên gói dịch vụ <span className="text-red-500">*</span>
+                                </Label>
                                 <Input
                                     id="concept-name"
                                     value={concepts[currentConceptIndex]?.name || ""}
@@ -498,7 +489,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="concept-description">Mô tả gói dịch vụ *</Label>
+                                <Label htmlFor="concept-description" className="text-xl font-semibold text-gray-900">
+                                    📋 Mô tả gói dịch vụ <span className="text-red-500">*</span>
+                                </Label>
                                 <TipTapEditor
                                     value={concepts[currentConceptIndex]?.description || ""}
                                     onChange={(value) => handleConceptChange(currentConceptIndex, "description", value)}
@@ -507,14 +500,15 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-price">Giá (VNĐ) *</Label>
+                                    <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900">
+                                        💰 Giá (VNĐ) <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="concept-price"
                                         type="number"
                                         value={concepts[currentConceptIndex]?.price || 0}
                                         onChange={(e) => {
                                             handleConceptChange(currentConceptIndex, "price", Number(e.target.value));
-                                            setIsPriceChanged(true);
                                         }}
                                         required
                                     />
@@ -522,18 +516,18 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                         <div className="flex flex-col items-start gap-2">
                                             <p className="text-sm text-gray-500">
                                                 <span className="font-bold">
-                                                    {isPriceChanged
-                                                        ? formatPrice(
+                                                    {concepts[currentConceptIndex]?.price === originalPrices[currentConceptIndex]
+                                                        ? formatPrice(concepts[currentConceptIndex]?.price || 0)
+                                                        : formatPrice(
                                                             concepts[currentConceptIndex]?.price +
                                                             concepts[currentConceptIndex]?.price * 0.05 +
                                                             concepts[currentConceptIndex]?.price * 0.3
                                                         )
-                                                        : formatPrice(concepts[currentConceptIndex]?.price || 0)
                                                     }
                                                 </span>
-                                                {isPriceChanged
-                                                    ? ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
-                                                    : " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
+                                                {concepts[currentConceptIndex]?.price === originalPrices[currentConceptIndex]
+                                                    ? " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
+                                                    : ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
                                                 }
                                             </p>
                                             <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
@@ -541,7 +535,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-duration">Thời gian (phút) *</Label>
+                                    <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900">
+                                        ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="concept-duration"
                                         type="number"
@@ -553,14 +549,16 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Loại dịch vụ *</Label>
-                                <Accordion type="single" collapsible>
+                                <Accordion type="single" collapsible >
                                     <AccordionItem value="service-types">
                                         <AccordionTrigger className="cursor-pointer">
-                                            <span className="text-sm font-medium leading-none">
-                                                {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
-                                                    ? `Đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại dịch vụ`
-                                                    : "Chọn loại dịch vụ"}
+                                            <span className="text-xl font-semibold text-gray-900">
+                                                🎯 Loại dịch vụ <span className="text-red-500">*</span>
+                                                <span className="text-sm font-medium text-gray-600 ml-2">
+                                                    {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
+                                                        ? `(đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length})`
+                                                        : "(Chưa chọn)"}
+                                                </span>
                                             </span>
                                         </AccordionTrigger>
                                         <AccordionContent>
@@ -597,7 +595,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Ảnh gói dịch vụ (tối đa 10 ảnh)</Label>
+                                <Label className="text-xl font-semibold text-gray-900">
+                                    🖼️ Ảnh gói dịch vụ <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
+                                </Label>
                                 {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
                                     <div className="grid grid-cols-5 gap-10 my-4">
                                         {conceptImagePreviews[currentConceptIndex].map((preview, index) => (
@@ -621,20 +621,19 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     </div>
                                 )}
                                 {conceptImagePreviews[currentConceptIndex]?.length < 10 && (
-                                    <div 
-                                        {...conceptImageDropzone.getRootProps()} 
-                                        className={`border-2 border-dashed rounded-lg p-4 transition-colors cursor-pointer ${
-                                            conceptImageDropzone.isDragActive 
-                                                ? 'border-blue-500 bg-blue-50' 
-                                                : 'border-gray-300 hover:border-gray-400'
-                                        }`}
+                                    <div
+                                        {...conceptImageDropzone.getRootProps()}
+                                        className={`border-2 border-dashed rounded-lg p-4 transition-colors cursor-pointer ${conceptImageDropzone.isDragActive
+                                            ? 'border-blue-500 bg-blue-50'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
                                     >
                                         <div className="text-center">
                                             <ImageIcon className="mx-auto h-8 w-8 text-gray-400" />
                                             <div className="mt-2">
                                                 <p className="text-sm font-medium text-gray-900">
-                                                    {conceptImageDropzone.isDragActive 
-                                                        ? "Thả ảnh vào đây..." 
+                                                    {conceptImageDropzone.isDragActive
+                                                        ? "Thả ảnh vào đây..."
                                                         : `Thêm ảnh (${conceptImagePreviews[currentConceptIndex]?.length || 0}/10)`
                                                     }
                                                 </p>
@@ -647,40 +646,73 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     </div>
                                 )}
                             </div>
+
                         </div>
                     )}
 
+                    {/* Nhóm nút điều hướng và thao tác concept */}
                     {concepts && concepts.length > 0 && (
-                        <div className="flex justify-between mt-4">
-                            <Button
-                                variant="outline"
-                                onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
-                                disabled={currentConceptIndex === 0}
-                                className="cursor-pointer"
-                            >
-                                Gói trước
-                            </Button>
-                            <Button variant="outline" onClick={async () => await handleRemoveConcept(currentConceptIndex)} className="cursor-pointer">
-                                {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
-                                disabled={currentConceptIndex === concepts.length - 1}
-                                className="cursor-pointer"
-                            >
-                                Gói tiếp theo
-                            </Button>
+                        <div className="flex justify-between items-center mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentConceptIndex((prev) => Math.max(0, prev - 1))}
+                                    disabled={currentConceptIndex === 0}
+                                    className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
+                                >
+                                    ⬅️ Gói trước
+                                </Button>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm font-medium text-green-800 bg-green-100 px-3 py-1 rounded-full">
+                                        📍 Gói {currentConceptIndex + 1} / {concepts.length}
+                                    </span>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentConceptIndex((prev) => Math.min(concepts.length - 1, prev + 1))}
+                                    disabled={currentConceptIndex === concepts.length - 1}
+                                    className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
+                                >
+                                    Gói tiếp theo ➡️
+                                </Button>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    onClick={async () => await handleRemoveConcept(currentConceptIndex)}
+                                    className="cursor-pointer text-red-600 border-red-300 hover:bg-red-50 font-medium"
+                                >
+                                    🗑️ {concepts.length <= 1 ? "Đặt lại gói này" : "Xóa gói này"}
+                                </Button>
+
+                                <div className="relative">
+                                    <ServiceConceptSaveButton
+                                        conceptData={concepts[currentConceptIndex]}
+                                        originalPrice={originalPrices[currentConceptIndex]}
+                                        servicePackageId={initialService?.id}
+                                        onSuccess={() => {
+                                            router.refresh();
+                                        }}
+                                    />
+                                    <div className="absolute -top-2 -right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    <div className="mt-6 flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService.id))} className="cursor-pointer">
-                            Hủy
-                        </Button>
-                        <Button onClick={() => handleSubmit()} disabled={isLoading} className="cursor-pointer">
-                            {isLoading ? "Đang cập nhật..." : "Lưu thay đổi"}
-                        </Button>
+                    {/* Nút hủy ở cuối */}
+                    <div className="mt-6 flex justify-end gap-2 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-gray-600">❌ Không lưu thay đổi</span>
+                            <Button
+                                variant="outline"
+                                onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.VIEW.replace(':id', initialService?.id || ""))}
+                                className="cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-100"
+                            >
+                                Hủy bỏ
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </Card>
