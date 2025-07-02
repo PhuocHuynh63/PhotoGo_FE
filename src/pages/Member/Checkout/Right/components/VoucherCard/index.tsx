@@ -75,14 +75,6 @@ const VoucherCard = ({ voucher, selectedVoucher, onSelect }: {
                         <Calendar className="w-3 h-3 text-gray-400" />
                         <span className="text-gray-500 break-words w-full max-w-full">HSD: {voucher?.voucher.end_date}</span>
                     </div>
-                    {voucher?.voucher.quantity && (
-                        <div className="flex items-center gap-1 break-words w-full max-w-full">
-                            <Clock className="w-3 h-3 text-gray-400" />
-                            <span className="text-gray-500 break-words w-full max-w-full">
-                                {voucher?.voucher.usedCount}/{voucher?.voucher.quantity}
-                            </span>
-                        </div>
-                    )}
                 </div>
             </div>
             {/* Action Buttons */}

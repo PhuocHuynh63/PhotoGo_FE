@@ -12,6 +12,7 @@ import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import VoucherPopup from '../VoucherPopup'
+import { IVoucherFilter } from '@models/voucher/common.model'
 
 const SummaryInformation = () => {
     /**
@@ -36,7 +37,10 @@ const SummaryInformation = () => {
     const remainingAmount = Number(serviceConcept.price) - depositAmount;
     //----------------------End----------------------//
 
-    const [selectedVoucher, setSelectedVoucher] = useState<any>(null)
+    const [selectedVoucher, setSelectedVoucher] = useState<IVoucherFilter | null>(null);
+    console.log('selectedVoucher', selectedVoucher);
+    
+
 
     return (
         <>
