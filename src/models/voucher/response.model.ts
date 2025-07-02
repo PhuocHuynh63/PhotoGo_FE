@@ -1,6 +1,6 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { z } from "zod";
-import { VoucherFromCampaignModel, VoucherFromPointModel, VoucherModel } from "./common.model";
+import { VoucherFilterModel, VoucherModel } from "./common.model";
 import { PaginationModel } from "@models/metadata";
 
 /**
@@ -59,27 +59,18 @@ export const DeleteVoucherModelResponse = z.object({
 
 export const DeleteVoucherResponseModel = BackendResponseModel(DeleteVoucherModelResponse);
 export type IDeleteVoucherResponseModel = z.infer<typeof DeleteVoucherResponseModel>;
+//---------------------End------------------//
 
-export const VoucherFromPointModelResponse = z.object({
-    data: z.array(VoucherFromPointModel),
+/**
+ * Model of Voucher Filter Response
+ */
+export const VoucherFilterModelResponse = z.object({
+    data: z.array(VoucherFilterModel),
     message: z.string(),
     statusCode: z.number(),
     pagination: PaginationModel.optional()
 });
 
-export const VoucherFromPointResponseModel = BackendResponseModel(VoucherFromPointModelResponse);
-export type IVoucherFromPointResponseModel = z.infer<typeof VoucherFromPointResponseModel>;
-
-export const VoucherFromCampaignModelResponse = z.object({
-    data: z.array(VoucherFromCampaignModel),
-    message: z.string(),
-    statusCode: z.number(),
-    pagination: PaginationModel.optional()
-});
-
-export const VoucherFromCampaignResponseModel = BackendResponseModel(VoucherFromCampaignModelResponse);
-export type IVoucherFromCampaignResponseModel = z.infer<typeof VoucherFromCampaignResponseModel>;
-
-
-
-
+export const VoucherFilterModelResponseModel = BackendResponseModel(VoucherFilterModelResponse);
+export type IVoucherFilterResponseModel = z.infer<typeof VoucherFilterModelResponseModel>;
+//---------------------End------------------//
