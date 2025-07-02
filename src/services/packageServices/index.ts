@@ -62,8 +62,8 @@ const packageService = {
         })
     },
 
-    getAllServicePackage: async (): Promise<IServicePackagesListResponse> => {
-        return await http.get("/service-packages", {
+    getAllServicePackage: async (current: number = 1, pageSize: number = 10, showAll: boolean = true, sortBy: string = "createdAt", sortDirection: string = "asc"): Promise<IServicePackagesListResponse> => {
+        return await http.get(`/service-packages?current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}&showAll=${showAll}`, {
             next: { revalidate: 10 }
         })
     }

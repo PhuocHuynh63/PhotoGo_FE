@@ -43,7 +43,7 @@ export const createCartSlice: StateCreator<
             // Handle other status codes
             toast.error(response.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng')
         } catch (error) {
-            console.error('Error adding to cart:', error)
+            console.error('Có lỗi xảy ra khi thêm vào giỏ hàng:', error)
             if (error instanceof Error) {
                 toast.error(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng')
             } else {
@@ -67,8 +67,8 @@ export const createCartSlice: StateCreator<
                 toast.success('Đã xóa mục khỏi giỏ hàng')
             }
         } catch (error) {
-            console.error('Error deleting item:', error)
-            toast.error('Có lỗi xảy ra khi xóa mục khỏi giỏ hàng')
+            console.error('Có lỗi xảy ra khi xóa mục khỏi giỏ hàng:', error)
+            toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra khi xóa mục khỏi giỏ hàng")
         }
     },
     removeItems: async (itemIds, cartId) => {
@@ -82,7 +82,7 @@ export const createCartSlice: StateCreator<
                         successfullyRemovedIds.push(String(itemId));
                     }
                 } catch (error) {
-                    console.error(`Error removing item ${itemId}:`, error);
+                    console.error(`Có lỗi xảy ra khi xóa mục ${itemId}:`, error);
                 }
             }
 
@@ -102,17 +102,28 @@ export const createCartSlice: StateCreator<
 
                 toast.success(
                     successfullyRemovedIds.length === itemIds.length
-                        ? 'Đã xóa tất cả các mục đã chọn khỏi giỏ hàng'
-                        : 'Đã xóa một số mục khỏi giỏ hàng'
+                        ? "Đã xóa tất cả các mục đã chọn khỏi giỏ hàng"
+                        : "Đã xóa một số mục khỏi giỏ hàng"
                 );
             }
 
             if (successfullyRemovedIds.length < itemIds.length) {
-                toast.error('Một số mục không thể xóa khỏi giỏ hàng');
+                toast.error("Một số mục không thể xóa khỏi giỏ hàng");
             }
         } catch (error) {
-            console.error('Error in removeItems:', error);
-            toast.error('Có lỗi xảy ra khi xóa các mục khỏi giỏ hàng');
+            console.error('Có lỗi xảy ra khi xóa các mục khỏi giỏ hàng:', error);
+            toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra khi xóa các mục khỏi giỏ hàng");
+        }
+    },
+    fetchCartByUserId: async (userId: string) => {
+        if (!userId) return;
+        try {
+            const response = await cartService.getCartByUserId(userId) as ICartResponse;
+            if (response?.statusCode === 200) {
+                set({ cart: response.data });
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi lấy giỏ hàng:", error);
         }
     },
 })

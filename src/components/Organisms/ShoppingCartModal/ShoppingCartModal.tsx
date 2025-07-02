@@ -10,6 +10,8 @@ import SingleCheckbox from "@components/Atoms/Checkbox/SingleCheckBox"
 import { useCart, useRemoveItem, useRemoveItems } from "@stores/cart/selectors"
 import toast from "react-hot-toast"
 import EnhancedBookingPopup from "@pages/Public/VendorDetail/components/EnhancedBookingPopup"
+import { ROUTES } from "@routes"
+import { useRouter } from "next/navigation"
 
 export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: Omit<ICOMPONENTS.ShoppingCartModalProps, 'cartItems'>) {
     const [selectedItems, setSelectedItems] = useState<string[]>([])
@@ -23,7 +25,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
     const cartItems = Array.isArray(cart?.data) ? cart?.data : []
     const removeItem = useRemoveItem()
     const removeItems = useRemoveItems()
-
+    const router = useRouter()
     const vendorGroups = cartItems.reduce((groups: ICOMPONENTS.VendorGroup[], item: ICOMPONENTS.CartItem) => {
         const vendorId = item.serviceConcept.servicePackageId;
         const existingGroup = groups.find(group => group.servicePackageId === vendorId);
@@ -45,6 +47,13 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
             setSelectedVendor(null)
         }
     }, [isOpen])
+
+    const handleClose = () => {
+        router.push(`${ROUTES.PUBLIC.SEARCH_PACKAGES}`)
+        setSelectedItems([])
+        setSelectedVendor(null)
+        onClose()
+    }
 
     const getServicePackageName = (servicePackageId: string) => {
         if (!servicePackages?.data || !Array.isArray(servicePackages.data)) {
@@ -130,7 +139,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
             setIsBulkDelete(false)
         } catch (error) {
             console.error('Error deleting item:', error);
-            toast.error("Đã xảy ra lỗi khi xóa sản phẩm")
+            toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi khi xóa sản phẩm")
         } finally {
             setIsDeleting(false)
         }
@@ -231,7 +240,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                             <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
                             <p className="text-lg font-medium">Giỏ hàng của bạn đang trống</p>
                             <p className="text-sm text-muted-foreground mt-1">Thêm một số dịch vụ vào giỏ hàng để xem chúng ở đây.</p>
-                            <Button className="mt-6 bg-primary text-white" onClick={onClose}>Tiếp tục tìm kiếm</Button>
+                            <Button className="mt-6 bg-primary text-white" onClick={handleClose}>Tiếp tục tìm kiếm</Button>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -281,7 +290,10 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                                                                 <div className="flex justify-between">
                                                                     <div>
                                                                         <h3 className="font-medium">{item.serviceConcept.name}</h3>
-                                                                        <p className="text-sm text-muted-foreground line-clamp-2">{item.serviceConcept.description}</p>
+                                                                        <div
+                                                                            className="text-muted-foreground prose prose-sm max-w-none text-sm line-clamp-2"
+                                                                            dangerouslySetInnerHTML={{ __html: item.serviceConcept.description || '' }}
+                                                                        />
                                                                         {renderItemDetails(item)}
                                                                     </div>
                                                                     <div className="flex items-center gap-2 justify-center">

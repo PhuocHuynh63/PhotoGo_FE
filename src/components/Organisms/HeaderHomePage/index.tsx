@@ -16,16 +16,17 @@ import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 import { usePathname } from "next/navigation";
-import { useCart, useSetCart } from "@stores/cart/selectors";
+import { useCart, useFetchCartByUserId } from "@stores/cart/selectors";
 import { formatRelativeTime } from "@utils/helpers/Date";
 import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
+import { ROLE } from "@constants/common";
 
 
 
-export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IHeader) {
+export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader) {
     const cartState = useCart()
-    const setCart = useSetCart()
+    const fetchCartByUserId = useFetchCartByUserId();
     //#region States
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
@@ -43,7 +44,7 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
     //#region Effects
     useEffect(() => {
         setIsLoaded(true);
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -66,10 +67,10 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
     }, [isOpenCart]);
 
     useEffect(() => {
-        if (cart?.data) {
-            setCart(cart.data)
+        if (user?.id) {
+            fetchCartByUserId(user.id);
         }
-    }, [cart?.data, setCart])
+    }, [user?.id, fetchCartByUserId]);
 
     //#endregion
 
@@ -114,6 +115,7 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
+                className="-mr-3"
             >
                 <div className="flex items-center justify-center mt-2">
                     <LocationButton
@@ -272,26 +274,32 @@ export default function HeaderHomePage({ user, cart, servicePackages }: PAGES.IH
                 <DropdownMenuContent>
                     <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <Link href={ROUTES.USER.PROFILE.INFO}>
+                    <Link href={
+                        user?.role?.name === ROLE.CUSTOMER
+                            ? ROUTES.USER.PROFILE.INFO
+                            : user?.role?.name === ROLE.VENDOR_OWNER
+                                ? ROUTES.VENDOR.PROFILE
+                                : ROUTES.USER.PROFILE.INFO
+                    }>
                         <DropdownMenuItem icon="UserCircle">
                             <span>Thông tin cá nhân</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={''}>
+                    {/* <Link href={''}>
                         <DropdownMenuItem icon="Settings">
                             <span>Cài đặt</span>
                         </DropdownMenuItem>
-                    </Link>
+                    </Link> */}
                     <Link href={'/chat'}>
                         <DropdownMenuItem icon="MessageSquare">
                             <span>Tin nhắn</span>
                         </DropdownMenuItem>
                     </Link>
-                    <Link href={''}>
+                    {/* <Link href={''}>
                         <DropdownMenuItem icon="HelpCircle">
                             <span>Trợ giúp</span>
                         </DropdownMenuItem>
-                    </Link>
+                    </Link> */}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         icon="LogOut"

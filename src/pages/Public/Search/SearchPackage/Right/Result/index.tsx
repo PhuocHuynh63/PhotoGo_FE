@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import Button from "@components/Atoms/Button"
-import LucideIcon from "@components/Atoms/LucideIcon"
 import Pagination from "@components/Organisms/Pagination/Pagination"
 import { IServicePackage } from "@models/servicePackages/common.model"
 import { IServicePackagesData } from "@models/servicePackages/response.model"
@@ -42,7 +41,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
         const locationCity = firstLocation?.district;
 
         if (vendorSlug) {
-            let url = ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', vendorSlug).replace(':page', '');
+            let url = ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', vendorSlug).replace(':page', 'packages');
             if (locationCity) {
                 url += `?location=${encodeURIComponent(locationCity)}`;
             }
@@ -164,14 +163,6 @@ export default function Right({ packages, pagination }: { packages: IServicePack
                                 }
                             }}
                         >
-                            <div className="absolute top-2 right-2 z-10">
-                                <Button
-                                    className="shadow-none hover:bg-none flex items-center justify-center"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <LucideIcon name="Heart" iconSize={18} fill={pkg.status ? "red" : "none"} iconColor={pkg.status ? "red" : "black"} />
-                                </Button>
-                            </div>
 
                             <div className="relative">
                                 <div className="relative h-60 border-b-2">
