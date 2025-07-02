@@ -7,18 +7,12 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import Footer from "@components/Organisms/Footer";
 import Header from "@components/Organisms/Header";
-import cartService from "@services/cart";
-import { ICartResponse } from "@models/cart/response.model";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
 import packageServices from "@services/packageServices";
 import { METADATA } from "../../../types/IMetadata";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
-}
-
-async function getCartByUserId(userId: string) {
-    return await cartService.getCartByUserId(userId);
 }
 
 async function getAllServicePackage() {
@@ -38,20 +32,9 @@ export default async function RootLayout({
     }
     const servicePackages = await getAllServicePackage();
     const servicePackagesData = servicePackages?.data as IServicePackagesData;
-    let cart: ICartResponse;
-    if (session?.user?.id) {
-        cart = await getCartByUserId(session?.user?.id as string) as ICartResponse;
-    } else {
-        // Provide default cart when no session
-        cart = {
-            statusCode: 200,
-            message: "No cart available",
-            data: []
-        };
-    }
     return (
         <>
-            <Header user={userData} cart={cart} servicePackages={servicePackagesData} />
+            <Header user={userData} servicePackages={servicePackagesData} />
             {children}
             <Footer />
         </>

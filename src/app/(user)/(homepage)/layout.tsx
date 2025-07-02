@@ -7,8 +7,6 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import Footer from "@components/Organisms/Footer";
 import HeaderHomePage from "@components/Organisms/HeaderHomePage";
-import { ICartResponse } from "@models/cart/response.model";
-import cartService from "@services/cart";
 import packageServices from "@services/packageServices";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
 import { METADATA } from "../../../types/IMetadata";
@@ -18,12 +16,8 @@ async function getAUser(id: string) {
     return await userService.getAUser(id);
 }
 
-async function getCartByUserId(userId: string) {
-    return await cartService.getCartByUserId(userId);
-}
-
-async function getAllServicePackage() {
-    return await packageServices.getAllServicePackage();
+async function getAllServicePackage(current: number = 1, pageSize: number = 10, showAll: boolean = true, sortBy: string = "createdAt", sortDirection: string = "asc") {
+    return await packageServices.getAllServicePackage(current, pageSize, showAll, sortBy, sortDirection);
 }
 
 export default async function RootLayout({
@@ -37,22 +31,11 @@ export default async function RootLayout({
         const user = await getAUser(session.user.id) as IUserResponse;
         userData = user?.data as IUser | undefined;
     }
-    const servicePackages = await getAllServicePackage();
+    const servicePackages = await getAllServicePackage(1, 1000, true, "createdAt", "asc");
     const servicePackagesData = servicePackages?.data as IServicePackagesData;
-    let cart: ICartResponse;
-    if (session?.user?.id) {
-        cart = await getCartByUserId(session?.user?.id as string) as ICartResponse;
-    } else {
-        // Provide default cart when no session
-        cart = {
-            statusCode: 200,
-            message: "No cart available",
-            data: []
-        };
-    }
     return (
         <>
-            <HeaderHomePage user={userData} cart={cart} servicePackages={servicePackagesData} />
+            <HeaderHomePage user={userData} servicePackages={servicePackagesData} />
             {children}
             <Chatbot />
             <Footer />
