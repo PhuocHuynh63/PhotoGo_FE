@@ -1,7 +1,6 @@
 import { IServiceConceptImageModel } from '@models/serviceConcepts/response.model';
 import { IUser } from '@models/user/common.model';
 import { IVendor } from '@models/vendor/common.model';
-import { ICartResponse } from '@models/cart/response.model';
 import { IReviewPaginationResponse } from '@models/review/repsonse.model';
 import { IVendorResponse } from '@models/vendor/response.model';
 import { IAttendance, ICheckAttendance } from '@models/attendance/common.model';
@@ -15,7 +14,6 @@ declare namespace PAGES {
 
     interface IHeader {
         user: IUser | undefined;
-        cart: ICartResponse;
         servicePackages: IServicePackagesData;
     }
     interface IProfile {

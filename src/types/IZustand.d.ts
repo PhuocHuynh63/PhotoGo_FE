@@ -61,6 +61,7 @@ declare namespace ZUSTAND {
         addToCart: (serviceConceptId: string, cartId: string, userId: string) => Promise<void>
         removeItem: (itemId: string, cartId: string) => Promise<void>
         removeItems: (itemIds: string[], cartId: string) => Promise<void>
+        fetchCartByUserId: (userId: string) => Promise<void>
     }
 
     export interface IChatingState {

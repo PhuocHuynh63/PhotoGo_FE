@@ -13,6 +13,7 @@ import BackToTop from "@components/Atoms/BackToTop"
 import { PAGES } from '../../../types/IPages';
 import AttendanceBoard from "../AttendanceModal"
 import VendorCarousel from "./components/VendorCarousel"
+import { ROLE } from "@constants/common"
 
 
 
@@ -197,16 +198,16 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
     const [ctaAnimation, setCtaAnimation] = useState(false)
     const [showModal, setShowModal] = useState(false)
 
-
     useEffect(() => {
         if (!user?.id) return;
+        if (user.role?.name !== ROLE.CUSTOMER) return;
         if (!checkAttendance?.hasAttended) {
             const timer = setTimeout(() => {
                 setShowModal(true);
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [user?.id, checkAttendance]);
+    }, [user?.id, checkAttendance, user?.role?.name]);
 
     useEffect(() => {
         const handleScroll = () => {
