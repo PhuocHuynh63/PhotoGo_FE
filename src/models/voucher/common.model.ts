@@ -19,13 +19,10 @@ export const VoucherModel = z.object({
     created_at: z.string(),
     updated_at: z.string()
 });
+export type IVoucherModel = z.TypeOf<typeof VoucherModel>;
 
 
-export type IVoucher = z.TypeOf<typeof VoucherModel>;
-
-
-export const VoucherFromPointModel = z.object({
-
+export const VoucherFilterModel = z.object({
     assigned_at: z.string(),
     is_valid: z.boolean(),
     status: z.string(),
@@ -35,22 +32,7 @@ export const VoucherFromPointModel = z.object({
     voucher: VoucherModel,
     voucher_id: z.string(),
 });
-
-export type IVoucherFromPoint = z.TypeOf<typeof VoucherFromPointModel>;
-
-export const VoucherFromCampaignModel = z.object({
-
-    assigned_at: z.string(),
-    is_valid: z.boolean(),
-    status: z.string(),
-    used_at: z.string(),
-    user: UserModel,
-    user_id: z.string(),
-    voucher: VoucherModel,
-    voucher_id: z.string(),
-});
-
-export type IVoucherFromCampaign = z.TypeOf<typeof VoucherFromCampaignModel>;
+export type IVoucherFilter = z.TypeOf<typeof VoucherFilterModel>;
 
 
 

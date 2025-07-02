@@ -14,17 +14,15 @@ import { ROUTES } from "@routes";
 import { PAGES } from "../../../../../types/IPages";
 import { Skeleton } from "@components/Atoms/ui/skeleton";
 import { RadioGroup, RadioGroupItem } from "@components/Atoms/ui/radio-group";
-import { useVoucherFromPoint } from "@utils/hooks/useVoucherFromPoint";
-import { useVoucherFromCampaign } from "@utils/hooks/useVoucherFromCampaign";
-import { IVoucherFromCampaign, IVoucherFromPoint } from "@models/voucher/common.model";
+import { useVoucher } from "@utils/hooks/useVoucher";
+import { IVoucherFilter } from "@models/voucher/common.model";
 
 export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     const [tab, setTab] = useState("all");
     const [statusTab, setStatusTab] = useState("hoạt động");
     const [selectedVoucherId, setSelectedVoucherId] = useState<string>("");
 
-    const { vouchers: vouchersFromPoint, loading: loadingPoint, fetchVouchers: fetchVouchersPoint, pagination: paginationPoint } = useVoucherFromPoint(session?.user?.id);
-    const { vouchers: vouchersFromCampaign, loading: loadingCampaign, fetchVouchers: fetchVouchersCampaign, pagination: paginationCampaign } = useVoucherFromCampaign(session?.user?.id);
+    const { vouchers: vouchersFromPoint, loading: loadingPoint, fetchVouchers: fetchVouchersPoint, pagination: paginationPoint } = useVoucher(session?.user?.id);
 
     // Lưu voucher ID vào localStorage khi có thay đổi
     useSetLocalStorage("selectedVoucherId", selectedVoucherId);
@@ -53,7 +51,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
     };
 
     // Transform vouchersFromPoint to match the expected structure
-    const transformedVouchersFromPoint = vouchersFromPoint?.map((item: IVoucherFromPoint) => ({
+    const transformedVouchersFromPoint = vouchersFromPoint?.map((item: IVoucherFilter) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
@@ -62,7 +60,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
         is_valid: item.is_valid
     })) || [];
 
-    const transformedVouchersFromCampaign = vouchersFromCampaign?.map((item: IVoucherFromCampaign) => ({
+    const transformedVouchersFromCampaign = vouchersFromCampaign?.map((item: IVoucherFilter) => ({
         ...item.voucher,
         id: item.voucher_id,
         status: item.status,
