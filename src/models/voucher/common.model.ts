@@ -26,6 +26,7 @@ export const VoucherFilterModel = z.object({
     assigned_at: z.string(),
     is_valid: z.boolean(),
     status: z.string(),
+    from: z.string(),
     used_at: z.string(),
     user: UserModel,
     user_id: z.string(),
