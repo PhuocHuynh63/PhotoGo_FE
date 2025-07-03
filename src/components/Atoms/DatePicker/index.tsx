@@ -90,10 +90,13 @@ export default function CustomDatePicker({
                             mode="single"
                             selected={value || undefined}
                             onSelect={handleDateSelect}
+                            captionLayout="dropdown"
+                            startMonth={new Date(2024, 6)}
                             disabled={{ before: today }}
                             defaultMonth={value || today}
                             classNames={{
                                 selected: "selected",
+                                chevron: `fill-amber-500`
                             }}
                             modifiersStyles={{
                                 selected: {
@@ -108,6 +111,18 @@ export default function CustomDatePicker({
                                 },
                             }}
                         />
+                        <button
+                            type="button"
+                            className="mt-2 w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition cursor-pointer"
+                            onClick={() => {
+                                if (today) {
+                                    onChange(today);
+                                    setOpen(false);
+                                }
+                            }}
+                        >
+                            Hôm nay
+                        </button>
                     </motion.div>
                 )}
             </AnimatePresence>
