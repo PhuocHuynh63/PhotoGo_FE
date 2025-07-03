@@ -108,6 +108,7 @@ export default function EnhancedBookingPopup({
         enabled: !!addressLocation?.id,
     });
 
+
     const availability = locationAvailability
         ? locationAvailability.flatMap((loc: any) =>
             loc.workingDates
