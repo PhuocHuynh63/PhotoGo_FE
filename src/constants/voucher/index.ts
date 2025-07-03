@@ -9,7 +9,13 @@ enum VOUCHER_TYPE {
     CAMPAIGN = 'chiến dịch',
 }
 
+enum VOUCHER_DISCOUNT_TYPE {
+    PERCENT = 'phần trăm',
+    AMOUNT = 'số tiền',
+}
+
 export const VOUCHER = {
     STATUS: VOUCHER_STATUS,
     TYPE: VOUCHER_TYPE,
+    DISCOUNT_TYPE: VOUCHER_DISCOUNT_TYPE,
 };

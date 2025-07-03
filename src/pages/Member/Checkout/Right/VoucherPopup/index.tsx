@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/t
 import VoucherDetailModal from "../components/VoucherDetail"
 import VoucherCard from "../components/VoucherCard"
 import { useVoucher } from "@utils/hooks/useVoucher"
-import { useCheckoutSession } from "@stores/checkout/selectors"
+import { useCheckoutSession, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors"
 import { VOUCHER } from "@constants/voucher"
 import { IVoucherFilter } from "@models/voucher/common.model"
 
@@ -48,7 +48,6 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     // const [isDetailOpen, setIsDetailOpen] = useState(false)
 
     const checkoutSessioin = useCheckoutSession();
-    console.log("checkoutSessioin", checkoutSessioin);
 
     /**
      * Handle voucher selection.
@@ -93,7 +92,20 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
             fetchVouchersPoint(1, 6, voucherType);
         }
     }, [checkoutSessioin?.userId, voucherType, fetchVouchersPoint]);
-    console.log(vouchers)
+    //------------------------------End------------------------------//
+
+    /**
+     * Set booking form with selected voucher.
+     * This effect updates the booking form state with the selected voucher ID
+     */
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    useEffect(() => {
+        setBookingForm({
+            ...formBooking,
+            voucherId: selectedVoucher ? selectedVoucher.voucher.id : "",
+        });
+    }, [selectedVoucher]);
     //------------------------------End------------------------------//
 
     return (
@@ -108,7 +120,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             <div className="text-sm font-semibold text-gray-900">Mã giảm giá</div>
                             {selectedVoucher ? (
                                 <div className="text-xs text-orange-600 font-medium">
-                                    {selectedVoucher.code} - {selectedVoucher.discount_value}
+                                    {selectedVoucher.voucher.code} - {selectedVoucher.voucher.discount_value}{selectedVoucher.voucher.type === VOUCHER.DISCOUNT_TYPE ? "đồng" : "%"}
                                 </div>
                             ) : (
                                 <div className="text-xs text-gray-500">Chọn hoặc nhập mã giảm giá</div>
@@ -224,7 +236,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             disabled={!selectedVoucher}
                             className="flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed max-w-full truncate break-words"
                         >
-                            {selectedVoucher ? `Áp dụng ${selectedVoucher.code}` : "Chọn voucher"}
+                            {selectedVoucher ? `Áp dụng ${selectedVoucher.voucher.code}` : "Chọn voucher"}
                         </Button>
                     </div>
                 </DialogContent>
