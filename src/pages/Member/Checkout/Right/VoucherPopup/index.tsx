@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/t
 import VoucherDetailModal from "../components/VoucherDetail"
 import VoucherCard from "../components/VoucherCard"
 import { useVoucher } from "@utils/hooks/useVoucher"
-import { useCheckoutSession } from "@stores/checkout/selectors"
+import { useCheckoutSession, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors"
 import { VOUCHER } from "@constants/voucher"
 import { IVoucherFilter } from "@models/voucher/common.model"
 
@@ -48,7 +48,6 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
     // const [isDetailOpen, setIsDetailOpen] = useState(false)
 
     const checkoutSessioin = useCheckoutSession();
-    console.log("checkoutSessioin", checkoutSessioin);
 
     /**
      * Handle voucher selection.
@@ -59,7 +58,6 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         setSelectedVoucher(voucher)
     }
     //-------------------------------End------------------------------//
-    console.log("selectedVoucher", selectedVoucher);
 
     const handleApplyVoucher = () => {
         if (selectedVoucher) {
@@ -94,7 +92,20 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
             fetchVouchersPoint(1, 6, voucherType);
         }
     }, [checkoutSessioin?.userId, voucherType, fetchVouchersPoint]);
-    console.log(vouchers)
+    //------------------------------End------------------------------//
+
+    /**
+     * Set booking form with selected voucher.
+     * This effect updates the booking form state with the selected voucher ID
+     */
+    const setBookingForm = useSetFormBooking();
+    const formBooking = useFormBooking();
+    useEffect(() => {
+        setBookingForm({
+            ...formBooking,
+            voucherId: selectedVoucher ? selectedVoucher.voucher.id : "",
+        });
+    }, [selectedVoucher]);
     //------------------------------End------------------------------//
 
     return (

@@ -12,3 +12,5 @@ export const BookingDataModel = z.object({
 export const BookingResponseModel = BackendResponseModel(BookingDataModel);
 export type IBookingResponseModel = z.infer<typeof BookingResponseModel>;
 //----------------------End----------------------//
+
+
