@@ -1,6 +1,6 @@
 "use client"
 
-import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Building2, Store, ChevronDown } from "lucide-react"
+import { User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Building2, Store, ChevronDown, File } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/Atoms/ui/collapsible"
@@ -43,8 +43,9 @@ export default function Sidebar() {
             ]
         },
         { icon: MessageSquare, label: "Tin nhắn", href: ROUTES.VENDOR.CHAT },
-        { icon: HelpCircle, label: "Hỗ trợ", href: "/vendor/support" },
+        { icon: HelpCircle, label: "Hỗ trợ", href: ROUTES.VENDOR.SUPPORT.MY_TICKETS },
         { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.SETTINGS },
+        { icon: File, label: "Bằng chứng đơn hàng", href: ROUTES.VENDOR.PROOF_MANAGEMENTS },
     ]
 
     return (
