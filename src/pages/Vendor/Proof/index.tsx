@@ -6,9 +6,9 @@ import { useState } from "react"
 
 import { Camera } from "lucide-react"
 import { Card, CardContent } from "@components/Atoms/ui/card"
-import DateStatsCard from "@pages/Vendor/Components/Proof/DateStatsCard"
-import ProofFilterTabs from "@pages/Vendor/Components/Proof/ProofFilterTabs"
-import ProofInvoiceCard from "@pages/Vendor/Components/Proof/ProofInvoiceCard"
+import DateStatsCard from "@components/Organisms/ProofInvoiceCard/DateStatsCard"
+import ProofFilterTabs from "@components/Organisms/ProofInvoiceCard/ProofFilterTabs"
+import ProofInvoiceCard from "@components/Organisms/ProofInvoiceCard/ProofInvoiceCard"
 
 interface Booking {
     id: string
