@@ -2,19 +2,23 @@
 
 import { Calendar } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayPicker, type DayPickerProps } from 'react-day-picker';
 import { motion, AnimatePresence } from 'framer-motion';
 import 'react-day-picker/dist/style.css';
+
+interface CustomDatePickerProps {
+    value: Date | null;
+    onChange: (date: Date | null) => void;
+    placeholder?: string;
+    dayPickerProps?: Partial<DayPickerProps>;
+}
 
 export default function CustomDatePicker({
     value,
     onChange,
     placeholder = 'Chọn ngày',
-}: {
-    value: Date | null;
-    onChange: (date: Date | null) => void;
-    placeholder?: string;
-}) {
+    dayPickerProps = {},
+}: CustomDatePickerProps) {
     const [open, setOpen] = useState(false);
     const [today, setToday] = useState<Date | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -40,14 +44,108 @@ export default function CustomDatePicker({
         };
     }, [open]);
 
-    const handleDateSelect = (date: Date | undefined) => {
+    // Handlers for each mode
+    const handleSingleSelect: import('react-day-picker').OnSelectHandler<Date | undefined> = (date) => {
         onChange(date || null);
+        setOpen(false);
+    };
+    const handleMultipleSelect: import('react-day-picker').OnSelectHandler<Date[] | undefined> = (dates) => {
+        // For multiple, you may want to pass the last selected date or the array
+        // Here, we pass the last date or null
+        if (Array.isArray(dates) && dates.length > 0) {
+            onChange(dates[dates.length - 1]);
+        } else {
+            onChange(null);
+        }
+        setOpen(false);
+    };
+    const handleRangeSelect: import('react-day-picker').OnSelectHandler<import('react-day-picker').DateRange | undefined> = (range) => {
+        // For range, you may want to pass the 'to' date or the full range
+        // Here, we pass the 'to' date if exists, else 'from', else null
+        if (range && range.to) {
+            onChange(range.to);
+        } else if (range && range.from) {
+            onChange(range.from);
+        } else {
+            onChange(null);
+        }
         setOpen(false);
     };
 
     const formatDate = (date: Date | null) => {
         return date ? date.toLocaleDateString('vi-VN') : '';
     };
+
+    // Default values for other props
+    const defaultCaptionLayout = 'dropdown' as const;
+    const defaultDayPickerProps = {
+        captionLayout: defaultCaptionLayout,
+        startMonth: new Date(2024, 6),
+        classNames: {
+            selected: 'selected',
+            chevron: 'fill-amber-500',
+        },
+        modifiersStyles: {
+            selected: {
+                backgroundColor: 'var(--bg-primary)',
+                color: 'white',
+                borderRadius: '100%',
+            },
+            today: {
+                color: 'blue',
+                borderRadius: '100%',
+                backgroundColor: 'var(--bg-primary-opacity)',
+            },
+        },
+    };
+
+    // Determine mode and render DayPicker with correct props
+    const mode = dayPickerProps?.mode ?? 'single';
+    let dayPickerNode: React.ReactNode = null;
+    if (mode === 'single') {
+        const singleProps = dayPickerProps as Partial<import('react-day-picker').PropsSingle>;
+        const { selected, ...restDayPickerProps } = singleProps;
+        const selectedDate = selected ?? (value instanceof Date ? value : undefined);
+        dayPickerNode = (
+            <DayPicker
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleSingleSelect}
+                disabled={dayPickerProps?.disabled ?? (today ? { before: today } : undefined)}
+                defaultMonth={dayPickerProps?.defaultMonth ?? (value instanceof Date ? value : today ?? undefined)}
+                {...defaultDayPickerProps}
+                {...restDayPickerProps}
+            />
+        );
+    } else if (mode === 'multiple') {
+        const multiProps = dayPickerProps as Partial<import('react-day-picker').PropsMulti>;
+        const { selected, ...restDayPickerProps } = multiProps;
+        dayPickerNode = (
+            <DayPicker
+                mode="multiple"
+                selected={selected}
+                onSelect={handleMultipleSelect}
+                disabled={dayPickerProps?.disabled ?? (today ? { before: today } : undefined)}
+                defaultMonth={dayPickerProps?.defaultMonth ?? (today ?? undefined)}
+                {...defaultDayPickerProps}
+                {...restDayPickerProps}
+            />
+        );
+    } else if (mode === 'range') {
+        const rangeProps = dayPickerProps as Partial<import('react-day-picker').PropsRange>;
+        const { selected, ...restDayPickerProps } = rangeProps;
+        dayPickerNode = (
+            <DayPicker
+                mode="range"
+                selected={selected}
+                onSelect={handleRangeSelect}
+                disabled={dayPickerProps?.disabled ?? (today ? { before: today } : undefined)}
+                defaultMonth={dayPickerProps?.defaultMonth ?? (today ?? undefined)}
+                {...defaultDayPickerProps}
+                {...restDayPickerProps}
+            />
+        );
+    }
 
     return (
         <div ref={containerRef} className="relative w-full">
@@ -86,31 +184,7 @@ export default function CustomDatePicker({
                         }}
                         className="absolute p-2 z-10 mt-2 bg-white border rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
                     >
-                        <DayPicker
-                            mode="single"
-                            selected={value || undefined}
-                            onSelect={handleDateSelect}
-                            captionLayout="dropdown"
-                            startMonth={new Date(2024, 6)}
-                            disabled={{ before: today }}
-                            defaultMonth={value || today}
-                            classNames={{
-                                selected: "selected",
-                                chevron: `fill-amber-500`
-                            }}
-                            modifiersStyles={{
-                                selected: {
-                                    backgroundColor: 'var(--bg-primary)',
-                                    color: 'white',
-                                    borderRadius: '100%',
-                                },
-                                today: {
-                                    color: 'blue',
-                                    borderRadius: '100%',
-                                    backgroundColor: 'var(--bg-primary-opacity)',
-                                },
-                            }}
-                        />
+                        {dayPickerNode}
                         <button
                             type="button"
                             className="mt-2 w-full px-4 py-2 bg-primary text-white rounded hover:bg-primary/80 transition cursor-pointer"
