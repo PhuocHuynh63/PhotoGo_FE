@@ -85,10 +85,6 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ isVisible, invoice }) => (
                 <span>Giảm giá</span>
                 <AnimatedNumber value={invoice?.discountAmount} className="font-medium" />
             </div>
-            <div className="flex justify-between items-center text-blue-600">
-                <span>Thuế</span>
-                <AnimatedNumber value={invoice?.taxAmount} className="font-medium" />
-            </div>
             <div className="flex justify-between items-center text-gray-600">
                 <span>Phí dịch vụ</span>
                 <AnimatedNumber value={invoice?.feeAmount} className="font-medium" />

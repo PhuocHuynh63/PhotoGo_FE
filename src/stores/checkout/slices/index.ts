@@ -20,6 +20,7 @@ export const createCheckoutSlice = (
         phone: "",
         email: "",
         userNote: "",
+        voucherId: "",
     },
     step: 1,
     isValidStep: {

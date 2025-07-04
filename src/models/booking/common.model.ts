@@ -129,3 +129,17 @@ export const BookingDetailModel = z.object({
 });
 
 export type IBookingDetail = z.TypeOf<typeof BookingDetailModel>
+//----------------------End----------------------//
+
+
+/**
+ * Model of Booking Discount Amount
+ */
+export const BookingDiscountAmount = z.object({
+    discount: z.number(),
+    depositAmount: z.number(),
+    remainingAmount: z.number(),
+})
+
+export type IBookingDiscountAmount = z.TypeOf<typeof BookingDiscountAmount>
+//----------------------End----------------------//

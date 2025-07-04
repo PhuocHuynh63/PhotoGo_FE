@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@components/Atoms/Button'
-import Input from '@components/Atoms/Input'
 import { Separator } from '@components/Atoms/Seperator/Seperator'
 import { IBookingFormRequest } from '@models/booking/request.model'
 import { IServiceConcept } from '@models/serviceConcepts/common.model'
@@ -12,6 +11,9 @@ import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import VoucherPopup from '../VoucherPopup'
+import { IVoucherFilter } from '@models/voucher/common.model'
+import { useBookingGetDiscountAmount } from '@utils/hooks/useBooking'
+import { VOUCHER } from '@constants/voucher'
 
 const SummaryInformation = () => {
     /**
@@ -28,15 +30,20 @@ const SummaryInformation = () => {
     //----------------------End----------------------//
 
     /**
-     * Calculate deposit and remaining amounts
-     * - depositAmount: The amount to be deposited based on the selected percentage
-     * - remainingAmount: The remaining amount after the deposit
+     * State to manage selected voucher
+     * This will be used to calculate the discount amount
+     * when a voucher is selected.
      */
-    const depositAmount = Number(serviceConcept.price) * (selectedDeposit) / 100;
-    const remainingAmount = Number(serviceConcept.price) - depositAmount;
-    //----------------------End----------------------//
+    const [selectedVoucher, setSelectedVoucher] = useState<IVoucherFilter | null>(null);
 
-    const [selectedVoucher, setSelectedVoucher] = useState<any>(null)
+    const { price } = useBookingGetDiscountAmount({
+        userId: formBooking.userId || '',
+        serviceConceptId: serviceConcept?.id || '',
+        voucherId: selectedVoucher?.voucher.id || '',
+        depositAmount: formBooking.depositAmount,
+        depositType: VOUCHER.DISCOUNT_TYPE.PERCENT
+    });
+    //----------------------End----------------------//
 
     return (
         <>
@@ -107,17 +114,19 @@ const SummaryInformation = () => {
                             <span className="text-gray-500">Tạm tính</span>
                             <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
                         </div>
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Tổng cộng</span>
-                            <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
-                        </div>
+                        {selectedVoucher && (
+                            <div className="flex justify-between">
+                                <span className="text-[#f0a06a] font-semibold">Giảm giá</span>
+                                <span className="font-medium text-[#f0a06a]">-{price?.discount.toLocaleString()}đ</span>
+                            </div>
+                        )}
                         <div className="flex justify-between text-[#f0a06a] font-medium">
                             <span>Đặt cọc ({selectedDeposit}%)</span>
-                            <span>-{depositAmount.toLocaleString()}đ</span>
+                            <span>-{price?.depositAmount.toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Số tiền còn lại</span>
-                            <span className="font-medium">{remainingAmount.toLocaleString()}đ</span>
+                            <span className="font-medium">{price?.remainingAmount.toLocaleString()}đ</span>
                         </div>
                     </div>
 
