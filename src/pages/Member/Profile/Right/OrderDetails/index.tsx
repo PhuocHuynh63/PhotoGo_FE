@@ -12,6 +12,7 @@ import ServiceCard from "./components/ServiceCard"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
+import AblumAfterShoot from "./components/AlbumAfterShoot";
 
 
 const mockOrderData: IBookingDetail = {
@@ -218,6 +219,17 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     completedStatuses={completedStatuses}
                     currentStatusIndex={currentStatusIndex}
                 />
+
+                <AblumAfterShoot
+                    title="Album ảnh của bạn"
+                    subTitle="Cảm ơn bạn đã tin tưởng Gạo Nâu Studio. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!"
+                />
+
+                <AblumAfterShoot
+                    title="Khoảnh khắc hậu trường"
+                    subTitle="Cùng nhìn lại những khoảnh khắc hậu trường thú vị nhé."
+                />
+
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <PaymentCard
                         isVisible={isVisible["payment-card"]}
