@@ -7,21 +7,13 @@ import ChatHeader from '@components/Atoms/ChatBotHeader';
 import ChatMessages from '@components/Atoms/ChatMessage';
 import ChatInput from '@components/Atoms/ChatInput';
 import ChatToggle from '@components/Atoms/ChatBotToogle';
-
-const botResponses = [
-    "Cảm ơn bạn đã liên hệ! Làm thế nào tôi có thể hỗ trợ bạn?",
-    "Đó là một câu hỏi thú vị! Tôi sẽ cố gắng giúp bạn.",
-    "Tôi hiểu rồi. Bạn có thể cho tôi biết thêm chi tiết không?",
-    "Tuyệt vời! Tôi có thể giúp bạn với điều đó.",
-    "Đó là một ý tưởng hay! Hãy cùng thảo luận thêm.",
-    "Tôi đang xử lý yêu cầu của bạn. Vui lòng đợi một chút...",
-    "Rất vui được trò chuyện với bạn! 😊"
-];
+import geminiService from '@services/gemini';
+import { IBackendResponse } from '@models/backend/backendResponse.model';
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: "Xin chào! Tôi là AI Assistant. Tôi có thể giúp gì cho bạn hôm nay? 🤖", sender: 'bot' }
+        { id: 1, text: "Chào bạn! Mình là trợ lý AI của PhotoGo, rất vui được gặp bạn. Bạn có muốn tìm hiểu về các gói chụp ảnh, concept hay cần mình phân tích ảnh nào không 🤖? Hãy cho mình biết nhé!", sender: 'bot' }
     ]);
     const [inputValue, setInputValue] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
@@ -54,41 +46,76 @@ const Chatbot = () => {
         }
     }
 
-    const handleSendMessage = () => {
+    const [conceptsSame, setConceptsSame] = useState([]);
+    const handleSendMessage = async () => {
         const text = inputValue.trim();
         if (!text && !selectedFile) return;
 
-        const newMessage = {
+        // Add user message
+        const userMessage = {
             id: Date.now(),
             sender: 'user',
             text: text,
             imageUrl: selectedFile ? URL.createObjectURL(selectedFile) : null
         };
+        setMessages(prev => [...prev, userMessage]);
 
-        setMessages(prev => [...prev, newMessage]);
+        const fileToSend = selectedFile;
         setInputValue('');
         setSelectedFile(null);
 
-        // Simulate bot response
         setIsTyping(true);
-        setTimeout(() => {
+
+        try {
+            const formData = new FormData();
+
+            formData.append('prompt', text);
+            if (fileToSend) {
+                formData.append('file', fileToSend);
+            }
+
+            const response = await geminiService.chatbotGemini(formData) as IBackendResponse<any>;
+            console.log("Response from Gemini:", response.data);
+
+            let botMessage = "";
+            let conceptsToShow = null;
+            if (response.data.data.concepts_same) {
+                conceptsToShow = response.data.data.concepts_same;
+                setConceptsSame(conceptsToShow);
+                console.log("Concepts same:", response.data.data.concepts_same);
+            } else {
+                botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
+            }
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: Date.now() + 1,
+                    sender: 'bot',
+                    text: botMessage,
+                    conceptsSame: conceptsToShow,
+                    imageUrl: null
+                }
+            ]);
+        } catch (error) {
+            console.error("Error sending message:", error);
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: Date.now() + 2,
+                    sender: 'bot',
+                    text: "Đã xảy ra lỗi khi gửi tin nhắn. Vui lòng thử lại sau.",
+                    imageUrl: null
+                }
+            ]);
+        } finally {
             setIsTyping(false);
-            const botResponse = {
-                id: Date.now() + 1,
-                sender: 'bot',
-                text: botResponses[Math.floor(Math.random() * botResponses.length)]
-            };
-            setMessages(prev => [...prev, botResponse]);
-        }, 1500 + Math.random() * 1000);
+        }
     };
 
     return (
         <div ref={chatContainerRef} className={clsx(
-            // Mobile (mặc định): Container là một dải nằm ngang ở dưới, cách lề 2 bên
             'fixed z-[1000] bottom-0 left-5 right-5',
-            // Căn chỉnh các phần tử con (nút, cửa sổ) về phía bên phải của container
             'flex flex-col items-end',
-            // Desktop (md và lớn hơn): Thu lại thành một box nhỏ ở góc phải dưới
             'md:bottom-5 md:left-auto md:w-auto'
         )}>
             {/* Chat Window */}
