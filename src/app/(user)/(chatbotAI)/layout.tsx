@@ -1,8 +1,8 @@
-'use client'
+export const dynamic = "force-dynamic";
 
 import Chatbot from "@components/Molecules/Chatbot";
 
-export default function SearchLayoutClient({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -11,6 +11,7 @@ export default function SearchLayoutClient({
     return (
         <>
             {children}
+            <Chatbot />
         </>
     );
 }

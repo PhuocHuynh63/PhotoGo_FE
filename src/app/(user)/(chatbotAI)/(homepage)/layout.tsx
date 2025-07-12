@@ -6,17 +6,17 @@ import userService from "@services/user";
 import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import Footer from "@components/Organisms/Footer";
-import Header from "@components/Organisms/Header";
-import { IServicePackagesData } from "@models/servicePackages/response.model";
+import HeaderHomePage from "@components/Organisms/HeaderHomePage";
 import packageServices from "@services/packageServices";
-import { METADATA } from "../../../types/IMetadata";
+import { IServicePackagesData } from "@models/servicePackages/response.model";
+import { METADATA } from "../../../../types/IMetadata";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
 }
 
-async function getAllServicePackage() {
-    return await packageServices.getAllServicePackage();
+async function getAllServicePackage(current: number = 1, pageSize: number = 10, showAll: boolean = true, sortBy: string = "createdAt", sortDirection: string = "asc") {
+    return await packageServices.getAllServicePackage(current, pageSize, showAll, sortBy, sortDirection);
 }
 
 export default async function RootLayout({
@@ -30,11 +30,11 @@ export default async function RootLayout({
         const user = await getAUser(session.user.id) as IUserResponse;
         userData = user?.data as IUser | undefined;
     }
-    const servicePackages = await getAllServicePackage();
+    const servicePackages = await getAllServicePackage(1, 1000, true, "createdAt", "asc");
     const servicePackagesData = servicePackages?.data as IServicePackagesData;
     return (
         <>
-            <Header user={userData} servicePackages={servicePackagesData} />
+            <HeaderHomePage user={userData} servicePackages={servicePackagesData} />
             {children}
             <Footer />
         </>
