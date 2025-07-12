@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
-import { Calendar, Loader2, Heart, Share2, X, ChevronLeft, ChevronRight, Camera, Info, ShoppingCart } from "lucide-react";
+import { Calendar, Loader2, Heart, X, Info, ShoppingCart } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";

@@ -40,6 +40,10 @@ const Chatbot = () => {
 
     const handleToggleChat = () => setIsOpen(prev => !prev);
 
+    const handleRemoveFile = () => {
+        setSelectedFile(null);
+    };
+
     const handleFileChange = (e: any) => {
         if (e.target.files && e.target.files[0]) {
             setSelectedFile(e.target.files[0]);
@@ -131,6 +135,7 @@ const Chatbot = () => {
                     onSend={handleSendMessage}
                     onFileChange={handleFileChange}
                     selectedFile={selectedFile}
+                    onRemoveFile={handleRemoveFile}
                 />
             </div>
             {/* Toggle Button */}

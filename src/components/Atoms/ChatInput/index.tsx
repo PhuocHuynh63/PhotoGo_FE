@@ -2,6 +2,7 @@
 
 import React, { useRef } from 'react';
 import { Button } from '../ui/button';
+import { XIcon } from 'lucide-react';
 
 const PaperclipIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -16,7 +17,7 @@ const SendIcon = () => (
     </svg>
 );
 
-const ChatInput = ({ value, onChange, onSend, onFileChange, selectedFile }: any) => {
+const ChatInput = ({ value, onChange, onSend, onFileChange, selectedFile, onRemoveFile }: any) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileButtonClick = () => {
@@ -35,9 +36,17 @@ const ChatInput = ({ value, onChange, onSend, onFileChange, selectedFile }: any)
     return (
         <div className="p-2 bg-white/90 border-t border-black/5">
             {selectedFile && (
-                <div className='pb-2 text-center'>
-                    <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="max-h-24 inline-block rounded-md border p-1" />
-                    <p className='text-xs text-gray-500 mt-1 truncate'>{selectedFile.name}</p>
+                <div className='pb-2 flex justify-center'>
+                    <div className="relative inline-block">
+                        <img src={URL.createObjectURL(selectedFile)} alt="Preview" className="max-h-24 rounded-md border p-1" />
+                        <button
+                            onClick={onRemoveFile}
+                            className="cursor-pointer w-5 h-5 absolute -top-1 -right-1 bg-gray-700 text-white rounded-full px-1 leading-none hover:bg-red-500 transition-colors"
+                            aria-label="Remove preview"
+                        >
+                            <XIcon width={14} height={15} />
+                        </button>
+                    </div>
                 </div>
             )}
             <div className="flex gap-2 items-center">
