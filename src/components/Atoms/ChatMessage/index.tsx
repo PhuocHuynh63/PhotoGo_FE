@@ -9,7 +9,7 @@ const TypingIndicator = ({ isActive }: any) => (
     <div className={clsx('p-5 text-left', isActive ? 'block' : 'hidden')}>
         <div className="inline-flex items-center gap-1 p-3 bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl rounded-bl-md">
             <div className={`${styles.typingDot} w-1.5 h-1.5 bg-orange-500 rounded-full`}></div>
-            <div className={`${styles.typingDot} w-1.SỬA LẠI CẤU TRÚC: Đưa key ra ngoài div cha không có style1.5 bg-orange-500 rounded-full`}></div>
+            <div className={`${styles.typingDot} w-1.5 h-1.5 bg-orange-500 rounded-full`}></div>
             <div className={`${styles.typingDot} w-1.5 h-1.5 bg-orange-500 rounded-full`}></div>
         </div>
     </div>
@@ -21,7 +21,7 @@ const ChatMessages = forwardRef(({ messages, isTyping }: any, ref: any) => {
             {messages.map((msg: any) => (
                 <div key={msg.id}>
                     {/* THÊM ĐIỀU KIỆN: Chỉ render bong bóng chat nếu có text */}
-                    {msg.text && (
+                    {(msg.text || msg.imageUrl) && (
                         <div className={clsx(styles.message, 'mb-4', msg.sender === 'user' ? 'text-right' : 'text-left')}>
                             <div className={clsx(
                                 'inline-block py-3 px-4 rounded-2xl max-w-[80%] text-sm leading-snug relative',
