@@ -1,6 +1,6 @@
 import { authOptions } from "@lib/authOptions";
 import ChangePasswordPage from "@pages/Member/Profile/Right/ChangePasswordContent"
-import { METADATA } from "../../../../../../types/IMetadata";
+import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 export default async function ChangePassword() {

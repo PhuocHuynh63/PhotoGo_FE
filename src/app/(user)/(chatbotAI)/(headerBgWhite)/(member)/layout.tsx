@@ -4,7 +4,7 @@ import { IUser } from "@models/user/common.model";
 import { IUserResponse } from "@models/user/response.model";
 import { ROUTES } from "@routes";
 import userService from "@services/user";
-import { METADATA } from "../../../../types/IMetadata";
+import { METADATA } from "../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
@@ -37,9 +37,11 @@ export default async function UserProfileLayout({
     }
 
     return (
-        <UserProfileLayoutClient user={userData} userOrders={userOrders} userFavorites={userFavorites} userPromotions={userPromotions}>
-            {children}
-        </UserProfileLayoutClient>
+        <>
+            <UserProfileLayoutClient user={userData} userOrders={userOrders} userFavorites={userFavorites} userPromotions={userPromotions}>
+                {children}
+            </UserProfileLayoutClient>
+        </>
     )
 }
 

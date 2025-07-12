@@ -166,7 +166,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                 <Heart size={20} className={cn("transition-all", isCurrentConceptInFavorites ? 'text-red-500 fill-current' : 'text-gray-600')} />
                             )}
                         </button>
-                        <button onClick={() => onOpenChange?.(false)} className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">
+                        <button onClick={() => onOpenChange?.(false)} className="cursor-pointer p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">
                             <X size={22} className="text-gray-600" />
                         </button>
                     </div>

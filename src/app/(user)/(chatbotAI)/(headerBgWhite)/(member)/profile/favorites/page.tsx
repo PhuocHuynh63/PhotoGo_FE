@@ -3,7 +3,7 @@ import { IFavoriteDetailModel } from "@models/favorite/common.model";
 import { IFavoriteListResponse } from "@models/favorite/response.model";
 import FavoritesPage from "@pages/Member/Profile/Right/FavoriteContent"
 import favoritesService from "@services/favorites";
-import { METADATA } from "../../../../../../types/IMetadata";
+import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 interface FavoritesPageProps {

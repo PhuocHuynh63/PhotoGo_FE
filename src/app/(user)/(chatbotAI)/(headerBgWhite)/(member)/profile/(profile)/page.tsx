@@ -4,7 +4,7 @@ import { authOptions } from "@lib/authOptions"
 import { getServerSession } from "next-auth"
 import userService from "@services/user"
 import { IUserResponse } from "@models/user/response.model"
-import { METADATA } from "../../../../../../types/IMetadata"
+import { METADATA } from "../../../../../../../types/IMetadata"
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
