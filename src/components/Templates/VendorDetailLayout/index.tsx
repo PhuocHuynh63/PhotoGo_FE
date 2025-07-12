@@ -108,8 +108,6 @@ const VendorDetailLayoutPage = ({
                     </motion.div>
                 </div>
             </div>
-
-            <Chatbot />
         </>
     )
 }

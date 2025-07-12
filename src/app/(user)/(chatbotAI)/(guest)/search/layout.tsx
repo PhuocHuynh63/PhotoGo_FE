@@ -9,7 +9,6 @@ export default function SearchLayout({ children,
     return (
         <SearchLayoutClient>
             {children}
-            <Chatbot />
         </SearchLayoutClient >
     );
 }
