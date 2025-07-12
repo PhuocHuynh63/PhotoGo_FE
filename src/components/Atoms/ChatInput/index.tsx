@@ -51,9 +51,9 @@ const ChatInput = ({ value, onChange, onSend, onFileChange, selectedFile }: any)
                     onChange={onChange}
                     onKeyDown={handleKeyDown}
                     placeholder="Nhập tin nhắn..."
-                    className="flex-1 py-2 px-1 md:px-3 border-2 border-purple-500/20 rounded-full outline-none text-sm transition-all bg-white/80 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10"
+                    className="flex-1 py-2 px-1 md:px-3 border-2 border-orange-400/20 rounded-full outline-none text-sm transition-all bg-white/80 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/10"
                 />
-                <Button onClick={onSend} className="w-10 h-8 flex-shrink-0 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+                <Button onClick={onSend} className="w-10 h-8 flex-shrink-0 bg-gradient-to-r from-orange-400 to-orange-300 text-white rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
                     <SendIcon />
                 </Button>
             </div>
