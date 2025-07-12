@@ -10,7 +10,6 @@ import Header from "@components/Organisms/Header";
 import { IServicePackagesData } from "@models/servicePackages/response.model";
 import packageServices from "@services/packageServices";
 import { METADATA } from "../../../../types/IMetadata";
-import Chatbot from "@components/Molecules/Chatbot";
 
 async function getAUser(id: string) {
     return await userService.getAUser(id);
