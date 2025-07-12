@@ -6,8 +6,6 @@ import Link from 'next/link';
 import React from 'react';
 
 const ConceptCard = ({ concept }: any) => {
-    console.log("Rendering ConceptCard with concept:", concept);
-
     if (!concept) return null;
 
     return (

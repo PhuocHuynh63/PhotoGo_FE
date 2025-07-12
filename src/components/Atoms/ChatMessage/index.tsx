@@ -16,9 +16,6 @@ const TypingIndicator = ({ isActive }: any) => (
 );
 
 const ChatMessages = forwardRef(({ messages, isTyping }: any, ref: any) => {
-    console.log("Rendering ChatMessages with messages:", messages);
-
-
     return (
         <div ref={ref} className="h-[350px] overflow-y-auto p-5 scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-black/5 [&::-webkit-scrollbar-thumb]:bg-orange-500/30">
             {messages.map((msg: any) => (

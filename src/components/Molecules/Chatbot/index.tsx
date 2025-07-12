@@ -75,14 +75,12 @@ const Chatbot = () => {
             }
 
             const response = await geminiService.chatbotGemini(formData) as IBackendResponse<any>;
-            console.log("Response from Gemini:", response.data);
 
             let botMessage = "";
             let conceptsToShow = null;
             if (response.data.data.concepts_same) {
                 conceptsToShow = response.data.data.concepts_same;
                 setConceptsSame(conceptsToShow);
-                console.log("Concepts same:", response.data.data.concepts_same);
             } else {
                 botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
             }

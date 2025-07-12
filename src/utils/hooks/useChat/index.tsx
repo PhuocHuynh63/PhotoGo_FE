@@ -25,8 +25,6 @@ export const useMessageByChatId = ({
     const [error, setError] = useState<string | null>(null);
 
     const fetchMessages = useCallback(async () => {
-        console.log('useMessageByChatId - Calling fetchMessages for chatId:', chatId); // <-- THÊM LOG NÀY
-
         if (!chatId) {
             setMessage([]);
             return;
@@ -35,8 +33,6 @@ export const useMessageByChatId = ({
         setError(null);
         try {
             const response: any = await chatService.getMessageChatById(chatId, page, pageSize);
-            console.log('useMessageByChatId - Fetched messages:', response.data); // <-- THÊM LOG NÀY
-
             setMessage(response.data);
         } catch (err: any) {
             setError(err.message || 'Failed to fetch messages');
