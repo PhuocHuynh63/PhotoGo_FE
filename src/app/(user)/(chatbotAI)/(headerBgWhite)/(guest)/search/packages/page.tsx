@@ -4,7 +4,7 @@ import { IServiceTypeModel } from "@models/serviceTypes/common.model";
 import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
 import SearchPackage from "@pages/Public/Search/SearchPackage";
 import packageServices from "@services/packageServices";
-import { METADATA } from "../../../../../../types/IMetadata";
+import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 async function getPackages({ searchParams, serviceTypes }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>, serviceTypes: IServiceTypeModel[] }) {

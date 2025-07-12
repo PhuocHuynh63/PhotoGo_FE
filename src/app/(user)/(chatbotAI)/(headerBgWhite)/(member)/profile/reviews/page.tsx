@@ -2,7 +2,7 @@ import { authOptions } from "@lib/authOptions";
 import { IReviewPaginationResponse, IReviewPaginationResponseModel } from "@models/review/repsonse.model";
 import ReviewsPage from "@pages/Member/Profile/Right/Reviews"
 import reviewService from "@services/review";
-import { METADATA } from "../../../../../../types/IMetadata";
+import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 
 

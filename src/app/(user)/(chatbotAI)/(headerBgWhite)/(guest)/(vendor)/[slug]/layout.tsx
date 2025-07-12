@@ -6,7 +6,7 @@ import { IVendorResponse } from "@models/vendor/response.model";
 import locationAvailabilityService from "@services/locationAvailability";
 import reviewService from "@services/review";
 import vendorService from "@services/vendors";
-import { METADATA } from "../../../../../../types/IMetadata";
+import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
