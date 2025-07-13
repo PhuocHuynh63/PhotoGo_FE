@@ -1,6 +1,7 @@
 
 'use client';
 
+import { ROUTES } from '@routes';
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat';
 import Link from 'next/link';
 import React from 'react';
@@ -8,8 +9,13 @@ import React from 'react';
 const ConceptCard = ({ concept }: any) => {
     if (!concept) return null;
 
+    console.log('>>>>>>>>>>>>>>>>> ConceptCard concept:', concept);
+
+
+    const href = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', concept.vendorSlug).replace(':page', 'packages')}?location=${concept.location}&conceptId=${concept.conceptId}`;
+
     return (
-        <Link href={`/concept/${concept.conceptId}`} passHref className="block flex-shrink-0 w-[200px] bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
+        <Link href={href} passHref className="block flex-shrink-0 w-[200px] bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">
             <div className="relative w-full h-[120px]">
                 <img
                     src={concept.imageUrl}
