@@ -509,11 +509,11 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900">
+                                <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                     📅 Loại phạm vi concept <span className="text-red-500">*</span>
                                 </Label>
                                 <Select
-                                    value={concepts[currentConceptIndex]?.conceptRangeType || "một ngày"}
+                                    value={concepts[currentConceptIndex]?.conceptRangeType || SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.ONE_DAY}
                                     onValueChange={(value: "một ngày" | "nhiều ngày") => {
                                         handleConceptChange(currentConceptIndex, "conceptRangeType", value);
                                         // Auto-update related fields based on concept range type
@@ -546,7 +546,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900">
+                                    <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                         💰 Giá (VNĐ) <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
@@ -578,7 +578,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900">
+                                    <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                         ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
@@ -597,7 +597,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900">
+                                    <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                         📅 Số ngày thực hiện <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
