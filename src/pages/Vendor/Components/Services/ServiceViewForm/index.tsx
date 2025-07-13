@@ -46,7 +46,6 @@ interface ServiceViewDetailProps {
 
 export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
 
-
     const router = useRouter();
     const formatCurrency = (amount: number) =>
         new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(amount);

@@ -15,6 +15,7 @@ import { IServiceTypeModel } from "@models/serviceTypes/common.model";
 import packageService from "@services/packageServices";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@routes";
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 
 interface ServiceConcept {
     id: string;
@@ -58,6 +59,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
     const [categoryFilter, setCategoryFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    console.log(vendor)
     const [vendorData, setVendorData] = useState<Vendor>({
         ...vendor,
         servicePackages: vendor?.servicePackages || [],
@@ -164,15 +166,6 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
         return Math.min(...validDurations);
     };
 
-    const formatCurrency = (amount: number | null) => {
-        if (amount === null) return "Không có giá";
-        return `Từ ${new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)}`;
-    };
-
     const formatDuration = (minutes: number | null) => {
         if (minutes === null) return "Không có thời gian";
         const hours = Math.floor(minutes / 60);
@@ -274,7 +267,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-sm">
                                     <DollarSign className="h-4 w-4 text-gray-500" />
-                                    <span>{formatCurrency(getMinPrice(service.serviceConcepts))}</span>
+                                    <span>Từ {formatPrice(getMinPrice(service.serviceConcepts) || 0)}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2 text-sm">

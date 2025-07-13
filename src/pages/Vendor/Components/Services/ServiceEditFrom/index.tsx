@@ -6,6 +6,7 @@ import { Input } from "@/components/Atoms/ui/input";
 import { Label } from "@/components/Atoms/ui/label";
 import TipTapEditor from "@/components/Organisms/TipTapEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select";
+import { Switch } from "@/components/Atoms/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Atoms/ui/accordion";
 import { ImageIcon, Pencil, Trash, X } from "lucide-react";
@@ -512,39 +513,46 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                     📅 Loại phạm vi concept <span className="text-red-500">*</span>
                                 </Label>
-                                <Select
-                                    value={concepts[currentConceptIndex]?.conceptRangeType || SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.ONE_DAY}
-                                    onValueChange={(value: "một ngày" | "nhiều ngày") => {
-                                        handleConceptChange(currentConceptIndex, "conceptRangeType", value);
-                                        // Auto-update related fields based on concept range type
-                                        if (value === "một ngày") {
-                                            handleConceptChange(currentConceptIndex, "numberOfDays", 1);
-                                            if (concepts[currentConceptIndex]?.duration === 0) {
-                                                handleConceptChange(currentConceptIndex, "duration", 60);
-                                            }
-                                        } else {
-                                            handleConceptChange(currentConceptIndex, "duration", 0);
-                                            if (concepts[currentConceptIndex]?.numberOfDays < 2) {
-                                                handleConceptChange(currentConceptIndex, "numberOfDays", 2);
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <SelectTrigger className="border-2 focus:border-blue-500">
-                                        <SelectValue placeholder="Chọn loại phạm vi" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="một ngày" className="text-green-700">
+                                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium text-gray-700">
                                             📅 Một ngày
-                                        </SelectItem>
-                                        <SelectItem value="nhiều ngày" className="text-blue-700">
+                                        </span>
+                                        <Switch
+                                            id="concept-range-type"
+                                            checked={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày"}
+                                            onCheckedChange={(checked) => {
+                                                const value = checked ? "nhiều ngày" : "một ngày";
+                                                handleConceptChange(currentConceptIndex, "conceptRangeType", value);
+                                                // Auto-update related fields based on concept range type
+                                                if (value === "một ngày") {
+                                                    handleConceptChange(currentConceptIndex, "numberOfDays", 1);
+                                                    if (concepts[currentConceptIndex]?.duration === 0) {
+                                                        handleConceptChange(currentConceptIndex, "duration", 60);
+                                                    }
+                                                } else {
+                                                    handleConceptChange(currentConceptIndex, "duration", 0);
+                                                    if (concepts[currentConceptIndex]?.numberOfDays < 2) {
+                                                        handleConceptChange(currentConceptIndex, "numberOfDays", 2);
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <span className="text-sm font-medium text-gray-700">
                                             📅 Nhiều ngày
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                        </span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm text-gray-600">
+                                            {concepts[currentConceptIndex]?.conceptRangeType === "một ngày"
+                                                ? "Concept thực hiện trong 1 ngày"
+                                                : "Concept thực hiện trong nhiều ngày"}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
                                         💰 Giá (VNĐ) <span className="text-red-500">*</span>
@@ -577,46 +585,47 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                         </div>
                                     )}
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
-                                        ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        id="concept-duration"
-                                        type="number"
-                                        value={concepts[currentConceptIndex]?.duration || 0}
-                                        onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
-                                        disabled={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày"}
-                                        placeholder={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" ? "0 (Tự động)" : "Nhập thời gian (phút)"}
-                                        required={concepts[currentConceptIndex]?.conceptRangeType === "một ngày"}
-                                    />
-                                    {concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" && (
+
+                                {/* Hiển thị Thời gian chỉ khi concept range type là "một ngày" */}
+                                {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                                            ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
+                                        </Label>
+                                        <Input
+                                            id="concept-duration"
+                                            type="number"
+                                            value={concepts[currentConceptIndex]?.duration || 0}
+                                            onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
+                                            placeholder="Nhập thời gian (phút)"
+                                            required
+                                        />
                                         <p className="text-sm text-gray-500">
-                                            💡 Thời gian được đặt = 0 cho concept nhiều ngày
+                                            💡 Thời gian thực hiện concept trong ngày
                                         </p>
-                                    )}
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
-                                        📅 Số ngày thực hiện <span className="text-red-500">*</span>
-                                    </Label>
-                                    <Input
-                                        id="concept-numberOfDays"
-                                        type="number"
-                                        value={concepts[currentConceptIndex]?.numberOfDays || 1}
-                                        onChange={(e) => handleConceptChange(currentConceptIndex, "numberOfDays", Number(e.target.value))}
-                                        min={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : 2}
-                                        max={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : undefined}
-                                        disabled={concepts[currentConceptIndex]?.conceptRangeType === "một ngày"}
-                                        placeholder={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? "1 (Tự động)" : "Nhập số ngày"}
-                                        required
-                                    />
-                                    {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
+                                    </div>
+                                )}
+
+                                {/* Hiển thị Số ngày thực hiện chỉ khi concept range type là "nhiều ngày" */}
+                                {concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                                            📅 Số ngày thực hiện <span className="text-red-500">*</span>
+                                        </Label>
+                                        <Input
+                                            id="concept-numberOfDays"
+                                            type="number"
+                                            value={concepts[currentConceptIndex]?.numberOfDays || 1}
+                                            onChange={(e) => handleConceptChange(currentConceptIndex, "numberOfDays", Number(e.target.value))}
+                                            min={2}
+                                            placeholder="Nhập số ngày"
+                                            required
+                                        />
                                         <p className="text-sm text-gray-500">
-                                            💡 Số ngày được đặt = 1 cho concept một ngày
+                                            💡 Số ngày thực hiện concept (tối thiểu 2 ngày)
                                         </p>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-y-2">
