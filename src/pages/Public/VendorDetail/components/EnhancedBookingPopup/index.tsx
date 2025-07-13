@@ -128,7 +128,7 @@ export default function EnhancedBookingPopup({
     } = useLocationAvailabilityByLocationIdAndDate({
         locationId: addressLocation?.id || "",
         date: watchedDate ? format(new Date(watchedDate), 'dd/MM/yyyy') : "",
-        enabled: !isMultiDay && !!watchedDate && !!addressLocation?.id
+        // enabled: !isMultiDay && !!watchedDate && !!addressLocation?.id
     });
 
     useEffect(() => {
@@ -233,7 +233,7 @@ export default function EnhancedBookingPopup({
                 ...data,
                 bookingDetails: {
                     ...data.bookingDetails,
-                    dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
+                    // dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
                     date: '', time: '', slot_time_id: '', working_date_id: '',
                 }
             };
@@ -248,7 +248,7 @@ export default function EnhancedBookingPopup({
                 bookingDetails: {
                     ...data.bookingDetails,
                     date: format(new Date(data.bookingDetails.date), 'dd/MM/yyyy'),
-                    dates: undefined,
+                    // dates: undefined,
                 }
             };
         }
