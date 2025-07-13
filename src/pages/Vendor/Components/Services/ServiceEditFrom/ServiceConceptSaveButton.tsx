@@ -24,7 +24,7 @@ interface ServiceConceptSaveButtonProps {
 
 export default function ServiceConceptSaveButton({ conceptData, originalPrice, servicePackageId, onSuccess, onError }: ServiceConceptSaveButtonProps) {
     const { saveServiceConcept, isLoading, error } = useSaveServiceConcept();
-
+    console.log(conceptData)
     const validateConceptData = (): { isValid: boolean; errors: string[] } => {
         const errors: string[] = [];
 

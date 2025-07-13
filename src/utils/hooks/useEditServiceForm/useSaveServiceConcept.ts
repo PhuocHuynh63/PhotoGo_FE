@@ -9,6 +9,8 @@ interface ConceptData {
   price: number;
   finalPrice: number;
   duration: number;
+  conceptRangeType: "một ngày" | "nhiều ngày";
+  numberOfDays: number;
   serviceTypeIds: string[];
   images: File[];
   originalPrice?: number; // Giá gốc từ DB
@@ -25,20 +27,22 @@ export function useSaveServiceConcept() {
       const formData = new FormData();
       formData.append("name", conceptData.name);
       formData.append("description", conceptData.description);
-      
+
       // Logic tính toán giá
       let priceToSave: number;
       if (conceptData.originalPrice !== undefined && conceptData.price === conceptData.originalPrice) {
         // Nếu giá hiện tại = giá gốc từ DB, lưu giá gốc (đã trừ VAT và hoa hồng)
         // Giá gốc = Giá hiện tại / (1 + 0.05 + 0.3) = Giá hiện tại / 1.35
-        priceToSave = Math.round(conceptData.price / 1.35);
+        priceToSave = Math.round(conceptData.price);
       } else {
         // Nếu giá đã thay đổi, lưu giá mới (đã bao gồm VAT và hoa hồng)
         priceToSave = conceptData.price;
       }
-      
+
       formData.append("price", priceToSave.toString());
       formData.append("duration", conceptData.duration.toString());
+      formData.append("conceptRangeType", conceptData.conceptRangeType);
+      formData.append("numberOfDays", conceptData.numberOfDays.toString());
       formData.append("servicePackageId", servicePackageId);
       formData.append("serviceTypeIds", (conceptData.serviceTypeIds || []).join(", "));
       formData.append("status", "hoạt động");
@@ -52,7 +56,7 @@ export function useSaveServiceConcept() {
       } else {
         response = await packageService.createServiceConcept(formData) as IServicePackageResponse;
       }
-      
+
       setIsLoading(false);
       if (response.statusCode === 200 || response.statusCode === 201) {
         return { success: true, response };
