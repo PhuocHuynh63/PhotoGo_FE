@@ -13,6 +13,7 @@ import { Button } from "@/components/Atoms/ui/button"
 import { Input } from "@/components/Atoms/ui/input"
 import { Label } from "@/components/Atoms/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
+import { Switch } from "@/components/Atoms/ui/switch"
 import { Badge } from "@/components/Atoms/ui/badge"
 import { Card, CardContent } from "@components/Atoms/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/Atoms/Accordion"
@@ -443,53 +444,60 @@ const ConceptForm = ({
                     <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900">
                         📅 Loại phạm vi concept <span className="text-red-500">*</span>
                     </Label>
-                    <Select
-                        value={concepts[currentConceptIndex]?.conceptRangeType || "một ngày"}
-                        onValueChange={(value: "một ngày" | "nhiều ngày") => {
-                            setConcepts((prev: ConceptFormData[]) => {
-                                const newConcepts = [...prev]
-                                newConcepts[currentConceptIndex] = {
-                                    ...newConcepts[currentConceptIndex],
-                                    conceptRangeType: value,
-                                }
-                                return newConcepts
-                            })
-                            // Auto-update related fields based on concept range type
-                            if (value === "một ngày") {
-                                setConcepts((prev: ConceptFormData[]) => {
-                                    const newConcepts = [...prev]
-                                    newConcepts[currentConceptIndex] = {
-                                        ...newConcepts[currentConceptIndex],
-                                        numberOfDays: 1,
-                                        duration: newConcepts[currentConceptIndex].duration === 0 ? 60 : newConcepts[currentConceptIndex].duration,
-                                    }
-                                    return newConcepts
-                                })
-                            } else {
-                                setConcepts((prev: ConceptFormData[]) => {
-                                    const newConcepts = [...prev]
-                                    newConcepts[currentConceptIndex] = {
-                                        ...newConcepts[currentConceptIndex],
-                                        duration: 0,
-                                        numberOfDays: newConcepts[currentConceptIndex].numberOfDays < 2 ? 2 : newConcepts[currentConceptIndex].numberOfDays,
-                                    }
-                                    return newConcepts
-                                })
-                            }
-                        }}
-                    >
-                        <SelectTrigger className="border-2 focus:border-blue-500">
-                            <SelectValue placeholder="Chọn loại phạm vi" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="một ngày" className="text-green-700">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-700">
                                 📅 Một ngày
-                            </SelectItem>
-                            <SelectItem value="nhiều ngày" className="text-blue-700">
+                            </span>
+                            <Switch
+                                id="concept-range-type"
+                                checked={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày"}
+                                onCheckedChange={(checked) => {
+                                    const value = checked ? "nhiều ngày" : "một ngày";
+                                    setConcepts((prev: ConceptFormData[]) => {
+                                        const newConcepts = [...prev]
+                                        newConcepts[currentConceptIndex] = {
+                                            ...newConcepts[currentConceptIndex],
+                                            conceptRangeType: value,
+                                        }
+                                        return newConcepts
+                                    })
+                                    // Auto-update related fields based on concept range type
+                                    if (value === "một ngày") {
+                                        setConcepts((prev: ConceptFormData[]) => {
+                                            const newConcepts = [...prev]
+                                            newConcepts[currentConceptIndex] = {
+                                                ...newConcepts[currentConceptIndex],
+                                                numberOfDays: 1,
+                                                duration: newConcepts[currentConceptIndex].duration === 0 ? 60 : newConcepts[currentConceptIndex].duration,
+                                            }
+                                            return newConcepts
+                                        })
+                                    } else {
+                                        setConcepts((prev: ConceptFormData[]) => {
+                                            const newConcepts = [...prev]
+                                            newConcepts[currentConceptIndex] = {
+                                                ...newConcepts[currentConceptIndex],
+                                                duration: 0,
+                                                numberOfDays: newConcepts[currentConceptIndex].numberOfDays < 2 ? 2 : newConcepts[currentConceptIndex].numberOfDays,
+                                            }
+                                            return newConcepts
+                                        })
+                                    }
+                                }}
+                            />
+                            <span className="text-sm font-medium text-gray-700">
                                 📅 Nhiều ngày
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                            </span>
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm text-gray-600">
+                                {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" 
+                                    ? "Concept thực hiện trong 1 ngày" 
+                                    : "Concept thực hiện trong nhiều ngày"}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
