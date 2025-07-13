@@ -25,6 +25,8 @@ export interface ServiceConcept {
     description: string;
     price: number;
     duration: number;
+    conceptRangeType?: "một ngày" | "nhiều ngày";
+    numberOfDays?: number;
     serviceTypes?: ServiceType[];
     serviceConceptServiceTypes?: { serviceTypeId: string; serviceType?: ServiceType }[];
     images?: ServiceConceptImage[];
@@ -76,7 +78,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2 text-blue-600">
                                         <Eye className="h-5 w-5" />
-                                        <span className="text-xl font-bold">Chi tiết dịch vụ</span>
+                                        <span className="text-xl font-bold">Chi tiết service</span>
                                     </div>
                                     <span className="text-xl font-semibold text-blue-900 bg-blue-100 px-3 py-1 rounded-full">
                                         {service?.name}
@@ -95,8 +97,8 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                             <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium text-gray-600">🚦 Trạng thái:</span>
                                 <span className={`text-sm font-semibold px-2 py-1 rounded-full ${service?.status === "hoạt động"
-                                        ? "text-green-700 bg-green-100"
-                                        : "text-red-700 bg-red-100"
+                                    ? "text-green-700 bg-green-100"
+                                    : "text-red-700 bg-red-100"
                                     }`}>
                                     {service?.status === "hoạt động" ? "✅ Đang hoạt động" : "⏸️ Tạm dừng"}
                                 </span>
@@ -127,7 +129,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                         <div className="flex justify-between items-center p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                             <div className="flex items-center gap-3">
                                 <h3 className="text-xl font-bold text-blue-900">
-                                    📦 Gói dịch vụ ({service?.serviceConcepts?.length})
+                                    📦 Gói concept ({service?.serviceConcepts?.length})
                                 </h3>
                                 <span className="text-sm text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
                                     {service?.serviceConcepts?.length || 0} gói
@@ -155,7 +157,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                                 dangerouslySetInnerHTML={{ __html: concept?.description || '' }}
                                             />
                                         </div>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-green-600">💰</span>
                                                 <div>
@@ -164,12 +166,31 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-blue-600">⏱️</span>
+                                                <span className="text-orange-600">📅</span>
                                                 <div>
-                                                    <p className="font-semibold text-sm text-gray-700">Thời gian:</p>
-                                                    <p className="font-bold text-blue-700">{formatDuration(concept?.duration)}</p>
+                                                    <p className="font-semibold text-sm text-gray-700">Loại:</p>
+                                                    <p className="font-bold text-orange-700">
+                                                        {concept?.conceptRangeType === "nhiều ngày" ? "Nhiều ngày" : "Một ngày"}
+                                                    </p>
                                                 </div>
                                             </div>
+                                            {concept?.conceptRangeType === "một ngày" || (concept?.conceptRangeType === undefined && concept?.duration > 0) ? (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-blue-600">⏱️</span>
+                                                    <div>
+                                                        <p className="font-semibold text-sm text-gray-700">Thời gian:</p>
+                                                        <p className="font-bold text-blue-700">{formatDuration(concept?.duration)}</p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-blue-600">📆</span>
+                                                    <div>
+                                                        <p className="font-semibold text-sm text-gray-700">Số ngày:</p>
+                                                        <p className="font-bold text-blue-700">{concept?.numberOfDays || 1} ngày</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                             <div className="flex items-center gap-2">
                                                 <span className="text-purple-600">🖼️</span>
                                                 <div>
@@ -181,7 +202,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                         {extractServiceTypes(concept).length > 0 && (
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium text-gray-600">🎯 Loại dịch vụ:</span>
+                                                    <span className="text-sm font-medium text-gray-600">🎯 Loại concept:</span>
                                                     <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                                                         {extractServiceTypes(concept).length} loại
                                                     </span>
@@ -201,7 +222,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                                         {concept?.images && concept?.images?.length > 0 && (
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium text-gray-600">🖼️ Ảnh gói dịch vụ:</span>
+                                                    <span className="text-sm font-medium text-gray-600">🖼️ Ảnh gói concept:</span>
                                                     <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                                                         {concept?.images?.length} ảnh
                                                     </span>
@@ -231,15 +252,15 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                         {service?.serviceConcepts?.length === 0 && (
                             <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                                 <div className="text-6xl mb-4">📦</div>
-                                <p className="text-gray-500 text-lg font-medium">Chưa có gói dịch vụ nào</p>
-                                <p className="text-gray-400 text-sm mt-2">Hãy thêm gói dịch vụ để bắt đầu</p>
+                                <p className="text-gray-500 text-lg font-medium">Chưa có gói concept nào</p>
+                                <p className="text-gray-400 text-sm mt-2">Hãy thêm gói concept để bắt đầu</p>
                             </div>
                         )}
                     </div>
 
                     <div className="mt-6 flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-lg">
                         <div className="flex items-center gap-3">
-                            <span className="text-sm text-gray-600">⬅️ Quay lại danh sách dịch vụ</span>
+                            <span className="text-sm text-gray-600">⬅️ Quay lại danh sách service</span>
                             <Button
                                 variant="outline"
                                 onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.LIST)}
@@ -249,7 +270,7 @@ export default function ServiceViewDetail({ service }: ServiceViewDetailProps) {
                             </Button>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="text-sm text-blue-600">✏️ Chỉnh sửa thông tin dịch vụ</span>
+                            <span className="text-sm text-blue-600">✏️ Chỉnh sửa thông tin service</span>
                             <Button
                                 variant="outline"
                                 onClick={() => router.push(ROUTES.VENDOR.SERVICE_PACKAGES.EDIT.replace(':id', service?.id))}
