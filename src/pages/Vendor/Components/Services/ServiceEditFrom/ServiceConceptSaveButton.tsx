@@ -11,6 +11,8 @@ interface ServiceConceptSaveButtonProps {
         price: number;
         finalPrice: number;
         duration: number;
+        conceptRangeType: "một ngày" | "nhiều ngày";
+        numberOfDays: number;
         serviceTypeIds: string[];
         images: File[];
     };
@@ -39,8 +41,21 @@ export default function ServiceConceptSaveButton({ conceptData, originalPrice, s
             errors.push("Giá gói dịch vụ phải lớn hơn 0");
         }
 
-        if (!conceptData.duration || conceptData.duration <= 0) {
-            errors.push("Thời gian gói dịch vụ phải lớn hơn 0");
+        // Validate duration and numberOfDays based on conceptRangeType
+        if (conceptData.conceptRangeType === "một ngày") {
+            if (!conceptData.duration || conceptData.duration <= 0) {
+                errors.push("Thời gian gói dịch vụ phải lớn hơn 0 cho dịch vụ một ngày");
+            }
+            if (conceptData.numberOfDays !== 1) {
+                errors.push("Số ngày phải bằng 1 cho dịch vụ một ngày");
+            }
+        } else if (conceptData.conceptRangeType === "nhiều ngày") {
+            if (conceptData.duration !== 0) {
+                errors.push("Thời gian phải bằng 0 cho dịch vụ nhiều ngày");
+            }
+            if (!conceptData.numberOfDays || conceptData.numberOfDays < 2) {
+                errors.push("Số ngày phải lớn hơn hoặc bằng 2 cho dịch vụ nhiều ngày");
+            }
         }
 
         if (!conceptData.serviceTypeIds || conceptData.serviceTypeIds.length === 0) {

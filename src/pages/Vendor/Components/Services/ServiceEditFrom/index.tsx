@@ -20,7 +20,7 @@ import { IServicePackageResponse } from "@models/servicePackages/response.model"
 import { useDropzone } from "react-dropzone";
 import ServicePackageSaveButton from "./ServicePackageSaveButton";
 import ServiceConceptSaveButton from "./ServiceConceptSaveButton";
-
+import { SERVICE_CONCEPT } from "@constants/serviceConcept";
 interface ServiceType {
     id: string;
     name: string;
@@ -41,6 +41,8 @@ interface ServiceConcept {
     price: number;
     finalPrice: number;
     duration: number;
+    conceptRangeType?: "một ngày" | "nhiều ngày";
+    numberOfDays?: number;
     serviceTypes?: { id: string }[];
     serviceConceptServiceTypes?: { serviceTypeId: string; serviceType?: ServiceType }[];
     images?: ServiceConceptImage[];
@@ -53,6 +55,8 @@ interface ConceptFormData {
     price: number;
     finalPrice: number;
     duration: number;
+    conceptRangeType: "một ngày" | "nhiều ngày";
+    numberOfDays: number;
     serviceTypeIds: string[];
     images: File[];
 }
@@ -88,6 +92,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 price: 0,
                 finalPrice: 0,
                 duration: 60,
+                conceptRangeType: SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.ONE_DAY,
+                numberOfDays: 1,
                 serviceTypeIds: [],
                 images: [],
             }];
@@ -100,7 +106,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 description: c.description || "",
                 price: Number(c.price) || 0,
                 finalPrice: Number(c.finalPrice) || 0,
-                duration: Number(c.duration) || 60,
+                duration: c.duration !== undefined && c.duration !== null ? Number(c.duration) : 60,
+                conceptRangeType: c.conceptRangeType || SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.ONE_DAY,
+                numberOfDays: c.numberOfDays || 1,
                 serviceTypeIds:
                     (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
                         .concat(c.serviceTypes?.map((t) => t.id) || []),
@@ -156,7 +164,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         onDrop: (acceptedFiles) => {
             const currentConcept = concepts[currentConceptIndex];
             if (!currentConcept) {
-                toast.error("Không tìm thấy gói dịch vụ");
+                toast.error("Không tìm thấy gói concept");
                 return;
             }
 
@@ -200,7 +208,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         const currentConcept = concepts[conceptIndex];
 
         if (!currentConcept) {
-            toast.error("Không tìm thấy gói dịch vụ");
+            toast.error("Không tìm thấy gói concept");
             return;
         }
 
@@ -222,7 +230,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     const handleAddConcept = () => {
         setConcepts((prev) => [
             ...prev,
-            { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, serviceTypeIds: [], images: [] },
+            { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, conceptRangeType: "một ngày", numberOfDays: 1, serviceTypeIds: [], images: [] },
         ]);
         setConceptImagePreviews((prev) => [...prev, []]);
         setOriginalPrices((prev) => [...prev, 0]);
@@ -237,9 +245,9 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 try {
                     const response = await packageService.deleteServiceConcept(conceptToRemove.id) as IServicePackageResponse;
                     if (response.statusCode === 200) {
-                        toast.success("Xóa gói dịch vụ thành công!");
+                        toast.success("Xóa gói concept thành công!");
                     } else {
-                        toast.error(response.error || "Có lỗi xảy ra khi xóa gói dịch vụ!");
+                        toast.error(response.error || "Có lỗi xảy ra khi xóa gói concept!");
                         setIsLoading(false);
                         return;
                     }
@@ -247,7 +255,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
                         toast.error((error.response.data as { message: string }).message);
                     } else {
-                        toast.error((error as { message: string }).message || "Có lỗi xảy ra khi xóa gói dịch vụ!");
+                        toast.error((error as { message: string }).message || "Có lỗi xảy ra khi xóa gói concept!");
                     }
                     setIsLoading(false);
                     return;
@@ -267,19 +275,21 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 price: 0,
                 finalPrice: 0,
                 duration: 60,
+                conceptRangeType: "một ngày",
+                numberOfDays: 1,
                 serviceTypeIds: [],
                 images: [],
             }]);
             setConceptImagePreviews([[]]);
             setOriginalPrices([0]);
             setCurrentConceptIndex(0);
-            toast.success("Đã reset gói dịch vụ về trạng thái mặc định");
+            toast.success("Đã reset gói concept về trạng thái mặc định");
         }
     };
 
     const handleConceptChange = (index: number, field: string, value: unknown) => {
         if (index < 0 || index >= concepts.length) {
-            toast.error("Chỉ mục gói dịch vụ không hợp lệ");
+            toast.error("Chỉ mục gói concept không hợp lệ");
             return;
         }
 
@@ -292,7 +302,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
     const handleServiceTypeToggle = (typeId: string, conceptIndex: number) => {
         if (conceptIndex < 0 || conceptIndex >= concepts.length) {
-            toast.error("Chỉ mục gói dịch vụ không hợp lệ");
+            toast.error("Chỉ mục gói concept không hợp lệ");
             return;
         }
 
@@ -459,7 +469,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     <div className="flex justify-between items-center p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                         <div className="flex items-center gap-3">
                             <h1 className="text-xl font-bold text-blue-900">
-                                📦 Gói dịch vụ {currentConceptIndex + 1}/{concepts?.length}
+                                📦 Gói concept {currentConceptIndex + 1}/{concepts?.length}
                             </h1>
                             <span className="text-sm text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
                                 {concepts[currentConceptIndex]?.id ? "Chỉnh sửa" : "Tạo mới"}
@@ -470,7 +480,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                             onClick={handleAddConcept}
                             className="gap-2 cursor-pointer border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400"
                         >
-                            ➕ Thêm gói dịch vụ
+                            ➕ Thêm gói concept
                         </Button>
                     </div>
 
@@ -478,7 +488,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="concept-name" className="text-xl font-semibold text-gray-900">
-                                    🏷️ Tên gói dịch vụ <span className="text-red-500">*</span>
+                                    🏷️ Tên gói concept <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="concept-name"
@@ -490,7 +500,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                             <div className="space-y-2">
                                 <Label htmlFor="concept-description" className="text-xl font-semibold text-gray-900">
-                                    📋 Mô tả gói dịch vụ <span className="text-red-500">*</span>
+                                    📋 Mô tả gói concept <span className="text-red-500">*</span>
                                 </Label>
                                 <TipTapEditor
                                     value={concepts[currentConceptIndex]?.description || ""}
@@ -498,7 +508,43 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900">
+                                    📅 Loại phạm vi concept <span className="text-red-500">*</span>
+                                </Label>
+                                <Select
+                                    value={concepts[currentConceptIndex]?.conceptRangeType || "một ngày"}
+                                    onValueChange={(value: "một ngày" | "nhiều ngày") => {
+                                        handleConceptChange(currentConceptIndex, "conceptRangeType", value);
+                                        // Auto-update related fields based on concept range type
+                                        if (value === "một ngày") {
+                                            handleConceptChange(currentConceptIndex, "numberOfDays", 1);
+                                            if (concepts[currentConceptIndex]?.duration === 0) {
+                                                handleConceptChange(currentConceptIndex, "duration", 60);
+                                            }
+                                        } else {
+                                            handleConceptChange(currentConceptIndex, "duration", 0);
+                                            if (concepts[currentConceptIndex]?.numberOfDays < 2) {
+                                                handleConceptChange(currentConceptIndex, "numberOfDays", 2);
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <SelectTrigger className="border-2 focus:border-blue-500">
+                                        <SelectValue placeholder="Chọn loại phạm vi" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="một ngày" className="text-green-700">
+                                            📅 Một ngày
+                                        </SelectItem>
+                                        <SelectItem value="nhiều ngày" className="text-blue-700">
+                                            📅 Nhiều ngày
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900">
                                         💰 Giá (VNĐ) <span className="text-red-500">*</span>
@@ -513,21 +559,18 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                         required
                                     />
                                     {concepts[currentConceptIndex]?.price > 0 && (
-                                        <div className="flex flex-col items-start gap-2">
+                                        <div className="flex flex-col items-start gap-2 ml-2">
                                             <p className="text-sm text-gray-500">
                                                 <span className="font-bold">
                                                     {concepts[currentConceptIndex]?.price === originalPrices[currentConceptIndex]
                                                         ? formatPrice(concepts[currentConceptIndex]?.price || 0)
                                                         : formatPrice(
-                                                            concepts[currentConceptIndex]?.price +
-                                                            concepts[currentConceptIndex]?.price * 0.05 +
-                                                            concepts[currentConceptIndex]?.price * 0.3
+                                                            concepts[currentConceptIndex]?.price
                                                         )
                                                     }
                                                 </span>
                                                 {concepts[currentConceptIndex]?.price === originalPrices[currentConceptIndex]
-                                                    ? " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
-                                                    : ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
+                                                    && " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
                                                 }
                                             </p>
                                             <p className="text-sm text-gray-500">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
@@ -541,10 +584,38 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     <Input
                                         id="concept-duration"
                                         type="number"
-                                        value={concepts[currentConceptIndex]?.duration || 60}
+                                        value={concepts[currentConceptIndex]?.duration || 0}
                                         onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
+                                        disabled={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày"}
+                                        placeholder={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" ? "0 (Tự động)" : "Nhập thời gian (phút)"}
+                                        required={concepts[currentConceptIndex]?.conceptRangeType === "một ngày"}
+                                    />
+                                    {concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" && (
+                                        <p className="text-sm text-gray-500">
+                                            💡 Thời gian được đặt = 0 cho concept nhiều ngày
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900">
+                                        📅 Số ngày thực hiện <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input
+                                        id="concept-numberOfDays"
+                                        type="number"
+                                        value={concepts[currentConceptIndex]?.numberOfDays || 1}
+                                        onChange={(e) => handleConceptChange(currentConceptIndex, "numberOfDays", Number(e.target.value))}
+                                        min={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : 2}
+                                        max={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : undefined}
+                                        disabled={concepts[currentConceptIndex]?.conceptRangeType === "một ngày"}
+                                        placeholder={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? "1 (Tự động)" : "Nhập số ngày"}
                                         required
                                     />
+                                    {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
+                                        <p className="text-sm text-gray-500">
+                                            💡 Số ngày được đặt = 1 cho concept một ngày
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -553,7 +624,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     <AccordionItem value="service-types">
                                         <AccordionTrigger className="cursor-pointer">
                                             <span className="text-xl font-semibold text-gray-900">
-                                                🎯 Loại dịch vụ <span className="text-red-500">*</span>
+                                                🎯 Loại concept <span className="text-red-500">*</span>
                                                 <span className="text-sm font-medium text-gray-600 ml-2">
                                                     {(concepts[currentConceptIndex]?.serviceTypeIds || []).length > 0
                                                         ? `(đã chọn ${(concepts[currentConceptIndex]?.serviceTypeIds || []).length})`
@@ -587,7 +658,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                                 ))}
                                             </div>
                                             <p className="text-sm text-gray-500 mt-2">
-                                                Đã chọn: {(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại dịch vụ
+                                                Đã chọn: {(concepts[currentConceptIndex]?.serviceTypeIds || []).length} loại concept
                                             </p>
                                         </AccordionContent>
                                     </AccordionItem>
@@ -596,7 +667,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
 
                             <div className="space-y-2">
                                 <Label className="text-xl font-semibold text-gray-900">
-                                    🖼️ Ảnh gói dịch vụ <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
+                                    🖼️ Ảnh gói concept <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
                                 </Label>
                                 {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
                                     <div className="grid grid-cols-5 gap-10 my-4">

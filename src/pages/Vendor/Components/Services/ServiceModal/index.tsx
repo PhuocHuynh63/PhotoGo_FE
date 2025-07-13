@@ -53,6 +53,8 @@ interface ConceptFormData {
     description: string
     price: number
     duration: number
+    conceptRangeType: "một ngày" | "nhiều ngày"
+    numberOfDays: number
     serviceTypeIds: string[]
     images: File[]
 }
@@ -108,6 +110,8 @@ const useConceptForm = () => {
         description: "",
         price: 0,
         duration: 60,
+        conceptRangeType: "một ngày",
+        numberOfDays: 1,
         serviceTypeIds: [],
         images: [],
     }])
@@ -157,6 +161,8 @@ const useConceptForm = () => {
             description: "",
             price: 0,
             duration: 60,
+            conceptRangeType: "một ngày",
+            numberOfDays: 1,
             serviceTypeIds: [],
             images: [],
         }])
@@ -358,7 +364,6 @@ const ConceptForm = ({
     handleServiceTypeToggle,
     removeConceptImage
 }: ConceptFormProps) => {
-    const [isPriceChanged, setIsPriceChanged] = useState(false)
 
     return (
         <div className="space-y-6">
@@ -434,7 +439,60 @@ const ConceptForm = ({
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="concept-range-type" className="text-xl font-semibold text-gray-900">
+                        📅 Loại phạm vi concept <span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                        value={concepts[currentConceptIndex]?.conceptRangeType || "một ngày"}
+                        onValueChange={(value: "một ngày" | "nhiều ngày") => {
+                            setConcepts((prev: ConceptFormData[]) => {
+                                const newConcepts = [...prev]
+                                newConcepts[currentConceptIndex] = {
+                                    ...newConcepts[currentConceptIndex],
+                                    conceptRangeType: value,
+                                }
+                                return newConcepts
+                            })
+                            // Auto-update related fields based on concept range type
+                            if (value === "một ngày") {
+                                setConcepts((prev: ConceptFormData[]) => {
+                                    const newConcepts = [...prev]
+                                    newConcepts[currentConceptIndex] = {
+                                        ...newConcepts[currentConceptIndex],
+                                        numberOfDays: 1,
+                                        duration: newConcepts[currentConceptIndex].duration === 0 ? 60 : newConcepts[currentConceptIndex].duration,
+                                    }
+                                    return newConcepts
+                                })
+                            } else {
+                                setConcepts((prev: ConceptFormData[]) => {
+                                    const newConcepts = [...prev]
+                                    newConcepts[currentConceptIndex] = {
+                                        ...newConcepts[currentConceptIndex],
+                                        duration: 0,
+                                        numberOfDays: newConcepts[currentConceptIndex].numberOfDays < 2 ? 2 : newConcepts[currentConceptIndex].numberOfDays,
+                                    }
+                                    return newConcepts
+                                })
+                            }
+                        }}
+                    >
+                        <SelectTrigger className="border-2 focus:border-blue-500">
+                            <SelectValue placeholder="Chọn loại phạm vi" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="một ngày" className="text-green-700">
+                                📅 Một ngày
+                            </SelectItem>
+                            <SelectItem value="nhiều ngày" className="text-blue-700">
+                                📅 Nhiều ngày
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="concept-price" className="text-xl font-semibold text-gray-900">
                             💰 Giá (VNĐ) <span className="text-red-500">*</span>
@@ -452,7 +510,6 @@ const ConceptForm = ({
                                     }
                                     return newConcepts
                                 })
-                                setIsPriceChanged(true)
                             }}
                             placeholder="0"
                             className="border-2 focus:border-blue-500"
@@ -460,20 +517,14 @@ const ConceptForm = ({
                         {concepts[currentConceptIndex]?.price > 0 && (
                             <div className="flex flex-col items-start gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
                                 <p className="text-sm text-gray-700">
-                                    <span className="font-bold text-green-700">
-                                        {isPriceChanged
-                                            ? formatPrice(
-                                                concepts[currentConceptIndex]?.price +
-                                                concepts[currentConceptIndex]?.price * 0.05 +
-                                                concepts[currentConceptIndex]?.price * 0.3
+                                    <span className="font-bold">
+                                        {concepts[currentConceptIndex]?.price
+                                            ? formatPrice(concepts[currentConceptIndex]?.price || 0)
+                                            : formatPrice(
+                                                concepts[currentConceptIndex]?.price
                                             )
-                                            : formatPrice(concepts[currentConceptIndex]?.price || 0)
                                         }
                                     </span>
-                                    {isPriceChanged
-                                        ? ` = ${formatPrice(concepts[currentConceptIndex]?.price)} + ${formatPrice(concepts[currentConceptIndex]?.price * 0.05)} (VAT 5%) + ${formatPrice(concepts[currentConceptIndex]?.price * 0.3)} (Hoa hồng 30%)`
-                                        : " (Giá đã bao gồm VAT và hoa hồng, lấy từ dữ liệu gốc)"
-                                    }
                                 </p>
                                 <p className="text-sm text-gray-600">*Giá trên đã bao gồm thuế 5% VAT và 30% hoa hồng</p>
                             </div>
@@ -498,9 +549,45 @@ const ConceptForm = ({
                                     return newConcepts
                                 })
                             }
-                            placeholder="60"
+                            disabled={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày"}
+                            placeholder={concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" ? "0 (Tự động)" : "Nhập thời gian (phút)"}
                             className="border-2 focus:border-blue-500"
                         />
+                        {concepts[currentConceptIndex]?.conceptRangeType === "nhiều ngày" && (
+                            <p className="text-sm text-gray-500">
+                                💡 Thời gian được đặt = 0 cho dịch vụ nhiều ngày
+                            </p>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="concept-numberOfDays" className="text-xl font-semibold text-gray-900">
+                            📅 Số ngày thực hiện <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="concept-numberOfDays"
+                            type="number"
+                            value={concepts[currentConceptIndex]?.numberOfDays}
+                            onChange={(e) =>
+                                setConcepts((prev: ConceptFormData[]) => {
+                                    const newConcepts = [...prev]
+                                    newConcepts[currentConceptIndex] = {
+                                        ...newConcepts[currentConceptIndex],
+                                        numberOfDays: Number(e.target.value),
+                                    }
+                                    return newConcepts
+                                })
+                            }
+                            min={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : 2}
+                            max={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? 1 : undefined}
+                            disabled={concepts[currentConceptIndex]?.conceptRangeType === "một ngày"}
+                            placeholder={concepts[currentConceptIndex]?.conceptRangeType === "một ngày" ? "1 (Tự động)" : "Nhập số ngày"}
+                            className="border-2 focus:border-blue-500"
+                        />
+                        {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
+                            <p className="text-sm text-gray-500">
+                                💡 Số ngày được đặt = 1 cho dịch vụ một ngày
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -723,12 +810,27 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
     };
 
     const handleCreateConcept = async () => {
-        const invalidConcepts = concepts.filter(
-            concept => !concept.name || !concept.description || concept.price <= 0 || concept.serviceTypeIds.length === 0
-        )
+        const invalidConcepts = concepts.filter(concept => {
+            if (!concept.name || !concept.description || concept.price <= 0 || concept.serviceTypeIds.length === 0) {
+                return true
+            }
+
+            // Validate based on conceptRangeType
+            if (concept.conceptRangeType === "một ngày") {
+                if (concept.duration <= 0 || concept.numberOfDays !== 1) {
+                    return true
+                }
+            } else if (concept.conceptRangeType === "nhiều ngày") {
+                if (concept.duration !== 0 || concept.numberOfDays < 2) {
+                    return true
+                }
+            }
+
+            return false
+        })
 
         if (invalidConcepts.length > 0) {
-            toast.error("Vui lòng điền đầy đủ thông tin cho tất cả các gói dịch vụ")
+            toast.error("Vui lòng điền đầy đủ thông tin cho tất cả các gói dịch vụ và đảm bảo validation đúng")
             return
         }
 
@@ -747,6 +849,8 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                 formData.append("description", concept.description)
                 formData.append("price", concept.price.toString())
                 formData.append("duration", concept.duration.toString())
+                formData.append("conceptRangeType", concept.conceptRangeType)
+                formData.append("numberOfDays", concept.numberOfDays.toString())
                 formData.append("servicePackageId", serviceId)
                 formData.append("serviceTypeIds", concept.serviceTypeIds.join(", "))
 
@@ -782,7 +886,7 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
-            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-3">
                         {step === "service" ? (
