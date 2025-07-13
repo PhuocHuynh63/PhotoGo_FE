@@ -4,18 +4,27 @@ import locationAvailabilityService from "@services/locationAvailability";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
+/**
+ * Custom hook to fetch location availability
+ * @param {UseLocationAvailabilityParams} params - Parameters for fetching location availability
+ * @param {string} params.locationId - The ID of the location to fetch availability for
+ */
 type UseLocationAvailabilityParams = {
     locationId: string;
+    conceptRangeType?: string;
     enabled?: boolean; // Optional flag to control when to fetch
 };
 
 export function useLocationAvailability({
     locationId,
+    conceptRangeType = 'một ngày',
     enabled = true,
 }: UseLocationAvailabilityParams) {
     const [locationAvailability, setLocationAvailability] = useState<ILocationSchedule[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+
+    console.log('>>>>>>>>>>>>>>>>>>>> conceptRangeType', conceptRangeType);
 
     const fetchWorkingHours = async () => {
         if (!locationId) return;
@@ -24,7 +33,12 @@ export function useLocationAvailability({
         setError(null);
 
         try {
-            const result = await locationAvailabilityService.getLocationAvailabilityByLocationId(locationId) as ILocationScheduleResponse;
+            let result;
+            if (conceptRangeType === 'nhiều ngày') {
+                result = await locationAvailabilityService.getLocationAvailabilityMultidayByLocationId(locationId) as ILocationScheduleResponse;
+            } else {
+                result = await locationAvailabilityService.getLocationAvailabilityByLocationId(locationId) as ILocationScheduleResponse;
+            }
 
             if (result.statusCode === 200 && result.data) {
                 setLocationAvailability(result.data.data);
@@ -46,7 +60,7 @@ export function useLocationAvailability({
 
     useEffect(() => {
         fetchWorkingHours();
-    }, [locationId, enabled]);
+    }, [locationId, conceptRangeType, enabled]);
 
     const refetch = () => {
         fetchWorkingHours();
@@ -59,6 +73,7 @@ export function useLocationAvailability({
         refetch,
     };
 }
+//----------------------------------End----------------------------------//
 
 /**
  * Custom hook to fetch location availability and date
@@ -121,3 +136,4 @@ export function useLocationAvailabilityByLocationIdAndDate({
         refetch,
     };
 }
+//----------------------------------End----------------------------------//

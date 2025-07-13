@@ -99,6 +99,7 @@ export default function EnhancedBookingPopup({
 
     const { locationAvailability } = useLocationAvailability({
         locationId: addressLocation?.id || "",
+        conceptRangeType: serviceConcept?.conceptRangeType,
         enabled: !!addressLocation?.id,
     });
 
@@ -160,6 +161,9 @@ export default function EnhancedBookingPopup({
                 price: Number(serviceConcept?.price || 0),
                 available: slotDetail.isAvailable && (slotDetail.maxParallelBookings - slotDetail.alreadyBooked) > 0,
             }));
+
+            availableSlots.sort((a: any, b: any) => a.time.localeCompare(b.time));
+
             setTimeSlots(availableSlots);
         } else if (watchedDate && !isTimeSlotsLoading) {
             setTimeSlots([]);

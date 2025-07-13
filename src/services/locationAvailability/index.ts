@@ -5,6 +5,9 @@ const locationAvailabilityService = {
     getLocationAvailabilityByLocationId: async (locationId: string, isAvailable: boolean = true, current: number = 1, pageSize: number = 10, sortBy: string = 'createdAt', sortDirection = 'asc') => {
         return await http.get(`/location-availability/location/${locationId}?isAvailable=${isAvailable}&current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
     },
+    getLocationAvailabilityMultidayByLocationId: async (locationId: string, isAvailable: boolean = true, current: number = 1, pageSize: number = 10, sortBy: string = 'createdAt', sortDirection = 'asc') => {
+        return await http.get(`/location-availability/location/${locationId}/multi-day?isAvailable=${isAvailable}&current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
+    },
     getLocationAvailabilityByIdAndDate: async (locationId: string, date: string, isAvailable: boolean = true, current: number = 1, pageSize: number = 10, sortBy: string = 'createdAt', sortDirection = 'asc') => {
         return await http.get(`/location-availability/location/${locationId}/date?date=${date}&isAvailable=${isAvailable}&current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`)
     },
