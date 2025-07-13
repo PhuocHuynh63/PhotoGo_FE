@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAddressLocation, useVendor } from "@stores/vendor/selectors";
 import { useLocationAvailability, useLocationAvailabilityByLocationIdAndDate } from "@utils/hooks/useLocationAvailability";
 import { useForm } from "react-hook-form";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import toast from "react-hot-toast";
 import { generateUUIDV4 } from "@utils/helpers/GenerateUUID";
 import { ROUTES } from "@routes";
@@ -37,44 +37,50 @@ interface TimeSlot {
     available: boolean;
 }
 
+// Update ICheckoutSessionRequest to handle multiple dates
+interface IExtendedCheckoutSessionRequest extends ICheckoutSessionRequest {
+    bookingDetails: {
+        date: string;
+        dates?: string[]; // For multi-day booking
+        time: string;
+        working_date_id: string;
+        slot_time_id: string;
+        duration: number;
+    };
+}
+
+
 export default function EnhancedBookingPopup({
     isOpen,
     onClose,
     serviceConcept,
 }: EnhancedBookingPopupProps) {
-    /**
-     * Define data from stores Zustand
-     * - session: User session data
-     * - router: Next.js router for navigation
-     * - addressLocation: Current address location for the booking
-     */
     const session = useSession() as METADATA.ISession;
     const router = useRouter();
     const addressLocation = useAddressLocation();
     const vendor = useVendor();
-    //--------------------------End--------------------------//
+
+    // Condition to check booking type
+    const isMultiDay = serviceConcept?.conceptRangeType === 'nhiều ngày';
 
     const [isLoading, setIsLoading] = useState(false);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
-    /**
-     * React Hook Form setup
-     * - register: Register form fields
-     * - handleSubmit: Handle form submission
-     * - setValue: Set form field values
-     * - watch: Watch form field values
-     * - errors: Form validation errors
-     */
+    console.log('timeSlots', timeSlots);
+
+
     const {
         register,
         handleSubmit,
         setValue,
         watch,
         formState: { errors },
-    } = useForm<ICheckoutSessionRequest>({
+        reset,
+    } = useForm<IExtendedCheckoutSessionRequest>({
         defaultValues: {
             bookingDetails: {
                 date: "",
+                dates: [],
                 time: "",
                 working_date_id: "",
                 slot_time_id: "",
@@ -82,31 +88,22 @@ export default function EnhancedBookingPopup({
             },
             conceptId: serviceConcept?.id || "",
             price: serviceConcept?.price || 0,
-            vendorDetails: {
-                id: serviceConcept?.id || "",
-                name: serviceConcept?.name || "",
-            },
-            locationDetails: {
-                id: addressLocation?.id || "",
-                address: addressLocation?.address || "",
-            },
+            vendorDetails: { id: vendor?.id || "", name: vendor?.name || "" },
+            locationDetails: { id: addressLocation?.id || "", address: addressLocation?.address || "" },
         }
     });
 
     const watchedDate = watch('bookingDetails.date');
+    const watchedDates = watch('bookingDetails.dates');
     const watchedTime = watch('bookingDetails.slot_time_id');
-    //--------------------------End--------------------------//
 
-
-    /**
-     * useLocationAvailability hook to fetch general location availability
-     * - Fetches working dates and times for the selected location
-     * - Enabled only when addressLocation is available
-     */
     const { locationAvailability } = useLocationAvailability({
         locationId: addressLocation?.id || "",
+        conceptRangeType: serviceConcept?.conceptRangeType,
         enabled: !!addressLocation?.id,
     });
+
+    console.log('locationAvailability', locationAvailability);
 
 
     const availability = locationAvailability
@@ -124,126 +121,98 @@ export default function EnhancedBookingPopup({
                 }),
         )
         : [];
-    //--------------------------End--------------------------//
 
-
-    /**
-     * useLocationAvailabilityByLocationIdAndDate hook to fetch specific time slots
-     * - Fetches time slots for the selected date and location
-     *  - Enabled only when both date and location are available
-     */
     const {
         locationAvailabilitySelectDate,
         loading: isTimeSlotsLoading,
     } = useLocationAvailabilityByLocationIdAndDate({
         locationId: addressLocation?.id || "",
         date: watchedDate ? format(new Date(watchedDate), 'dd/MM/yyyy') : "",
-        // enabled: !!watchedDate && !!addressLocation?.id // Only fetch when date and location are available
+        enabled: !isMultiDay && !!watchedDate && !!addressLocation?.id
     });
-    //--------------------------End--------------------------//
 
-
-    /**
-     * Effect to set initial form values based on serviceConcept and addressLocation    
-     * - Sets values for concept, price, booking details, and location details
-     * - Runs when serviceConcept, addressLocation, or vendor changes
-     */
     useEffect(() => {
-        setValue('conceptId', serviceConcept?.id || "");
-        setValue('price', serviceConcept?.price || 0);
-        setValue('bookingDetails.duration', serviceConcept?.duration || 0);
-        setValue('locationDetails.id', addressLocation?.id || "");
-        setValue('locationDetails.address', addressLocation?.address || "");
-        setValue('vendorDetails.id', vendor?.id || "");
-        setValue('vendorDetails.name', vendor?.name || "");
-    }, [
-        serviceConcept?.id,
-        serviceConcept?.name,
-        serviceConcept?.price,
-        serviceConcept?.duration,
-        addressLocation?.id,
-        addressLocation?.address,
-        vendor?.id,
-        vendor?.name,
-        setValue,
-    ]);
-    //--------------------------End--------------------------//
+        reset({
+            bookingDetails: {
+                date: "",
+                dates: [],
+                time: "",
+                working_date_id: "",
+                slot_time_id: "",
+                duration: serviceConcept?.duration || 0,
+            },
+            conceptId: serviceConcept?.id || "",
+            price: serviceConcept?.price || 0,
+            vendorDetails: { id: vendor?.id || "", name: vendor?.name || "" },
+            locationDetails: { id: addressLocation?.id || "", address: addressLocation?.address || "" },
+        })
+    }, [serviceConcept, addressLocation, vendor, reset]);
 
-    // Update timeSlots when locationAvailabilitySelectDate changes
     useEffect(() => {
+        if (isMultiDay) {
+            setTimeSlots([]);
+            return;
+        }
         if (locationAvailabilitySelectDate && locationAvailabilitySelectDate.length > 0) {
             const firstLocationAvailability = locationAvailabilitySelectDate[0] as any;
-            const availableSlots = firstLocationAvailability.slotTimeWorkingDates.map((slotDetail: any) => {
-                const startTime = slotDetail.startSlotTime.substring(0, 5);
-                const price = Number(serviceConcept?.price || 0);
+            const availableSlots = firstLocationAvailability.slotTimeWorkingDates.map((slotDetail: any) => ({
+                id: slotDetail.id,
+                time: `${slotDetail.startSlotTime.substring(0, 5)}`,
+                price: Number(serviceConcept?.price || 0),
+                available: slotDetail.isAvailable && (slotDetail.maxParallelBookings - slotDetail.alreadyBooked) > 0,
+            }));
 
-                return {
-                    id: slotDetail.id,
-                    time: `${startTime}`,
-                    price: price,
-                    available: slotDetail.isAvailable && (slotDetail.maxParallelBookings - slotDetail.alreadyBooked) > 0,
-                };
-            });
+            availableSlots.sort((a: any, b: any) => a.time.localeCompare(b.time));
+
             setTimeSlots(availableSlots);
         } else if (watchedDate && !isTimeSlotsLoading) {
             setTimeSlots([]);
         } else if (!watchedDate) {
             setTimeSlots([]);
         }
-    }, [locationAvailabilitySelectDate, watchedDate, isTimeSlotsLoading, serviceConcept?.price]);
-
+    }, [locationAvailabilitySelectDate, watchedDate, isTimeSlotsLoading, serviceConcept?.price, isMultiDay]);
 
     const selectedSlotData = timeSlots.find((slot) => slot.id === watchedTime);
 
-    /**
-     * Handles form submission for booking a service
-     * @param data - Form data submitted from the booking form
-     * @returns
-     * This function processes the booking by:
-     * 1. Validating the selected date and time slot
-     * 2. Formatting the date for submission
-     * 3. Creating a booking data object 
-     */
-    const onSubmit = async (data: ICheckoutSessionRequest) => {
-        const { bookingDetails, conceptId, price, locationDetails, vendorDetails } = data;
+    const handleDateSelect = (selected: { date: Date, id: string }) => {
+        if (isMultiDay) {
+            const startDate = selected.date;
+            const numberOfDays = serviceConcept?.numberOfDays || 1;
+            const availableDateTimes = new Set(availability.map(a => a.date.setHours(0, 0, 0, 0)));
+            const dateRange: Date[] = [];
+            let allDaysAvailable = true;
 
-        const selectedDate = new Date(bookingDetails.date);
-        const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : '';
-        const selectedSlotId = bookingDetails.slot_time_id;
+            for (let i = 0; i < numberOfDays; i++) {
+                const currentDate = addDays(startDate, i);
+                currentDate.setHours(0, 0, 0, 0);
+                if (availableDateTimes.has(currentDate.getTime())) {
+                    dateRange.push(currentDate);
+                } else {
+                    allDaysAvailable = false;
+                    break;
+                }
+            }
 
-        if (!selectedDate || !selectedSlotId) {
-            toast.error('Vui lòng chọn ngày và khung giờ để đặt lịch hẹn.');
-            return;
+            if (allDaysAvailable) {
+                // Store the full array of dates in the form state for submission
+                setValue('bookingDetails.dates', dateRange.map(d => d.toISOString()));
+                setValue('bookingDetails.date', ""); // Clear single date selection
+                toast.success(`Đã chọn chuỗi ${numberOfDays} ngày.`);
+            } else {
+                setValue('bookingDetails.dates', []);
+                toast.error(`Không thể chọn chuỗi ${numberOfDays} ngày liên tiếp. Vui lòng chọn ngày bắt đầu khác.`);
+            }
+        } else {
+            setValue('bookingDetails.date', selected.date ? selected.date.toISOString() : "");
+            setValue('bookingDetails.working_date_id', selected.id);
+            setValue('bookingDetails.time', "");
+            setValue('bookingDetails.slot_time_id', "");
+            setValue('bookingDetails.dates', []);
         }
+    };
 
-        if (!selectedSlotId) {
-            toast.error('Không tìm thấy thông tin khung giờ đã chọn.');
-            return;
-        }
-
-        const id = generateUUIDV4();
-
-        const bookingData: ICheckoutSessionRequest = {
-            bookingDetails: {
-                date: formattedDate,
-                time: bookingDetails.time,
-                working_date_id: bookingDetails.working_date_id,
-                slot_time_id: selectedSlotId,
-                duration: bookingDetails.duration,
-            },
-            conceptId: conceptId,
-            price: price,
-            vendorDetails: {
-                id: vendorDetails.id,
-                name: vendorDetails.name,
-            },
-            locationDetails: {
-                id: locationDetails.id,
-                address: locationDetails.address,
-            },
-        };
-
-        const userId = session?.user?.id || '';
+    const onSubmit = async (data: IExtendedCheckoutSessionRequest) => {
+        const userId = session?.user?.id;
         if (!userId) {
             toast.error('Bạn cần đăng nhập để đặt lịch hẹn');
             router.replace(ROUTES.AUTH.LOGIN);
@@ -251,6 +220,39 @@ export default function EnhancedBookingPopup({
         }
 
         setIsLoading(true);
+        const id = generateUUIDV4();
+        let bookingData: ICheckoutSessionRequest;
+
+        if (isMultiDay) {
+            if (!data.bookingDetails.dates || data.bookingDetails.dates.length === 0) {
+                toast.error('Vui lòng chọn khoảng ngày để đặt lịch.');
+                setIsLoading(false);
+                return;
+            }
+            bookingData = {
+                ...data,
+                bookingDetails: {
+                    ...data.bookingDetails,
+                    dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
+                    date: '', time: '', slot_time_id: '', working_date_id: '',
+                }
+            };
+        } else {
+            if (!data.bookingDetails.date || !data.bookingDetails.slot_time_id) {
+                toast.error('Vui lòng chọn ngày và khung giờ để đặt lịch hẹn.');
+                setIsLoading(false);
+                return;
+            }
+            bookingData = {
+                ...data,
+                bookingDetails: {
+                    ...data.bookingDetails,
+                    date: format(new Date(data.bookingDetails.date), 'dd/MM/yyyy'),
+                    dates: undefined,
+                }
+            };
+        }
+
         try {
             const res = await checkoutSessionService.createCheckSession(id, userId, bookingData) as ICheckoutSessionResponseModel;
             if (res.statusCode !== 201) {
@@ -267,7 +269,18 @@ export default function EnhancedBookingPopup({
             setIsLoading(false);
         }
     };
-    //---------------------------End--------------------------//
+
+    const isBookingReady = isMultiDay
+        ? (watchedDates && watchedDates.length > 0)
+        : (watchedDate && watchedTime);
+
+    // **FIX**: Prepare the correct prop for the calendar's visual state.
+    // For range mode, it needs an object { from: Date, to: Date }.
+    const calendarSelection = isMultiDay
+        ? (watchedDates && watchedDates.length > 0
+            ? { from: new Date(watchedDates[0]), to: new Date(watchedDates[watchedDates.length - 1]) }
+            : undefined)
+        : (watchedDate ? new Date(watchedDate) : undefined);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -279,9 +292,9 @@ export default function EnhancedBookingPopup({
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    {/* Thông tin gói dịch vụ */}
-                    <div className="xl:col-span-1 space-y-4">
+                <div className={`grid grid-cols-1 ${isMultiDay ? 'xl:grid-cols-2' : 'xl:grid-cols-3'} gap-6`}>
+                    {/* Column 1: Service Info & Booking Summary */}
+                    <div className="space-y-4">
                         <Card className="border-primary/20">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">
@@ -293,22 +306,21 @@ export default function EnhancedBookingPopup({
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">{serviceConcept?.name}</h3>
                                 </div>
-
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2 text-sm">
                                         <Clock className="h-4 w-4 text-muted-foreground" />
-                                        <span>Thời gian: {serviceConcept?.duration}</span>
+                                        <span>
+                                            Thời gian thực hiện: {isMultiDay ? `${serviceConcept?.numberOfDays} ngày` : `${serviceConcept?.duration} phút`}
+                                        </span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm">
                                         <MapPin className="h-4 w-4 text-muted-foreground" />
                                         <span>{addressLocation?.address}</span>
                                     </div>
                                 </div>
-
                                 <Separator />
-
                                 <div className="text-right">
-                                    <div className="text-sm text-muted-foreground">Giá từ</div>
+                                    <div className="text-sm text-muted-foreground">Giá dịch vụ</div>
                                     <div className="text-xl font-bold text-primary">
                                         {Number(serviceConcept?.price).toLocaleString("vi-VN", {
                                             style: "currency",
@@ -319,21 +331,36 @@ export default function EnhancedBookingPopup({
                             </CardContent>
                         </Card>
 
-                        {/* Tóm tắt đặt lịch */}
-                        {(watchedDate && watchedTime && selectedSlotData) && (
+                        {/* Booking Summary */}
+                        {isBookingReady && (
                             <Card className="border-green-200 bg-green-50">
                                 <CardHeader>
                                     <CardTitle className="text-lg text-green-800">Tóm tắt đặt lịch</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-3">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-green-700">Ngày:</span>
-                                        <span className="font-medium">{watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-green-700">Giờ:</span>
-                                        <span className="font-medium">{selectedSlotData?.time}</span>
-                                    </div>
+                                    {isMultiDay ? (
+                                        <>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-green-700">Từ ngày:</span>
+                                                <span className="font-medium">{watchedDates ? new Date(watchedDates[0]).toLocaleDateString("vi-VN") : ""}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-green-700">Đến ngày:</span>
+                                                <span className="font-medium">{watchedDates ? new Date(watchedDates[watchedDates.length - 1]).toLocaleDateString("vi-VN") : ""}</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-green-700">Ngày:</span>
+                                                <span className="font-medium">{watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-green-700">Giờ:</span>
+                                                <span className="font-medium">{selectedSlotData?.time}</span>
+                                            </div>
+                                        </>
+                                    )}
                                     <div className="flex justify-between text-sm">
                                         <span className="text-green-700">Dịch vụ:</span>
                                         <span className="font-medium">{serviceConcept?.name}</span>
@@ -342,7 +369,7 @@ export default function EnhancedBookingPopup({
                                     <div className="flex justify-between">
                                         <span className="font-medium text-green-800">Tổng tiền:</span>
                                         <span className="font-bold text-lg text-green-800">
-                                            {selectedSlotData?.price.toLocaleString("vi-VN", {
+                                            {Number(serviceConcept?.price).toLocaleString("vi-VN", {
                                                 style: "currency",
                                                 currency: "VND",
                                             })}
@@ -353,116 +380,98 @@ export default function EnhancedBookingPopup({
                         )}
                     </div>
 
-                    {/* Lịch */}
+                    {/* Column 2: Calendar */}
                     <div className="xl:col-span-1">
                         <div className="space-y-4">
                             <div>
-                                <h3 className="text-lg font-semibold mb-2">Chọn ngày</h3>
+                                <h3 className="text-lg font-semibold mb-2">{isMultiDay ? 'Chọn ngày bắt đầu' : 'Chọn ngày'}</h3>
                                 <CustomCalendar
-                                    selectedDate={watchedDate ? new Date(watchedDate) : undefined}
-                                    onDateSelect={(date: { date: Date, id: string }) => {
-                                        setValue('bookingDetails.date', date.date ? date.date.toISOString() : "");
-                                        setValue('bookingDetails.working_date_id', date.id);
-                                        setValue('bookingDetails.time', "");
-                                    }}
+                                    selected={calendarSelection}
+                                    onDateSelect={handleDateSelect}
                                     availability={availability}
+                                    mode={isMultiDay ? 'range' : 'single'}
                                 />
                                 {errors.bookingDetails?.date && <p className="text-red-500 text-sm mt-1">{errors.bookingDetails.date.message}</p>}
                             </div>
                         </div>
                     </div>
 
-                    {/* Khung giờ */}
-                    <div className="xl:col-span-1">
-                        <div className="space-y-4">
-                            <div>
-                                <h3 className="text-lg font-semibold mb-2">
-                                    Chọn khung giờ
-                                    {watchedDate && (
-                                        <span className="text-sm font-normal text-muted-foreground ml-2">
-                                            - {watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}
-                                        </span>
-                                    )}
-                                </h3>
-                            </div>
-
-                            <Card>
-                                <CardContent className="p-4">
-                                    {isTimeSlotsLoading ? (
-                                        <div className="text-center py-12">
-                                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                                            <p className="text-muted-foreground">Đang tải khung giờ...</p>
-                                        </div>
-                                    ) : !watchedDate ? (
-                                        <div className="text-center py-12 text-muted-foreground">
-                                            <Clock className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                                            <p className="text-lg mb-2">Chọn ngày trước</p>
-                                            <p className="text-sm">Vui lòng chọn ngày để xem các khung giờ có sẵn</p>
-                                        </div>
-                                    ) : timeSlots.length === 0 ? (
-                                        <div className="text-center py-12 text-muted-foreground">
-                                            <p className="text-lg mb-2">Không có khung giờ</p>
-                                            <p className="text-sm">Ngày này không có khung giờ nào khả dụng hoặc đã hết.</p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            {timeSlots.map((slot) => (
-                                                <Button
-                                                    key={slot.id}
-                                                    variant={watchedTime === slot.id ? "default" : "outline"}
-                                                    className={`w-full justify-between h-auto p-4 cursor-pointer ${!slot.available ? "opacity-50 cursor-not-allowed bg-muted" : ""
-                                                        }`}
-                                                    onClick={() => {
-                                                        if (slot.available) {
-                                                            setValue('bookingDetails.slot_time_id', slot.id);
-                                                            setValue('bookingDetails.time', slot.time);
-                                                        }
-                                                    }}
-                                                    disabled={!slot.available || isLoading || isTimeSlotsLoading}
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <Clock className="h-4 w-4" />
-                                                        <div className="text-left">
-                                                            <div className="font-medium">{slot.time}</div>
-                                                            {/* <div className="text-sm opacity-70">
-                                                                {slot.price.toLocaleString("vi-VN", {
-                                                                    style: "currency",
-                                                                    currency: "VND",
-                                                                })}
-                                                            </div> */}
+                    {/* Column 3: Time Slots (Only for single day) */}
+                    {!isMultiDay && (
+                        <div className="xl:col-span-1">
+                            <div className="space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-semibold mb-2">
+                                        Chọn khung giờ
+                                        {watchedDate && (
+                                            <span className="text-sm font-normal text-muted-foreground ml-2">
+                                                - {new Date(watchedDate).toLocaleDateString("vi-VN")}
+                                            </span>
+                                        )}
+                                    </h3>
+                                </div>
+                                <Card>
+                                    <CardContent className="p-4">
+                                        {isTimeSlotsLoading ? (
+                                            <div className="text-center py-12">
+                                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                                                <p className="text-muted-foreground">Đang tải khung giờ...</p>
+                                            </div>
+                                        ) : !watchedDate ? (
+                                            <div className="text-center py-12 text-muted-foreground">
+                                                <Clock className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                                                <p className="text-lg mb-2">Chọn ngày trước</p>
+                                                <p className="text-sm">Vui lòng chọn ngày để xem các khung giờ có sẵn</p>
+                                            </div>
+                                        ) : timeSlots.length === 0 ? (
+                                            <div className="text-center py-12 text-muted-foreground">
+                                                <p className="text-lg mb-2">Không có khung giờ</p>
+                                                <p className="text-sm">Ngày này không có khung giờ nào khả dụng hoặc đã hết.</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                {timeSlots.map((slot) => (
+                                                    <Button
+                                                        key={slot.id}
+                                                        variant={watchedTime === slot.id ? "default" : "outline"}
+                                                        className={`w-full justify-between h-auto p-4 cursor-pointer ${!slot.available ? "opacity-50 cursor-not-allowed bg-muted" : ""}`}
+                                                        onClick={() => {
+                                                            if (slot.available) {
+                                                                setValue('bookingDetails.slot_time_id', slot.id);
+                                                                setValue('bookingDetails.time', slot.time);
+                                                            }
+                                                        }}
+                                                        disabled={!slot.available || isLoading}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <Clock className="h-4 w-4" />
+                                                            <div className="text-left">
+                                                                <div className="font-medium">{slot.time}</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-2">
-                                                        {!slot.available && (
-                                                            <Badge variant="destructive" className="text-xs">
-                                                                Đã đặt
-                                                            </Badge>
-                                                        )}
-                                                        {slot.available && watchedTime === slot.id && (
-                                                            <Badge variant="secondary" className="text-xs">
-                                                                Đã chọn
-                                                            </Badge>
-                                                        )}
-                                                    </div>
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
+                                                        <div className="flex items-center gap-2">
+                                                            {!slot.available && <Badge variant="destructive" className="text-xs">Đã đặt</Badge>}
+                                                            {slot.available && watchedTime === slot.id && <Badge variant="secondary" className="text-xs">Đã chọn</Badge>}
+                                                        </div>
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
-                {/* Nút hành động */}
+                {/* Action Buttons */}
                 <div className="flex justify-end gap-3 pt-6 border-t">
                     <Button variant="outline" onClick={onClose} size="lg" disabled={isLoading}>
                         Hủy bỏ
                     </Button>
                     <Button
                         onClick={handleSubmit(onSubmit)}
-                        disabled={!watchedDate || !watchedTime || isLoading || isTimeSlotsLoading}
+                        disabled={!isBookingReady || isLoading}
                         size="lg"
                         className="min-w-[180px]"
                     >

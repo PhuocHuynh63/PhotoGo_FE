@@ -11,6 +11,8 @@ export const ServiceConceptModel = z.object({
     images: z.array(z.string()),
     price: z.number(),
     duration: z.number(),
+    conceptRangeType: z.enum(["một ngày", "nhiều ngày"]).optional(),
+    numberOfDays: z.number().optional(),
     serviceTypes: z.array(ServiceTypeModel),
 });
 
