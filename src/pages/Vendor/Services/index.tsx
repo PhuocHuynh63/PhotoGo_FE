@@ -21,6 +21,7 @@ interface ServiceConcept {
     name: string;
     price: number;
     duration: number;
+    conceptRangeType?: "một ngày" | "nhiều ngày";
     description: string;
     images: string[];
     serviceTypes: Array<{
@@ -150,7 +151,17 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
 
     const getMinDuration = (serviceConcepts: ServiceConcept[]) => {
         if (!serviceConcepts || serviceConcepts.length === 0) return null;
-        return Math.min(...serviceConcepts.map((c) => Number(c.duration)));
+
+        // Chỉ tính duration cho concepts "một ngày" (duration > 0)
+        // Bỏ qua concepts "nhiều ngày" (duration = 0)
+        const validDurations = serviceConcepts
+            .filter((c) => c.conceptRangeType === "một ngày" || (c.conceptRangeType === undefined && Number(c.duration) > 0))
+            .map((c) => Number(c.duration))
+            .filter((duration) => duration > 0);
+
+        if (validDurations.length === 0) return null;
+
+        return Math.min(...validDurations);
     };
 
     const formatCurrency = (amount: number | null) => {
@@ -171,7 +182,6 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
         }
         return `Từ ${mins} phút`;
     };
-
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -257,7 +267,7 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
 
                         <CardContent className="space-y-4">
                             <div
-                                className="text-muted-foreground prose prose-sm max-w-none line-clamp-3"
+                                className="text-muted-foreground prose prose-sm max-w-none line-clamp-2 overflow-hidden h-12"
                                 dangerouslySetInnerHTML={{ __html: service?.description || '' }}
                             />
 
