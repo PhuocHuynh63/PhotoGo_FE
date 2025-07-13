@@ -37,18 +37,6 @@ interface TimeSlot {
     available: boolean;
 }
 
-// Update ICheckoutSessionRequest to handle multiple dates
-interface IExtendedCheckoutSessionRequest extends ICheckoutSessionRequest {
-    bookingDetails: {
-        date: string;
-        dates?: string[]; // For multi-day booking
-        time: string;
-        working_date_id: string;
-        slot_time_id: string;
-        duration: number;
-    };
-}
-
 
 export default function EnhancedBookingPopup({
     isOpen,
@@ -76,7 +64,7 @@ export default function EnhancedBookingPopup({
         watch,
         formState: { errors },
         reset,
-    } = useForm<IExtendedCheckoutSessionRequest>({
+    } = useForm<ICheckoutSessionRequest>({
         defaultValues: {
             bookingDetails: {
                 date: "",
@@ -211,7 +199,7 @@ export default function EnhancedBookingPopup({
         }
     };
 
-    const onSubmit = async (data: IExtendedCheckoutSessionRequest) => {
+    const onSubmit = async (data: ICheckoutSessionRequest) => {
         const userId = session?.user?.id;
         if (!userId) {
             toast.error('Bạn cần đăng nhập để đặt lịch hẹn');
@@ -233,7 +221,7 @@ export default function EnhancedBookingPopup({
                 ...data,
                 bookingDetails: {
                     ...data.bookingDetails,
-                    // dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
+                    dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
                     date: '', time: '', slot_time_id: '', working_date_id: '',
                 }
             };
@@ -248,7 +236,7 @@ export default function EnhancedBookingPopup({
                 bookingDetails: {
                     ...data.bookingDetails,
                     date: format(new Date(data.bookingDetails.date), 'dd/MM/yyyy'),
-                    // dates: undefined,
+                    dates: undefined,
                 }
             };
         }
