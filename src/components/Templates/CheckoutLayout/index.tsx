@@ -71,8 +71,8 @@ export default function CheckoutLayoutClient({
                 userId: user.data?.id || "",
                 serviceConceptId: checkoutSession.conceptId || "",
                 locationId: checkoutSession.locationDetails?.id || "",
-                date: checkoutSession.bookingDetails?.date || "",
-                time: checkoutSession.bookingDetails?.time || "",
+                date: checkoutSession.singleDayBookingDetails?.date || "",
+                time: checkoutSession.singleDayBookingDetails?.time || "",
             });
         }
 

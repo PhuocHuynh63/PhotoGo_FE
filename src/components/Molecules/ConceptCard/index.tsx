@@ -9,9 +9,6 @@ import React from 'react';
 const ConceptCard = ({ concept }: any) => {
     if (!concept) return null;
 
-    console.log("Rendering ConceptCard for concept:", concept);
-
-
     const href = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', concept.vendorSlug).replace(':page', 'packages')}?location=${concept.location[0].district}&conceptId=${concept.conceptId}`;
 
     return (
