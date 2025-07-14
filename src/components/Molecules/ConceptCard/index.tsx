@@ -9,10 +9,10 @@ import React from 'react';
 const ConceptCard = ({ concept }: any) => {
     if (!concept) return null;
 
-    console.log('>>>>>>>>>>>>>>>>> ConceptCard concept:', concept);
+    console.log("Rendering ConceptCard for concept:", concept);
 
 
-    const href = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', concept.vendorSlug).replace(':page', 'packages')}?location=${concept.location}&conceptId=${concept.conceptId}`;
+    const href = `${ROUTES.PUBLIC.VENDOR_DETAIL.replace(':slug', concept.vendorSlug).replace(':page', 'packages')}?location=${concept.location[0].district}&conceptId=${concept.conceptId}`;
 
     return (
         <Link href={href} passHref className="block flex-shrink-0 w-[200px] bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group">

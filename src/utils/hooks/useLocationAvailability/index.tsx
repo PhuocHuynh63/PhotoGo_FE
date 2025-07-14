@@ -24,7 +24,6 @@ export function useLocationAvailability({
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    console.log('>>>>>>>>>>>>>>>>>>>> conceptRangeType', conceptRangeType);
 
     const fetchWorkingHours = async () => {
         if (!locationId) return;
