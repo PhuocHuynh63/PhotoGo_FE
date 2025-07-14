@@ -19,8 +19,9 @@ import { useVendor } from "@utils/hooks/useVendor/useVendor";
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showReportDialog, setShowReportDialog] = useState(false)
+    const vendorId = invoice?.booking?.serviceConcept?.servicePackage?.vendorId
     const { concept, loading: conceptLoading } = useConcept(booking?.serviceConceptId);
-    const { vendor, loading: vendorLoading } = useVendor(invoice?.vendorId);
+    const { vendor, loading: vendorLoading } = useVendor(vendorId);
     if (conceptLoading || vendorLoading) {
         return <BookingCardSkeleton />;
     }
@@ -32,8 +33,8 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
     // Get status badge color
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "chờ xử lý":
-                return <Badge variant="outline" className="text-blue-500 border-blue-200">Chờ xử lý</Badge>
+            case "đã thanh toán":
+                return <Badge variant="outline" className="text-blue-500 border-blue-200">Đã thanh toán</Badge>
             case "đã hoàn thành":
                 return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
             case "đã hủy":
@@ -107,8 +108,12 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             </div>
                             {concept && (
                                 <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                                    {concept.description || "Không có mô tả"}
+                                    <div
+                                        className="text-muted-foreground prose prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: concept?.description || '' }}
+                                    />
                                 </p>
+
                             )}
                         </div>
 

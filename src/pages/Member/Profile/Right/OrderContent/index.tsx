@@ -25,16 +25,20 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
     const handlePageChange = (page: number) => {
         router.push(`?page=${page}`);
     };
+
+    console.log(invoices)
     // Filter bookings based on active tab and search query
     let filteredBookings = invoices?.map((invoice) => invoice.booking).filter((booking) => {
         const matchesTab =
             activeTab === "all" ||
             (activeTab === "upcoming" && booking.status === "chờ xử lý") ||
+            (activeTab === "paid" && booking.status === "đã thanh toán") ||
             (activeTab === "pending" && booking.status === "chờ thanh toán") ||
             (activeTab === "completed" && booking.status === "đã hoàn thành") ||
             (activeTab === "cancelled" && booking.status === "đã hủy")
         return matchesTab
     })
+    console.log(filteredBookings)
     // Đưa booking mới lên đầu nếu có trong danh sách
     if (newBooking && filteredBookings?.some(b => b.id === newBooking.id)) {
         const newBookingItem = filteredBookings?.find(b => b.id === newBooking.id)
@@ -45,7 +49,6 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             ]
         }
     }
-    console.log(invoices)
     return (
         <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -60,9 +63,10 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             </div>
 
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-4 gap-2 bg-orange-100 p-1 rounded-xl max-w-xl mx-auto mb-6">
+                <TabsList className="grid grid-cols- gap-2 bg-orange-100 p-1 rounded-xl max-w-2xl mx-auto mb-6">
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
                     <TabsTrigger value="upcoming">Chờ xử lý</TabsTrigger>
+                    <TabsTrigger value="paid">Đã thanh toán</TabsTrigger>
                     <TabsTrigger value="pending">Chờ thanh toán</TabsTrigger>
                     <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
                     <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
