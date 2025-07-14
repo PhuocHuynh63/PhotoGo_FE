@@ -54,9 +54,6 @@ export default function EnhancedBookingPopup({
     const [isLoading, setIsLoading] = useState(false);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
-    console.log('timeSlots', timeSlots);
-
-
     const {
         register,
         handleSubmit,
@@ -90,9 +87,6 @@ export default function EnhancedBookingPopup({
         conceptRangeType: serviceConcept?.conceptRangeType,
         enabled: !!addressLocation?.id,
     });
-
-    console.log('locationAvailability', locationAvailability);
-
 
     const availability = locationAvailability
         ? locationAvailability.flatMap((loc: any) =>
