@@ -10,6 +10,8 @@ export const createCheckoutSlice = (
     formBooking: {
         userId: "",
         serviceConceptId: "",
+        bookingType: "một ngày",
+        schedules: [],
         date: "",
         time: "",
         locationId: "",
