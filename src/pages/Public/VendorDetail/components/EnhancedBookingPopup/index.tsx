@@ -63,14 +63,9 @@ export default function EnhancedBookingPopup({
         reset,
     } = useForm<ICheckoutSessionRequest>({
         defaultValues: {
-            bookingDetails: {
-                date: "",
-                dates: [],
-                time: "",
-                working_date_id: "",
-                slot_time_id: "",
-                duration: serviceConcept?.duration || 0,
-            },
+            singleDayBookingDetails: undefined,
+            multiDaysBookingDetails: undefined,
+            conceptRangeType: serviceConcept?.conceptRangeType || '',
             conceptId: serviceConcept?.id || "",
             price: serviceConcept?.price || 0,
             vendorDetails: { id: vendor?.id || "", name: vendor?.name || "" },
@@ -78,9 +73,13 @@ export default function EnhancedBookingPopup({
         }
     });
 
-    const watchedDate = watch('bookingDetails.date');
-    const watchedDates = watch('bookingDetails.dates');
-    const watchedTime = watch('bookingDetails.slot_time_id');
+    const watchedDate = watch('singleDayBookingDetails.date');
+    const watchedDates = watch('multiDaysBookingDetails');
+    const watchedTime = watch('singleDayBookingDetails.slot_time_id');
+
+    useEffect(() => {
+        setValue('conceptRangeType', serviceConcept?.conceptRangeType || 'một ngày');
+    }, [serviceConcept?.conceptRangeType, setValue]);
 
     const { locationAvailability } = useLocationAvailability({
         locationId: addressLocation?.id || "",
@@ -115,14 +114,9 @@ export default function EnhancedBookingPopup({
 
     useEffect(() => {
         reset({
-            bookingDetails: {
-                date: "",
-                dates: [],
-                time: "",
-                working_date_id: "",
-                slot_time_id: "",
-                duration: serviceConcept?.duration || 0,
-            },
+            singleDayBookingDetails: undefined,
+            multiDaysBookingDetails: undefined,
+            conceptRangeType: serviceConcept?.conceptRangeType || '',
             conceptId: serviceConcept?.id || "",
             price: serviceConcept?.price || 0,
             vendorDetails: { id: vendor?.id || "", name: vendor?.name || "" },
@@ -176,20 +170,17 @@ export default function EnhancedBookingPopup({
             }
 
             if (allDaysAvailable) {
-                // Store the full array of dates in the form state for submission
-                setValue('bookingDetails.dates', dateRange.map(d => d.toISOString()));
-                setValue('bookingDetails.date', ""); // Clear single date selection
+                setValue('multiDaysBookingDetails', dateRange.map(d => d.toISOString()));
                 toast.success(`Đã chọn chuỗi ${numberOfDays} ngày.`);
             } else {
-                setValue('bookingDetails.dates', []);
+                setValue('multiDaysBookingDetails', []);
                 toast.error(`Không thể chọn chuỗi ${numberOfDays} ngày liên tiếp. Vui lòng chọn ngày bắt đầu khác.`);
             }
         } else {
-            setValue('bookingDetails.date', selected.date ? selected.date.toISOString() : "");
-            setValue('bookingDetails.working_date_id', selected.id);
-            setValue('bookingDetails.time', "");
-            setValue('bookingDetails.slot_time_id', "");
-            setValue('bookingDetails.dates', []);
+            setValue('singleDayBookingDetails.date', selected.date ? selected.date.toISOString() : "");
+            setValue('singleDayBookingDetails.working_date_id', selected.id);
+            setValue('singleDayBookingDetails.time', "");
+            setValue('singleDayBookingDetails.slot_time_id', "");
         }
     };
 
@@ -206,31 +197,26 @@ export default function EnhancedBookingPopup({
         let bookingData: ICheckoutSessionRequest;
 
         if (isMultiDay) {
-            if (!data.bookingDetails.dates || data.bookingDetails.dates.length === 0) {
+            if (!data.multiDaysBookingDetails || data.multiDaysBookingDetails.length === 0) {
                 toast.error('Vui lòng chọn khoảng ngày để đặt lịch.');
                 setIsLoading(false);
                 return;
             }
             bookingData = {
                 ...data,
-                bookingDetails: {
-                    ...data.bookingDetails,
-                    dates: data.bookingDetails.dates.map(d => format(new Date(d), 'dd/MM/yyyy')),
-                    date: '', time: '', slot_time_id: '', working_date_id: '',
-                }
+                multiDaysBookingDetails: data.multiDaysBookingDetails.map(date => format(new Date(date), 'dd/MM/yyyy')),
             };
         } else {
-            if (!data.bookingDetails.date || !data.bookingDetails.slot_time_id) {
+            if (!data.singleDayBookingDetails?.date || !data.singleDayBookingDetails.slot_time_id) {
                 toast.error('Vui lòng chọn ngày và khung giờ để đặt lịch hẹn.');
                 setIsLoading(false);
                 return;
             }
             bookingData = {
                 ...data,
-                bookingDetails: {
-                    ...data.bookingDetails,
-                    date: format(new Date(data.bookingDetails.date), 'dd/MM/yyyy'),
-                    dates: undefined,
+                singleDayBookingDetails: {
+                    ...data.singleDayBookingDetails,
+                    date: format(new Date(data.singleDayBookingDetails.date), 'dd/MM/yyyy'),
                 }
             };
         }
@@ -373,7 +359,7 @@ export default function EnhancedBookingPopup({
                                     availability={availability}
                                     mode={isMultiDay ? 'range' : 'single'}
                                 />
-                                {errors.bookingDetails?.date && <p className="text-red-500 text-sm mt-1">{errors.bookingDetails.date.message}</p>}
+                                {errors.singleDayBookingDetails?.date && <p className="text-red-500 text-sm mt-1">{errors.singleDayBookingDetails.date.message}</p>}
                             </div>
                         </div>
                     </div>
@@ -419,8 +405,8 @@ export default function EnhancedBookingPopup({
                                                         className={`w-full justify-between h-auto p-4 cursor-pointer ${!slot.available ? "opacity-50 cursor-not-allowed bg-muted" : ""}`}
                                                         onClick={() => {
                                                             if (slot.available) {
-                                                                setValue('bookingDetails.slot_time_id', slot.id);
-                                                                setValue('bookingDetails.time', slot.time);
+                                                                setValue('singleDayBookingDetails.slot_time_id', slot.id);
+                                                                setValue('singleDayBookingDetails.time', slot.time);
                                                             }
                                                         }}
                                                         disabled={!slot.available || isLoading}

@@ -69,10 +69,12 @@ export default function CheckoutLayoutClient({
             setBookingForm({
                 ...formBooking,
                 userId: user.data?.id || "",
+                bookingType: checkoutSession.conceptRangeType || "",
                 serviceConceptId: checkoutSession.conceptId || "",
                 locationId: checkoutSession.locationDetails?.id || "",
-                date: checkoutSession.bookingDetails?.date || "",
-                time: checkoutSession.bookingDetails?.time || "",
+                date: checkoutSession.singleDayBookingDetails?.date || "",
+                time: checkoutSession.singleDayBookingDetails?.time || "",
+                schedules: checkoutSession.multiDaysBookingDetails || [],
             });
         }
 
