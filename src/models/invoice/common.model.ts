@@ -1,4 +1,4 @@
-import { BookingModel } from "@models/booking/common.model";
+import { BookingDetailModel } from "@models/booking/common.model";
 import { PaymentModel } from "@models/payment/common.model";
 import { z } from "zod";
 
@@ -22,7 +22,7 @@ export const InvoiceModel = z.object({
     updatedAt: z.string(),
     payments: z.array(PaymentModel),
     refunds: z.array(z.object({})), // You might want to define a detailed refund model
-    booking: BookingModel,
+    booking: BookingDetailModel,
     vendorId: z.string()
 });
 

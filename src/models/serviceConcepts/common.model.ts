@@ -45,7 +45,7 @@ export const InvoiceServiceModel = z.object({
         imageUrl: z.string(),
         createdAt: z.string()
     })),
-    price: z.string(),
+    price: z.number(),
     duration: z.number(),
     countConceptUsed: z.number(),
     createdAt: z.string(),
