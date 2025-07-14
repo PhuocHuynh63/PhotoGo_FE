@@ -5,7 +5,7 @@ import type { IInvoiceServiceModel } from "@models/serviceConcepts/common.model"
 import { IServiceConceptResponseModel } from "@models/serviceConcepts/response.model";
 
 
-export function useConcept(conceptId: string | undefined) {
+export function useConcept(conceptId: string | undefined, showAll: boolean = false) {
     const [concept, setConcept] = useState<IInvoiceServiceModel | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -19,7 +19,7 @@ export function useConcept(conceptId: string | undefined) {
         const fetchConcept = async () => {
             try {
                 setLoading(true);
-                const response = await ConceptService.getAServiceConceptById(conceptId) as IServiceConceptResponseModel;
+                const response = await ConceptService.getAServiceConceptById(conceptId, showAll) as IServiceConceptResponseModel;
                 if (response?.data) {
                     // Parse the data through the Zod schema to ensure it matches the expected type
                     const parsedData = InvoiceServiceModel.parse(response.data);
@@ -34,6 +34,5 @@ export function useConcept(conceptId: string | undefined) {
 
         fetchConcept();
     }, [conceptId]);
-
     return { concept, loading, error };
 }
