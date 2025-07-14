@@ -7,8 +7,10 @@ import { z } from "zod";
 export const BookingFormRequest = z.object({
     userId: z.string(),
     serviceConceptId: z.string(),
-    date: z.string(),
-    time: z.string(),
+    bookingType: z.enum(["một ngày", "nhiều ngày", ""]),
+    date: z.string().optional(),
+    time: z.string().optional(),
+    schedules: z.array(z.string()).optional(),
     sourceType: z.enum(["trực tiếp", "chiến dịch", "giới thiệu", "nổi bật", "khuyến mãi", "khác"], {
         errorMap: () => ({ message: "Source type must be one of web, app, facebook, or titok" }),
     }),
@@ -33,6 +35,7 @@ export type IBookingFormRequest = z.TypeOf<typeof BookingFormRequest>;
  * It includes details about the price, vendor, location, concept, and booking details.
  */
 export const CheckoutSessionRequest = z.object({
+    conceptRangeType: z.enum(['một ngày', 'nhiều ngày', '']),
     price: z.number(),
     vendorDetails: z.object({
         id: z.string(),
@@ -43,14 +46,15 @@ export const CheckoutSessionRequest = z.object({
         address: z.string(),
     }),
     conceptId: z.string(),
-    bookingDetails: z.object({
+    singleDayBookingDetails: z.object({
         working_date_id: z.string(),
         slot_time_id: z.string(),
         date: z.string(),
         dates: z.array(z.string()).optional(),
         time: z.string(),
         duration: z.number(),
-    }),
+    }).optional(),
+    multiDaysBookingDetails: z.array(z.string()).optional(),
 });
 export type ICheckoutSessionRequest = z.TypeOf<typeof CheckoutSessionRequest>;
 //----------------------------End-----------------------------//

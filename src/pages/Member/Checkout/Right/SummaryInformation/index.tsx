@@ -45,6 +45,9 @@ const SummaryInformation = () => {
     });
     //----------------------End----------------------//
 
+
+    console.log('formBooking', formBooking);
+
     return (
         <>
             {/* Right Column - Order Summary */}
@@ -72,11 +75,23 @@ const SummaryInformation = () => {
                             <div className="flex gap-4 text-xs text-gray-500">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
-                                    {formBooking.date || '30/04/1975'}
+                                    {formBooking.bookingType === 'một ngày'
+                                        ? formBooking.date || '30/04/1975'
+                                        : formBooking?.schedules?.length && formBooking.schedules.length > 0
+                                            ? formBooking.schedules[0]
+                                            : '30/04/1975'}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {formBooking.time || '00:00'}
+                                    {formBooking.bookingType === 'một ngày' ?
+                                        <Clock className="h-3 w-3" /> :
+                                        <Calendar className="h-3 w-3" />
+                                    }
+
+                                    {formBooking.bookingType === 'một ngày'
+                                        ? formBooking.time || '08:00'
+                                        : formBooking?.schedules?.length && formBooking.schedules.length > 0
+                                            ? formBooking.schedules[formBooking.schedules.length - 1]
+                                            : '08:00'}
                                 </div>
                             </div>
                         </div>
