@@ -47,6 +47,7 @@ export const CheckoutSessionRequest = z.object({
         working_date_id: z.string(),
         slot_time_id: z.string(),
         date: z.string(),
+        dates: z.array(z.string()).optional(),
         time: z.string(),
         duration: z.number(),
     }),

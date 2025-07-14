@@ -50,7 +50,6 @@ const Chatbot = () => {
         }
     }
 
-    const [conceptsSame, setConceptsSame] = useState([]);
     const handleSendMessage = async () => {
         const text = inputValue.trim();
         if (!text && !selectedFile) return;
@@ -80,11 +79,13 @@ const Chatbot = () => {
 
             const response = await geminiService.chatbotGemini(formData) as IBackendResponse<any>;
 
+            console.log("Response from chatbot:", response);
+
             let botMessage = "";
             let conceptsToShow = null;
             if (response.data.data.concepts_same) {
+                botMessage = response.data.data.analysis.description;
                 conceptsToShow = response.data.data.concepts_same;
-                setConceptsSame(conceptsToShow);
             } else {
                 botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
             }
