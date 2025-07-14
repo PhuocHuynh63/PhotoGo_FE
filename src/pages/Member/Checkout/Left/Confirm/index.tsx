@@ -44,13 +44,36 @@ const Confirm = () => {
                         </div>
 
                         <div className="mt-6 space-y-3">
-                            <div className="flex items-center gap-2">
-                                <Calendar className="h-5 w-5 text-[#f0a06a]" />
-                                <span>{formBooking.date || 'NaN'}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Clock className="h-5 w-5 text-[#f0a06a]" />
-                                <span>{formBooking.time || 'NaN'}</span>
+                            <div className={`${formBooking.bookingType === 'một ngày' ? 'block' : 'flex'} items-center gap-2`}>
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="h-5 w-5 text-[#f0a06a]" />
+                                    {formBooking.bookingType === 'một ngày'
+                                        ? <span>{formBooking.date}</span>
+                                        : formBooking?.schedules?.length && formBooking.schedules.length > 0
+                                            ? <span>{formBooking.schedules[0]}</span>
+                                            : <span>NaN</span>
+                                    }
+                                </div>
+
+                                {
+                                    formBooking.bookingType === 'một ngày' ?
+                                        <></> :
+                                        <div className="w-3.5 h-0.5 bg-gray-500"></div>
+                                }
+
+                                <div className="flex items-center gap-2">
+                                    {formBooking.bookingType === 'một ngày' ?
+                                        <Clock className="h-5 w-5 text-[#f0a06a]" /> :
+                                        <></>
+                                    }
+
+                                    {formBooking.bookingType === 'một ngày'
+                                        ? <span>{formBooking.time}</span>
+                                        : formBooking?.schedules?.length && formBooking.schedules.length > 0
+                                            ? <span>{formBooking.schedules[formBooking.schedules.length - 1]}</span>
+                                            : <span>NaN</span>
+                                    }
+                                </div>
                             </div>
                             <div className="flex items-start gap-2">
                                 <MapPin className="h-5 w-5 text-[#f0a06a] mt-0.5" />
