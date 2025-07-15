@@ -29,23 +29,23 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
 
     // Get discount display
     const getDiscountDisplay = (voucher: IVoucherModel) => {
-        if (voucher.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT) {
-            return `${voucher.discount_value}%`;
+        if (voucher?.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT) {
+            return `${voucher?.discount_value}%`;
         }
-        return `${parseInt(voucher.discount_value).toLocaleString('vi-VN')}đ`;
+        return `${parseInt(voucher?.discount_value).toLocaleString('vi-VN')}đ`;
     };
 
     // Format price range
     const getPriceRange = (voucher: IVoucherModel) => {
-        const min = voucher.minPrice.toLocaleString('vi-VN');
-        const max = voucher.maxPrice.toLocaleString('vi-VN');
+        const min = voucher?.minPrice.toLocaleString('vi-VN');
+        const max = voucher?.maxPrice.toLocaleString('vi-VN');
         return `${min}đ - ${max}đ`;
     };
 
     // Pagination controls
     const getPageNumbers = () => {
         const pages: (number | string)[] = [];
-        const totalPages = pagination.totalPage;
+        const totalPages = pagination?.totalPage;
         const currentPage = pagination.current;
 
         // Hiển thị tối đa 7 trang
@@ -113,23 +113,23 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {vouchers.length > 0 ? (
+                            {vouchers?.length > 0 ? (
                                 vouchers.map((voucher) => (
-                                    <TableRow key={voucher.id} className="hover:bg-gray-50">
+                                    <TableRow key={voucher?.id} className="hover:bg-gray-50">
                                         <TableCell className="font-medium">
                                             <div className="flex items-center gap-2">
                                                 <LucideIcon name="Tag" className="text-blue-500 flex-shrink-0" iconSize={16} />
-                                                <span className="truncate">{voucher.code}</span>
+                                                <span className="truncate">{voucher?.code}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <span className={
-                                                voucher.type === 'point' || (voucher.type && voucher.type.toLowerCase() === 'điểm') ? 'text-purple-700 font-semibold' :
-                                                    voucher.type === 'campaign' || (voucher.type && voucher.type.toLowerCase() === 'tiền') ? 'text-orange-700 font-semibold' :
+                                                voucher?.type === 'point' || (voucher?.type && voucher?.type.toLowerCase() === 'điểm') ? 'text-purple-700 font-semibold' :
+                                                    voucher?.type === 'campaign' || (voucher?.type && voucher?.type.toLowerCase() === 'tiền') ? 'text-orange-700 font-semibold' :
                                                         'text-gray-700 font-semibold'
                                             }>
-                                                {voucher.type === 'point' || (voucher.type && voucher.type.toLowerCase() === 'điểm') ? 'Điểm' :
-                                                    voucher.type === 'campaign' || (voucher.type && voucher.type.toLowerCase() === 'tiền') ? 'Tiền' : voucher.type}
+                                                {voucher?.type === 'point' || (voucher?.type && voucher?.type.toLowerCase() === 'điểm') ? 'Điểm' :
+                                                    voucher?.type === 'campaign' || (voucher?.type && voucher?.type.toLowerCase() === 'tiền') ? 'Tiền' : voucher?.type}
                                             </span>
                                         </TableCell>
                                         <TableCell>
@@ -141,31 +141,31 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
                                         </TableCell>
                                         <TableCell>
                                             <div className="text-sm font-medium">
-                                                {voucher.quantity.toLocaleString('vi-VN')}
+                                                {voucher?.quantity.toLocaleString('vi-VN')}
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <div className="text-sm text-gray-600">
-                                                {voucher.usedCount?.toLocaleString('vi-VN') || 0}
+                                                {voucher?.usedCount?.toLocaleString('vi-VN') || 0}
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <div className="text-sm text-gray-600">
-                                                <div>{formatDate(voucher.start_date)}</div>
+                                                <div>{formatDate(voucher?.start_date)}</div>
                                                 <div className="text-xs text-gray-500">đến</div>
-                                                <div>{formatDate(voucher.end_date)}</div>
+                                                <div>{formatDate(voucher?.end_date)}</div>
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <span className={
-                                                voucher.status === VOUCHER.STATUS.AVAILABLE || (voucher.status && voucher.status.toLowerCase() === 'hoạt động') ? 'text-green-700 font-semibold' :
-                                                    voucher.status === VOUCHER.STATUS.INACTIVE || (voucher.status && voucher.status.toLowerCase() === 'không hoạt động') ? 'text-gray-500 font-semibold' :
-                                                        voucher.status === VOUCHER.STATUS.EXPIRED || (voucher.status && voucher.status.toLowerCase() === 'hết hạn') ? 'text-red-700 font-semibold' :
+                                                voucher?.status === VOUCHER.STATUS.AVAILABLE || (voucher?.status && voucher?.status.toLowerCase() === 'hoạt động') ? 'text-green-700 font-semibold' :
+                                                    voucher?.status === VOUCHER.STATUS.INACTIVE || (voucher?.status && voucher?.status.toLowerCase() === 'không hoạt động') ? 'text-gray-500 font-semibold' :
+                                                        voucher?.status === VOUCHER.STATUS.EXPIRED || (voucher?.status && voucher?.status.toLowerCase() === 'hết hạn') ? 'text-red-700 font-semibold' :
                                                             'text-gray-700 font-semibold'
                                             }>
-                                                {voucher.status === VOUCHER.STATUS.AVAILABLE || (voucher.status && voucher.status.toLowerCase() === 'hoạt động') ? 'Hoạt động' :
-                                                    voucher.status === VOUCHER.STATUS.INACTIVE || (voucher.status && voucher.status.toLowerCase() === 'không hoạt động') ? 'Không hoạt động' :
-                                                        voucher.status === VOUCHER.STATUS.EXPIRED || (voucher.status && voucher.status.toLowerCase() === 'hết hạn') ? 'Hết hạn' : voucher.status}
+                                                {voucher?.status === VOUCHER.STATUS.AVAILABLE || (voucher?.status && voucher?.status.toLowerCase() === 'hoạt động') ? 'Hoạt động' :
+                                                    voucher?.status === VOUCHER.STATUS.INACTIVE || (voucher?.status && voucher?.status.toLowerCase() === 'không hoạt động') ? 'Không hoạt động' :
+                                                        voucher?.status === VOUCHER.STATUS.EXPIRED || (voucher?.status && voucher?.status.toLowerCase() === 'hết hạn') ? 'Hết hạn' : voucher?.status}
                                             </span>
                                         </TableCell>
                                         <TableCell>
@@ -202,20 +202,20 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
             <div className="flex items-center justify-between bg-white px-4 py-3 border border-gray-200 rounded-lg">
                 <div className="flex items-center gap-2 text-sm text-gray-700">
                     <span>
-                        {pagination.totalPage > 1 ? (
+                        {pagination?.totalPage > 1 ? (
                             <>
-                                Hiển thị {((pagination.current - 1) * pagination.pageSize) + 1} - {Math.min(pagination.current * pagination.pageSize, pagination.totalItem)}
-                                trong tổng số {pagination.totalItem.toLocaleString('vi-VN')} voucher
+                                Hiển thị {((pagination.current - 1) * pagination.pageSize) + 1} - {Math.min(pagination.current * pagination.pageSize, pagination?.totalItem)}
+                                trong tổng số {pagination?.totalItem.toLocaleString('vi-VN')} voucher
                             </>
                         ) : (
                             <>
-                                Hiển thị tất cả {pagination.totalItem.toLocaleString('vi-VN')} voucher
+                                Hiển thị tất cả {pagination?.totalItem.toLocaleString('vi-VN')} voucher
                             </>
                         )}
                     </span>
                 </div>
 
-                {pagination.totalPage > 1 && (
+                {pagination?.totalPage > 1 && (
                     <div className="flex items-center gap-1">
                         {/* Previous button */}
                         <Button
@@ -252,7 +252,7 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
                             variant="outline"
                             size="sm"
                             onClick={() => onPageChange(pagination.current + 1)}
-                            disabled={pagination.current >= pagination.totalPage}
+                            disabled={pagination.current >= pagination?.totalPage}
                             className="h-8 w-8 p-0"
                         >
                             <LucideIcon name="ChevronRight" iconSize={16} />
