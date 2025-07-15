@@ -60,17 +60,17 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
     // Debug: log status thực tế từ API
     if (typeof window !== 'undefined') {
         // eslint-disable-next-line no-console
-        console.log('Voucher status list:', vouchers.map(v => v.status));
+        console.log('Voucher status list:', vouchers?.map(v => v.status));
     }
 
     // Phân loại voucher theo trạng thái đúng với backend
     const getVouchersByStatus = (status: string) => {
-        return vouchers.filter(voucher => normalizeStatus(voucher.status) === normalizeStatus(status));
+        return vouchers?.filter(voucher => normalizeStatus(voucher?.status) === normalizeStatus(status));
     };
 
     // Đếm số lượng voucher trong mỗi cột
     const getVoucherCount = (status: string) => {
-        return getVouchersByStatus(status).length;
+        return getVouchersByStatus(status)?.length;
     };
 
     const handleEditVoucher = (voucher: IVoucherModel) => {
@@ -86,7 +86,7 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
         <div className="space-y-6">
             {/* Kanban Board */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {KANBAN_COLUMNS.map((column) => (
+                {KANBAN_COLUMNS?.map((column) => (
                     <Card key={column.id} className={`${column.bgColor} border-2`}>
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center justify-between text-lg">
@@ -105,14 +105,14 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
                         </CardHeader>
                         <CardContent className="pt-0">
                             <div className="space-y-3">
-                                {getVouchersByStatus(column.status).map((voucher) => (
+                                {getVouchersByStatus(column.status)?.map((voucher) => (
                                     <VoucherCard
-                                        key={voucher.id}
+                                        key={voucher?.id}
                                         voucher={voucher}
                                         onEdit={() => handleEditVoucher(voucher)}
                                     />
                                 ))}
-                                {getVouchersByStatus(column.status).length === 0 && (
+                                {getVouchersByStatus(column.status)?.length === 0 && (
                                     <div className="text-center py-8 text-gray-500">
                                         <LucideIcon name="Inbox" className="mx-auto mb-2" iconSize={24} />
                                         <p className="text-sm">Không có voucher nào</p>

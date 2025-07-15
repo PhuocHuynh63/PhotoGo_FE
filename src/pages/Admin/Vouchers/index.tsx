@@ -16,17 +16,17 @@ import voucherService from "@services/voucher";
 
 const STATUS_OPTIONS = [
   { value: 'Tất cả', icon: 'Circle', name: 'Tất cả' },
-  ...Object.entries(VOUCHER.STATUS_MAP).map(([value, { name, icon }]) => ({ value, name, icon }))
+  ...Object.entries(VOUCHER.STATUS_MAP)?.map(([value, { name, icon }]) => ({ value, name, icon }))
 ];
 
 const TYPE_OPTIONS = [
   { value: 'Tất cả', icon: 'Tag', name: 'Tất cả' },
-  ...Object.entries(VOUCHER.TYPE_MAP).map(([value, { name, icon }]) => ({ value, name, icon }))
+  ...Object.entries(VOUCHER.TYPE_MAP)?.map(([value, { name, icon }]) => ({ value, name, icon }))
 ];
 
 const DISCOUNT_TYPE_OPTIONS = [
   { value: 'Tất cả', icon: 'Percent', name: 'Tất cả' },
-  ...Object.entries(VOUCHER.DISCOUNT_TYPE_MAP).map(([value, { name, icon }]) => ({ value, name, icon }))
+  ...Object.entries(VOUCHER.DISCOUNT_TYPE_MAP)?.map(([value, { name, icon }]) => ({ value, name, icon }))
 ];
 
 const SORT_FIELDS = [
@@ -147,12 +147,12 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
 
   // Infinite scroll: tự động load thêm khi chạm đáy
   const loadMore = useCallback(async () => {
-    if (loadingMore || pagination.current >= pagination.totalPage) return;
+    if (loadingMore || pagination?.current >= pagination?.totalPage) return;
     setLoadingMore(true);
     try {
       const params = new URLSearchParams();
       // Lấy lại các filter hiện tại từ searchParams nếu cần
-      params.set("current", (pagination.current + 1).toString());
+      params.set("current", (pagination?.current + 1).toString());
       params.set("pageSize", pageSize.toString());
       if (searchValue) params.set("q", searchValue);
       if (statusValue) params.set("status", statusValue);
@@ -175,9 +175,9 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
       setVouchers(prev => [...prev, ...newVouchers]);
       setPagination(prev => ({
         ...prev,
-        current: prev.current + 1,
+        current: prev?.current + 1,
         totalItem: newPagination.totalItem || prev.totalItem,
-        totalPage: newPagination.totalPage || prev.totalPage
+        totalPage: newPagination?.totalPage || prev?.totalPage
       }));
     } finally {
       setLoadingMore(false);
@@ -185,16 +185,16 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
   }, [loadingMore, pagination, searchValue, statusValue, typeValue, discountTypeValue, sortFieldValue, sortDirectionValue, pageSize]);
 
   useEffect(() => {
-    if (!loaderRef.current) return;
+    if (!loaderRef?.current) return;
     const observer = new window.IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && pagination.current < pagination.totalPage && !loadingMore) {
+        if (entries[0].isIntersecting && pagination?.current < pagination?.totalPage && !loadingMore) {
           loadMore();
         }
       },
       { threshold: 1 }
     );
-    observer.observe(loaderRef.current);
+    observer.observe(loaderRef?.current);
     return () => observer.disconnect();
   }, [loaderRef, pagination, loadingMore, loadMore]);
 
@@ -363,8 +363,8 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
           {/* Loader cho infinite scroll */}
           <div ref={loaderRef} className="flex justify-center py-4">
             {loadingMore && <span>Đang tải thêm...</span>}
-            {!loadingMore && pagination.current < pagination.totalPage && <span className="text-gray-400">Kéo xuống để tải thêm...</span>}
-            {pagination.current >= pagination.totalPage && <span className="text-gray-400">Đã tải hết voucher</span>}
+            {!loadingMore && pagination?.current < pagination?.totalPage && <span className="text-gray-400">Kéo xuống để tải thêm...</span>}
+            {pagination?.current >= pagination?.totalPage && <span className="text-gray-400">Đã tải hết voucher</span>}
           </div>
         </>
       ) : (

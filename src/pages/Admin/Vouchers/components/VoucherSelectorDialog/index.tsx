@@ -41,7 +41,7 @@ interface VoucherTypeSelectorProps {
   onSelect: (discountType: "phần trăm" | "cố định", voucherType: "điểm" | "tiền") => void;
 }
 
-export function VoucherTypeSelector({ open, onOpenChange, onSelect }: VoucherTypeSelectorProps) {
+export default function VoucherTypeSelector({ open, onOpenChange, onSelect }: VoucherTypeSelectorProps) {
   const [selected, setSelected] = React.useState<number | null>(null);
 
   return (
@@ -73,7 +73,7 @@ export function VoucherTypeSelector({ open, onOpenChange, onSelect }: VoucherTyp
                 <span className="text-xl font-bold">{type.title}</span>
               </div>
               <div className="text-gray-600 mb-2">{type.description}</div>
-            
+
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-transform group-hover:translate-x-2 text-blue-500">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 12m0 0l-3.75 5.25M21 12H3" />
