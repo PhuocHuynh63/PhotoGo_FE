@@ -18,7 +18,7 @@ const PaymentSuccessPage = () => {
         const payosId = params.get("id");
         const cancel = params.get("cancel");
         const orderCode = params.get("orderCode");
-
+        console.log(paymentId, status, code, payosId, cancel, orderCode)
         if (!paymentId || !status || !code || !payosId || !cancel || !orderCode) {
             router.push(ROUTES.PUBLIC.HOME);
             return;

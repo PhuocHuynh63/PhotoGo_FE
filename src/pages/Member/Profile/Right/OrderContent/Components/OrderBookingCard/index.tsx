@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const router = useRouter();
+    console.log(invoice)
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showReportDialog, setShowReportDialog] = useState(false)
     const vendorId = invoice?.booking?.serviceConcept?.servicePackage?.vendorId
