@@ -24,6 +24,28 @@ import Image from "next/image"
 import { useDropzone } from "react-dropzone"
 import TipTapEditor from "@components/Organisms/TipTapEditor"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
+import { validateDuration, validateNumberOfDays } from "@utils/helpers/Validation"
+import {
+    handleHoursChange,
+    handleMinutesChange,
+    shouldDisableMinutes,
+    formatTimeDisplay,
+    getDisplayMinutes,
+    getDisplayHours
+} from "@utils/helpers/TimeValidation"
+
+// Duration validation constants
+const DURATION_LIMITS = {
+    ONE_DAY: {
+        MIN_MINUTES: 30,
+        MAX_MINUTES: 23 * 60, // 23 hours = 1380 minutes
+        TOOLTIP_THRESHOLD: 24 * 60, // 24 hours = 1440 minutes
+    },
+    MULTI_DAY: {
+        MIN_DAYS: 2,
+        MAX_DAYS: 10,
+    }
+};
 
 // Types
 interface ServiceType {
@@ -118,6 +140,63 @@ const useConceptForm = () => {
     }])
     const [conceptImagePreviews, setConceptImagePreviews] = useState<string[][]>([[]])
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0)
+
+    // Utility functions
+    const showMultiDayTooltip = () => {
+        toast.error("💡 Gợi ý: Với thời gian trên 24 giờ, bạn nên chọn loại 'nhiều ngày' để quản lý tốt hơn!", {
+            duration: 5000,
+            position: "top-center",
+        });
+    };
+
+    const updateConceptDuration = (conceptIndex: number, newDuration: number) => {
+        setConcepts((prev: ConceptFormData[]) => {
+            const newConcepts = [...prev]
+            newConcepts[conceptIndex] = {
+                ...newConcepts[conceptIndex],
+                duration: newDuration,
+            }
+            return newConcepts
+        })
+    };
+
+    const validateAndShowError = (newDuration: number, conceptRangeType: string) => {
+        const validation = validateDuration(newDuration, conceptRangeType);
+
+        if (!validation.isValid) {
+            if (validation.shouldSuggestMultiDay) {
+                showMultiDayTooltip();
+            } else {
+                toast.error(validation.message || "Giá trị không hợp lệ");
+            }
+        }
+    };
+
+    const handleHoursInputChange = (newHours: number) => {
+        const currentTotalMinutes = concepts[currentConceptIndex]?.duration || 0;
+        const newDuration = handleHoursChange(newHours, currentTotalMinutes);
+        updateConceptDuration(currentConceptIndex, newDuration);
+    };
+
+    const handleMinutesInputChange = (newMinutes: number) => {
+        const currentTotalMinutes = concepts[currentConceptIndex]?.duration || 0;
+        const newDuration = handleMinutesChange(newMinutes, currentTotalMinutes);
+        updateConceptDuration(currentConceptIndex, newDuration);
+    };
+
+    const handleHoursBlur = (newHours: number) => {
+        const currentTotalMinutes = concepts[currentConceptIndex]?.duration || 0;
+        const newDuration = handleHoursChange(newHours, currentTotalMinutes);
+        const currentConcept = concepts[currentConceptIndex];
+        validateAndShowError(newDuration, currentConcept.conceptRangeType);
+    };
+
+    const handleMinutesBlur = (newMinutes: number) => {
+        const currentTotalMinutes = concepts[currentConceptIndex]?.duration || 0;
+        const newDuration = handleMinutesChange(newMinutes, currentTotalMinutes);
+        const currentConcept = concepts[currentConceptIndex];
+        validateAndShowError(newDuration, currentConcept.conceptRangeType);
+    };
 
     const { getRootProps: getConceptImagesRootProps, getInputProps: getConceptImagesInputProps } = useDropzone({
         accept: {
@@ -221,7 +300,11 @@ const useConceptForm = () => {
         handleAddConcept,
         handleRemoveConcept,
         handleServiceTypeToggle,
-        removeConceptImage
+        removeConceptImage,
+        handleHoursInputChange,
+        handleMinutesInputChange,
+        handleHoursBlur,
+        handleMinutesBlur
     }
 }
 
@@ -248,6 +331,10 @@ interface ConceptFormProps {
     handleRemoveConcept: (index: number) => void
     handleServiceTypeToggle: (typeId: string, conceptIndex: number) => void
     removeConceptImage: (conceptIndex: number, imageIndex: number) => void
+    handleHoursInputChange: (newHours: number) => void
+    handleMinutesInputChange: (newMinutes: number) => void
+    handleHoursBlur: (newHours: number) => void
+    handleMinutesBlur: (newMinutes: number) => void
 }
 
 // Components
@@ -363,7 +450,11 @@ const ConceptForm = ({
     handleAddConcept,
     handleRemoveConcept,
     handleServiceTypeToggle,
-    removeConceptImage
+    removeConceptImage,
+    handleHoursInputChange,
+    handleMinutesInputChange,
+    handleHoursBlur,
+    handleMinutesBlur
 }: ConceptFormProps) => {
 
     return (
@@ -534,28 +625,53 @@ const ConceptForm = ({
                     {/* Hiển thị Thời gian chỉ khi concept range type là "một ngày" */}
                     {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
                         <div className="space-y-2">
-                            <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
-                                ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
+                            <Label className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                                ⏱️ Thời gian thực hiện <span className="text-red-500">*</span>
                             </Label>
-                            <Input
-                                id="concept-duration"
-                                type="number"
-                                value={concepts[currentConceptIndex]?.duration || 0}
-                                onChange={(e) =>
-                                    setConcepts((prev: ConceptFormData[]) => {
-                                        const newConcepts = [...prev]
-                                        newConcepts[currentConceptIndex] = {
-                                            ...newConcepts[currentConceptIndex],
-                                            duration: Number(e.target.value),
-                                        }
-                                        return newConcepts
-                                    })
-                                }
-                                placeholder="Nhập thời gian (phút)"
-                                required
-                            />
-                            <p className="text-sm text-gray-500">
-                                💡 Thời gian thực hiện concept trong ngày
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        id="concept-hours"
+                                        type="number"
+                                        min={0}
+                                        max={23}
+                                        value={getDisplayHours(concepts[currentConceptIndex]?.duration || 0)}
+                                                                                onChange={(e) => handleHoursInputChange(Number(e.target.value))}
+                                        onBlur={(e) => handleHoursBlur(Number(e.target.value))}
+                                        placeholder="0"
+                                        className="text-center"
+                                    />
+                                    <Label htmlFor="concept-hours" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                        Giờ
+                                    </Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Input
+                                        id="concept-minutes"
+                                        type="number"
+                                        min={0}
+                                        max={50}
+                                        step={10}
+                                        disabled={shouldDisableMinutes(concepts[currentConceptIndex]?.duration || 0)}
+                                        value={getDisplayMinutes(concepts[currentConceptIndex]?.duration || 0)}
+                                                                                onChange={(e) => handleMinutesInputChange(Number(e.target.value))}
+                                        onBlur={(e) => handleMinutesBlur(Number(e.target.value))}
+                                        placeholder="0"
+                                        className="text-center"
+                                    />
+                                    <Label htmlFor="concept-minutes" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                        Phút
+                                    </Label>
+                                </div>
+                            </div>
+                            <div className="text-center p-2 bg-blue-50 rounded-lg border">
+                                <span className="text-sm font-medium text-blue-800">
+                                    ⏱️ Tổng thời gian: {formatTimeDisplay(concepts[currentConceptIndex]?.duration || 0)}
+                                    ({concepts[currentConceptIndex]?.duration || 0} phút)
+                                </span>
+                            </div>
+                            <p className="text-xs text-amber-600">
+                                ⚠️ Lưu ý: Nếu thời gian vượt quá 24 giờ, hãy chọn loại &quot;nhiều ngày&quot;
                             </p>
                         </div>
                     )}
@@ -570,22 +686,32 @@ const ConceptForm = ({
                                 id="concept-numberOfDays"
                                 type="number"
                                 value={concepts[currentConceptIndex]?.numberOfDays || 1}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                    const newNumberOfDays = Number(e.target.value);
                                     setConcepts((prev: ConceptFormData[]) => {
                                         const newConcepts = [...prev]
                                         newConcepts[currentConceptIndex] = {
                                             ...newConcepts[currentConceptIndex],
-                                            numberOfDays: Number(e.target.value),
+                                            numberOfDays: newNumberOfDays,
                                         }
                                         return newConcepts
                                     })
-                                }
-                                min={2}
+                                }}
+                                onBlur={(e) => {
+                                    const newNumberOfDays = Number(e.target.value);
+                                    const validation = validateNumberOfDays(newNumberOfDays);
+
+                                    if (!validation.isValid) {
+                                        toast.error(validation.message || "Giá trị không hợp lệ");
+                                    }
+                                }}
+                                min={DURATION_LIMITS.MULTI_DAY.MIN_DAYS}
+                                max={DURATION_LIMITS.MULTI_DAY.MAX_DAYS}
                                 placeholder="Nhập số ngày"
                                 required
                             />
                             <p className="text-sm text-gray-500">
-                                💡 Số ngày thực hiện concept (tối thiểu 2 ngày)
+                                💡 Số ngày thực hiện concept (từ {DURATION_LIMITS.MULTI_DAY.MIN_DAYS} ngày đến {DURATION_LIMITS.MULTI_DAY.MAX_DAYS} ngày)
                             </p>
                         </div>
                     )}
@@ -770,7 +896,11 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
         handleAddConcept,
         handleRemoveConcept,
         handleServiceTypeToggle,
-        removeConceptImage
+        removeConceptImage,
+        handleHoursInputChange,
+        handleMinutesInputChange,
+        handleHoursBlur,
+        handleMinutesBlur
     } = useConceptForm()
 
     const handleCreateService = async () => {
@@ -939,6 +1069,10 @@ export default function ServiceModal({ isOpen, onClose, onSuccess, serviceTypes,
                         handleRemoveConcept={handleRemoveConcept}
                         handleServiceTypeToggle={handleServiceTypeToggle}
                         removeConceptImage={removeConceptImage}
+                        handleHoursInputChange={handleHoursInputChange}
+                        handleMinutesInputChange={handleMinutesInputChange}
+                        handleHoursBlur={handleHoursBlur}
+                        handleMinutesBlur={handleMinutesBlur}
                     />
                 )}
 

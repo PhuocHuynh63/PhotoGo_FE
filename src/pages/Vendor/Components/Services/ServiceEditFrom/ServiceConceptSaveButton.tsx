@@ -107,7 +107,7 @@ export default function ServiceConceptSaveButton({ conceptData, originalPrice, s
 
     return (
         <Button onClick={handleSave} disabled={isLoading} className="cursor-pointer">
-            {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...</> : "Lưu gói này"}
+            {isLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...</> : "Lưu concept này"}
         </Button>
     );
 }

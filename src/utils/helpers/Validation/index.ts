@@ -1,3 +1,5 @@
+import { SERVICE_CONCEPT } from "@constants/serviceConcept";
+
 interface DateValidationResult {
     isValid: boolean;
     message: string;
@@ -127,4 +129,45 @@ export const validateWorkingDateForm = (data: {
     }
 
     return { isValid: true, message: "" };
-}; 
+};
+
+export const validateDuration = (duration: number, conceptRangeType: string): { isValid: boolean; message?: string; shouldSuggestMultiDay?: boolean } => {
+    if (conceptRangeType === "một ngày") {
+        if (duration < SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.MIN_MINUTES) {
+            return {
+                isValid: false,
+                message: `Thời gian tối thiểu phải là ${SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.MIN_MINUTES} phút`
+            };
+        }
+        if (duration > SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.MAX_MINUTES) {
+            return {
+                isValid: false,
+                message: `Thời gian tối đa cho một ngày là ${SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.MAX_MINUTES} phút (${SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.MAX_MINUTES / 60} giờ)`
+            };
+        }
+        if (duration >= SERVICE_CONCEPT.DURATION_LIMIT_ONE_DAY.TOOLTIP_THRESHOLD) {
+            return {
+                isValid: false,
+                message: `Thời gian vượt quá 24 giờ`,
+                shouldSuggestMultiDay: true
+            };
+        }
+    }
+    return { isValid: true };
+};
+
+export const validateNumberOfDays = (numberOfDays: number): { isValid: boolean; message?: string } => {
+    if (numberOfDays < SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MIN_DAYS) {
+        return {
+            isValid: false,
+            message: `Số ngày tối thiểu phải là ${SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MIN_DAYS} ngày`
+        };
+    }
+    if (numberOfDays > SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MAX_DAYS) {
+        return {
+            isValid: false,
+            message: `Số ngày tối đa là ${SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MAX_DAYS} ngày`
+        };
+    }
+    return { isValid: true };
+};
