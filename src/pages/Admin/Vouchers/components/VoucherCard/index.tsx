@@ -6,7 +6,6 @@ import { Card, CardContent } from "@components/Atoms/ui/card";
 import { Badge } from "@components/Atoms/ui/badge";
 import LucideIcon from "@components/Atoms/LucideIcon";
 import { Button } from "@components/Atoms/Button/Button";
-import { useState } from "react";
 
 interface VoucherCardProps {
     voucher: IVoucherModel;
@@ -80,10 +79,10 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
 
     // Get discount display
     const getDiscountDisplay = () => {
-        if (voucher.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT) {
-            return `${voucher.discount_value}%`;
+        if (voucher?.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT) {
+            return `${voucher?.discount_value}%`;
         }
-        return `${parseInt(voucher.discount_value).toLocaleString('vi-VN')}đ`;
+        return `${parseInt(voucher?.discount_value).toLocaleString('vi-VN')}đ`;
     };
 
     return (
@@ -95,7 +94,7 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                 <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 text-sm mb-1">
-                            {voucher.code}
+                            {voucher?.code}
                         </h3>
                     </div>
                     <Button
@@ -113,8 +112,8 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
 
                 {/* Badges */}
                 <div className="flex flex-wrap gap-1 mb-3">
-                    {getStatusBadge(voucher.status)}
-                    {getTypeBadge(voucher.type)}
+                    {getStatusBadge(voucher?.status)}
+                    {getTypeBadge(voucher?.type)}
                 </div>
 
                 {/* Discount Info */}
@@ -129,7 +128,7 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                         <div className="text-right">
                             <p className="text-xs text-gray-600">Áp dụng</p>
                             <p className="text-sm font-medium text-gray-900">
-                                {voucher.minPrice.toLocaleString('vi-VN')}đ - {voucher.maxPrice.toLocaleString('vi-VN')}đ
+                                {voucher?.minPrice.toLocaleString('vi-VN')}đ - {voucher?.maxPrice.toLocaleString('vi-VN')}đ
                             </p>
                         </div>
                     </div>
@@ -139,27 +138,27 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
                         <span className="text-gray-600">Số lượng:</span>
-                        <span className="font-medium">{voucher.quantity}</span>
+                        <span className="font-medium">{voucher?.quantity}</span>
                     </div>
-                    {voucher.usedCount !== undefined && (
+                    {voucher?.usedCount !== undefined && (
                         <div className="flex items-center justify-between text-xs">
                             <span className="text-gray-600">Đã sử dụng:</span>
-                            <span className="font-medium">{voucher.usedCount}</span>
+                            <span className="font-medium">{voucher?.usedCount}</span>
                         </div>
                     )}
-                    {voucher.point && (
+                    {voucher?.point && (
                         <div className="flex items-center justify-between text-xs">
                             <span className="text-gray-600">Điểm yêu cầu:</span>
                             <span className="font-medium flex items-center gap-1">
                                 <LucideIcon name="Star" iconSize={12} className="text-yellow-500" />
-                                {voucher.point}
+                                {voucher?.point}
                             </span>
                         </div>
                     )}
                     <div className="flex items-center justify-between text-xs">
                         <span className="text-gray-600">Hiệu lực:</span>
                         <span className="font-medium">
-                            {formatDate(voucher.start_date)} - {formatDate(voucher.end_date)}
+                            {formatDate(voucher?.start_date)} - {formatDate(voucher?.end_date)}
                         </span>
                     </div>
                 </div>
@@ -167,7 +166,7 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                 {/* Created date */}
                 <div className="mt-3 pt-3 border-t border-gray-100">
                     <p className="text-xs text-gray-500">
-                        Tạo: {formatDate(voucher.created_at)}
+                        Tạo: {formatDate(voucher?.created_at)}
                     </p>
                 </div>
             </CardContent>

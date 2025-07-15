@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { VoucherTypeSelector } from "../VoucherSelectorDialog"
+import VoucherTypeSelector from "../VoucherSelectorDialog"
 import AddVoucherDialog from "../AddVoucherDialog"
 import { VOUCHER } from "@constants/voucher"
 
