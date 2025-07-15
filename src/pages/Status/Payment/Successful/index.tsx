@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@components/Organisms/Loading";
 import { ROUTES } from "@routes";
-import paymentService from "@services/payment";
+// import paymentService from "@services/payment";
 
 const PaymentSuccessPage = () => {
     const router = useRouter();
@@ -18,31 +18,30 @@ const PaymentSuccessPage = () => {
         const payosId = params.get("id");
         const cancel = params.get("cancel");
         const orderCode = params.get("orderCode");
-        console.log(paymentId, status, code, payosId, cancel, orderCode)
-       
-       console.log('first')
+        // console.log(paymentId, status, code, payosId, cancel, orderCode)
+
         if (!paymentId || !status || !code || !payosId || !cancel || !orderCode) {
             router.push(ROUTES.PUBLIC.HOME);
             return;
         }
 
-        const data = {
-            status,
-            code,
-            id: payosId,
-            cancel: Boolean(cancel),
-            orderCode
-        };
+        // const data = {
+        //     status,
+        //     code,
+        //     id: payosId,
+        //     cancel: Boolean(cancel),
+        //     orderCode
+        // };
 
-        const response = await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
-        if (response.statusCode === 200) {
-            const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
-            router.push(ordersUrl);
-            return;
-        } else {
-            router.push(ROUTES.PUBLIC.HOME);
-            return;
-        }
+        // const response = await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
+        // if (response.statusCode === 200) {
+        const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
+        router.push(ordersUrl);
+        return;
+        // } else {
+        //     router.push(ROUTES.PUBLIC.HOME);
+        //     return;
+        // }
     }
 
     useEffect(() => {
