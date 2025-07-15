@@ -35,7 +35,7 @@ const RANK_OPTIONS = [
   { value: 'Đồng', icon: '', name: 'Đồng' },
   { value: 'Bạc', icon: 'Medal', name: 'Bạc' },
   { value: 'Vàng', icon: 'Star', name: 'Vàng' },
-  { value: 'Kim cương', icon: 'Gem', name: 'Kim cương' },
+  { value: 'Kim Cương', icon: 'Gem', name: 'Kim cương' },
 ];
 const SORT_FIELDS = [
   { value: 'fullName', name: 'Tên' },
