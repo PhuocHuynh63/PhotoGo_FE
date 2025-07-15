@@ -229,18 +229,16 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
                 {filteredServices?.map((service: ServicePackage) => (
                     <Card key={service.id} className="bg-white hover:shadow-md transition-shadow">
                         <CardHeader className="pb-3">
-                            {service.image && (
-                                <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
-                                    <Image
-                                        src={service.image}
-                                        alt={service.name}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        className="object-cover"
-                                        priority={true}
-                                    />
-                                </div>
-                            )}
+                            <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
+                                <Image
+                                    src={service.image || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg'}
+                                    alt={service.name}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    className="object-cover"
+                                    priority={true}
+                                />
+                            </div>
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                     <CardTitle className="text-lg font-medium mb-2">{service.name}</CardTitle>
