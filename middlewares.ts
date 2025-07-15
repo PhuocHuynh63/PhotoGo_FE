@@ -2,9 +2,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { ROUTES } from './routes';
 import { ROLE } from '@constants/common';
 import { handleStatus } from '@middlewares/status';
+import { ROUTES } from '@routes';
 
 // DANH SÁCH CÁC TIỀN TỐ CẦN ĐƯỢC BẢO VỆ (YÊU CẦU ĐĂNG NHẬP)
 const PROTECTED_PREFIXES = [
