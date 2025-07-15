@@ -22,6 +22,17 @@ import { useDropzone } from "react-dropzone";
 import ServicePackageSaveButton from "./ServicePackageSaveButton";
 import ServiceConceptSaveButton from "./ServiceConceptSaveButton";
 import { SERVICE_CONCEPT } from "@constants/serviceConcept";
+import { validateDuration, validateNumberOfDays } from "@utils/helpers/Validation";
+import {
+    handleHoursChange,
+    handleMinutesChange,
+    shouldDisableMinutes,
+    formatTimeDisplay,
+    getDisplayMinutes,
+    getDisplayHours
+} from "@utils/helpers/TimeValidation";
+
+
 interface ServiceType {
     id: string;
     name: string;
@@ -83,6 +94,50 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         image: undefined as File | undefined,
         imagePreview: initialService?.image || "",
     });
+
+    // Utility functions
+    const showMultiDayTooltip = () => {
+        toast.error("💡 Gợi ý: Với thời gian trên 24 giờ, bạn nên chọn loại 'nhiều ngày' để quản lý tốt hơn!");
+    };
+
+    const validateAndShowError = (newDuration: number, conceptRangeType: string) => {
+        const validation = validateDuration(newDuration, conceptRangeType);
+
+        if (!validation.isValid) {
+            if (validation.shouldSuggestMultiDay) {
+                showMultiDayTooltip();
+            } else {
+                toast.error(validation.message || "Giá trị không hợp lệ");
+            }
+        }
+    };
+
+    const handleHoursInputChange = (conceptIndex: number, newHours: number) => {
+        const currentTotalMinutes = concepts[conceptIndex]?.duration || 0;
+        const newDuration = handleHoursChange(newHours, currentTotalMinutes);
+        handleConceptChange(conceptIndex, "duration", newDuration);
+    };
+
+    const handleMinutesInputChange = (conceptIndex: number, newMinutes: number) => {
+        const currentTotalMinutes = concepts[conceptIndex]?.duration || 0;
+        const newDuration = handleMinutesChange(newMinutes, currentTotalMinutes);
+        handleConceptChange(conceptIndex, "duration", newDuration);
+    };
+
+    const handleHoursBlur = (conceptIndex: number, newHours: number) => {
+        const currentTotalMinutes = concepts[conceptIndex]?.duration || 0;
+        const newDuration = handleHoursChange(newHours, currentTotalMinutes);
+        const currentConcept = concepts[conceptIndex];
+        validateAndShowError(newDuration, currentConcept.conceptRangeType);
+    };
+
+    const handleMinutesBlur = (conceptIndex: number, newMinutes: number) => {
+        const currentTotalMinutes = concepts[conceptIndex]?.duration || 0;
+        const newDuration = handleMinutesChange(newMinutes, currentTotalMinutes);
+        const currentConcept = concepts[conceptIndex];
+        validateAndShowError(newDuration, currentConcept.conceptRangeType);
+    };
+
     const [concepts, setConcepts] = useState<ConceptFormData[]>(() => {
         if (!initialService?.serviceConcepts || initialService.serviceConcepts.length === 0) {
             // Nếu không có service concepts, tạo một concept mặc định
@@ -293,6 +348,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             toast.error("Chỉ mục gói concept không hợp lệ");
             return;
         }
+
+        // Remove validation from onChange - will be handled in onBlur
 
         setConcepts((prev) => {
             const newConcepts = [...prev];
@@ -589,19 +646,53 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 {/* Hiển thị Thời gian chỉ khi concept range type là "một ngày" */}
                                 {concepts[currentConceptIndex]?.conceptRangeType === "một ngày" && (
                                     <div className="space-y-2">
-                                        <Label htmlFor="concept-duration" className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
-                                            ⏱️ Thời gian (phút) <span className="text-red-500">*</span>
+                                        <Label className="text-xl font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                                            ⏱️ Thời gian thực hiện <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input
-                                            id="concept-duration"
-                                            type="number"
-                                            value={concepts[currentConceptIndex]?.duration || 0}
-                                            onChange={(e) => handleConceptChange(currentConceptIndex, "duration", Number(e.target.value))}
-                                            placeholder="Nhập thời gian (phút)"
-                                            required
-                                        />
-                                        <p className="text-sm text-gray-500">
-                                            💡 Thời gian thực hiện concept trong ngày
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    id="concept-hours"
+                                                    type="number"
+                                                    min={0}
+                                                    max={23}
+                                                    value={getDisplayHours(concepts[currentConceptIndex]?.duration || 0)}
+                                                    onChange={(e) => handleHoursInputChange(currentConceptIndex, Number(e.target.value))}
+                                                    onBlur={(e) => handleHoursBlur(currentConceptIndex, Number(e.target.value))}
+                                                    placeholder="0"
+                                                    className="text-center"
+                                                />
+                                                <Label htmlFor="concept-hours" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                                    Giờ
+                                                </Label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    id="concept-minutes"
+                                                    type="number"
+                                                    min={0}
+                                                    max={50}
+                                                    step={10}
+                                                    disabled={shouldDisableMinutes(concepts[currentConceptIndex]?.duration || 0)}
+                                                    value={getDisplayMinutes(concepts[currentConceptIndex]?.duration || 0)}
+                                                    onChange={(e) => handleMinutesInputChange(currentConceptIndex, Number(e.target.value))}
+                                                    onBlur={(e) => handleMinutesBlur(currentConceptIndex, Number(e.target.value))}
+                                                    placeholder="0"
+                                                    className="text-center"
+                                                />
+                                                <Label htmlFor="concept-minutes" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                                    Phút
+                                                </Label>
+                                            </div>
+                                        </div>
+                                        <div className="text-center p-2 bg-blue-50 rounded-lg border">
+                                            <span className="text-sm font-medium text-blue-800">
+                                                ⏱️ Tổng thời gian: {formatTimeDisplay(concepts[currentConceptIndex]?.duration || 0)}
+                                                ({concepts[currentConceptIndex]?.duration || 0} phút)
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-amber-600">
+                                            ⚠️ Lưu ý: Nếu thời gian vượt quá 24 giờ, hãy chọn loại &quot;nhiều ngày&quot;
                                         </p>
                                     </div>
                                 )}
@@ -617,12 +708,21 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                             type="number"
                                             value={concepts[currentConceptIndex]?.numberOfDays || 1}
                                             onChange={(e) => handleConceptChange(currentConceptIndex, "numberOfDays", Number(e.target.value))}
-                                            min={2}
+                                            onBlur={(e) => {
+                                                const newNumberOfDays = Number(e.target.value);
+                                                const validation = validateNumberOfDays(newNumberOfDays);
+
+                                                if (!validation.isValid) {
+                                                    toast.error(validation.message || "Giá trị không hợp lệ");
+                                                }
+                                            }}
+                                            min={SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MIN_DAYS}
+                                            max={SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MAX_DAYS}
                                             placeholder="Nhập số ngày"
                                             required
                                         />
                                         <p className="text-sm text-gray-500">
-                                            💡 Số ngày thực hiện concept (tối thiểu 2 ngày)
+                                            💡 Số ngày thực hiện concept (từ {SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MIN_DAYS} ngày đến {SERVICE_CONCEPT.DURATION_LIMIT_MULTI_DAY.MAX_DAYS} ngày)
                                         </p>
                                     </div>
                                 )}

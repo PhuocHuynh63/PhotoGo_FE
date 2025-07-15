@@ -151,7 +151,10 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
                                         <div className="p-4 space-y-1">
                                             <h3 className="font-semibold text-lg truncate">{item.serviceConcept.name}</h3>
                                             <p className="text-sm text-gray-500 line-clamp-2 text-ellipsis h-10">
-                                                {item.serviceConcept.description}
+                                                <div
+                                                    className="text-muted-foreground prose prose-sm max-w-none line-clamp-2 overflow-hidden h-12"
+                                                    dangerouslySetInnerHTML={{ __html: item.serviceConcept.description || '' }}
+                                                />
                                             </p>
 
                                             <div className="flex items-center justify-between mt-2 flex-wrap gap-1">
