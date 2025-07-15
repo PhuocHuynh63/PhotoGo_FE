@@ -21,6 +21,7 @@ export default function CustomDatePicker({
 }: CustomDatePickerProps) {
     const [open, setOpen] = useState(false);
     const [today, setToday] = useState<Date | null>(null);
+    const [popupPosition, setPopupPosition] = useState<'left' | 'right'>('right');
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -147,6 +148,18 @@ export default function CustomDatePicker({
         );
     }
 
+    const handleOpen = () => {
+        if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect();
+            if (rect.left < window.innerWidth / 2) {
+                setPopupPosition('left');
+            } else {
+                setPopupPosition('right');
+            }
+        }
+        setOpen(true);
+    };
+
     return (
         <div ref={containerRef} className="relative w-full">
             <input
@@ -155,9 +168,9 @@ export default function CustomDatePicker({
                 className="w-full px-4 py-2 border rounded-md cursor-pointer bg-white"
                 placeholder={placeholder}
                 value={formatDate(value)}
-                onClick={() => setOpen(!open)}
+                onClick={handleOpen}
             />
-            <span className="absolute right-4 top-2 cursor-pointer" onClick={() => setOpen(!open)}>
+            <span className="absolute right-4 top-2 cursor-pointer" onClick={handleOpen}>
                 <Calendar className='text-gray-600' />
             </span>
             <AnimatePresence>
@@ -182,7 +195,8 @@ export default function CustomDatePicker({
                             duration: 0.2,
                             ease: "easeOut",
                         }}
-                        className="absolute p-2 z-10 mt-2 bg-white border rounded-lg shadow-lg ring-1 ring-black ring-opacity-5"
+                        className={`absolute z-50 mt-2 bg-white border rounded-xl shadow-2xl ring-1 ring-black ring-opacity-5 max-w-xs w-[320px] ${popupPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'}`}
+                        style={{ minWidth: 240 }}
                     >
                         {dayPickerNode}
                         <button

@@ -28,7 +28,9 @@ const userService = {
 
     getUsers: async (params: IAdminGetUsersRequest) => {
         const query = params ? `?${new URLSearchParams(params as any).toString()}` : '';
-        return await http.get<IAdminGetUsersResponse>(`/users${query}`);
+        return await http.get<IAdminGetUsersResponse>(`/users${query}`, {
+            cache: 'no-store'
+        });
     }
 }
 

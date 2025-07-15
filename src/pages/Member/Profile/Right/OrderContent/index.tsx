@@ -26,7 +26,6 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
         router.push(`?page=${page}`);
     };
 
-    console.log(invoices)
     // Filter bookings based on active tab and search query
     let filteredBookings = invoices?.map((invoice) => invoice.booking).filter((booking) => {
         const matchesTab =
@@ -38,7 +37,6 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             (activeTab === "cancelled" && booking.status === "đã hủy")
         return matchesTab
     })
-    console.log(filteredBookings)
     // Đưa booking mới lên đầu nếu có trong danh sách
     if (newBooking && filteredBookings?.some(b => b.id === newBooking.id)) {
         const newBookingItem = filteredBookings?.find(b => b.id === newBooking.id)

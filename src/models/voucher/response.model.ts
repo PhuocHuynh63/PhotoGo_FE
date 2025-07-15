@@ -74,3 +74,15 @@ export const VoucherFilterModelResponse = z.object({
 export const VoucherFilterModelResponseModel = BackendResponseModel(VoucherFilterModelResponse);
 export type IVoucherFilterResponseModel = z.infer<typeof VoucherFilterModelResponseModel>;
 //---------------------End------------------//
+
+/**
+ * Model of Voucher List Response
+ */
+export const VoucherListModelResponse = z.object({
+    data: z.array(VoucherModel),
+    message: z.string(),
+    statusCode: z.number(),
+    pagination: PaginationModel.optional()
+});
+export const VoucherListResponseModel = BackendResponseModel(VoucherListModelResponse);
+export type IVoucherListResponseModel = z.infer<typeof VoucherListResponseModel>;

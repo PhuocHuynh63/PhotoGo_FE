@@ -5,9 +5,14 @@ import { z } from "zod";
  */
 export const PaymentModel = z.object({
     id: z.string(),
-    amount: z.number(),
-    method: z.string(),
+    invoiceId: z.string(),
+    amount: z.string(),
+    paymentOSId: z.string(),
+    paymentMethod: z.string(),
     status: z.string(),
+    type: z.string(),
+    transactionId: z.string(),
+    description: z.string(),
     createdAt: z.string(),
     updatedAt: z.string(),
 });

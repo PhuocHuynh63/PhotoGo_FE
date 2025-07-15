@@ -1,6 +1,6 @@
 'use client'
 
-import { Facebook, InstagramIcon } from 'lucide-react'
+import { Facebook } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -36,7 +36,7 @@ const Footer = () => {
                 <div className="flex-1 min-w-[200px] mb-5">
                     <h3 className="text-base mb-3">Dịch vụ</h3>
                     <ul className="text-gray-400 list-none p-0">
-                        <li className="mb-2"><Link href="#" className="text-gray-400 no-underline hover:underline">Chụp ảnh trong studip</Link></li>
+                        <li className="mb-2"><Link href="#" className="text-gray-400 no-underline hover:underline">Chụp ảnh trong studio</Link></li>
                         <li className="mb-2"><Link href="#" className="text-gray-400 no-underline hover:underline">Chụp ảnh với freelancer</Link></li>
                         <li className="mb-2"><Link href="#" className="text-gray-400 no-underline hover:underline">Dịch vụ trang điểm</Link></li>
                     </ul>

@@ -42,7 +42,7 @@ const vendorService = {
 
     getAdminVendors: async (searchParams: URLSearchParams) => {
         return await http.get(`/vendors/admin/filter?${searchParams.toString()}`, {
-            next: { revalidate: 10 }
+            cache: 'no-store'
         });
     },
 

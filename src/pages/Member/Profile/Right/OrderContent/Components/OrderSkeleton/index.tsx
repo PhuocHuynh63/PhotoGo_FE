@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@components/Atoms/Card";
-import Skeleton from "@components/Atoms/Skeleton";
+import { Skeleton } from "@components/Atoms/ui/skeleton";
 import { MapPin } from "lucide-react";
 import { Separator } from "@components/Atoms/Seperator/Seperator";
 
