@@ -10,11 +10,11 @@ interface Appointment {
     customerName: string
     customerPhone: string
     date: string
-    startTime: string
-    endTime: string
+    from: string | null
+    to: string | null
     service: string
     location: string
-    status: "pending" | "confirmed" | "completed" | "cancelled"
+    status: "chờ xử lý" | "đã thanh toán" | "hoàn thành" | "đã hủy"
     notes: string
 }
 
@@ -36,9 +36,9 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
     })
 
     // Đếm số lượng lịch hẹn theo trạng thái
-    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === "pending").length
-    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === "confirmed").length
-    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === "cancelled").length
+    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === "chờ xử lý").length
+    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === "đã thanh toán").length
+    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === "đã hủy").length
     const totalCount = filteredAppointments?.length
 
     return (
@@ -67,7 +67,7 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-blue-600">{confirmedCount}</p>
-                        <p className="text-xs text-blue-600">Đơn chờ xác nhận</p>
+                        <p className="text-xs text-blue-600">Đơn chờ xử lý</p>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-green-600">{pendingCount}</p>
-                        <p className="text-xs text-green-600">Đơn đã xác nhận</p>
+                        <p className="text-xs text-green-600">Đơn đã thanh toán</p>
                     </div>
                 </div>
 

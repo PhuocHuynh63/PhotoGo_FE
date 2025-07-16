@@ -26,7 +26,6 @@ import toast from "react-hot-toast";
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const router = useRouter();
-    console.log(invoice)
     const [showCancelDialog, setShowCancelDialog] = useState(false)
     const [showReportDialog, setShowReportDialog] = useState(false)
     const vendorId = invoice?.booking?.serviceConcept?.servicePackage?.vendorId
@@ -48,15 +47,9 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
             case "đã hoàn thành":
                 return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
             case "đã hủy":
-                return (
-                    <Badge variant="outline" className="text-red-500 border-red-200">
-                        Đã hủy
-                    </Badge>
-                )
+                return <Badge variant="outline" className="text-red-500 border-red-200">Đã hủy</Badge>
             case "chờ xử lý":
                 return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Chờ xử lý</Badge>
-            case "chờ thanh toán":
-                return <Badge variant="outline" className="text-orange-500 border-orange-200">Chờ thanh toán</Badge>
             default:
                 return <Badge>{status}</Badge>
         }
@@ -147,16 +140,39 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                                 </p>
                             )}
 
-                            <div className="flex flex-wrap gap-4 mt-4">
-                                <div className="flex items-center">
-                                    <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                                    <span className="text-sm">{booking.date}</span>
+
+                            {invoice.booking.date && invoice.booking.time ? (
+                                <div className="flex flex-wrap gap-4 mt-4">
+                                    <div className="flex items-center">
+                                        <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
+                                        <span className="text-sm">{invoice.booking.date}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+                                        <span className="text-sm">{invoice.booking.time}</span>
+
+                                    </div>
                                 </div>
-                                <div className="flex items-center">
-                                    <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
-                                    <span className="text-sm">{booking.time}</span>
+                            ) : (
+                                <div className="text-sm mt-1">
+                                    {invoice.booking.serviceConcept?.numberOfDays && invoice.booking.serviceConcept.numberOfDays > 1 && invoice.booking.date ? (
+                                        (() => {
+                                            const startDate = new Date(invoice.booking.date.split('/').reverse().join('-'));
+                                            const endDate = new Date(startDate);
+                                            endDate.setDate(startDate.getDate() + invoice.booking.serviceConcept.numberOfDays - 1);
+                                            const formatDate = (date: Date) => {
+                                                return date.toLocaleDateString('vi-VN', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric'
+                                                });
+                                            };
+                                            return `Thời gian thực hiện: ${formatDate(startDate)} - ${formatDate(endDate)} (${invoice.booking.serviceConcept.numberOfDays} ngày)`;
+                                        })()
+                                    ) : null}
                                 </div>
-                            </div>
+                            )}
+
                             {concept && (
                                 <div
                                     className="text-muted-foreground prose prose-sm max-w-none line-clamp-2"
@@ -188,9 +204,13 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                                 </div> */}
                             </div>
                             <div className="text-xs text-muted-foreground mt-4">Loại: {booking.sourceType}</div>
-                            {concept && (
+                            {invoice.booking.serviceConcept.conceptRangeType === 'một ngày' ? (
                                 <div className="text-xs text-muted-foreground mt-1">
-                                    Thời gian: {concept.duration} phút
+                                    {invoice.booking.serviceConcept.duration} phút
+                                </div>
+                            ) : (
+                                <div className="text-xs text-muted-foreground mt-1">
+                                    {invoice.booking.serviceConcept.numberOfDays} ngày
                                 </div>
                             )}
                         </div>

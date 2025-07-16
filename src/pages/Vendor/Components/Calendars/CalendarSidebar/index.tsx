@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/card"
-import { Badge } from "@/components/Atoms/ui/badge"
 import { Button } from "@/components/Atoms/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Atoms/ui/avatar"
 import { Calendar, Clock, Users, DollarSign, MessageSquare } from "lucide-react"
@@ -37,31 +36,13 @@ interface CalendarSidebarProps {
 }
 
 export default function CalendarSidebar({ todayAppointments, upcomingAppointments, stats }: CalendarSidebarProps) {
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
             maximumFractionDigits: 0,
         }).format(amount)
-    }
-
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "confirmed":
-                return <Badge variant="outline" className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-green-500 "></span>
-                </Badge>
-            case "pending":
-                return <Badge variant="outline" className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
-                </Badge>
-            case "cancelled":
-                return <Badge variant="outline" className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                </Badge>
-            default:
-                return null
-        }
     }
 
     return (
@@ -152,7 +133,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
             </Card>
 
             {/* Lịch hẹn sắp tới */}
-            <Card>
+            {/* <Card>
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg font-medium">Sắp tới</CardTitle>
                 </CardHeader>
@@ -184,29 +165,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                         <p className="text-sm text-gray-500 text-center py-4">Không có lịch hẹn sắp tới</p>
                     )}
                 </CardContent>
-            </Card>
-
-            {/* Giờ làm việc */}
-            <Card>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-medium">Giờ làm việc</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">Thứ 2 - Chủ nhật</span>
-                            <span className="font-medium">08:00 - 18:00</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">Nghỉ trưa</span>
-                            <span className="font-medium">12:00 - 13:00</span>
-                        </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full mt-3 cursor-pointer">
-                        Chỉnh sửa giờ làm việc
-                    </Button>
-                </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }

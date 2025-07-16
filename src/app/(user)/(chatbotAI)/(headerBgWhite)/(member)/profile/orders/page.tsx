@@ -29,9 +29,8 @@ export default async function Orders({ searchParams }: OrdersProps) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const invoices = await getInvoices(session.user.id) as IInvoiceListResponse
     const invoicesData = invoices?.data?.data as IInvoice[] || []
-    console.log(invoicesData)
     const paginationInvoices = invoices?.data?.pagination as IPagination || null
-
+console.log(invoicesData)
     const { id } = await searchParams || {};
     let booking = null;
     if (id) {
