@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
     if (!isProtectedRoute) {
         return NextResponse.next();
     }
-
+  console.log(pathname);
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
 
