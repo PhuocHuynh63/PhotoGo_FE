@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/Atoms/ui/button"
-import { CalendarDays, List, Plus } from "lucide-react"
+import { CalendarDays, List, AlertCircle, Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/Atoms/ui/alert"
 import CalendarView from "../Components/Calendars/CalendarView"
 import CalendarSidebar from "../Components/Calendars/CalendarSidebar"
 import AppointmentTable from "../Components/Appointment/AppointmentTable"
 import AppointmentStats from "../Components/Appointment/AppointmentStats"
 import RecentAppointments from "../Components/Appointment/RecentAppointments"
-
+import { useLocationOverview, type Booking, type Slot } from "@/utils/hooks/useLocation/useLocationOverview"
+import { useVendorLocations } from "@/utils/hooks/useVendorLocations"
 
 interface Appointment {
     id: string
@@ -19,9 +21,9 @@ interface Appointment {
     service: string
     package: string
     date: string
-    startTime: string
-    endTime: string
-    status: "confirmed" | "pending" | "cancelled"
+    from: string | null
+    to: string | null
+    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
     color: string
     notes: string
     price: number
@@ -36,406 +38,190 @@ interface WorkingHours {
     breakEnd: string
 }
 
-interface TodayAppointment {
-    id: string
-    customerName: string
-    service: string
-    time: string
-    status: string
-}
+export default function CalendarManagement({ vendorId }: { vendorId: string | undefined }) {
+    const [viewMode, setViewMode] = useState<"calendar" | "appointments">("calendar")
+    const [selectedLocationId, setSelectedLocationId] = useState<string>("")
 
-interface UpcomingAppointment {
-    id: string
-    customerName: string
-    service: string
-    date: string
-    time: string
-    status: string
-}
+    // Get current week range (Monday to Sunday)
+    const getCurrentWeekRange = () => {
+        const today = new Date()
+        const currentDay = today.getDay()
+        const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1) // Monday
 
-interface Stats {
-    totalThisWeek: number
-    confirmedThisWeek: number
-    pendingThisWeek: number
-    revenueThisWeek: number
-}
+        const monday = new Date(today)
+        monday.setDate(diff)
 
-interface CalendarManagementProps {
-    appointments: Appointment[]
-    workingHours: WorkingHours
-    todayAppointments: TodayAppointment[]
-    upcomingAppointments: UpcomingAppointment[]
-    stats: Stats
-}
+        const sunday = new Date(monday)
+        sunday.setDate(monday.getDate() + 6)
 
+        const formatDate = (date: Date) => {
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = (date.getMonth() + 1).toString().padStart(2, '0')
+            const year = date.getFullYear()
+            return `${day}/${month}/${year}`
+        }
 
-const mockData: CalendarManagementProps = {
-    appointments: [
-        // Thứ 2 (25/05)
-        {
-            id: "apt1",
-            title: "Chụp ảnh cưới - Nguyễn Văn A",
-            customerName: "Nguyễn Văn A",
-            customerPhone: "0905234567",
-            customerEmail: "nguyenvana@email.com",
-            service: "Chụp ảnh cưới",
-            package: "Gói Cao Cấp",
-            date: "2025-05-25",
-            startTime: "09:00",
-            endTime: "12:00",
-            status: "confirmed",
-            color: "blue",
-            notes: "Khách hàng yêu cầu chụp ngoại cảnh, mang theo 3 bộ váy cưới",
-            price: 8000000,
-            deposit: 3000000,
-            location: "Studio + Công viên Tao Đàn",
-        },
-        {
-            id: "apt2",
-            title: "Chụp ảnh gia đình - Trần Thị B",
-            customerName: "Trần Thị B",
-            customerPhone: "0912345678",
-            customerEmail: "tranthib@email.com",
-            service: "Chụp ảnh gia đình",
-            package: "Gói Tiêu Chuẩn",
-            date: "2025-05-25",
-            startTime: "14:00",
-            endTime: "16:00",
-            status: "confirmed",
-            color: "green",
-            notes: "Gia đình 5 người, có 2 trẻ nhỏ",
-            price: 3500000,
-            deposit: 1500000,
-            location: "Studio",
-        },
-        {
-            id: "apt3",
-            title: "Chụp ảnh chân dung - Lê Minh C",
-            customerName: "Lê Minh C",
-            customerPhone: "0923456789",
-            customerEmail: "leminhc@email.com",
-            service: "Chụp ảnh chân dung",
-            package: "Gói Cá Nhân",
-            date: "2025-05-25",
-            startTime: "17:00",
-            endTime: "18:00",
-            status: "pending",
-            color: "purple",
-            notes: "Chụp ảnh profile cho LinkedIn",
-            price: 1200000,
-            deposit: 500000,
-            location: "Studio",
-        },
+        return {
+            from: formatDate(monday),
+            to: formatDate(sunday)
+        }
+    }
 
-        // Thứ 3 (26/05)
-        {
-            id: "apt4",
-            title: "Chụp ảnh sản phẩm - Công ty ABC",
-            customerName: "Phạm Văn D (Công ty ABC)",
-            customerPhone: "0934567890",
-            customerEmail: "phamvand@abc.com",
-            service: "Chụp ảnh sản phẩm",
-            package: "Gói Doanh Nghiệp",
-            date: "2025-05-26",
-            startTime: "08:30",
-            endTime: "11:30",
-            status: "confirmed",
-            color: "indigo",
-            notes: "Chụp 50 sản phẩm điện tử, cần background trắng",
-            price: 5000000,
-            deposit: 2000000,
-            location: "Studio",
-        },
-        {
-            id: "apt5",
-            title: "Chụp ảnh kỷ yếu - Trường THPT XYZ",
-            customerName: "Cô Nguyễn Thị E",
-            customerPhone: "0945678905",
-            customerEmail: "nguyenthie@thptxyz.edu.vn",
-            service: "Chụp ảnh kỷ yếu",
-            package: "Gói Nhóm Lớn",
-            date: "2025-05-26",
-            startTime: "13:30",
-            endTime: "16:30",
-            status: "confirmed",
-            color: "yellow",
-            notes: "Lớp 12A1 - 45 học sinh, cần chụp ảnh lẻ và nhóm",
-            price: 6500000,
-            deposit: 3000000,
-            location: "Trường THPT XYZ",
-        },
+    const [dateRange, setDateRange] = useState(getCurrentWeekRange)
 
-        // Thứ 4 (27/05)
-        {
-            id: "apt6",
-            title: "Chụp ảnh cưới - Hoàng Văn F",
-            customerName: "Hoàng Văn F",
-            customerPhone: "0956789052",
-            customerEmail: "hoangvanf@email.com",
-            service: "Chụp ảnh cưới",
-            package: "Gói Cơ Bản",
-            date: "2025-05-27",
-            startTime: "09:00",
-            endTime: "11:00",
-            status: "confirmed",
-            color: "blue",
-            notes: "Chụp trong studio, 2 bộ trang phục",
-            price: 4500000,
-            deposit: 2000000,
-            location: "Studio",
-        },
-        {
-            id: "apt7",
-            title: "Chụp ảnh thời trang - Model G",
-            customerName: "Vũ Thị G",
-            customerPhone: "0967890523",
-            customerEmail: "vuthig@model.com",
-            service: "Chụp ảnh thời trang",
-            package: "Gói Chuyên Nghiệp",
-            date: "2025-05-27",
-            startTime: "14:00",
-            endTime: "17:00",
-            status: "pending",
-            color: "red",
-            notes: "Chụp lookbook thu đông, cần makeup artist",
-            price: 7500000,
-            deposit: 3500000,
-            location: "Studio + Ngoại cảnh",
-        },
+    // Fetch vendor's locations
+    const {
+        data: vendorLocations,
+        loading: locationsLoading,
+        error: locationsError,
+        refetch: refetchLocations
+    } = useVendorLocations(vendorId || '')
 
-        // Thứ 5 (28/05)
-        {
-            id: "apt8",
-            title: "Chụp ảnh sự kiện - Công ty DEF",
-            customerName: "Đặng Văn H (Công ty DEF)",
-            customerPhone: "0978905234",
-            customerEmail: "dangvanh@def.com",
-            service: "Chụp ảnh sự kiện",
-            package: "Gói Sự Kiện",
-            date: "2025-05-28",
-            startTime: "08:00",
-            endTime: "12:00",
-            status: "confirmed",
-            color: "green",
-            notes: "Lễ khai trương chi nhánh mới, cần 2 photographer",
-            price: 8500000,
-            deposit: 4000000,
-            location: "Tòa nhà Bitexco",
-        },
-        {
-            id: "apt9",
-            title: "Chụp ảnh gia đình - Ngô Thị I",
-            customerName: "Ngô Thị I",
-            customerPhone: "0989052345",
-            customerEmail: "ngothii@email.com",
-            service: "Chụp ảnh gia đình",
-            package: "Gói Ngoại Cảnh",
-            date: "2025-05-28",
-            startTime: "15:00",
-            endTime: "17:00",
-            status: "confirmed",
-            color: "green",
-            notes: "Gia đình 3 thế hệ, chụp tại công viên",
-            price: 4000000,
-            deposit: 1800000,
-            location: "Công viên Lê Văn Tám",
-        },
+    // Convert vendor locations to format expected by CalendarView
+    const locations = vendorLocations?.map(location => ({
+        id: location.id,
+        name: `${location.address}, ${location.district}, ${location.city}`
+    })) || []
 
-        // Thứ 6 (29/05)
-        {
-            id: "apt10",
-            title: "Chụp ảnh cưới - Trịnh Văn J",
-            customerName: "Trịnh Văn J",
-            customerPhone: "0990523456",
-            customerEmail: "trinhvanj@email.com",
-            service: "Chụp ảnh cưới",
-            package: "Gói Luxury",
-            date: "2025-05-29",
-            startTime: "08:00",
-            endTime: "12:00",
-            status: "confirmed",
-            color: "blue",
-            notes: "Chụp sunrise tại bãi biển Vũng Tàu, có ekip makeup",
-            price: 15000000,
-            deposit: 7000000,
-            location: "Bãi biển Vũng Tàu",
-        },
-        {
-            id: "apt11",
-            title: "Chụp ảnh sản phẩm - Shop K",
-            customerName: "Lý Thị K",
-            customerPhone: "0905234567",
-            customerEmail: "lythik@shopk.com",
-            service: "Chụp ảnh sản phẩm",
-            package: "Gói Thời Trang",
-            date: "2025-05-29",
-            startTime: "14:00",
-            endTime: "16:00",
-            status: "pending",
-            color: "indigo",
-            notes: "Chụp bộ sưu tập áo dài, cần model",
-            price: 3500000,
-            deposit: 1500000,
-            location: "Studio",
-        },
+    // Set default selectedLocationId to first location when locations are loaded
+    useEffect(() => {
+        if (vendorLocations && vendorLocations.length > 0 && !selectedLocationId) {
+            setSelectedLocationId(vendorLocations[0].id)
+        }
+    }, [vendorLocations, selectedLocationId])
 
-        // Thứ 7 (30/05)
-        {
-            id: "apt12",
-            title: "Chụp ảnh baby - Gia đình L",
-            customerName: "Bùi Văn L",
-            customerPhone: "0912345678",
-            customerEmail: "buivanl@email.com",
-            service: "Chụp ảnh baby",
-            package: "Gói Newborn",
-            date: "2025-05-30",
-            startTime: "10:00",
-            endTime: "12:00",
-            status: "confirmed",
-            color: "pink",
-            notes: "Em bé 2 tháng tuổi, cần studio ấm áp",
-            price: 2500000,
-            deposit: 1000000,
-            location: "Studio",
-        },
-        {
-            id: "apt13",
-            title: "Chụp ảnh graduation - Sinh viên M",
-            customerName: "Cao Thị M",
-            customerPhone: "0923456789",
-            customerEmail: "caothim@student.edu.vn",
-            service: "Chụp ảnh tốt nghiệp",
-            package: "Gói Sinh Viên",
-            date: "2025-05-30",
-            startTime: "15:00",
-            endTime: "16:00",
-            status: "confirmed",
-            color: "purple",
-            notes: "Chụp với áo cử nhân, cần background trường đại học",
-            price: 1500000,
-            deposit: 700000,
-            location: "Đại học Kinh Tế",
-        },
+    // Handle date range change from CalendarView
+    const handleDateRangeChange = useCallback((from: string, to: string) => {
+        setDateRange({ from, to })
+        // refetch sẽ tự động được gọi khi dateRange thay đổi
+    }, [])
 
-        // Chủ nhật (31/05)
-        {
-            id: "apt14",
-            title: "Chụp ảnh cưới - Đinh Văn N",
-            customerName: "Đinh Văn N",
-            customerPhone: "0934567890",
-            customerEmail: "dinhvann@email.com",
-            service: "Chụp ảnh cưới",
-            package: "Gói Cao Cấp",
-            date: "2025-05-31",
-            startTime: "08:00",
-            endTime: "11:00",
-            status: "pending",
-            color: "blue",
-            notes: "Chụp tại Landmark 81, cần booking trước",
-            price: 12000000,
-            deposit: 5000000,
-            location: "Landmark 81",
-        },
-        {
-            id: "apt15",
-            title: "Chụp ảnh gia đình - Gia đình O",
-            customerName: "Phạm Thị O",
-            customerPhone: "0945678905",
-            customerEmail: "phamthio@email.com",
-            service: "Chụp ảnh gia đình",
-            package: "Gói Lễ Tết",
-            date: "2025-05-31",
-            startTime: "14:00",
-            endTime: "16:00",
-            status: "confirmed",
-            color: "green",
-            notes: "Chụp ảnh Tết, trang phục áo dài truyền thống",
-            price: 4500000,
-            deposit: 2000000,
-            location: "Chùa Ngọc Hoàng",
-        },
-    ],
-    workingHours: {
+    // Fetch location overview data
+    const {
+        data: locationOverview,
+        loading: locationLoading,
+        error: locationError,
+        refetch: refetchLocation
+    } = useLocationOverview({
+        locationId: selectedLocationId,
+        from: dateRange.from, // Sử dụng state thay vì hardcode
+        to: dateRange.to      // Sử dụng state thay vì hardcode
+    })
+
+    // Handle location change
+    const handleLocationChange = (locationId: string) => {
+        setSelectedLocationId(locationId)
+        // refetch sẽ tự động được gọi khi selectedLocationId thay đổi
+    }
+
+    // Helper functions để convert location overview data sang format của UI components
+
+    const convertBookingToAppointment = (booking: Booking, slot: Slot): Appointment => {
+        const statusMap: Record<string, "đã thanh toán" | "chờ xử lý" | "đã hủy"> = {
+            "đã thanh toán": "đã thanh toán",
+            "chờ xử lý": "chờ xử lý",
+            "đã hủy": "đã hủy"
+        }
+
+        const colorMap: Record<string, string> = {
+            "đã thanh toán": "green",
+            "chờ xử lý": "yellow",
+            "đã hủy": "red"
+        }
+
+        const mappedStatus = statusMap[booking.status] || "chờ xử lý"
+
+        // Helper function to format time from "HH:MM:SS" to "HH:MM"
+        const formatTime = (timeString: string | null) => {
+            if (!timeString) return null
+            return timeString.substring(0, 5) // "11:00:00" -> "11:00"
+        }
+
+        return {
+            id: booking.id,
+            title: `${booking.service} - ${booking.fullName}`,
+            customerName: booking.fullName,
+            customerPhone: booking.phone,
+            customerEmail: booking.email,
+            service: booking.service,
+            package: "Gói Tiêu Chuẩn", // Default package
+            date: slot.date,
+            from: formatTime((slot as unknown as { from: string | null }).from), // Access slot.from
+            to: formatTime((slot as unknown as { to: string | null }).to), // Access slot.to
+            status: mappedStatus,
+            color: colorMap[mappedStatus],
+            notes: booking.notes || "",
+            price: 0, // Will be calculated based on service
+            deposit: 0,
+            location: "Studio", // Default location
+        }
+    }
+
+    const convertToTodayAppointments = (bookings: Booking[]) => {
+        return bookings.map(booking => ({
+            id: booking.id,
+            customerName: booking.fullName,
+            service: booking.service,
+            time: (booking as unknown as { from: string | null }).from ?
+                (booking as unknown as { from: string | null }).from!.substring(0, 5) : "N/A",
+            status: booking.status
+        }))
+    }
+
+    const convertToUpcomingAppointments = (slots: Slot[]) => {
+        return slots.slice(0, 4).map(slot => {
+            const firstBooking = slot.bookings[0]
+            if (!firstBooking) return null
+
+            return {
+                id: firstBooking.id,
+                customerName: firstBooking.fullName,
+                service: firstBooking.service,
+                date: new Date(slot.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+                time: (slot as unknown as { from: string | null, to: string | null }).from &&
+                    (slot as unknown as { from: string | null, to: string | null }).to ?
+                    `${(slot as unknown as { from: string | null, to: string | null }).from!.substring(0, 5)} - ${(slot as unknown as { from: string | null, to: string | null }).to!.substring(0, 5)}` :
+                    "09:00 - 11:00",
+                status: firstBooking.status
+            }
+        }).filter((item): item is NonNullable<typeof item> => item !== null)
+    }
+
+    // Convert location overview data sang format cho UI components
+    const appointments: Appointment[] = locationOverview
+        ? locationOverview.slots.flatMap((slot: Slot) =>
+            slot.bookings.map((booking: Booking) => convertBookingToAppointment(booking, slot))
+        )
+        : []
+
+    const todayAppointments = locationOverview
+        ? convertToTodayAppointments(locationOverview.todayBookings)
+        : []
+
+    const upcomingAppointments = locationOverview
+        ? convertToUpcomingAppointments(locationOverview.slots)
+        : []
+
+    const stats = locationOverview
+        ? {
+            totalThisWeek: locationOverview.stats.total,
+            confirmedThisWeek: locationOverview.stats.confirmed,
+            pendingThisWeek: locationOverview.stats.pending,
+            revenueThisWeek: locationOverview.stats.expectedRevenue
+        }
+        : {
+            totalThisWeek: 0,
+            confirmedThisWeek: 0,
+            pendingThisWeek: 0,
+            revenueThisWeek: 0
+        }
+
+    const workingHours: WorkingHours = {
         start: "08:00",
         end: "18:00",
         breakStart: "12:00",
         breakEnd: "13:00",
-    },
-    todayAppointments: [
-        {
-            id: "apt1",
-            customerName: "Nguyễn Văn A",
-            service: "Chụp ảnh cưới",
-            time: "09:00 - 12:00",
-            status: "confirmed",
-        },
-        {
-            id: "apt2",
-            customerName: "Trần Thị B",
-            service: "Chụp ảnh gia đình",
-            time: "14:00 - 16:00",
-            status: "confirmed",
-        },
-        {
-            id: "apt3",
-            customerName: "Lê Minh C",
-            service: "Chụp ảnh chân dung",
-            time: "17:00 - 18:00",
-            status: "pending",
-        },
-    ],
-    upcomingAppointments: [
-        {
-            id: "apt4",
-            customerName: "Phạm Văn D",
-            service: "Chụp ảnh sản phẩm",
-            date: "26/05",
-            time: "08:30 - 11:30",
-            status: "confirmed",
-        },
-        {
-            id: "apt5",
-            customerName: "Cô Nguyễn Thị E",
-            service: "Chụp ảnh kỷ yếu",
-            date: "26/05",
-            time: "13:30 - 16:30",
-            status: "confirmed",
-        },
-        {
-            id: "apt6",
-            customerName: "Hoàng Văn F",
-            service: "Chụp ảnh cưới",
-            date: "27/05",
-            time: "09:00 - 11:00",
-            status: "confirmed",
-        },
-        {
-            id: "apt7",
-            customerName: "Vũ Thị G",
-            service: "Chụp ảnh thời trang",
-            date: "27/05",
-            time: "14:00 - 17:00",
-            status: "pending",
-        },
-    ],
-    stats: {
-        totalThisWeek: 15,
-        confirmedThisWeek: 11,
-        pendingThisWeek: 4,
-        revenueThisWeek: 89000000,
-    },
-}
-
-export default function CalendarManagement(
-    //     {
-    //     appointments,
-    //     workingHours,
-    //     todayAppointments,
-    //     upcomingAppointments,
-    //     stats,
-    // }: CalendarManagementProps
-) {
-    const [viewMode, setViewMode] = useState<"calendar" | "appointments">("calendar")
+    }
 
     return (
         <div>
@@ -458,6 +244,7 @@ export default function CalendarManagement(
                             size="sm"
                             onClick={() => setViewMode("calendar")}
                             className={`cursor-pointer gap-2 ${viewMode === "calendar" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+                            disabled={locationLoading}
                         >
                             <CalendarDays className="h-4 w-4" />
                             Lịch
@@ -467,44 +254,99 @@ export default function CalendarManagement(
                             size="sm"
                             onClick={() => setViewMode("appointments")}
                             className={`cursor-pointer gap-2 ${viewMode === "appointments" ? "bg-white shadow-sm" : "hover:bg-gray-200"}`}
+                            disabled={locationLoading}
                         >
                             <List className="h-4 w-4" />
                             Danh sách
                         </Button>
                     </div>
-
-                    {/* Add Appointment Button */}
-                    <Button size="sm" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Thêm lịch hẹn
-                    </Button>
                 </div>
             </div>
 
+            {/* Loading State */}
+            {(locationLoading || locationsLoading) && (
+                <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                    <p className="text-gray-500">
+                        {locationsLoading ? "Đang tải danh sách địa điểm..." : "Đang tải dữ liệu lịch làm việc..."}
+                    </p>
+                </div>
+            )}
+
+            {/* Error State */}
+            {(locationError || locationsError) && !locationLoading && !locationsLoading && (
+                <Alert className="border-red-200 bg-red-50">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <AlertDescription className="text-red-800">
+                        <div className="flex flex-col gap-2">
+                            <span>
+                                {locationsError
+                                    ? `Không thể tải danh sách địa điểm: ${locationsError}`
+                                    : "Không thể tải dữ liệu lịch làm việc. Vui lòng thử lại."}
+                            </span>
+                            <div className="flex gap-2">
+                                {locationsError && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => refetchLocations()}
+                                        className="w-fit"
+                                    >
+                                        Thử lại tải địa điểm
+                                    </Button>
+                                )}
+                                {locationError && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => refetchLocation()}
+                                        className="w-fit"
+                                    >
+                                        Thử lại tải lịch
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </AlertDescription>
+                </Alert>
+            )}
+
             {/* Content based on view mode */}
-            {viewMode === "calendar" ? (
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <div className="lg:col-span-3">
-                        <CalendarView appointments={mockData.appointments} workingHours={mockData.workingHours} />
-                    </div>
-                    <div>
-                        <CalendarSidebar
-                            todayAppointments={mockData.todayAppointments}
-                            upcomingAppointments={mockData.upcomingAppointments}
-                            stats={mockData.stats}
-                        />
-                    </div>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2">
-                        <AppointmentTable appointments={mockData.appointments} />
-                    </div>
-                    <div className="space-y-6">
-                        <AppointmentStats appointments={mockData.appointments} />
-                        <RecentAppointments appointments={mockData.appointments} />
-                    </div>
-                </div>
+            {!locationLoading && !locationsLoading && !locationError && !locationsError && locations.length > 0 && selectedLocationId && (
+                <>
+                    {viewMode === "calendar" ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            <div className="lg:col-span-3">
+                                <CalendarView
+                                    appointments={appointments}
+                                    workingHours={workingHours}
+                                    locations={locations}
+                                    selectedLocationId={selectedLocationId}
+                                    onLocationChange={handleLocationChange}
+                                    onDateRangeChange={handleDateRangeChange}
+                                    isLoading={locationLoading}
+                                />
+                            </div>
+                            <div className="space-y-4">
+                                <CalendarSidebar
+                                    todayAppointments={todayAppointments}
+                                    upcomingAppointments={upcomingAppointments}
+                                    stats={stats}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2">
+                                <AppointmentTable appointments={appointments} />
+                            </div>
+                            <div className="space-y-6">
+                                <AppointmentStats appointments={appointments} />
+                                <RecentAppointments appointments={appointments} />
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     )

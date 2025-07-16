@@ -32,7 +32,6 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             activeTab === "all" ||
             (activeTab === "upcoming" && booking.status === "chờ xử lý") ||
             (activeTab === "paid" && booking.status === "đã thanh toán") ||
-            (activeTab === "pending" && booking.status === "chờ thanh toán") ||
             (activeTab === "completed" && booking.status === "đã hoàn thành") ||
             (activeTab === "cancelled" && booking.status === "đã hủy")
         return matchesTab
@@ -65,7 +64,6 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
                     <TabsTrigger value="upcoming">Chờ xử lý</TabsTrigger>
                     <TabsTrigger value="paid">Đã thanh toán</TabsTrigger>
-                    <TabsTrigger value="pending">Chờ thanh toán</TabsTrigger>
                     <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
                     <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
                 </TabsList>
