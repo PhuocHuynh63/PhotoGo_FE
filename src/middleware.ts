@@ -1,12 +1,9 @@
-// File: src/middleware.ts (Phiên bản cuối cùng, xử lý được route động)
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { ROUTES } from './routes';
 import { ROLE } from '@constants/common';
 import { handleStatus } from '@middlewares/status';
 
-// DANH SÁCH CÁC TIỀN TỐ CẦN ĐƯỢC BẢO VỆ (YÊU CẦU ĐĂNG NHẬP)
 const PROTECTED_PREFIXES = [
     ROUTES.ADMIN.ROOT,
     ROUTES.STAFF.ROOT,
@@ -27,7 +24,7 @@ export async function middleware(req: NextRequest) {
     if (!isProtectedRoute) {
         return NextResponse.next();
     }
-
+  console.log(pathname);
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
 
