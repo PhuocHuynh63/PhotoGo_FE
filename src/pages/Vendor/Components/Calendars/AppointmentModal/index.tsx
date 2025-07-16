@@ -37,9 +37,9 @@ interface Appointment {
     service: string
     package: string
     date: string
-    startTime: string
-    endTime: string
-    status: "confirmed" | "pending" | "cancelled"
+    from: string | null
+    to: string | null
+    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
     color: string
     notes: string
     price: number
@@ -78,21 +78,21 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "confirmed":
+            case "đã thanh toán":
                 return (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                         <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
                         Đã xác nhận
                     </Badge>
                 )
-            case "pending":
+            case "chờ xử lý":
                 return (
                     <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></span>
                         Chờ xác nhận
                     </Badge>
                 )
-            case "cancelled":
+            case "đã hủy":
                 return (
                     <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>
@@ -181,7 +181,10 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     <div>
                                         <p className="text-sm text-gray-500">Thời gian</p>
                                         <p className="font-medium">
-                                            {appointment.startTime} - {appointment.endTime}
+                                            {appointment.from && appointment.to 
+                                                ? `${appointment.from} - ${appointment.to}`
+                                                : "Cả ngày"
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -268,7 +271,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         <Button variant="outline" onClick={onClose} className="cursor-pointer">
                             Đóng
                         </Button>
-                        {appointment.status === "pending" && (
+                        {appointment.status === "chờ xử lý" && (
                             <Button className="gap-1">
                                 <Calendar className="h-4 w-4" />
                                 Xác nhận lịch

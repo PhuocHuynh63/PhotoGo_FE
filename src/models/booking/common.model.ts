@@ -78,6 +78,8 @@ export const BookingDetailModel = z.object({
         id: z.string(),
         servicePackageId: z.string(),
         name: z.string(),
+        conceptRangeType: z.enum(["một ngày", "nhiều ngày"]),
+        numberOfDays: z.number(),
         description: z.string(),
         price: z.string(),
         duration: z.number(),

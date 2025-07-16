@@ -59,6 +59,8 @@ const mockOrderData: IBookingDetail = {
             "Thông tin chi tiết về gói chụp:  Make Up & Làm Tóc: Bao gồm 2 layout make up và làm tóc dành cho cả nam và nữ. Trang Phục & Concept: Cung cấp 1 bộ trang phục do Gạo Nâu chuẩn bị, cùng các phụ kiện đi kèm theo concept đã thống nhất. Background: Khách hàng được lựa chọn 1 background chụp ảnh. Ảnh Chỉnh Sửa Chuyên Nghiệp: Khách hàng sẽ nhận được 15 tấm ảnh đã qua chỉnh sửa hoàn thiện một cách kỹ lưỡng. Thời Gian Chụp Ảnh Linh Hoạt: Buổi chụp hình không bị giới hạn về thời gian. Dịch Vụ Chăm Sóc Đặc Biệt: Trước buổi chụp, cặp đôi sẽ được trải nghiệm dịch vụ đắp mặt nạ và massage chân thư giãn. Hỗ Trợ Tận Tình Từ Ekip: Đội ngũ chuyên nghiệp sẽ hỗ trợ tạo dáng và lựa chọn góc chụp đẹp nhất xuyên suốt buổi chụp. Không Gian & Bối Cảnh Đa Dạng: Buổi chụp không bị giới hạn về không gian và bối cảnh. Trả Toàn Bộ File Gốc: Khách hàng sẽ nhận được toàn bộ file ảnh gốc ngay trong ngày. Những lưu ý quan trọng từ Gạo Nâu:  Ưu đãi đặc biệt: Giảm ngay 28% khi khách hàng đặt thêm một concept chụp khác ngay trong ngày. Sản phẩm cuối cùng: Ngoài 15 ảnh đã được chỉnh sửa, khách hàng còn nhận được toàn bộ file ảnh gốc đã chụp. Xem trước và tư vấn: Khách hàng được kiểm tra hình ảnh và nhận tư vấn trực tiếp qua màn hình trong quá trình chụp. Chi phí trang phục thêm: Từ trang phục thứ hai trở đi sẽ tính thêm phụ phí phát sinh. Thời lượng buổi chụp: Một buổi chụp hoàn chỉnh, bao gồm cả thời gian make up và các dịch vụ chăm sóc trước buổi chụp, thường kéo dài khoảng 2 - 2.5 giờ. Thời gian giao ảnh chỉnh sửa: Khách hàng sẽ nhận được file ảnh chỉnh sửa hoàn thiện sau 3 - 4 ngày kể từ ngày chụp xong. Dịch vụ Takecare: Có gói chăm sóc kỹ lưỡng về tóc và trang phục xuyên suốt buổi chụp",
         price: "14000.00",
         duration: 0,
+        conceptRangeType: "một ngày",
+        numberOfDays: 1,
         status: "hoạt động",
         createdAt: "2025-05-26T18:36:04.492Z",
         updatedAt: "2025-06-24T01:41:25.473Z",
@@ -120,7 +122,14 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const data = booking || mockOrderData
     const [day, month, year] = data.date.split("/")
     const formattedDate = `${year}-${month}-${day}`
-    const targetDate = new Date(`${formattedDate}T${data.time}`).getTime()
+
+    // Handle different booking types - multi-day vs single day
+    const isMultiDay = data.serviceConcept?.conceptRangeType === "nhiều ngày"
+    const targetDate = isMultiDay
+        ? new Date(`${formattedDate}T00:00:00`).getTime() // For multi-day, use start of day
+        : data.time
+            ? new Date(`${formattedDate}T${data.time}`).getTime() // For single day with time
+            : new Date(`${formattedDate}T00:00:00`).getTime() // Fallback to start of day
 
     const [isVisible, setIsVisible] = useState<Record<string, boolean>>({})
     const [showFullDescription, setShowFullDescription] = useState(false)
@@ -134,8 +143,9 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     }
 
     useEffect(() => {
-        // Convert DD/MM/YYYY to YYYY-MM-DD format for Date constructor
-        const targetDate = new Date(`${formattedDate}T${data.time}`).getTime()
+        // Only set up countdown if we have a valid target date
+        if (!targetDate) return
+
         const interval = setInterval(() => {
             const now = new Date().getTime()
             const distance = targetDate - now
@@ -148,7 +158,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
         }, 1000)
 
         return () => clearInterval(interval)
-    }, [data.date, data.time])
+    }, [targetDate])
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -206,6 +216,9 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     <CountdownCard
                         isVisible={isVisible["countdown-card"]}
                         targetDate={targetDate}
+                        isMultiDay={isMultiDay}
+                        bookingDate={data.date}
+                        bookingTime={data.time}
                     />
                     <QRCard
                         isVisible={isVisible["qr-card"]}

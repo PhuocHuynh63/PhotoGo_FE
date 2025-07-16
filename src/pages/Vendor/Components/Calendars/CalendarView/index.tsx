@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/card"
 import { Button } from "@/components/Atoms/ui/button"
 import { Badge } from "@/components/Atoms/ui/badge"
-import { ChevronLeft, ChevronRight, Plus, Filter } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
 import AppointmentModal from "@pages/Vendor/Components/Calendars/AppointmentModal"
+import React from "react"
 
 export interface Appointment {
     id: string
@@ -17,9 +18,9 @@ export interface Appointment {
     service: string
     package: string
     date: string
-    startTime: string
-    endTime: string
-    status: "confirmed" | "pending" | "cancelled"
+    from: string | null
+    to: string | null
+    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
     color: string
     notes: string
     price: number
@@ -34,16 +35,59 @@ interface WorkingHours {
     breakEnd: string
 }
 
+interface Location {
+    id: string
+    name: string
+}
+
 interface CalendarViewProps {
     appointments: Appointment[]
     workingHours: WorkingHours
+    locations: Location[]
+    selectedLocationId: string
+    onLocationChange: (locationId: string) => void
+    onDateRangeChange?: (from: string, to: string) => void
+    isLoading?: boolean
 }
 
-export default function CalendarView({ appointments, workingHours }: CalendarViewProps) {
-    const [currentDate, setCurrentDate] = useState(new Date())
+export default function CalendarView({
+    appointments,
+    workingHours,
+    locations,
+    selectedLocationId,
+    onLocationChange,
+    onDateRangeChange,
+    isLoading = false
+}: CalendarViewProps) {
+    // Use sessionStorage to persist currentDate across re-renders
+    const getInitialDate = () => {
+        if (typeof window !== 'undefined') {
+            const saved = sessionStorage.getItem('calendar-current-date')
+            if (saved) {
+                return new Date(saved)
+            }
+        }
+        return new Date()
+    }
+
+    const [currentDate, setCurrentDate] = useState(getInitialDate)
     const [viewMode, setViewMode] = useState<"week" | "day">("week")
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    // Track component lifecycle
+    useEffect(() => {
+        return () => {
+            // Cleanup if needed
+        }
+    }, [])
+
+    // Save currentDate to sessionStorage whenever it changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('calendar-current-date', currentDate.toISOString())
+        }
+    }, [currentDate])
 
     // Lấy tuần hiện tại
     const getWeekDays = (date: Date) => {
@@ -61,6 +105,68 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
         return week
     }
 
+    // Format date to DD/MM/YYYY for API
+    const formatDateForAPI = (date: Date) => {
+        const day = date.getDate().toString().padStart(2, '0')
+        const month = (date.getMonth() + 1).toString().padStart(2, '0') 
+        const year = date.getFullYear()
+        return `${day}/${month}/${year}`
+    }
+
+    // Get date range for current view and notify parent
+    const updateDateRange = (date: Date) => {
+        if (viewMode === "week") {
+            const weekDays = getWeekDays(date)
+            const from = formatDateForAPI(weekDays[0]) // Monday
+            const to = formatDateForAPI(weekDays[6])   // Sunday
+            onDateRangeChange?.(from, to)
+        } else {
+            // For day view, use single day
+            const singleDay = formatDateForAPI(date)
+            onDateRangeChange?.(singleDay, singleDay)
+        }
+    }
+
+    // Update date range when component mounts or view mode changes
+    React.useEffect(() => {
+        updateDateRange(currentDate)
+    }, [currentDate, viewMode])
+
+    // Tạo range ngày cho appointment nhiều ngày
+    const getMultiDayRange = (fromDate: string, toDate?: string) => {
+        const startDate = new Date(fromDate.split('/').reverse().join('-'))
+        let endDate: Date
+        
+        if (toDate) {
+            // Nếu có toDate, sử dụng nó
+            endDate = new Date(toDate.split('/').reverse().join('-'))
+        } else {
+            // Nếu không có toDate, mặc định là 7 ngày từ startDate
+            endDate = new Date(startDate)
+            endDate.setDate(startDate.getDate() + 6) // 7 ngày (0-6)
+        }
+        
+        const formatDate = (date: Date) => {
+            return date.toLocaleDateString('vi-VN', { 
+                day: '2-digit', 
+                month: '2-digit'
+            })
+        }
+        
+        return `${formatDate(startDate)} - ${formatDate(endDate)}`
+    }
+
+    // Kiểm tra xem appointment có phải là booking nhiều ngày không
+    const isMultiDayBooking = (appointment: Appointment) => {
+        // Kiểm tra nếu from và to có format DD/MM/YYYY (nhiều ngày) thay vì HH:MM (trong ngày)
+        if (appointment.from && appointment.to) {
+            // Nếu chứa dấu '/' thì là date format (DD/MM/YYYY), không phải time format (HH:MM)
+            return appointment.from.includes('/') && appointment.to.includes('/')
+        }
+        // Nếu từ và to đều null thì cũng có thể là booking nhiều ngày
+        return (!appointment.from || !appointment.to)
+    }
+
     // Tạo khung giờ làm việc
     const generateTimeSlots = () => {
         const slots = []
@@ -76,6 +182,9 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
     const timeSlots = generateTimeSlots()
     const weekDays = getWeekDays(currentDate)
 
+    // Constants for calendar layout
+    const HOUR_HEIGHT = 64 // Match h-16 class (4rem = 64px)
+
     // Lấy lịch hẹn cho ngày cụ thể
     const getAppointmentsForDate = (date: Date) => {
         const dateStr = date.toISOString().split("T")[0]
@@ -84,17 +193,29 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
 
     // Tính toán vị trí của appointment trong lưới
     const getAppointmentPosition = (appointment: Appointment) => {
-        const startHour = Number.parseInt(appointment?.startTime?.split(":")[0] || "00")
-        const startMinute = Number.parseInt(appointment?.startTime?.split(":")[1] || "00")
-        const endHour = Number.parseInt(appointment?.endTime?.split(":")[0] || "00")
-        const endMinute = Number.parseInt(appointment?.endTime?.split(":")[1] || "00")
+        // Nếu from hoặc endTime là null, đây là booking full ngày
+        if (!appointment?.from || !appointment?.to) {
+            const workStart = Number.parseInt(workingHours?.start?.split(":")[0] || "00")
+            const workEnd = Number.parseInt(workingHours?.end?.split(":")[0] || "00")
+            const fullDayDuration = workEnd - workStart
+            return {
+                top: 0,
+                height: fullDayDuration * HOUR_HEIGHT - 2,
+                isFullDay: true
+            }
+        }
+
+        const startHour = Number.parseInt(appointment?.from?.split(":")[0] || "00")
+        const startMinute = Number.parseInt(appointment?.from?.split(":")[1] || "00")
+        const endHour = Number.parseInt(appointment?.to?.split(":")[0] || "00")
+        const endMinute = Number.parseInt(appointment?.to?.split(":")[1] || "00")
 
         const workStart = Number.parseInt(workingHours?.start?.split(":")[0] || "00")
-        const top = (((startHour - workStart) * 60 + startMinute) / 60) * 60 // 60px per hour
+        const top = ((startHour - workStart) + startMinute / 60) * HOUR_HEIGHT
         const duration = ((endHour - startHour) * 60 + (endMinute - startMinute)) / 60
-        const height = duration * 60 - 2 // -2px for gap
+        const height = duration * HOUR_HEIGHT - 2 // -2px for gap
 
-        return { top, height }
+        return { top, height, isFullDay: false }
     }
 
     // Hàm để hiển thị màu theo trạng thái
@@ -108,9 +229,9 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
             red: "bg-red-500",
         }
 
-        if (status === "pending") {
+        if (status === "chờ xử lý") {
             return "bg-yellow-100 border-yellow-300 text-yellow-800"
-        } else if (status === "cancelled") {
+        } else if (status === "đã hủy") {
             return "bg-red-100 border-red-300 text-red-800"
         }
 
@@ -139,7 +260,8 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
     }
 
     const goToToday = () => {
-        setCurrentDate(new Date())
+        const today = new Date()
+        setCurrentDate(today)
     }
 
     // Format date for display
@@ -177,38 +299,52 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                         <p className="text-sm text-gray-500">{formatDateRange()}</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Select value={viewMode} onValueChange={(value: "week" | "day") => setViewMode(value)}>
-                            <SelectTrigger className="w-32 cursor-pointer">
-                                <SelectValue />
+                    <div className="flex flex-wrap items-center gap-4">
+                        {/* Location Select */}
+                        <Select value={selectedLocationId} onValueChange={onLocationChange} disabled={isLoading}>
+                            <SelectTrigger className="w-48 cursor-pointer">
+                                <SelectValue placeholder="Chọn studio" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="week">Tuần</SelectItem>
-                                <SelectItem value="day">Ngày</SelectItem>
+                                {locations?.map((location) => (
+                                    <SelectItem key={location.id} value={location.id}>
+                                        {location.name}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
 
-                        <div className="flex items-center gap-1">
-                            <Button variant="outline" size="sm" onClick={goToPrevious} className="cursor-pointer">
+
+
+                        {/* Navigation Buttons */}
+                        <div className="flex items-center gap-1 w-full">
+                            {/* View Mode Select */}
+                            <Select value={viewMode} onValueChange={(value: "week" | "day") => setViewMode(value)} disabled={isLoading}>
+                                <SelectTrigger className="w-32 cursor-pointer">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="week">Tuần</SelectItem>
+                                    <SelectItem value="day">Ngày</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToPrevious()
+                            }} className="cursor-pointer" disabled={isLoading}>
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm" onClick={goToToday} className="cursor-pointer">
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToToday()
+                            }} className={`cursor-pointer ${currentDate.toDateString() === (new Date()).toDateString() ? "bg-orange-300 text-white hover:bg-orange-300/100" : ""}`} disabled={isLoading}>
                                 Hôm nay
                             </Button>
-                            <Button variant="outline" size="sm" onClick={goToNext} className="cursor-pointer">
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToNext()
+                            }} className="cursor-pointer" disabled={isLoading}>
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>
-
-                        <Button variant="outline" size="sm" className="cursor-pointer">
-                            <Filter className="h-4 w-4 mr-1" />
-                            Lọc
-                        </Button>
-
-                        <Button size="sm" className="gap-1 cursor-pointer">
-                            <Plus className="h-4 w-4" />
-                            Thêm lịch
-                        </Button>
                     </div>
                 </div>
             </CardHeader>
@@ -265,7 +401,7 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                                 return (
                                                     <div
                                                         key={appointment.id}
-                                                        className={`absolute left-1 right-1 rounded-md border-l-4 p-2 cursor-pointer z-20 ${getStatusColor(appointment.status, appointment.color)}`}
+                                                        className={`absolute left-1 right-1 rounded-md border-l-4 p-2 cursor-pointer z-20 ${getStatusColor(appointment.status, appointment.color)} ${position.isFullDay ? 'border-2 border-dashed' : ''}`}
                                                         style={{
                                                             top: `${position.top}px`,
                                                             height: `${position.height}px`,
@@ -275,7 +411,12 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                                         <div className="text-xs font-medium truncate">{appointment.customerName}</div>
                                                         <div className="text-xs opacity-90 truncate">{appointment.service}</div>
                                                         <div className="text-xs opacity-75">
-                                                            {appointment.startTime} - {appointment.endTime}
+                                                            {appointment.from && appointment.to && !isMultiDayBooking(appointment)
+                                                                ? `${appointment.from} - ${appointment.to}`
+                                                                : isMultiDayBooking(appointment) && appointment.from
+                                                                    ? `🗓️ ${getMultiDayRange(appointment.from, appointment.to || undefined)}`
+                                                                    : "🗓️ Cả ngày"
+                                                            }
                                                         </div>
                                                     </div>
                                                 )
@@ -305,15 +446,21 @@ export default function CalendarView({ appointments, workingHours }: CalendarVie
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-sm font-medium">
-                                                    {appointment.startTime} - {appointment.endTime}
+                                                    {appointment.from && appointment.to && !isMultiDayBooking(appointment)
+                                                        ? `${appointment.from} - ${appointment.to}`
+                                                        : isMultiDayBooking(appointment) && appointment.from
+                                                            ? getMultiDayRange(appointment.from, appointment.to || undefined)
+                                                            : "Cả ngày"
+                                                    }
                                                 </p>
                                                 <Badge
-                                                    className={`mt-1 ${appointment.status === "confirmed"
+                                                    variant='outline'
+                                                    className={`mt-1 ${appointment.status === "đã thanh toán"
                                                         ? "bg-green-100 text-green-800"
                                                         : "bg-yellow-100 text-yellow-800"
                                                         }`}
                                                 >
-                                                    {appointment.status === "confirmed" ? "Đã xác nhận" : "Chờ xác nhận"}
+                                                    {appointment.status}
                                                 </Badge>
                                             </div>
                                         </div>

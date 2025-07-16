@@ -12,11 +12,11 @@ interface Appointment {
     customerName: string
     customerPhone: string
     date: string
-    startTime: string
-    endTime: string
+    from: string | null
+    to: string | null
     service: string
     location: string
-    status: "pending" | "confirmed" | "completed" | "cancelled"
+    status: "chờ xử lý" | "đã thanh toán" | "hoàn thành" | "đã hủy"
     notes: string
 }
 
@@ -32,10 +32,10 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
     // Lọc lịch hẹn theo trạng thái
     const filteredAppointments = appointments?.filter((appointment) => {
         if (filter === "all") return true
-        if (filter === "pending") return appointment.status === "pending"
-        if (filter === "confirmed") return appointment.status === "confirmed"
-        if (filter === "completed") return appointment.status === "completed"
-        if (filter === "cancelled") return appointment.status === "cancelled"
+        if (filter === "chờ xử lý") return appointment.status === "chờ xử lý"
+        if (filter === "đã thanh toán") return appointment.status === "đã thanh toán"
+        if (filter === "hoàn thành") return appointment.status === "hoàn thành"
+        if (filter === "đã hủy") return appointment.status === "đã hủy"
         return true
     })
 
@@ -48,73 +48,33 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
     // Hàm để hiển thị trạng thái
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "pending":
+            case "chờ xử lý":
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-yellow-400 mr-1.5"></span>
-                        Chờ xác nhận
+                        Chờ xử lý
                     </div>
                 )
-            case "confirmed":
+            case "đã thanh toán":
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-blue-400 mr-1.5"></span>
-                        Đã xác nhận
+                        Đã thanh toán
                     </div>
                 )
-            case "completed":
+            case "hoàn thành":
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-green-400 mr-1.5"></span>
                         Hoàn thành
                     </div>
                 )
-            case "cancelled":
+            case "đã hủy":
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-red-400 mr-1.5"></span>
                         Đã hủy
                     </div>
-                )
-            default:
-                return null
-        }
-    }
-
-    // Hàm để hiển thị nút hành động dựa trên trạng thái
-    const getActionButton = (status: string) => {
-        switch (status) {
-            case "pending":
-                return (
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"
-                    >
-                        Chờ xác nhận
-                    </Button>
-                )
-            case "confirmed":
-                return (
-                    <Button size="sm" variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
-                        Đã xác nhận
-                    </Button>
-                )
-            case "completed":
-                return (
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100"
-                    >
-                        Hoàn thành
-                    </Button>
-                )
-            case "cancelled":
-                return (
-                    <Button size="sm" variant="outline" className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100">
-                        Đã hủy
-                    </Button>
                 )
             default:
                 return null
@@ -134,25 +94,25 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                                 Tất cả
                             </TabsTrigger>
                             <TabsTrigger
-                                value="pending"
+                                value="chờ xử lý"
                                 className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Chờ xác nhận
                             </TabsTrigger>
                             <TabsTrigger
-                                value="confirmed"
+                                value="đã thanh toán"
                                 className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã xác nhận
                             </TabsTrigger>
                             <TabsTrigger
-                                value="completed"
+                                value="hoàn thành"
                                 className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Hoàn thành
                             </TabsTrigger>
                             <TabsTrigger
-                                value="cancelled"
+                                value="đã hủy"
                                 className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã hủy
@@ -192,7 +152,7 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                                     <td className="whitespace-nowrap px-4 py-3">
                                         <p className="text-sm">{formatDate(appointment.date)}</p>
                                         <p className="text-xs text-gray-500">
-                                            {appointment.startTime} - {appointment.endTime}
+                                            {appointment.from} - {appointment.to}
                                         </p>
                                     </td>
                                     <td className="px-4 py-3">
