@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/Atoms/ui/button"
 import { CalendarDays, List, AlertCircle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/Atoms/ui/alert"
@@ -11,8 +11,6 @@ import AppointmentStats from "../Components/Appointment/AppointmentStats"
 import RecentAppointments from "../Components/Appointment/RecentAppointments"
 import { useLocationOverview, type Booking, type Slot } from "@/utils/hooks/useLocation/useLocationOverview"
 import { useVendorLocations } from "@/utils/hooks/useVendorLocations"
-import { METADATA } from "../../../types/IMetadata"
-
 
 interface Appointment {
     id: string
@@ -40,10 +38,36 @@ interface WorkingHours {
     breakEnd: string
 }
 
-export default function CalendarManagement({ session }: { session: METADATA.ISession }) {
+export default function CalendarManagement({ vendorId }: { vendorId: string | undefined }) {
     const [viewMode, setViewMode] = useState<"calendar" | "appointments">("calendar")
     const [selectedLocationId, setSelectedLocationId] = useState<string>("")
-    const vendorId = session.user.id
+
+    // Get current week range (Monday to Sunday)
+    const getCurrentWeekRange = () => {
+        const today = new Date()
+        const currentDay = today.getDay()
+        const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1) // Monday
+
+        const monday = new Date(today)
+        monday.setDate(diff)
+
+        const sunday = new Date(monday)
+        sunday.setDate(monday.getDate() + 6)
+
+        const formatDate = (date: Date) => {
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = (date.getMonth() + 1).toString().padStart(2, '0')
+            const year = date.getFullYear()
+            return `${day}/${month}/${year}`
+        }
+
+        return {
+            from: formatDate(monday),
+            to: formatDate(sunday)
+        }
+    }
+
+    const [dateRange, setDateRange] = useState(getCurrentWeekRange)
 
     // Fetch vendor's locations
     const {
@@ -51,7 +75,7 @@ export default function CalendarManagement({ session }: { session: METADATA.ISes
         loading: locationsLoading,
         error: locationsError,
         refetch: refetchLocations
-    } = useVendorLocations(vendorId)
+    } = useVendorLocations(vendorId || '')
 
     // Convert vendor locations to format expected by CalendarView
     const locations = vendorLocations?.map(location => ({
@@ -66,6 +90,12 @@ export default function CalendarManagement({ session }: { session: METADATA.ISes
         }
     }, [vendorLocations, selectedLocationId])
 
+    // Handle date range change from CalendarView
+    const handleDateRangeChange = useCallback((from: string, to: string) => {
+        setDateRange({ from, to })
+        // refetch sẽ tự động được gọi khi dateRange thay đổi
+    }, [])
+
     // Fetch location overview data
     const {
         data: locationOverview,
@@ -74,11 +104,9 @@ export default function CalendarManagement({ session }: { session: METADATA.ISes
         refetch: refetchLocation
     } = useLocationOverview({
         locationId: selectedLocationId,
-        from: "14/07/2025", // Ngày bắt đầu
-        to: "20/07/2025"    // Ngày kết thúc
+        from: dateRange.from, // Sử dụng state thay vì hardcode
+        to: dateRange.to      // Sử dụng state thay vì hardcode
     })
-
-    console.log(locationOverview)
 
     // Handle location change
     const handleLocationChange = (locationId: string) => {
@@ -295,6 +323,7 @@ export default function CalendarManagement({ session }: { session: METADATA.ISes
                                     locations={locations}
                                     selectedLocationId={selectedLocationId}
                                     onLocationChange={handleLocationChange}
+                                    onDateRangeChange={handleDateRangeChange}
                                     isLoading={locationLoading}
                                 />
                             </div>

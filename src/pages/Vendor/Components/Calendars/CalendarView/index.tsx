@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/card"
 import { Button } from "@/components/Atoms/ui/button"
 import { Badge } from "@/components/Atoms/ui/badge"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
 import AppointmentModal from "@pages/Vendor/Components/Calendars/AppointmentModal"
+import React from "react"
 
 export interface Appointment {
     id: string
@@ -45,6 +46,7 @@ interface CalendarViewProps {
     locations: Location[]
     selectedLocationId: string
     onLocationChange: (locationId: string) => void
+    onDateRangeChange?: (from: string, to: string) => void
     isLoading?: boolean
 }
 
@@ -54,12 +56,38 @@ export default function CalendarView({
     locations,
     selectedLocationId,
     onLocationChange,
+    onDateRangeChange,
     isLoading = false
 }: CalendarViewProps) {
-    const [currentDate, setCurrentDate] = useState(new Date())
+    // Use sessionStorage to persist currentDate across re-renders
+    const getInitialDate = () => {
+        if (typeof window !== 'undefined') {
+            const saved = sessionStorage.getItem('calendar-current-date')
+            if (saved) {
+                return new Date(saved)
+            }
+        }
+        return new Date()
+    }
+
+    const [currentDate, setCurrentDate] = useState(getInitialDate)
     const [viewMode, setViewMode] = useState<"week" | "day">("week")
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    // Track component lifecycle
+    useEffect(() => {
+        return () => {
+            // Cleanup if needed
+        }
+    }, [])
+
+    // Save currentDate to sessionStorage whenever it changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('calendar-current-date', currentDate.toISOString())
+        }
+    }, [currentDate])
 
     // Lấy tuần hiện tại
     const getWeekDays = (date: Date) => {
@@ -77,6 +105,68 @@ export default function CalendarView({
         return week
     }
 
+    // Format date to DD/MM/YYYY for API
+    const formatDateForAPI = (date: Date) => {
+        const day = date.getDate().toString().padStart(2, '0')
+        const month = (date.getMonth() + 1).toString().padStart(2, '0') 
+        const year = date.getFullYear()
+        return `${day}/${month}/${year}`
+    }
+
+    // Get date range for current view and notify parent
+    const updateDateRange = (date: Date) => {
+        if (viewMode === "week") {
+            const weekDays = getWeekDays(date)
+            const from = formatDateForAPI(weekDays[0]) // Monday
+            const to = formatDateForAPI(weekDays[6])   // Sunday
+            onDateRangeChange?.(from, to)
+        } else {
+            // For day view, use single day
+            const singleDay = formatDateForAPI(date)
+            onDateRangeChange?.(singleDay, singleDay)
+        }
+    }
+
+    // Update date range when component mounts or view mode changes
+    React.useEffect(() => {
+        updateDateRange(currentDate)
+    }, [currentDate, viewMode])
+
+    // Tạo range ngày cho appointment nhiều ngày
+    const getMultiDayRange = (fromDate: string, toDate?: string) => {
+        const startDate = new Date(fromDate.split('/').reverse().join('-'))
+        let endDate: Date
+        
+        if (toDate) {
+            // Nếu có toDate, sử dụng nó
+            endDate = new Date(toDate.split('/').reverse().join('-'))
+        } else {
+            // Nếu không có toDate, mặc định là 7 ngày từ startDate
+            endDate = new Date(startDate)
+            endDate.setDate(startDate.getDate() + 6) // 7 ngày (0-6)
+        }
+        
+        const formatDate = (date: Date) => {
+            return date.toLocaleDateString('vi-VN', { 
+                day: '2-digit', 
+                month: '2-digit'
+            })
+        }
+        
+        return `${formatDate(startDate)} - ${formatDate(endDate)}`
+    }
+
+    // Kiểm tra xem appointment có phải là booking nhiều ngày không
+    const isMultiDayBooking = (appointment: Appointment) => {
+        // Kiểm tra nếu from và to có format DD/MM/YYYY (nhiều ngày) thay vì HH:MM (trong ngày)
+        if (appointment.from && appointment.to) {
+            // Nếu chứa dấu '/' thì là date format (DD/MM/YYYY), không phải time format (HH:MM)
+            return appointment.from.includes('/') && appointment.to.includes('/')
+        }
+        // Nếu từ và to đều null thì cũng có thể là booking nhiều ngày
+        return (!appointment.from || !appointment.to)
+    }
+
     // Tạo khung giờ làm việc
     const generateTimeSlots = () => {
         const slots = []
@@ -91,7 +181,7 @@ export default function CalendarView({
 
     const timeSlots = generateTimeSlots()
     const weekDays = getWeekDays(currentDate)
-    
+
     // Constants for calendar layout
     const HOUR_HEIGHT = 64 // Match h-16 class (4rem = 64px)
 
@@ -170,7 +260,8 @@ export default function CalendarView({
     }
 
     const goToToday = () => {
-        setCurrentDate(new Date())
+        const today = new Date()
+        setCurrentDate(today)
     }
 
     // Format date for display
@@ -215,7 +306,7 @@ export default function CalendarView({
                                 <SelectValue placeholder="Chọn studio" />
                             </SelectTrigger>
                             <SelectContent>
-                                {locations.map((location) => (
+                                {locations?.map((location) => (
                                     <SelectItem key={location.id} value={location.id}>
                                         {location.name}
                                     </SelectItem>
@@ -223,26 +314,34 @@ export default function CalendarView({
                             </SelectContent>
                         </Select>
 
-                        {/* View Mode Select */}
-                        <Select value={viewMode} onValueChange={(value: "week" | "day") => setViewMode(value)} disabled={isLoading}>
-                            <SelectTrigger className="w-32 cursor-pointer">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="week">Tuần</SelectItem>
-                                <SelectItem value="day">Ngày</SelectItem>
-                            </SelectContent>
-                        </Select>
+
 
                         {/* Navigation Buttons */}
-                        <div className="flex items-center gap-1">
-                            <Button variant="outline" size="sm" onClick={goToPrevious} className="cursor-pointer" disabled={isLoading}>
+                        <div className="flex items-center gap-1 w-full">
+                            {/* View Mode Select */}
+                            <Select value={viewMode} onValueChange={(value: "week" | "day") => setViewMode(value)} disabled={isLoading}>
+                                <SelectTrigger className="w-32 cursor-pointer">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="week">Tuần</SelectItem>
+                                    <SelectItem value="day">Ngày</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToPrevious()
+                            }} className="cursor-pointer" disabled={isLoading}>
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm" onClick={goToToday} className={`cursor-pointer ${currentDate.toDateString() === (new Date()).toDateString() ? "bg-orange-300 text-white hover:bg-orange-300/100" : ""}`} disabled={isLoading}>
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToToday()
+                            }} className={`cursor-pointer ${currentDate.toDateString() === (new Date()).toDateString() ? "bg-orange-300 text-white hover:bg-orange-300/100" : ""}`} disabled={isLoading}>
                                 Hôm nay
                             </Button>
-                            <Button variant="outline" size="sm" onClick={goToNext} className="cursor-pointer" disabled={isLoading}>
+                            <Button variant="outline" size="sm" onClick={() => {
+                                goToNext()
+                            }} className="cursor-pointer" disabled={isLoading}>
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>
@@ -312,9 +411,11 @@ export default function CalendarView({
                                                         <div className="text-xs font-medium truncate">{appointment.customerName}</div>
                                                         <div className="text-xs opacity-90 truncate">{appointment.service}</div>
                                                         <div className="text-xs opacity-75">
-                                                            {appointment.from && appointment.to
+                                                            {appointment.from && appointment.to && !isMultiDayBooking(appointment)
                                                                 ? `${appointment.from} - ${appointment.to}`
-                                                                : "🗓️ Cả ngày"
+                                                                : isMultiDayBooking(appointment) && appointment.from
+                                                                    ? `🗓️ ${getMultiDayRange(appointment.from, appointment.to || undefined)}`
+                                                                    : "🗓️ Cả ngày"
                                                             }
                                                         </div>
                                                     </div>
@@ -345,9 +446,11 @@ export default function CalendarView({
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-sm font-medium">
-                                                    {appointment.from && appointment.to
+                                                    {appointment.from && appointment.to && !isMultiDayBooking(appointment)
                                                         ? `${appointment.from} - ${appointment.to}`
-                                                        : "Cả ngày"
+                                                        : isMultiDayBooking(appointment) && appointment.from
+                                                            ? getMultiDayRange(appointment.from, appointment.to || undefined)
+                                                            : "Cả ngày"
                                                     }
                                                 </p>
                                                 <Badge
