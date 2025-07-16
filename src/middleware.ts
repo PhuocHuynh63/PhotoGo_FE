@@ -25,8 +25,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.next();
     }
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    
 
+    
     if (!token) {
         const loginUrl = new URL(ROUTES.AUTH.LOGIN, req.url);
         return NextResponse.redirect(loginUrl);
