@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "@components/Organisms/Loading";
 import { ROUTES } from "@routes";
-// import paymentService from "@services/payment";
+import paymentService from "@services/payment";
 
 const PaymentSuccessPage = () => {
     const router = useRouter();
@@ -25,15 +25,15 @@ const PaymentSuccessPage = () => {
             return;
         }
 
-        // const data = {
-        //     status,
-        //     code,
-        //     id: payosId,
-        //     cancel: Boolean(cancel),
-        //     orderCode
-        // };
+        const data = {
+            status,
+            code,
+            id: payosId,
+            cancel: Boolean(cancel),
+            orderCode
+        };
 
-        // const response = await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
+        await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
         // if (response.statusCode === 200) {
         const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
         router.push(ordersUrl);
