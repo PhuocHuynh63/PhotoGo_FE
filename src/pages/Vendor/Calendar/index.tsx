@@ -29,6 +29,9 @@ interface Appointment {
     price: number
     deposit: number
     location: string
+    alreadyPaid: number
+    remain: number
+    total: number
 }
 
 interface WorkingHours {
@@ -88,7 +91,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             setSelectedLocationId(vendorLocations[0].id)
         }
     }, [vendorLocations, selectedLocationId])
-
     // Handle date range change from CalendarView
     const handleDateRangeChange = useCallback((from: string, to: string) => {
         setDateRange({ from, to })
@@ -111,7 +113,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
         setSelectedLocationId(locationId)
         // refetch sẽ tự động được gọi khi selectedLocationId thay đổi
     }
-
     // Helper functions để convert location overview data sang format của UI components
 
     const convertBookingToAppointment = (booking: Booking, slot: Slot): Appointment => {
@@ -144,6 +145,9 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             service: booking.service,
             package: "Gói Tiêu Chuẩn", // Default package
             date: slot.date,
+            alreadyPaid: booking.alreadyPaid,
+            remain: booking.remain,
+            total: booking.total,
             from: formatTime((slot as unknown as { from: string | null }).from), // Access slot.from
             to: formatTime((slot as unknown as { to: string | null }).to), // Access slot.to
             status: mappedStatus,
@@ -191,7 +195,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             slot.bookings.map((booking: Booking) => convertBookingToAppointment(booking, slot))
         )
         : []
-
     const todayAppointments = locationOverview
         ? convertToTodayAppointments(locationOverview.todayBookings)
         : []

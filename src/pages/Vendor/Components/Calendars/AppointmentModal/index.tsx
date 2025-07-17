@@ -16,16 +16,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/Atoms/ui/avata
 import {
     Phone,
     Mail,
-    MapPin,
     Clock,
     DollarSign,
     FileText,
-    Edit,
     Trash2,
     MessageSquare,
     Calendar,
     User,
-    Package,
+    Notebook,
 } from "lucide-react"
 
 interface Appointment {
@@ -42,8 +40,9 @@ interface Appointment {
     status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
     color: string
     notes: string
-    price: number
-    deposit: number
+    alreadyPaid: number
+    remain: number
+    total: number
     location: string
 }
 
@@ -80,21 +79,21 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
         switch (status) {
             case "đã thanh toán":
                 return (
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                    <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">
                         <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
-                        Đã xác nhận
+                        Đã thanh toán
                     </Badge>
                 )
             case "chờ xử lý":
                 return (
-                    <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                    <Badge variant='outline' className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></span>
-                        Chờ xác nhận
+                        Chờ xử lý
                     </Badge>
                 )
             case "đã hủy":
                 return (
-                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+                    <Badge variant='outline' className="bg-red-100 text-red-800 hover:bg-red-100">
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>
                         Đã hủy
                     </Badge>
@@ -104,7 +103,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
         }
     }
 
-    const remainingAmount = appointment.price - appointment.deposit
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -114,7 +112,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         <div>
                             <DialogTitle className="text-xl font-semibold">{appointment.service}</DialogTitle>
                             <DialogDescription className="text-base mt-1">
-                                Mã lịch hẹn: <span className="font-medium">{appointment.id.toUpperCase()}</span>
+                                ID lịch hẹn: <span className="font-medium">{appointment.id.toUpperCase()}</span>
                             </DialogDescription>
                         </div>
                         {getStatusBadge(appointment.status)}
@@ -139,16 +137,12 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Phone className="h-4 w-4" />
                                         <span>{appointment.customerPhone}</span>
-                                        <Button variant="ghost" size="sm" className="h-6 px-2 ml-2 cursor-pointer">
-                                            Gọi
-                                        </Button>
+
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Mail className="h-4 w-4" />
                                         <span>{appointment.customerEmail}</span>
-                                        <Button variant="ghost" size="sm" className="h-6 px-2 ml-2 cursor-pointer">
-                                            Email
-                                        </Button>
+
                                     </div>
                                 </div>
                             </div>
@@ -170,29 +164,15 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
-                                    <Package className="h-4 w-4 text-gray-500" />
-                                    <div>
-                                        <p className="text-sm text-gray-500">Gói dịch vụ</p>
-                                        <p className="font-medium">{appointment.package}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
                                     <Clock className="h-4 w-4 text-gray-500" />
                                     <div>
                                         <p className="text-sm text-gray-500">Thời gian</p>
                                         <p className="font-medium">
-                                            {appointment.from && appointment.to 
+                                            {appointment.from && appointment.to
                                                 ? `${appointment.from} - ${appointment.to}`
                                                 : "Cả ngày"
                                             }
                                         </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <MapPin className="h-4 w-4 text-gray-500" />
-                                    <div>
-                                        <p className="text-sm text-gray-500">Địa điểm</p>
-                                        <p className="font-medium">{appointment.location}</p>
                                     </div>
                                 </div>
                             </div>
@@ -204,11 +184,16 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                         <p className="font-medium">{formatDate(appointment.date)}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <DollarSign className="h-4 w-4 text-gray-500" />
-                                    <div>
-                                        <p className="text-sm text-gray-500">Tổng giá trị</p>
-                                        <p className="font-medium text-lg">{formatCurrency(appointment.price)}</p>
+
+                            </div>
+                            <div className="space-y-3 col-span-1 md:col-span-2">
+                                <div className="flex items-start gap-3">
+                                    <Notebook className="h-4 w-4 text-gray-500 mt-1" />
+                                    <div className="flex-1">
+                                        <p className="text-sm text-gray-500">Ghi chú khách hàng</p>
+                                        <p className="font-medium text-sm leading-relaxed">
+                                            {appointment.notes || "Không có ghi chú"}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -226,15 +211,15 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="p-4 bg-green-50 rounded-lg">
                                 <p className="text-sm text-green-600 font-medium">Đã thanh toán</p>
-                                <p className="text-xl font-bold text-green-700">{formatCurrency(appointment.deposit)}</p>
+                                <p className="text-xl font-bold text-green-700">{formatCurrency(appointment.alreadyPaid)}</p>
                             </div>
                             <div className="p-4 bg-orange-50 rounded-lg">
                                 <p className="text-sm text-orange-600 font-medium">Còn lại</p>
-                                <p className="text-xl font-bold text-orange-700">{formatCurrency(remainingAmount)}</p>
+                                <p className="text-xl font-bold text-orange-700">{formatCurrency(appointment.remain)}</p>
                             </div>
                             <div className="p-4 bg-blue-50 rounded-lg">
                                 <p className="text-sm text-blue-600 font-medium">Tổng cộng</p>
-                                <p className="text-xl font-bold text-blue-700">{formatCurrency(appointment.price)}</p>
+                                <p className="text-xl font-bold text-blue-700">{formatCurrency(appointment.total)}</p>
                             </div>
                         </div>
                     </div>
@@ -258,10 +243,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
 
                 <DialogFooter className="flex flex-col sm:flex-row gap-2">
                     <div className="flex gap-2 flex-1">
-                        <Button variant="outline" className="flex-1 gap-1 cursor-pointer">
-                            <Edit className="h-4 w-4" />
-                            Chỉnh sửa
-                        </Button>
                         <Button variant="outline" className="flex-1 gap-1 text-red-600 hover:text-red-700 cursor-pointer">
                             <Trash2 className="h-4 w-4" />
                             Hủy lịch
