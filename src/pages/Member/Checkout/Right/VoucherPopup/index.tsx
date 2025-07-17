@@ -6,12 +6,12 @@ import { Button } from "@components/Atoms/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/Atoms/ui/dialog"
 import { Input } from "@components/Atoms/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Atoms/ui/tabs"
-import VoucherDetailModal from "../components/VoucherDetail"
 import VoucherCard from "../components/VoucherCard"
 import { useVoucher } from "@utils/hooks/useVoucher"
 import { useCheckoutSession, useFormBooking, useSetFormBooking } from "@stores/checkout/selectors"
 import { VOUCHER } from "@constants/voucher"
 import { IVoucherFilter } from "@models/voucher/common.model"
+import { Skeleton } from "@components/Atoms/ui/skeleton"
 
 interface Voucher {
     id: string
@@ -55,7 +55,14 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
      */
     const [selectedVoucher, setSelectedVoucher] = useState<any | null>(null)
     const handleVoucherSelect = (voucher: any) => {
-        setSelectedVoucher(voucher)
+        if (!voucher.is_valid) {
+            return;
+        }
+        if (selectedVoucher?.voucher.id === voucher.voucher.id) {
+            setSelectedVoucher(null)
+        } else {
+            setSelectedVoucher(voucher)
+        }
     }
     //-------------------------------End------------------------------//
 
@@ -82,7 +89,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         userId: checkoutSessioin?.userId || "",
         current: 1,
         pageSize: 6,
-        status: voucherType,
+        status: VOUCHER.STATUS.AVAILABLE,
         term: searchTerm,
         from: voucherType
     });
@@ -106,6 +113,26 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
             voucherId: selectedVoucher ? selectedVoucher.voucher.id : "",
         });
     }, [selectedVoucher]);
+    //------------------------------End------------------------------//
+
+    /**
+     * VoucherSkeleton component
+     * @returns A skeleton component for loading state.
+     */
+    const VoucherSkeleton = () => (
+        <div className="flex gap-4 p-4 border rounded-xl">
+            <Skeleton className="w-24 h-24 bg-gray-200" />
+            <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/4 bg-gray-200" />
+                <Skeleton className="h-3 w-3/4 bg-gray-200" />
+                <Skeleton className="h-3 w-1/2 bg-gray-200" />
+            </div>
+            <div className="flex flex-col gap-2 justify-between">
+                <Skeleton className="h-8 w-20 bg-gray-200" />
+                <Skeleton className="h-8 w-20 bg-gray-200" />
+            </div>
+        </div>
+    )
     //------------------------------End------------------------------//
 
     return (
@@ -184,7 +211,11 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             </TabsList>
                             <TabsContent value="points" className="mt-2 sm:mt-6 w-full max-w-full">
                                 <div className="space-y-2 sm:space-y-4 w-full max-w-full">
-                                    {vouchers.length > 0 ? (
+                                    {loading ? (
+                                        Array(3).fill(0).map((_, index) => (
+                                            <VoucherSkeleton key={index} />
+                                        ))
+                                    ) : vouchers.length > 0 ? (
                                         vouchers?.map((voucher) => (
                                             <VoucherCard
                                                 key={voucher.voucher.id}
@@ -205,7 +236,11 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                             </TabsContent>
                             <TabsContent value="campaign" className="mt-2 sm:mt-6 w-full max-w-full">
                                 <div className="space-y-2 sm:space-y-4 w-full max-w-full">
-                                    {vouchers.length > 0 ? (
+                                    {loading ? (
+                                        Array(3).fill(0).map((_, index) => (
+                                            <VoucherSkeleton key={index} />
+                                        ))
+                                    ) : vouchers.length > 0 ? (
                                         vouchers.map((voucher: IVoucherFilter) => (
                                             <VoucherCard
                                                 key={voucher.voucher.id}
