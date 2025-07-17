@@ -37,7 +37,9 @@ const vendorService = {
     },
 
     createVendor: async (data: FormData) => {
-        return await http.post("/vendors", data)
+        return await http.post("/vendors", data, {
+            cache: 'no-store'
+        });
     },
 
     getAdminVendors: async (searchParams: URLSearchParams) => {

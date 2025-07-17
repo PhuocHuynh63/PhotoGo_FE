@@ -102,6 +102,7 @@ const ADMIN = {
     SETTINGS: {
         ROOT: '/admin/settings',
         CATEGORIES: '/admin/settings/categories',
+        SERVICE_TYPES: '/admin/settings/serviceType',
         POLICIES: '/admin/settings/policies',
         LOYALTY: '/admin/settings/loyalty',
         SUBSCRIPTIONS: '/admin/settings/subscriptions',

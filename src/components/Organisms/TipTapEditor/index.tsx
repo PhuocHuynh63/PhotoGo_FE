@@ -100,7 +100,7 @@ export default function TipTapEditor({
   return (
     <div className={cn("border rounded-md", className)}>
       {!disabled && (
-        <div className="flex flex-wrap gap-1 p-1 border-b">
+        <div className="flex gap-1 p-1 border-b overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
           <Button
             variant="ghost"
             size="icon"
@@ -111,7 +111,7 @@ export default function TipTapEditor({
           >
             <Bold className="h-4 w-4" />
           </Button>
-          
+
           <Button
             variant="ghost"
             size="icon"
@@ -222,7 +222,7 @@ export default function TipTapEditor({
           </Button>
         </div>
       )}
-      
+
       <EditorContent editor={editor} className="prose prose-sm max-w-none" />
 
       {/* CSS để hiện thị định dạng */}
