@@ -5,10 +5,17 @@ import { METADATA } from "../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 import { IInvoice } from "@models/invoice/common.model";
 import { IInvoiceListResponse } from "@models/invoice/response.model";
+import vendorService from "@services/vendors";
+import { IVendorResponse } from "@models/vendor/response.model";
 
 async function getInvoices(userId: string) {
     const invoices = await invoiceService.getInvoiceByUserId(userId)
     return invoices
+}
+
+async function getLocationsByUserId(userId: string) {
+    const locations = await vendorService.getVendorByUserId(userId)
+    return locations
 }
 
 interface Booking {
@@ -77,9 +84,11 @@ export default async function ProofManagement() {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const invoices = await getInvoices(session.user.id) as IInvoiceListResponse
     const invoicesData = invoices?.data?.data as IInvoice[] || []
+    const vendor = await getLocationsByUserId(session.user.id) as IVendorResponse
+    const locations = vendor.data?.locations || []
     return (
         <>
-            <ProofManagementPage invoices={invoicesData as unknown as Invoice[]} />
+            <ProofManagementPage invoices={invoicesData as unknown as Invoice[]} locations={locations} />
         </>
     )
 }
