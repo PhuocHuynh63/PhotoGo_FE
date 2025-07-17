@@ -23,8 +23,9 @@ export interface Appointment {
     status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
     color: string
     notes: string
-    price: number
-    deposit: number
+    alreadyPaid: number
+    remain: number
+    total: number
     location: string
 }
 
@@ -108,7 +109,7 @@ export default function CalendarView({
     // Format date to DD/MM/YYYY for API
     const formatDateForAPI = (date: Date) => {
         const day = date.getDate().toString().padStart(2, '0')
-        const month = (date.getMonth() + 1).toString().padStart(2, '0') 
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
         const year = date.getFullYear()
         return `${day}/${month}/${year}`
     }
@@ -136,7 +137,7 @@ export default function CalendarView({
     const getMultiDayRange = (fromDate: string, toDate?: string) => {
         const startDate = new Date(fromDate.split('/').reverse().join('-'))
         let endDate: Date
-        
+
         if (toDate) {
             // Nếu có toDate, sử dụng nó
             endDate = new Date(toDate.split('/').reverse().join('-'))
@@ -145,14 +146,14 @@ export default function CalendarView({
             endDate = new Date(startDate)
             endDate.setDate(startDate.getDate() + 6) // 7 ngày (0-6)
         }
-        
+
         const formatDate = (date: Date) => {
-            return date.toLocaleDateString('vi-VN', { 
-                day: '2-digit', 
+            return date.toLocaleDateString('vi-VN', {
+                day: '2-digit',
                 month: '2-digit'
             })
         }
-        
+
         return `${formatDate(startDate)} - ${formatDate(endDate)}`
     }
 

@@ -57,8 +57,8 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                 )
             case "đã thanh toán":
                 return (
-                    <div className="flex items-center justify-center px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs">
-                        <span className="w-2 h-2 rounded-full bg-blue-400 mr-1.5"></span>
+                    <div className="flex items-center justify-center px-3 py-1 rounded-full bg-green-100 text-green-800 hover:bg-green-100 text-xs">
+                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
                         Đã thanh toán
                     </div>
                 )
@@ -89,31 +89,31 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
                             <TabsTrigger
                                 value="all"
-                                className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Tất cả
                             </TabsTrigger>
                             <TabsTrigger
                                 value="chờ xử lý"
-                                className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Chờ xác nhận
                             </TabsTrigger>
                             <TabsTrigger
                                 value="đã thanh toán"
-                                className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã xác nhận
                             </TabsTrigger>
                             <TabsTrigger
                                 value="hoàn thành"
-                                className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Hoàn thành
                             </TabsTrigger>
                             <TabsTrigger
                                 value="đã hủy"
-                                className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã hủy
                             </TabsTrigger>
