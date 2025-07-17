@@ -1,6 +1,6 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { z } from "zod";
-import { ServiceTypeModel } from "./common.model";
+import { ServiceTypeModel, ServiceTypeFilterModel } from "./common.model";
 import { PaginationModel } from "@models/metadata";
 
 /**
@@ -22,3 +22,13 @@ export type IServiceTypesResponse = z.infer<typeof ServiceTypesResponseModel>;
 export const ServiceTypeResponseModel = BackendResponseModel(ServiceTypeModel);
 export type IServiceTypeResponse = z.infer<typeof ServiceTypeResponseModel>;
 //----------------------End----------------------//
+
+export const ServiceTypeFilterResponseModel = z.object({
+    status: z.string(),
+    message : z.string(),
+    data : z.object({
+        data: z.array(ServiceTypeFilterModel),
+        pagination: PaginationModel
+    })
+});
+export type IServiceTypeFilterResponse = z.infer<typeof ServiceTypeFilterResponseModel>;

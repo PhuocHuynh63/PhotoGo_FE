@@ -1,7 +1,7 @@
 import { authOptions } from "@lib/authOptions";
 import { IServicePackagesListResponse } from "@models/servicePackages/response.model";
 import { IServiceTypeModel } from "@models/serviceTypes/common.model";
-import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
+import { IServiceTypesResponse } from "@models/serviceTypes/response.model";
 import SearchPackage from "@pages/Public/Search/SearchPackage";
 import packageServices from "@services/packageServices";
 import { METADATA } from "../../../../../../../types/IMetadata";
