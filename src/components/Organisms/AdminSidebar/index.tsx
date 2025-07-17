@@ -104,6 +104,11 @@ const adminNavItems: SidebarItem[] = [
                 icon: "FolderOpen",
             },
             {
+                title: "Loại dịch vụ",
+                path: ROUTES.ADMIN.SETTINGS.SERVICE_TYPES,
+                icon: "FileText",
+            },
+            {
                 title: "Chính sách",
                 path: ROUTES.ADMIN.SETTINGS.POLICIES,
                 icon: "FileText",

@@ -1,7 +1,7 @@
 // pages/VendorProfile.tsx
 import ServicesPage from "@pages/Vendor/Services";
 import packageService from "@services/packageServices";
-import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
+import { IServiceTypesResponse } from "@models/serviceTypes/response.model";
 import vendorService from "@services/vendors";
 import { IBackendResponse } from "@models/backend/backendResponse.model";
 import { getServerSession } from "next-auth";
