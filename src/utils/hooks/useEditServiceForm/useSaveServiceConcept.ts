@@ -14,6 +14,8 @@ interface ConceptData {
   serviceTypeIds: string[];
   images: File[];
   originalPrice?: number; // Giá gốc từ DB
+  replaceAllImages?: boolean;
+  imagesToDelete: string[];
 }
 
 export function useSaveServiceConcept() {
@@ -46,6 +48,8 @@ export function useSaveServiceConcept() {
       formData.append("servicePackageId", servicePackageId);
       formData.append("serviceTypeIds", (conceptData.serviceTypeIds || []).join(", "));
       formData.append("status", "hoạt động");
+      formData.append("replaceAllImages", conceptData.replaceAllImages ? "true" : "false");
+      formData.append("imagesToDelete", conceptData.imagesToDelete.join(","));
       conceptData.images.forEach((image, idx) => {
         if (idx < 10) formData.append("images", image);
       });

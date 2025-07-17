@@ -1,6 +1,6 @@
 import packageService from "@services/packageServices";
 import ServiceEditForm from "@pages/Vendor/Components/Services/ServiceEditFrom";
-import { IServiceTypesResponse } from "@models/serviceTypes/repsonse.model";
+import { IServiceTypesResponse } from "@models/serviceTypes/response.model";
 
 interface ServiceConceptImage {
     id: string;

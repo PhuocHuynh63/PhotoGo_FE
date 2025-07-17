@@ -1,15 +1,14 @@
 import { z } from "zod";
 
 /** 
- * Model of CampaignRequest
+ * Model of create Campaign
  */
-export const CampaignRequestModel = z.object({
+export const CreateCampaignModel = z.object({
     name: z.string(),
     description: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    status: z.boolean(),
 });
 
-export type ICampaignRequestModel = z.infer<typeof CampaignRequestModel>;
+export type ICreateCampaignModel = z.infer<typeof CreateCampaignModel>;
 

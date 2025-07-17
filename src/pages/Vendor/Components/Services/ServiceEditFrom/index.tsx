@@ -71,6 +71,8 @@ interface ConceptFormData {
     numberOfDays: number;
     serviceTypeIds: string[];
     images: File[];
+    replaceAllImages?: boolean;
+    imagesToDelete?: string[];
 }
 
 interface ServiceEditFormProps {
@@ -152,6 +154,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                 numberOfDays: 1,
                 serviceTypeIds: [],
                 images: [],
+                replaceAllImages: false,
+                imagesToDelete: [],
             }];
         }
 
@@ -169,6 +173,8 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                     (c.serviceConceptServiceTypes?.map((t) => t.serviceTypeId) || [])
                         .concat(c.serviceTypes?.map((t) => t.id) || []),
                 images: [],
+                replaceAllImages: false,
+                imagesToDelete: [],
             };
         });
     });
@@ -179,6 +185,15 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
         }
 
         return initialService.serviceConcepts.map((c) => c.images?.map(img => img.imageUrl) || []);
+    });
+
+    // State để lưu mapping ID của ảnh hiện có với index
+    const [existingImageIds, setExistingImageIds] = useState<string[][]>(() => {
+        if (!initialService?.serviceConcepts || initialService.serviceConcepts.length === 0) {
+            return [[]];
+        }
+
+        return initialService.serviceConcepts.map((c) => c.images?.map(img => img.id) || []);
     });
     const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -268,14 +283,44 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
             return;
         }
 
-        setConcepts((prev) => {
-            const newConcepts = [...prev];
-            newConcepts[conceptIndex] = {
-                ...newConcepts[conceptIndex],
-                images: newConcepts[conceptIndex].images.filter((_, i) => i !== imageIndex),
-            };
-            return newConcepts;
-        });
+        const existingImagesCount = existingImageIds[conceptIndex]?.length || 0;
+
+        // Kiểm tra nếu ảnh này là ảnh có sẵn từ DB (index < số lượng ảnh có sẵn)
+        if (imageIndex < existingImagesCount) {
+            const existingImageId = existingImageIds[conceptIndex][imageIndex];
+            if (existingImageId) {
+                // Thêm ID ảnh vào danh sách cần xóa
+                setConcepts((prev) => {
+                    const newConcepts = [...prev];
+                    const currentImagesToDelete = newConcepts[conceptIndex].imagesToDelete || [];
+                    newConcepts[conceptIndex] = {
+                        ...newConcepts[conceptIndex],
+                        imagesToDelete: [...currentImagesToDelete, existingImageId],
+                    };
+                    return newConcepts;
+                });
+
+                // Xóa ID ảnh khỏi danh sách existingImageIds
+                setExistingImageIds((prev) => {
+                    const newIds = [...prev];
+                    newIds[conceptIndex] = newIds[conceptIndex].filter((_, i) => i !== imageIndex);
+                    return newIds;
+                });
+            }
+        } else {
+            // Đây là ảnh mới upload, xóa khỏi danh sách images
+            const newImageIndex = imageIndex - existingImagesCount;
+            setConcepts((prev) => {
+                const newConcepts = [...prev];
+                newConcepts[conceptIndex] = {
+                    ...newConcepts[conceptIndex],
+                    images: newConcepts[conceptIndex].images.filter((_, i) => i !== newImageIndex),
+                };
+                return newConcepts;
+            });
+        }
+
+        // Xóa preview
         setConceptImagePreviews((prev) => {
             const newPreviews = [...prev];
             newPreviews[conceptIndex] = newPreviews[conceptIndex].filter((_, i) => i !== imageIndex);
@@ -286,9 +331,10 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
     const handleAddConcept = () => {
         setConcepts((prev) => [
             ...prev,
-            { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, conceptRangeType: "một ngày", numberOfDays: 1, serviceTypeIds: [], images: [] },
+            { id: "", name: "", description: "", price: 0, finalPrice: 0, duration: 60, conceptRangeType: "một ngày", numberOfDays: 1, serviceTypeIds: [], images: [], replaceAllImages: false, imagesToDelete: [] },
         ]);
         setConceptImagePreviews((prev) => [...prev, []]);
+        setExistingImageIds((prev) => [...prev, []]);
         setOriginalPrices((prev) => [...prev, 0]);
         setCurrentConceptIndex(concepts.length);
     };
@@ -774,10 +820,56 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                 </Accordion>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2 flex flex-col">
                                 <Label className="text-xl font-semibold text-gray-900">
                                     🖼️ Ảnh gói concept <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
                                 </Label>
+
+                                {/* Toggle để thay thế toàn bộ ảnh */}
+                                {concepts[currentConceptIndex]?.id && (
+                                    <div className="inline-flex items-center mt-2 gap-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg w-fit">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-yellow-800">
+                                                🔄 Thay thế toàn bộ ảnh
+                                            </span>
+                                            <Switch
+                                                checked={concepts[currentConceptIndex]?.replaceAllImages || false}
+                                                onCheckedChange={(checked) => {
+                                                    setConcepts((prev) => {
+                                                        const newConcepts = [...prev];
+                                                        newConcepts[currentConceptIndex] = {
+                                                            ...newConcepts[currentConceptIndex],
+                                                            replaceAllImages: checked,
+                                                        };
+                                                        return newConcepts;
+                                                    });
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-yellow-700">
+                                                {concepts[currentConceptIndex]?.replaceAllImages
+                                                    ? "⚠️ Sẽ xóa tất cả ảnh cũ và thay bằng ảnh mới"
+                                                    : "📝 Chỉ thêm ảnh mới vào danh sách hiện có"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Hiển thị danh sách ảnh sẽ bị xóa */}
+                                {concepts[currentConceptIndex]?.imagesToDelete && concepts[currentConceptIndex]?.imagesToDelete!.length > 0 && (
+                                    <div className="inline-block p-3 bg-red-50 border border-red-200 rounded-lg w-fit">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-sm font-medium text-red-800">
+                                                🗑️ Ảnh sẽ bị xóa ({concepts[currentConceptIndex]?.imagesToDelete!.length})
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-red-700">
+                                            Những ảnh này sẽ bị xóa vĩnh viễn khi bạn lưu concept. Bạn có thể hủy thao tác xóa bằng cách refresh trang.
+                                        </p>
+                                    </div>
+                                )}
+
                                 {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
                                     <div className="grid grid-cols-5 gap-10 my-4">
                                         {conceptImagePreviews[currentConceptIndex].map((preview, index) => (
