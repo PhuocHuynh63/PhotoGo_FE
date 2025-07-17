@@ -8,34 +8,37 @@ interface UseLocationOverviewProps {
 }
 
 export interface Booking {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  service: string;
-  status: string;
-  notes: string;
-  time: string;
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    service: string;
+    status: string;
+    notes: string;
+    time: string;
+    alreadyPaid: number;
+    remain: number;
+    total: number;
 }
 
 export interface Slot {
-  date: string;
-  time: string | null;
-  count: number;
-  bookings: Booking[];
+    date: string;
+    time: string | null;
+    count: number;
+    bookings: Booking[];
 }
 
 export interface Stats {
-  confirmed: number;
-  expectedRevenue: number;
-  pending: number;
-  total: number;
+    confirmed: number;
+    expectedRevenue: number;
+    pending: number;
+    total: number;
 }
 
 export interface LocationOverviewData {
-  slots: Slot[];
-  stats: Stats;
-  todayBookings: Booking[];
+    slots: Slot[];
+    stats: Stats;
+    todayBookings: Booking[];
 }
 
 export function useLocationOverview({ locationId, from, to }: UseLocationOverviewProps) {
