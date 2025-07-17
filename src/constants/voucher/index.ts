@@ -7,8 +7,9 @@ enum VOUCHER_STATUS {
 }
 
 enum VOUCHER_TYPE {
-    POINT = 'điểm',
+    POINT = 'đổi điểm',
     CAMPAIGN = 'chiến dịch',
+    WHEEL = 'vòng quay may mắn',
 }
 
 enum VOUCHER_DISCOUNT_TYPE {
