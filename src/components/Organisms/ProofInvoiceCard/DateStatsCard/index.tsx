@@ -29,7 +29,7 @@ export default function DateStatsCard({ selectedDate, onDateChange, needsProofCo
                     //     disabled: (date: Date) => date > new Date(),
                     // }}
                     />
-                    <p className="text-xs text-muted-foreground mt-1">{formatDate(selectedDateStr)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{(selectedDateStr)}</p>
                 </CardContent>
             </Card>
             <Card>
