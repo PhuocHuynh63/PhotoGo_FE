@@ -5,72 +5,13 @@ import { Badge } from "@components/Atoms/ui/badge"
 import { Button } from "@components/Atoms/ui/button"
 import { Card, CardContent } from "@components/Atoms/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@components/Atoms/ui/dialog"
-import { FileText, Phone, Mail, Package, DollarSign, Clock, Calendar, CheckCircle, Camera, Eye, ImagePlus, Trash2, X, Upload } from "lucide-react"
+import { FileText, Phone, Mail, Package, Clock, Calendar, CheckCircle, Camera, Eye, ImagePlus, Trash2, X, Upload } from "lucide-react"
 import { Input } from "@components/Atoms/ui/input"
 import { Label } from "@components/Atoms/ui/label"
 import React from "react"
 import toast from "react-hot-toast"
-
-interface Booking {
-    id: string
-    userId: string
-    locationId: string
-    serviceConceptId: string
-    date: string
-    time?: string
-    status?: string
-    sourceType?: string
-    sourceId?: string | null
-    depositAmount?: string | number
-    depositType?: string
-    userNote?: string
-    fullName?: string
-    phone?: string
-    email?: string
-    code?: string
-    priorityScore?: string
-    created_at?: string
-    updated_at?: string
-}
-
-interface Payment {
-    id: string
-    invoiceId: string
-    amount: string
-    paymentOSId: string
-    paymentMethod: string
-    status: string
-    type: string
-    transactionId: string
-    description: string
-    createdAt: string
-    updatedAt: string
-}
-
-interface Invoice {
-    id: string
-    bookingId: string
-    voucherId?: string | null
-    originalPrice: number
-    discountAmount: number
-    discountedPrice: number
-    taxAmount: number
-    feeAmount: number
-    payablePrice: number
-    depositAmount: number
-    remainingAmount: number
-    paidAmount: number
-    status: string
-    issuedAt: string
-    updatedAt: string
-    booking: Booking
-    payments: Payment[]
-    vendorId: string
-    proofImages?: string[]
-    proofNotes?: string
-    proofUploadedAt?: string
-    needsProof?: boolean
-}
+import albumVendorService from "@services/albumVendor"
+import { type Invoice, type ApiResponse } from "@utils/hooks/useAlbumData"
 
 interface ProofInvoiceCardProps {
     invoice: Invoice;
@@ -82,14 +23,14 @@ interface ProofInvoiceCardProps {
     formatDateTime: (dateTimeStr: string) => string;
     getStatusColor: (status: string) => string;
     getPaymentStatusColor: (status: string) => string;
+    onUploadSuccess?: () => void;
 }
 
-export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal, formatCurrency, formatDate, formatTime, formatDateTime, getStatusColor, getPaymentStatusColor }: ProofInvoiceCardProps) {
+export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal, formatDate, formatTime, formatDateTime, getStatusColor, getPaymentStatusColor, onUploadSuccess }: ProofInvoiceCardProps) {
     const [photos, setPhotos] = React.useState<File[]>([])
     const [behindTheScenes, setBehindTheScenes] = React.useState<File[]>([])
     const [driveLink, setDriveLink] = React.useState("")
     const [isUploading, setIsUploading] = React.useState(false)
-
     const removePhoto = (index: number) => {
         setPhotos((prev) => prev.filter((_, i) => i !== index))
     }
@@ -111,6 +52,13 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
             toast.error("Vui lòng thêm ít nhất một ảnh hoặc link Google Drive")
             return
         }
+        const album = await albumVendorService.getAlbumByBookingId(invoice.bookingId, 1, 10, "createdAt", "DESC") as ApiResponse
+        const albumId = album?.data?.data[0]?.id
+
+        if (!albumId) {
+            toast.error("Không tìm thấy album cho booking này")
+            return
+        }
 
         setIsUploading(true)
         try {
@@ -118,7 +66,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
 
             // Add required fields
             formData.append('locationId', invoice.booking.locationId)
-            formData.append('userId', invoice.booking.userId)
+
 
             // Add optional Google Drive link
             if (driveLink.trim()) {
@@ -135,17 +83,24 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                 formData.append('behindTheScenes', file)
             })
 
-            // TODO: Replace with actual API call
-            // const response = await uploadProofAPI(formData)
-            await new Promise((resolve) => setTimeout(resolve, 2000))
+            // Call actual API
+            const response = await albumVendorService.uploadAlbum(albumId, formData)
 
-            toast.success(`Đã upload thành công bằng chứng cho đơn ${uploadModal.invoice!.booking?.code || uploadModal.invoice!.booking.id}`)
-            setPhotos([])
-            setBehindTheScenes([])
-            setDriveLink("")
-            setUploadModal({ open: false })
-        } catch {
-            toast.error("Có lỗi xảy ra khi upload ảnh")
+            if (response && typeof response === 'object' && 'data' in response) {
+                toast.success(`Đã upload thành công bằng chứng cho đơn ${uploadModal.invoice!.booking?.code || uploadModal.invoice!.booking.id}`)
+                setPhotos([])
+                setBehindTheScenes([])
+                setDriveLink("")
+                setUploadModal({ open: false })
+                // Refresh data after successful upload
+                onUploadSuccess?.()
+            } else {
+                throw new Error('Upload failed')
+            }
+        } catch (error: unknown) {
+            console.error('Upload error:', error)
+            const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi upload ảnh'
+            toast.error(errorMessage)
         } finally {
             setIsUploading(false)
         }
@@ -202,15 +157,15 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         ID: {invoice?.booking?.serviceConceptId.substring(0, 8)}...
                                     </p>
                                 </div>
-                                <div className="space-y-1">
+                                {/* <div className="space-y-1">
                                     <p className="flex items-center gap-1 font-medium">
-                                        <DollarSign className="h-3 w-3" />
+                                        <Coins className="h-3 w-3" />
                                         {formatCurrency(invoice?.payablePrice)}
                                     </p>
                                     <p className="text-muted-foreground text-xs">
                                         Đã trả: {formatCurrency(invoice?.paidAmount)}
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex items-center gap-2 flex-wrap">
                                 <Badge variant="outline" className={getStatusColor(invoice?.booking?.status || invoice?.status)}>{invoice?.booking.status || invoice?.status}</Badge>
@@ -335,7 +290,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                                                     alt={`Photo ${index + 1}`}
                                                                     className="w-full h-32 object-cover rounded-lg border-2 border-green-200"
                                                                 />
-                                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
+                                                                <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
                                                                     <Button
                                                                         size="sm"
                                                                         variant="destructive"
@@ -411,7 +366,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                                                     alt={`Behind scenes ${index + 1}`}
                                                                     className="w-full h-32 object-cover rounded-lg border-2 border-purple-200"
                                                                 />
-                                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
+                                                                <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
                                                                     <Button
                                                                         size="sm"
                                                                         variant="destructive"
@@ -492,24 +447,111 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-6">
-                                        {invoice?.proofImages && invoice?.proofImages.length > 0 && (
+                                        {/* Drive Link */}
+                                        {invoice?.driveLink && (
+                                            <div>
+                                                <Label className="text-base font-medium mb-3 block">Link Google Drive</Label>
+                                                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                                    <a
+                                                        href={invoice.driveLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:text-blue-800 underline break-all"
+                                                    >
+                                                        {invoice.driveLink}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Main Photos */}
+                                        {invoice?.photos && invoice?.photos.length > 0 && (
+                                            <div>
+                                                <Label className="text-base font-medium mb-3 block">
+                                                    Ảnh chính ({invoice?.photos.length} ảnh)
+                                                </Label>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {invoice?.photos.map((image, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={image || "/placeholder.svg"}
+                                                                alt={`Photo ${index + 1}`}
+                                                                className="w-full h-32 object-cover rounded-lg border-2 border-green-200 hover:scale-105 transition-transform cursor-pointer"
+                                                                onClick={() => window.open(image, "_blank")}
+                                                                onError={(e) => {
+                                                                    console.error('Error loading image:', image);
+                                                                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Behind The Scenes */}
+                                        {invoice?.behindTheScenes && invoice?.behindTheScenes.length > 0 && (
+                                            <div>
+                                                <Label className="text-base font-medium mb-3 block">
+                                                    Behind the scenes ({invoice?.behindTheScenes.length} ảnh)
+                                                </Label>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {invoice?.behindTheScenes.map((image, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={image || "/placeholder.svg"}
+                                                                alt={`Behind scenes ${index + 1}`}
+                                                                className="w-full h-32 object-cover rounded-lg border-2 border-purple-200 hover:scale-105 transition-transform cursor-pointer"
+                                                                onClick={() => window.open(image, "_blank")}
+                                                                onError={(e) => {
+                                                                    console.error('Error loading behind scenes image:', image);
+                                                                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Fallback to proofImages for backwards compatibility */}
+                                        {(!invoice?.photos || invoice?.photos.length === 0) && invoice?.proofImages && invoice?.proofImages.length > 0 && (
                                             <div>
                                                 <Label className="text-base font-medium mb-3 block">
                                                     Ảnh bằng chứng ({invoice?.proofImages.length} ảnh)
                                                 </Label>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                     {invoice?.proofImages.map((image, index) => (
-                                                        <img
-                                                            key={index}
-                                                            src={image || "/placeholder.svg"}
-                                                            alt={`Proof ${index + 1}`}
-                                                            className="w-full h-32 object-cover rounded-lg border hover:scale-105 transition-transform cursor-pointer"
-                                                            onClick={() => window.open(image, "_blank")}
-                                                        />
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={image || "/placeholder.svg"}
+                                                                alt={`Proof ${index + 1}`}
+                                                                className="w-full h-32 object-cover rounded-lg border hover:scale-105 transition-transform cursor-pointer"
+                                                                onClick={() => window.open(image, "_blank")}
+                                                                onError={(e) => {
+                                                                    console.error('Error loading proof image:', image);
+                                                                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                                                                }}
+                                                            />
+                                                        </div>
                                                     ))}
                                                 </div>
                                             </div>
                                         )}
+
+                                        {/* No Images Message */}
+                                        {(!invoice?.photos || invoice?.photos.length === 0) &&
+                                            (!invoice?.behindTheScenes || invoice?.behindTheScenes.length === 0) &&
+                                            (!invoice?.proofImages || invoice?.proofImages.length === 0) &&
+                                            !invoice?.driveLink && (
+                                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
+                                                    <p className="text-yellow-800 font-medium">Chưa có ảnh bằng chứng nào được upload</p>
+                                                    <p className="text-yellow-600 text-sm mt-1">
+                                                        Vendor chưa upload ảnh hoặc link Google Drive cho booking này
+                                                    </p>
+                                                </div>
+                                            )}
+
                                         {invoice?.proofNotes && (
                                             <div>
                                                 <Label className="text-base font-medium mb-2 block">Ghi chú</Label>

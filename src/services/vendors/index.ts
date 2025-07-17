@@ -1,5 +1,4 @@
 import http from "@configs/fetch"
-import { IVendorCreateRequest } from "@models/vendor/request.model"
 
 const vendorService = {
     getVendorsWithFilter: async (searchParams: URLSearchParams) => {
