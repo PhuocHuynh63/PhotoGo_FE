@@ -70,6 +70,9 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
         if (selectedVoucher) {
             onVoucherSelect?.(selectedVoucher)
             setIsOpen(false)
+        } else {
+            onVoucherSelect?.(null)
+            setIsOpen(false)
         }
     }
 
