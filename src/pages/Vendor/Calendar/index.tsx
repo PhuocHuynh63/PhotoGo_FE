@@ -41,7 +41,6 @@ interface WorkingHours {
 export default function CalendarManagement({ vendorId }: { vendorId: string | undefined }) {
     const [viewMode, setViewMode] = useState<"calendar" | "appointments">("calendar")
     const [selectedLocationId, setSelectedLocationId] = useState<string>("")
-
     // Get current week range (Monday to Sunday)
     const getCurrentWeekRange = () => {
         const today = new Date()
@@ -107,7 +106,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
         from: dateRange.from, // Sử dụng state thay vì hardcode
         to: dateRange.to      // Sử dụng state thay vì hardcode
     })
-
     // Handle location change
     const handleLocationChange = (locationId: string) => {
         setSelectedLocationId(locationId)
