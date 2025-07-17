@@ -15,6 +15,8 @@ interface ServiceConceptSaveButtonProps {
         numberOfDays: number;
         serviceTypeIds: string[];
         images: File[];
+        replaceAllImages?: boolean;
+        imagesToDelete?: string[];
     };
     originalPrice?: number;
     servicePackageId: string;
@@ -24,7 +26,6 @@ interface ServiceConceptSaveButtonProps {
 
 export default function ServiceConceptSaveButton({ conceptData, originalPrice, servicePackageId, onSuccess, onError }: ServiceConceptSaveButtonProps) {
     const { saveServiceConcept, isLoading, error } = useSaveServiceConcept();
-    console.log(conceptData)
     const validateConceptData = (): { isValid: boolean; errors: string[] } => {
         const errors: string[] = [];
 
@@ -80,7 +81,9 @@ export default function ServiceConceptSaveButton({ conceptData, originalPrice, s
 
         const conceptDataWithOriginalPrice = {
             ...conceptData,
-            originalPrice
+            originalPrice,
+            replaceAllImages: conceptData.replaceAllImages || false,
+            imagesToDelete: conceptData.imagesToDelete || []
         };
 
         const result = await saveServiceConcept(conceptDataWithOriginalPrice, servicePackageId);
