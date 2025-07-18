@@ -189,6 +189,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const currentStatusIndex = completedStatuses.length - 1
 
     const qrURL = 'https://photogo.id.vn/booking/' + data.code
+    console.log(data);
 
     /**
      * Fetch vendor albums by booking ID using custom hook
@@ -266,6 +267,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                 <TimelineCard
                     isVisible={isVisible["timeline-card"]}
                     allPossibleStatuses={allPossibleStatuses}
+                    status={mockOrderData.status}
                     completedStatuses={completedStatuses}
                     currentStatusIndex={currentStatusIndex}
                 />
