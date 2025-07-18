@@ -3,6 +3,7 @@ import { Card, CardContent } from '@components/Atoms/ui/card';
 import { Badge } from '@components/Atoms/ui/badge';
 import LucideIcon from '@components/Atoms/LucideIcon';
 import { Button } from '@components/Atoms/Button/Button';
+import { useRouter } from 'next/navigation';
 
 interface CampaignCardProps {
     campaign: ICampaign;
@@ -34,7 +35,8 @@ const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('vi-VN');
 };
 
-export default function CampaignCard({ campaign, onEdit }: CampaignCardProps) {
+export default function CampaignCard({ campaign }: CampaignCardProps) {
+    const router = useRouter();
     if (!campaign) return null; // Tránh lỗi khi campaign bị undefined
     return (
         <Card className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer relative">
@@ -83,17 +85,15 @@ export default function CampaignCard({ campaign, onEdit }: CampaignCardProps) {
                 </div>
                 <div className="border-t pt-2 mt-2 flex items-center justify-between text-xs text-gray-500">
                     <span>Kết thúc: {formatDate(campaign.endDate)}</span>
-                    {onEdit && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                            className="h-8 w-8 p-0 hover:bg-gray-100"
-                            aria-label="Chỉnh sửa"
-                        >
-                            <LucideIcon name="Edit" iconSize={18} />
-                        </Button>
-                    )}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => { e.stopPropagation(); router.push(`/admin/campaigns/${campaign.id}`); }}
+                        className="h-8 w-8 p-0 hover:bg-gray-100"
+                        aria-label="Chỉnh sửa"
+                    >
+                        <LucideIcon name="Edit" iconSize={18} />
+                    </Button>
                 </div>
             </CardContent>
         </Card>

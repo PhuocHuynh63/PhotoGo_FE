@@ -16,4 +16,12 @@ export const CampaignDataModel = z.object({
 
 export type ICampaignResponseModel = z.infer<typeof CampaignDataModel>;
 
+export const CampaignDetailModel = z.object({
+    statusCode: z.number(),
+    message: z.string(),
+    data: z.object({
+      data: CampaignModel,
+    }),
+});
 
+export type ICampaignDetailModel = z.infer<typeof CampaignDetailModel>;
