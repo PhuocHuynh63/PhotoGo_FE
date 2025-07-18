@@ -9,7 +9,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /home/root/nginx/certbot/conf:/home/root/nginx/certbot/conf:ro
       - ./certbot/www:/var/www/certbot
     networks:
       - photogo-network
