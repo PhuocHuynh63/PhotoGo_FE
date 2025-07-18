@@ -38,14 +38,6 @@ export const useVoucher = ({ userId, current, pageSize, status, from, term }: Us
             setError(null);
 
             try {
-                console.log('Fetching vouchers with params:', {
-                    userId,
-                    fetchCurrent,
-                    fetchPageSize,
-                    fetchStatus,
-                    fetchTerm,
-                    fetchFrom,
-                });
                 const response = await voucherService.getVoucher(
                     userId,
                     fetchCurrent,
@@ -56,10 +48,7 @@ export const useVoucher = ({ userId, current, pageSize, status, from, term }: Us
                     'maxPrice',
                     'asc',
                 ) as IVoucherResponseModel;
-
-                console.log('Fetched vouchers:', response);
-
-
+                
                 const data = Array.isArray(response.data?.data)
                     ? (response.data.data as IVoucherFilter[])
                     : [];

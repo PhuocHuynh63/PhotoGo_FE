@@ -6,7 +6,7 @@ import { IBookingFormRequest } from '@models/booking/request.model'
 import { IServiceConcept } from '@models/serviceConcepts/common.model'
 import { IServicePackage } from '@models/servicePackages/common.model'
 import { useFormBooking, useSelectedDeposit } from '@stores/checkout/selectors'
-import { useServiceConcept, useServicePackage } from '@stores/vendor/selectors'
+import { useServiceConcept, useServicePackage, useSetAddressLocation } from '@stores/vendor/selectors'
 import { Calendar, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
@@ -44,9 +44,6 @@ const SummaryInformation = () => {
         depositType: VOUCHER.DISCOUNT_TYPE.PERCENT
     });
     //----------------------End----------------------//
-
-
-    console.log('formBooking', formBooking);
 
     return (
         <>

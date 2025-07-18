@@ -6,9 +6,11 @@ interface HeroSectionProps {
   isVisible?: boolean;
   image: string;
   firstName: string;
+  addressLocation: string;
+  studioName: string;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ isVisible, image, firstName }) => (
+const HeroSection: React.FC<HeroSectionProps> = ({ isVisible, image, firstName, addressLocation, studioName }) => (
   <div
     id="hero-section"
     data-animate
@@ -27,8 +29,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isVisible, image, firstName }
       }}
     />
     <div className="absolute bottom-0 left-0 p-8 text-white">
-      <h1 className="text-4xl md:text-6xl font-extrabold">{`Chào, ${firstName}!`}</h1>
-      <p className="text-lg md:text-xl mt-2 opacity-90">Hẹn gặp bạn tại studio!</p>
+      <h1 className="text-4xl md:text-6xl font-extrabold">Chào, {firstName}!</h1>
+      <p className="text-sm md:text-xl mt-2 opacity-90">Hẹn gặp bạn tại {studioName}!</p>
+      <p className="text-sm md:text-sm mt-2 text-gray-200 opacity-90">Địa chỉ: {addressLocation}</p>
     </div>
   </div>
 );

@@ -1,4 +1,5 @@
 
+import { LocationModel } from "@models/location/common.model";
 import { z } from "zod";
 
 /**
@@ -42,6 +43,7 @@ export const BookingDetailModel = z.object({
     id: z.string(),
     userId: z.string(),
     locationId: z.string(),
+    location: LocationModel.optional(),
     serviceConceptId: z.string(),
     date: z.string(), // Format: DD/MM/YYYY
     time: z.string(),
