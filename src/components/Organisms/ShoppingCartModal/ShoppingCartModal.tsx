@@ -187,8 +187,8 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
     )
 
     const handleCheckout = () => {
-        if (selectedItems.length === 0) {
-            toast.error("Vui lòng chọn dịch vụ để thanh toán");
+        if (selectedItems.length !== 1) {
+            toast.error("Vui lòng chọn đúng 1 dịch vụ để thanh toán");
             return;
         }
 
@@ -354,7 +354,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                                 <Button
                                     className="flex-1 bg-primary text-white"
                                     onClick={handleCheckout}
-                                    disabled={selectedItems.length === 0}
+                                    disabled={selectedItems.length !== 1}
                                 >
                                     Thanh toán
                                 </Button>
