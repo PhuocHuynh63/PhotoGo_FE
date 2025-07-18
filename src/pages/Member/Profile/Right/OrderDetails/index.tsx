@@ -13,6 +13,7 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import AblumAfterShoot from "./components/AlbumAfterShoot";
+import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 
 
 const mockOrderData: IBookingDetail = {
@@ -186,6 +187,32 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const currentStatusIndex = completedStatuses.length - 1
 
     const qrURL = 'https://photogo.id.vn/booking/' + data.code
+    console.log(booking, 'booking data in OrderDetails component');
+
+
+    /**
+     * Fetch vendor albums by booking ID using custom hook
+     * This will retrieve albums related to the booking, including photos and behind-the-scenes content.
+     */
+    const { vendorAlbums, fetchVendorAlbumsByBookingId } = useVendorAlbumsByBookingId({
+        bookingId: data.id,
+    })
+
+    useEffect(() => {
+        if (data.id) {
+            fetchVendorAlbumsByBookingId()
+        }
+    }, [data.id, fetchVendorAlbumsByBookingId])
+
+    const albumPhotos = vendorAlbums.map((album: any) => ({
+        id: album.id,
+        bookingId: album.bookingId,
+        photos: album.photos,
+        behindTheScenes: album.behindTheScenes,
+        driveLink: album.driveLink,
+        vendorAlbum: album.vendorAlbum,
+    }))
+    //-------------------------End--------------------//
 
     return (
         <motion.div
