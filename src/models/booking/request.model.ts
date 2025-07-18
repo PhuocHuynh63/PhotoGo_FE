@@ -1,3 +1,4 @@
+import { LocationModel } from "@models/location/common.model";
 import { z } from "zod";
 
 /**
@@ -15,6 +16,7 @@ export const BookingFormRequest = z.object({
         errorMap: () => ({ message: "Source type must be one of web, app, facebook, or titok" }),
     }),
     locationId: z.string(),
+    location: LocationModel.optional(),
     depositAmount: z.number(),
     // method: z.enum(["payos"], {
     //     errorMap: () => ({ message: "Payment method is required" }),
