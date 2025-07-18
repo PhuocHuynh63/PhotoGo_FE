@@ -205,14 +205,8 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
         }
     }, [data.id, fetchVendorAlbumsByBookingId])
 
-    const albumPhotos = vendorAlbums.map((album: any) => ({
-        id: album.id,
-        bookingId: album.bookingId,
-        photos: album.photos,
-        behindTheScenes: album.behindTheScenes,
-        driveLink: album.driveLink,
-        vendorAlbum: album.vendorAlbum,
-    }))
+    console.log('vendorAlbums', vendorAlbums);
+        
     //-------------------------End--------------------//
 
     /**

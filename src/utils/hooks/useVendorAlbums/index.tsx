@@ -20,7 +20,7 @@ export const useVendorAlbumsByBookingId = ({ bookingId }: { bookingId: string })
                     bookingId,
                 ) as IVendorAlbumsByBookingIdResponse;
 
-                setVendorAlbums(response.data?.data || []);
+                setVendorAlbums(response.data || []);
 
             } catch (err) {
                 console.error('Error fetching vendor albums:', err);
