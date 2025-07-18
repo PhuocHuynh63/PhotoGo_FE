@@ -45,9 +45,10 @@ interface TimelineCardProps {
     allPossibleStatuses: string[];
     completedStatuses: string[];
     currentStatusIndex: number;
+    status: string;
 }
 
-const TimelineCard: React.FC<TimelineCardProps> = ({ isVisible, allPossibleStatuses, completedStatuses, currentStatusIndex }) => (
+const TimelineCard: React.FC<TimelineCardProps> = ({ isVisible, allPossibleStatuses, completedStatuses, currentStatusIndex, status }) => (
     <div
         id="timeline-card"
         data-animate
@@ -55,15 +56,17 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ isVisible, allPossibleStatu
     >
         <h3 className="text-2xl font-bold mb-8 text-center text-gray-800">Lộ trình thực hiện</h3>
         <div className="flex justify-between items-start">
-            {allPossibleStatuses?.map((status, index) => {
-                const isCompleted = completedStatuses?.includes(status);
+            {allPossibleStatuses?.map((itemStatus, index) => {
+                const isCompleted = completedStatuses?.includes(itemStatus);
                 const isActive = index === currentStatusIndex;
-                const iconBg = isCompleted
-                    ? "bg-gradient-to-br from-yellow-400 to-amber-500 text-white"
-                    : "bg-gray-200 text-gray-500";
+                const iconBg = isActive
+                    ? "bg-gradient-to-br from-yellow-400 to-amber-500 text-white shadow-lg ring-4 ring-yellow-400 animate-pulse"
+                    : isCompleted
+                        ? "bg-gradient-to-br from-yellow-400 to-amber-500 text-white"
+                        : "bg-gray-200 text-gray-500";
 
                 return (
-                    <div key={status} className="relative flex-1">
+                    <div key={itemStatus} className="relative flex-1">
                         {index > 0 && (
                             <motion.div
                                 initial={{
@@ -83,20 +86,17 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ isVisible, allPossibleStatu
                         )}
                         <div className="flex flex-col items-center">
                             <div className="relative">
-                                {isActive && (
-                                    <div className="absolute inset-0 w-11 h-11 rounded-full ring-4 ring-yellow-200 animate-pulse transition-all duration-300 ease-out scale-110" />
-                                )}
                                 <div
-                                    className={`w-11 h-11 rounded-full flex items-center justify-center relative z-10 border-4 border-[#fdfdfd] transition-all duration-500 ${iconBg} ${isActive ? "ring-4 ring-yellow-200" : ""}`}
+                                    className={`w-11 h-11 rounded-full flex items-center justify-center relative z-10 border-4 border-[#fdfdfd] transition-all duration-500 ${iconBg}`}
                                 >
-                                    {ICONS[status as keyof typeof ICONS]}
+                                    {ICONS[itemStatus as keyof typeof ICONS]}
                                 </div>
                             </div>
                             <div className="mt-3 text-center">
                                 <p
-                                    className={`font-semibold text-sm capitalize ${isCompleted ? "text-gray-800" : "text-gray-400"}`}
+                                    className={`font-semibold text-sm capitalize ${isActive ? "text-yellow-600" : isCompleted ? "text-gray-800" : "text-gray-400"} ${isActive ? "font-extrabold" : ""}`}
                                 >
-                                    {status}
+                                    {itemStatus}
                                 </p>
                             </div>
                         </div>
