@@ -15,6 +15,7 @@ import { ArrowLeft } from "lucide-react"
 import AblumAfterShoot from "./components/AlbumAfterShoot";
 import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
+import { albumComponent } from "@constants/vendorAlbums";
 
 
 const mockOrderData: IBookingDetail = {
@@ -188,14 +189,12 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const currentStatusIndex = completedStatuses.length - 1
 
     const qrURL = 'https://photogo.id.vn/booking/' + data.code
-    console.log(booking, 'booking data in OrderDetails component');
-
 
     /**
      * Fetch vendor albums by booking ID using custom hook
      * This will retrieve albums related to the booking, including photos and behind-the-scenes content.
      */
-    const { vendorAlbums, fetchVendorAlbumsByBookingId } = useVendorAlbumsByBookingId({
+    const { vendorAlbums, loading, fetchVendorAlbumsByBookingId } = useVendorAlbumsByBookingId({
         bookingId: data.id,
     })
 
@@ -204,9 +203,6 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
             fetchVendorAlbumsByBookingId()
         }
     }, [data.id, fetchVendorAlbumsByBookingId])
-
-    console.log('vendorAlbums', vendorAlbums);
-        
     //-------------------------End--------------------//
 
     /**
@@ -275,13 +271,19 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                 />
 
                 <AblumAfterShoot
+                    id={albumComponent.ALBUM_AFTER_SHOOT}
                     title="Album ảnh của bạn"
-                    subTitle="Cảm ơn bạn đã tin tưởng Gạo Nâu Studio. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!"
+                    subTitle={`Cảm ơn bạn đã tin tưởng ${booking?.location?.vendor?.name}. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!`}
+                    isLoading={loading}
+                    vendorAlbums={vendorAlbums}
                 />
 
                 <AblumAfterShoot
+                    id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
                     title="Khoảnh khắc hậu trường"
                     subTitle="Cùng nhìn lại những khoảnh khắc hậu trường thú vị nhé."
+                    isLoading={loading}
+                    vendorAlbums={vendorAlbums}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

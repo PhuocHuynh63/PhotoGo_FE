@@ -40,8 +40,15 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
             </h3>
             <p className="text-gray-500 mb-6">
                 {isMultiDay
-                    ? `Dịch vụ sẽ bắt đầu từ ngày ${bookingDate}. Chúng tôi rất mong được đón tiếp bạn.`
-                    : `Buổi chụp vào lúc ${bookingTime} ngày ${bookingDate}. Chúng tôi rất mong được đón tiếp bạn.`
+                    ?
+                    <>
+                        Dịch vụ sẽ bắt đầu từ ngày <strong>{bookingDate}</strong>. Chúng tôi rất mong được đón tiếp bạn.
+                    </>
+                    : (
+                        <>
+                            Buổi chụp vào lúc <strong>{bookingTime}</strong> ngày <strong>{bookingDate}</strong>. Chúng tôi rất mong được đón tiếp bạn.
+                        </>
+                    )
                 }
             </p>
 
