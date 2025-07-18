@@ -59,25 +59,76 @@ export default function Right({ vendors }: { vendors: IVendorsData }) {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
             >
-                <h2 className="text-3xl font-medium pb-2">Kết quả tìm kiếm</h2>
-                <p className="text-sm text-gray-500">Tìm thấy <span className="font-medium">{resultCount}</span> kết quả</p>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-3xl font-medium pb-2">Kết quả tìm kiếm</h2>
+                        <p className="text-sm text-gray-500">Tìm thấy <span className="font-medium">{resultCount}</span> kết quả</p>
+                    </div>
+                </div>
             </motion.div>
 
             {!vendors ? (
                 <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4`}>
-                    {[...Array(6)].map((_, index) => (
-                        <div key={index} className="border-3 rounded-lg overflow-hidden">
-                            <Skeleton className="h-60 w-full" />
-                            <div className="p-3">
-                                <Skeleton className="h-6 w-3/4 mb-2" />
-                                <Skeleton className="h-4 w-1/2 mb-4" />
-                                <Skeleton className="h-4 w-1/4 mb-2" />
-                                <div className="flex justify-between items-center">
-                                    <Skeleton className="h-4 w-1/3" />
-                                    <Skeleton className="h-8 w-20" />
+                    {Array.from({ length: 6 }).map((_, index) => (
+                        <motion.div
+                            key={index}
+                            className="border-3 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                        >
+                            {/* Featured badge skeleton */}
+                            <div className="relative">
+                                {/* Occasional featured badge */}
+                                {index % 3 === 0 && (
+                                    <div className="absolute top-2 left-2 z-10">
+                                        <div className="h-6 w-16 rounded-full animate-shimmer" />
+                                    </div>
+                                )}
+
+                                {/* Image skeleton with shimmer */}
+                                <div className="relative h-60 border-b-2 animate-shimmer rounded-t-lg overflow-hidden">
                                 </div>
                             </div>
-                        </div>
+
+                            <div className="p-3 space-y-3">
+                                {/* Title and location skeleton */}
+                                <div className="flex justify-between items-start gap-3">
+                                    <div className="flex-1 space-y-2">
+                                        {/* Vendor name - 2 lines with different widths */}
+                                        <div className="space-y-2">
+                                            <div className="h-5 w-full rounded animate-shimmer" />
+                                            <div className="h-5 w-2/3 rounded animate-shimmer" />
+                                        </div>
+                                        {/* Location with icon space */}
+                                        <div className="flex items-center space-x-1">
+                                            <div className="h-3 w-3 rounded animate-shimmer" />
+                                            <div className="h-3 w-3/4 rounded animate-shimmer" />
+                                        </div>
+                                    </div>
+                                    {/* Distance badge */}
+                                    <div className="h-7 w-14 rounded-full flex-shrink-0 animate-shimmer" />
+                                </div>
+
+                                {/* Rating skeleton */}
+                                <div className="flex items-center space-x-2">
+                                    <div className="h-4 w-4 rounded animate-shimmer" />
+                                    <div className="h-4 w-8 rounded animate-shimmer" />
+                                    <div className="h-3 w-16 rounded animate-shimmer" />
+                                </div>
+
+                                {/* Category tags skeleton */}
+                                <div className="flex flex-wrap gap-1">
+                                    <div className="h-6 w-20 rounded-full animate-shimmer" />
+                                    {index % 2 === 0 && <div className="h-6 w-16 rounded-full animate-shimmer" />}
+                                </div>
+
+                                {/* Price range skeleton */}
+                                <div className="flex justify-between items-center">
+                                    <div className="h-5 w-36 rounded animate-shimmer" />
+                                </div>
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
             ) : vendors.data.length === 0 ? (

@@ -14,7 +14,7 @@ interface DateStatsCardProps {
     selectedDateStr: string;
 }
 
-export default function DateStatsCard({ selectedDate, onDateChange, needsProofCount, hasProofCount, formatDate, selectedDateStr }: DateStatsCardProps) {
+export default function DateStatsCard({ selectedDate, onDateChange, needsProofCount, hasProofCount, selectedDateStr }: DateStatsCardProps) {
     return (
         <div className="grid gap-4 md:grid-cols-4">
             <Card>
@@ -25,9 +25,9 @@ export default function DateStatsCard({ selectedDate, onDateChange, needsProofCo
                     <CustomDatePicker
                         value={selectedDate}
                         onChange={onDateChange}
-                    // dayPickerProps={{
-                    //     disabled: (date: Date) => date > new Date(),
-                    // }}
+                    dayPickerProps={{
+                        disabled: (date: Date) => date > new Date(),
+                    }}
                     />
                     <p className="text-xs text-muted-foreground mt-1">{(selectedDateStr)}</p>
                 </CardContent>

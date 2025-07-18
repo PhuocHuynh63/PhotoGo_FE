@@ -36,7 +36,7 @@ const AttendancePage = ({ user, attendance, checkAttendance }: PAGES.IAttendance
 
     // Get user info from attendance data
     const userId = user?.id
-    const isLoggedIn = !!userId && !!attendance && attendance.length > 0
+    const isLoggedIn = !!userId && !!attendance
 
     // Tải thống kê điểm danh
     useEffect(() => {
