@@ -18,6 +18,12 @@ export const campaignService = {
         });
     },
 
+    getCampaignById: async (campaignId: string) => {
+        return await http.get(`/campaigns/${campaignId}`, {
+            next: { revalidate: 10 },
+        });
+    },
+
     getVoucherOfCampaign: async (campaignId: string) => {
         return await http.get(`/campaigns/${campaignId}/vouchers`, {
             next: { revalidate: 10 },

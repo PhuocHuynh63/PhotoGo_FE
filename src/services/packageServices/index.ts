@@ -7,7 +7,7 @@ const packageService = {
             next: { revalidate: 10 }
         })
     },
-
+    
     getServiceTypes: async () => {
         return await http.get("/service-packages/service-type", {
             next: { revalidate: 10 }
