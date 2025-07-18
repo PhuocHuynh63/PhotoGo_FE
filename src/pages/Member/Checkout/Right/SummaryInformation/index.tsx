@@ -129,6 +129,24 @@ const SummaryInformation = () => {
                             <span className="text-gray-500">Tạm tính</span>
                             <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
                         </div>
+
+                        {price?.rushFee && (
+                            <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-[#fffaf5] border border-[#f0a06a]/20 mb-2">
+                                <span className="text-[#f0a06a] font-semibold flex items-center gap-2">
+                                    <Clock className="h-4 w-4" />
+                                    Phụ phí gấp
+                                </span>
+                                <span className="font-medium text-[#f0a06a]">+{price?.rushFee.toLocaleString()}đ</span>
+                            </div>
+                        )}
+
+                        <div className="flex justify-between">
+                            <span className="text-gray-500">Tổng tiền</span>
+                            <span className="font-medium">{price?.totalPayable.toLocaleString()}đ</span>
+                        </div>
+
+                        <Separator className="my-6" />
+
                         {selectedVoucher && (
                             <div className="flex justify-between">
                                 <span className="text-[#f0a06a] font-semibold">Giảm giá</span>
@@ -144,6 +162,8 @@ const SummaryInformation = () => {
                             <span className="font-medium">{price?.remainingAmount.toLocaleString()}đ</span>
                         </div>
                     </div>
+
+                    <Separator className="my-6" />
 
                     <div className="bg-[#fffaf5] border border-[#f0a06a]/20 rounded-lg p-4 mb-6">
                         <div className="flex gap-2">
