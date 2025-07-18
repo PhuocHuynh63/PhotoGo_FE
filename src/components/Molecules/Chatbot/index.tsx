@@ -84,7 +84,7 @@ const Chatbot = () => {
             let botMessage = "";
             let conceptsToShow = null;
             if (response.data.data.concepts_same) {
-                botMessage = response.data.data.analysis.description;
+                botMessage = response.data.data.example;
                 conceptsToShow = response.data.data.concepts_same;
             } else {
                 botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
