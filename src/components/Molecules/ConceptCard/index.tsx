@@ -25,7 +25,7 @@ const ConceptCard = ({ concept }: any) => {
                     {concept.name}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1">
-                    {concept.keywords.slice(0, 3).join(', ')}...
+                    {/* {concept.keywords.slice(0, 3).join(', ')}... */}
                 </p>
                 <p className="text-base font-bold text-orange-500 mt-2">
                     {formatPrice(concept.price)}

@@ -23,6 +23,7 @@ import { IServiceConceptResponseModel } from "@models/serviceConcepts/response.m
 import { IServicePackageResponse } from "@models/servicePackages/response.model";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { ROUTES } from "@routes";
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const router = useRouter();
@@ -219,7 +220,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                     <Separator className="my-4" />
 
                     <div className="flex flex-wrap gap-2 justify-end">
-                        <Link href={`/profile/orders/${booking.id}`}>
+                        <Link href={`${ROUTES.USER.PROFILE.ORDERS}/${booking.id}`}>
                             <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 hover:text-white text-white">Xem chi tiết</Button>
                         </Link>
 
