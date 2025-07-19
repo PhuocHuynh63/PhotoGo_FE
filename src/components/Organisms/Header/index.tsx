@@ -4,7 +4,7 @@ import { Avatar } from "@components/Molecules/Avatar";
 import { ROUTES } from "@routes";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@components/Atoms/ui/dropdown-menu";
 import LucideIcon from "@components/Atoms/LucideIcon";
 import Button from "@components/Atoms/Button";
@@ -17,17 +17,18 @@ import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
 import { usePathname } from "next/navigation";
 import { useCart, useFetchCartByUserId } from "@stores/cart/selectors";
-import { formatRelativeTime } from "@utils/helpers/Date";
+
 import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
 import { ROLE } from "@constants/common";
+import NotificationDropdown from "../NotificationDropdown";
+import MobileNotificationButton from "../MobileNotificationButton";
 
 export default function Header({ user, servicePackages }: PAGES.IHeader) {
     const cartState = useCart()
     const fetchCartByUserId = useFetchCartByUserId();
     //#region States
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [notifications, setNotifications] = useState<ICOMPONENTS.Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false);
@@ -51,11 +52,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
 
     //#endregion
 
-    //#region Memoized Values
-    const unreadNotifications = useMemo(() => {
-        return notifications.filter((notification) => !notification.read);
-    }, [notifications]);
-    //#endregion
+
 
     //#region Event Handlers
     const handleOpenNotification = () => {
@@ -135,93 +132,10 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
 
             <ShoppingCartModal isOpen={isOpenCart} onClose={() => setIsOpenCart(false)} servicePackages={servicePackages} />
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <div
-                            onClick={handleOpenNotification}
-                            className="hover:bg-[#c9c9ce21] cursor-pointer relative mt-2 p-1 rounded-md"
-                        >
-                            <LucideIcon
-                                name="Bell"
-                                iconSize={26}
-                                iconColor={"black"}
-                            />
-                            <span className="absolute -top-2 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                {unreadNotifications.length}
-                            </span>
-                        </div>
-                    </motion.div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-80">
-                    <DropdownMenuLabel className="text-xl font-bold flex justify-between items-center">
-                        Thông báo
-                        <Button
-                            className="text-sm whitespace-pre text-blue-500 bg-none shadow-none hover:bg-gray-200"
-                            onClick={() => {
-                                setNotifications(
-                                    notifications.map((notification) => ({
-                                        ...notification,
-                                        read: true,
-                                    }))
-                                );
-                            }}
-                        >
-                            Đánh dấu đã đọc
-                        </Button>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {notifications.length > 0 ? (
-                        notifications.map((notification) => (
-                            <DropdownMenuItem
-                                key={notification.id}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setNotifications((prevNotifications) =>
-                                        prevNotifications.map((n) =>
-                                            n.id === notification.id
-                                                ? { ...n, read: true }
-                                                : n
-                                        )
-                                    );
-                                }}
-                            >
-                                <div className="flex flex-col gap-2 w-full">
-                                    <div className="flex w-full justify-between items-center">
-                                        <p className="text-sm font-medium">
-                                            {notification.title}
-                                        </p>
-                                        <p className="text-xs text-gray-400">
-                                            {formatRelativeTime(notification.createdAt)}
-                                        </p>
-                                    </div>
-                                    <div className="flex w-full justify-between">
-                                        <p className="text-xs text-gray-500 whitespace-normal break-words">
-                                            {notification.description}
-                                        </p>
-                                        <div className="flex items-center gap-2">
-                                            {!notification.read && (
-                                                <span className="inline-block w-2 h-2 bg-blue-500 rounded-full"></span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </DropdownMenuItem>
-                        ))
-                    ) : (
-                        <DropdownMenuItem disabled>
-                            <p className="text-sm text-gray-500">
-                                Không có thông báo mới.
-                            </p>
-                        </DropdownMenuItem>
-                    )}
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <NotificationDropdown
+                isNotificationOpen={isNotificationOpen}
+                setIsNotificationOpen={setIsNotificationOpen}
+            />
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -387,20 +301,10 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                                             </div>
                                             <span className="text-xs">Giỏ hàng</span>
                                         </div>
-                                        <div
-                                            onClick={handleOpenNotification}
-                                            className={`flex flex-col items-center gap-1 cursor-pointer ${isNotificationOpen ? "text-primary" : ""}`}
-                                        >
-                                            <div className={`w-12 h-12 rounded-full ${isNotificationOpen ? "bg-primary/10" : "bg-gray-100"} flex items-center justify-center relative`}>
-                                                <LucideIcon name="Bell" iconSize={24} />
-                                                {unreadNotifications.length > 0 && (
-                                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                                        {unreadNotifications.length}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <span className="text-xs">Thông báo</span>
-                                        </div>
+                                        <MobileNotificationButton
+                                            isNotificationOpen={isNotificationOpen}
+                                            handleOpenNotification={handleOpenNotification}
+                                        />
                                     </div>
                                 </div>
                             )}
