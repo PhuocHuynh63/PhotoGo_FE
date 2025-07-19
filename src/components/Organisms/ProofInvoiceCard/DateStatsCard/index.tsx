@@ -49,7 +49,7 @@ export default function DateStatsCard({ selectedDate, onDateChange, needsProofCo
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold text-green-600">{hasProofCount}</div>
-                    <p className="text-xs text-muted-foreground">đơn đã hoàn thành</p>
+                    <p className="text-xs text-muted-foreground">Đơn đã hoàn thành</p>
                 </CardContent>
             </Card>
             <Card>

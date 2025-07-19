@@ -185,7 +185,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
         return () => observer.disconnect()
     }, [])
 
-    const allPossibleStatuses = ["chờ xử lý", "đã xác nhận", "đang thực hiện", "hoàn thành"]
+    const allPossibleStatuses = [BOOKING.BOOKING_STATUS.PENDING, BOOKING.BOOKING_STATUS.CONFIRMED, BOOKING.BOOKING_STATUS.IN_PROGRESS, BOOKING.BOOKING_STATUS.COMPLETED]
     const completedStatuses = data.histories.map((h) => h.status.toLowerCase())
     const currentStatusIndex = completedStatuses.length - 1
 
@@ -258,6 +258,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                             isMultiDay={isMultiDay}
                             bookingDate={data.date}
                             bookingTime={data.time}
+                            status={data.status}
                         />
                     }
                     <QRCard

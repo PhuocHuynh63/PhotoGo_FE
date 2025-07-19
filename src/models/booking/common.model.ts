@@ -1,4 +1,5 @@
 
+import { BOOKING } from "@constants/booking";
 import { LocationModel } from "@models/location/common.model";
 import { z } from "zod";
 
@@ -12,7 +13,18 @@ export const BookingModel = z.object({
     serviceConceptId: z.string(),
     date: z.string(),
     time: z.string(),
-    status: z.enum(["chờ xử lý", "đã xác nhận", "đã hoàn thành", "đã hủy", "chờ thanh toán"]),
+    status: z.enum([
+        BOOKING.BOOKING_STATUS.NOT_PAID,
+        BOOKING.BOOKING_STATUS.PAID,
+        BOOKING.BOOKING_STATUS.PENDING,
+        BOOKING.BOOKING_STATUS.CONFIRMED,
+        BOOKING.BOOKING_STATUS.IN_PROGRESS,
+        BOOKING.BOOKING_STATUS.COMPLETED,
+        BOOKING.BOOKING_STATUS.CANCELLED,
+        BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT,
+        BOOKING.BOOKING_STATUS.CANCELLED_USER,
+        BOOKING.BOOKING_STATUS.CANCELLED_VENDOR,
+    ]),
     sourceType: z.enum(["trực tiếp", "chiến dịch", "giới thiệu", "nổi bật", "khuyến mãi", "khác"]),
     sourceId: z.string().nullable(),
     depositAmount: z.string(),

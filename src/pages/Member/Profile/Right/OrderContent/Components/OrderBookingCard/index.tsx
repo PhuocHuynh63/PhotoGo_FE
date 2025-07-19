@@ -24,6 +24,7 @@ import { IServicePackageResponse } from "@models/servicePackages/response.model"
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { ROUTES } from "@routes";
+import { BOOKING } from "@constants/booking";
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
     const router = useRouter();
@@ -45,14 +46,14 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
         console.log('Status:', status);
 
         switch (status) {
-            case "đã thanh toán":
-                return <Badge variant="outline" className="text-blue-500 border-blue-200">Đã thanh toán</Badge>
-            case "đã hoàn thành":
+            case BOOKING.BOOKING_STATUS.IN_PROGRESS:
+                return <Badge variant="outline" className="text-blue-500 border-blue-200">Đang thực hiện</Badge>
+            case BOOKING.BOOKING_STATUS.COMPLETED:
                 return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
-            case "đã hủy":
+            case BOOKING.BOOKING_STATUS.CANCELLED:
                 return <Badge variant="outline" className="text-red-500 border-red-200">Đã hủy</Badge>
-            case "chờ xử lý":
-                return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Chờ xử lý</Badge>
+            case BOOKING.BOOKING_STATUS.PENDING:
+                return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Chờ xác nhận</Badge>
             default:
                 return <Badge>{status}</Badge>
         }
@@ -226,7 +227,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 hover:text-white text-white">Xem chi tiết</Button>
                         </Link>
 
-                        {booking.status === "chờ xử lý" && invoice.payments?.[0]?.paymentOSId && (
+                        {booking.status === BOOKING.BOOKING_STATUS.NOT_PAID && invoice.payments?.[0]?.paymentOSId && (
                             <Link href={`https://pay.payos.vn/web/${invoice.payments[0].paymentOSId.trim()}`} target="_blank" rel="noopener noreferrer">
                                 <Button variant="outline" className="bg-green-600 hover:bg-green-700 hover:text-white text-white">
                                     Thanh toán
@@ -234,7 +235,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             </Link>
                         )}
 
-                        {booking.status === "chờ xử lý" && (
+                        {booking.status === BOOKING.BOOKING_STATUS.NOT_PAID && (
                             <>
                                 <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
                                     <DialogTrigger asChild>
