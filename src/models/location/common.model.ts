@@ -1,9 +1,10 @@
+import { VendorModel } from "@models/vendor/common.model";
 import { z } from "zod";
 
 /**
  * Model of Location
  */
-export const LocationModel = z.object({
+export const LocationModel: any = z.object({
     id: z.string(),
     address: z.string(),
     district: z.string(),
@@ -12,10 +13,11 @@ export const LocationModel = z.object({
     province: z.string(),
     latitude: z.string(),
     longitude: z.string(),
+    vendor: VendorModel.optional(),
     created_at: z.string(),
     updated_at: z.string(),
 });
-export type ILocation = z.TypeOf<typeof LocationModel>
+export type ILocation = z.infer<typeof LocationModel>
 //----------------------End----------------------//
 
 

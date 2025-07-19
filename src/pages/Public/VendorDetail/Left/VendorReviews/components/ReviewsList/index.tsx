@@ -35,7 +35,6 @@ const ReviewsList = ({ activeTab, reviewsToRender, isLoading, isOverview }: Revi
      * Lightbox for images in reviews
      * We use a lightbox to display images when clicked
      */
-
     const [lightboxOpen, setLightboxOpen] = useState<boolean>(false)
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0)
     const [lightboxImages, setLightboxImages] = useState<{ src: string }[]>([])

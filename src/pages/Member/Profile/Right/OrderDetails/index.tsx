@@ -13,6 +13,9 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import AblumAfterShoot from "./components/AlbumAfterShoot";
+import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
+import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
+import { albumComponent } from "@constants/vendorAlbums";
 
 
 const mockOrderData: IBookingDetail = {
@@ -186,6 +189,39 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const currentStatusIndex = completedStatuses.length - 1
 
     const qrURL = 'https://photogo.id.vn/booking/' + data.code
+    console.log(data);
+
+    /**
+     * Fetch vendor albums by booking ID using custom hook
+     * This will retrieve albums related to the booking, including photos and behind-the-scenes content.
+     */
+    const { vendorAlbums, loading, fetchVendorAlbumsByBookingId } = useVendorAlbumsByBookingId({
+        bookingId: data.id,
+    })
+
+    useEffect(() => {
+        if (data.id) {
+            fetchVendorAlbumsByBookingId()
+        }
+    }, [data.id, fetchVendorAlbumsByBookingId])
+    //-------------------------End--------------------//
+
+    /**
+     * Set the address location based on the selected location in the booking form
+     * This will update the address location in the global state
+     */
+    const setAddressLocation = useSetAddressLocation();
+    const addressLocation = useAddressLocation();
+    useEffect(() => {
+        if (booking?.locationId && booking?.location) {
+            const address = `${booking?.location?.address}, ${booking?.location?.ward}, ${booking?.location.district}, ${booking?.location.city}, ${booking?.location.province}`
+            setAddressLocation({
+                id: booking?.locationId,
+                address: address
+            });
+        }
+    }, [location])
+    //---------------------------End---------------------------//
 
     return (
         <motion.div
@@ -210,6 +246,8 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                 isVisible={isVisible["hero-section"]}
                 image={data.serviceConcept.servicePackage.image}
                 firstName={firstName}
+                addressLocation={addressLocation?.address || ""}
+                studioName={booking?.location?.vendor?.name}
             />
             <main className="mt-8 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -229,18 +267,25 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                 <TimelineCard
                     isVisible={isVisible["timeline-card"]}
                     allPossibleStatuses={allPossibleStatuses}
+                    status={mockOrderData.status}
                     completedStatuses={completedStatuses}
                     currentStatusIndex={currentStatusIndex}
                 />
 
                 <AblumAfterShoot
+                    id={albumComponent.ALBUM_AFTER_SHOOT}
                     title="Album ảnh của bạn"
-                    subTitle="Cảm ơn bạn đã tin tưởng Gạo Nâu Studio. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!"
+                    subTitle={`Cảm ơn bạn đã tin tưởng ${booking?.location?.vendor?.name}. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!`}
+                    isLoading={loading}
+                    vendorAlbums={vendorAlbums}
                 />
 
                 <AblumAfterShoot
+                    id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
                     title="Khoảnh khắc hậu trường"
                     subTitle="Cùng nhìn lại những khoảnh khắc hậu trường thú vị nhé."
+                    isLoading={loading}
+                    vendorAlbums={vendorAlbums}
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
