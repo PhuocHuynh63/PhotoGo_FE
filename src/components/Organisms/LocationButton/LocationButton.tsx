@@ -8,12 +8,12 @@ import Cookies from "js-cookie";
 
 interface LocationButtonProps {
     className?: string
-    isScrolled?: boolean
-    isLoaded?: boolean
     homePage?: boolean
+    iconColor?: string
+    isLoaded?: boolean
 }
 
-export default function LocationButton({ className, isScrolled, isLoaded, homePage }: LocationButtonProps) {
+export default function LocationButton({ className, homePage, isLoaded, iconColor }: LocationButtonProps) {
     const [location, setLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -83,7 +83,7 @@ export default function LocationButton({ className, isScrolled, isLoaded, homePa
                 fetchAddress(latitude, longitude)
                 setLoading(false)
             },
-            (error) => {
+            () => {
                 setLoading(false)
                 setError("Không thể lấy vị trí hiện tại. Vui lòng kiểm tra quyền truy cập vị trí.")
             }
@@ -99,7 +99,7 @@ export default function LocationButton({ className, isScrolled, isLoaded, homePa
             } else {
                 setError("Không thể lấy địa chỉ")
             }
-        } catch (error) {
+        } catch {
             setError("Có lỗi khi lấy địa chỉ")
         }
     }
@@ -124,13 +124,23 @@ export default function LocationButton({ className, isScrolled, isLoaded, homePa
                 } else {
                     setError("Không tìm thấy địa chỉ này")
                 }
-            } catch (err) {
+            } catch {
                 setError("Có lỗi khi tìm địa chỉ")
             }
         } else {
             setError("Vui lòng nhập địa chỉ")
         }
     }
+
+    const getIconColor = () => {
+        if (location) {
+            return '#50C878';
+        }
+
+        if (iconColor) return iconColor;
+
+        return homePage ? 'white' : 'black';
+    };
 
     return (
         <TooltipProvider>
@@ -150,7 +160,7 @@ export default function LocationButton({ className, isScrolled, isLoaded, homePa
                         <LucideIcon
                             name="MapPin"
                             iconSize={24}
-                            iconColor={location ? isScrolled ? '#51c778' : '#50C878' : homePage ? 'white' : 'black'}
+                            iconColor={getIconColor()}
                         />
                     </Button>
                 </TooltipTrigger>
