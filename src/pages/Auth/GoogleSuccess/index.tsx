@@ -31,17 +31,12 @@ const GoogleCompletePage = () => {
                 accessToken: token,
             });
 
-            console.log("Google sign-in response:", res);
-
             //#region Handle response
             const status = res?.status;
 
             //#region Handle success
             if (status === 200) {
                 const session = await getSession() as unknown as METADATA.ISession;
-                console.log("Session after Google sign-in:", session);
-                console.log("User role:", session?.user?.role?.name);
-
 
                 switch (session?.user?.role?.name) {
                     case ROLE.CUSTOMER:
