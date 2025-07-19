@@ -89,7 +89,7 @@ const Chatbot = () => {
                 conceptsToShow = response.data.data.concepts_same;
             } else {
                 botMessage = response.data.data.suggestion;
-                conceptsToShow = response.data.data.concepts_suggested;
+                conceptsToShow = response.data.data.concepts_same;
             }
             setMessages(prev => [
                 ...prev,
