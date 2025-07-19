@@ -16,6 +16,7 @@ import AblumAfterShoot from "./components/AlbumAfterShoot";
 import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
 import { albumComponent } from "@constants/vendorAlbums";
+import { BOOKING } from "@constants/booking";
 
 
 const mockOrderData: IBookingDetail = {
@@ -250,13 +251,15 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
             />
             <main className="mt-8 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <CountdownCard
-                        isVisible={isVisible["countdown-card"]}
-                        targetDate={targetDate}
-                        isMultiDay={isMultiDay}
-                        bookingDate={data.date}
-                        bookingTime={data.time}
-                    />
+                    {data.date < new Date().toLocaleDateString() &&
+                        <CountdownCard
+                            isVisible={isVisible["countdown-card"]}
+                            targetDate={targetDate}
+                            isMultiDay={isMultiDay}
+                            bookingDate={data.date}
+                            bookingTime={data.time}
+                        />
+                    }
                     <QRCard
                         isVisible={isVisible["qr-card"]}
                         code={data.code}
@@ -271,21 +274,25 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     currentStatusIndex={currentStatusIndex}
                 />
 
-                <AblumAfterShoot
-                    id={albumComponent.ALBUM_AFTER_SHOOT}
-                    title="Album ảnh của bạn"
-                    subTitle={`Cảm ơn bạn đã tin tưởng ${booking?.location?.vendor?.name}. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!`}
-                    isLoading={loading}
-                    vendorAlbums={vendorAlbums}
-                />
+                {booking?.status === BOOKING.BOOKING_STATUS.COMPLETED &&
+                    <AblumAfterShoot
+                        id={albumComponent.ALBUM_AFTER_SHOOT}
+                        title="Album ảnh của bạn"
+                        subTitle={`Cảm ơn bạn đã tin tưởng ${booking?.location?.vendor?.name}. Hy vọng bạn hài lòng với những khoảnh khắc tuyệt vời này!`}
+                        isLoading={loading}
+                        vendorAlbums={vendorAlbums}
+                    />
+                }
 
-                <AblumAfterShoot
-                    id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
-                    title="Khoảnh khắc hậu trường"
-                    subTitle="Cùng nhìn lại những khoảnh khắc hậu trường thú vị nhé."
-                    isLoading={loading}
-                    vendorAlbums={vendorAlbums}
-                />
+                {booking?.status === BOOKING.BOOKING_STATUS.IN_PROGRESS &&
+                    <AblumAfterShoot
+                        id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
+                        title="Khoảnh khắc hậu trường"
+                        subTitle="Cùng nhìn lại những khoảnh khắc hậu trường thú vị nhé."
+                        isLoading={loading}
+                        vendorAlbums={vendorAlbums}
+                    />
+                }
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <PaymentCard

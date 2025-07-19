@@ -25,6 +25,14 @@ import {
     User,
     Notebook,
 } from "lucide-react"
+import { BOOKING_STATUS } from "@constants/booking"
+import { useBooking } from "@utils/hooks/useBooking"
+import toast from "react-hot-toast"
+import React from "react"
+import Link from "next/link"
+import { ROUTES } from "@routes"
+import { formatDate } from "@utils/helpers/Date"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 interface Appointment {
     id: string
@@ -37,7 +45,7 @@ interface Appointment {
     date: string
     from: string | null
     to: string | null
-    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
+    status: BOOKING_STATUS
     color: string
     notes: string
     alreadyPaid: number
@@ -50,52 +58,95 @@ interface AppointmentModalProps {
     appointment: Appointment | null
     isOpen: boolean
     onClose: () => void
+    onAppointmentUpdate?: (updatedAppointment: Appointment) => void
 }
 
-export default function AppointmentModal({ appointment, isOpen, onClose }: AppointmentModalProps) {
+export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: AppointmentModalProps) {
     // const [isEditing, setIsEditing] = useState(false)
+    const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
+    const [localAppointment, setLocalAppointment] = React.useState<Appointment | null>(appointment)
 
-    if (!appointment) return null
+    // Update local appointment when prop changes
+    React.useEffect(() => {
+        setLocalAppointment(appointment)
+    }, [appointment])
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
-    }
+    // Clear error when modal opens/closes
+    React.useEffect(() => {
+        if (isOpen) {
+            clearError()
+        }
+    }, [isOpen, clearError])
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr)
-        return date.toLocaleDateString("vi-VN", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        })
+    if (!localAppointment) return null
+
+    const handleConfirmAppointment = async (bookingId: string) => {
+        try {
+            console.log("confirm appointment", bookingId)
+            await updateBookingStatus(bookingId, BOOKING_STATUS.CONFIRMED)
+
+            // Update local state immediately
+            const updatedAppointment = {
+                ...localAppointment,
+                status: BOOKING_STATUS.CONFIRMED
+            }
+            setLocalAppointment(updatedAppointment)
+
+            // Notify parent component
+            if (onAppointmentUpdate) {
+                onAppointmentUpdate(updatedAppointment)
+            }
+
+            toast.success("Đã xác nhận lịch hẹn thành công!")
+            onClose() // Đóng modal sau khi xác nhận thành công
+        } catch (err) {
+            console.error("Error confirming appointment:", err)
+            toast.error("Có lỗi xảy ra khi xác nhận lịch hẹn")
+        }
     }
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "đã thanh toán":
+            case BOOKING_STATUS.PAID:
                 return (
                     <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">
                         <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
-                        Đã thanh toán
+                        {status}
                     </Badge>
                 )
-            case "chờ xử lý":
+            case BOOKING_STATUS.PENDING:
                 return (
                     <Badge variant='outline' className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></span>
-                        Chờ xử lý
+                        {status}
                     </Badge>
                 )
-            case "đã hủy":
+            case BOOKING_STATUS.CONFIRMED:
+                return (
+                    <Badge variant='outline' className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>
+                        {status}
+                    </Badge>
+                )
+            case BOOKING_STATUS.CANCELLED:
                 return (
                     <Badge variant='outline' className="bg-red-100 text-red-800 hover:bg-red-100">
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>
-                        Đã hủy
+                        {status}
+                    </Badge>
+                )
+            case BOOKING_STATUS.IN_PROGRESS:
+                return (
+                    <Badge variant='outline' className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>
+                        {status}
+                    </Badge>
+                )
+            case BOOKING_STATUS.COMPLETED:
+                return (
+                    <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">
+                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
+                        {status}
                     </Badge>
                 )
             default:
@@ -103,6 +154,55 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
         }
     }
 
+    const handleCompleteAppointment = async (bookingId: string) => {
+        try {
+            console.log("complete appointment", bookingId)
+            await updateBookingStatus(bookingId, BOOKING_STATUS.COMPLETED)
+
+            // Update local state immediately
+            const updatedAppointment = {
+                ...localAppointment,
+                status: BOOKING_STATUS.COMPLETED
+            }
+            setLocalAppointment(updatedAppointment)
+
+            // Notify parent component
+            if (onAppointmentUpdate) {
+                onAppointmentUpdate(updatedAppointment)
+            }
+
+            toast.success("Đã hoàn thành lịch hẹn thành công!")
+            onClose() // Đóng modal sau khi hoàn thành thành công
+        } catch (err) {
+            console.error("Error completing appointment:", err)
+            toast.error("Có lỗi xảy ra khi hoàn thành lịch hẹn")
+        }
+    }
+
+    const handleProgressAppointment = async (bookingId: string) => {
+        try {
+            console.log("progress appointment", bookingId)
+            await updateBookingStatus(bookingId, BOOKING_STATUS.IN_PROGRESS)
+
+            // Update local state immediately
+            const updatedAppointment = {
+                ...localAppointment,
+                status: BOOKING_STATUS.IN_PROGRESS
+            }
+            setLocalAppointment(updatedAppointment)
+
+            // Notify parent component
+            if (onAppointmentUpdate) {
+                onAppointmentUpdate(updatedAppointment)
+            }
+
+            toast.success("Đã tiến hành lịch hẹn thành công!")
+            onClose() // Đóng modal sau khi tiến hành thành công
+        } catch (err) {
+            console.error("Error progressing appointment:", err)
+            toast.error("Có lỗi xảy ra khi tiến hành lịch hẹn")
+        }
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -110,16 +210,23 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                 <DialogHeader>
                     <div className="flex items-start justify-between">
                         <div>
-                            <DialogTitle className="text-xl font-semibold">{appointment.service}</DialogTitle>
+                            <DialogTitle className="text-xl font-semibold">{localAppointment.service}</DialogTitle>
                             <DialogDescription className="text-base mt-1">
-                                ID lịch hẹn: <span className="font-medium">{appointment.id.toUpperCase()}</span>
+                                ID lịch hẹn: <span className="font-medium">{localAppointment.id.toUpperCase()}</span>
                             </DialogDescription>
                         </div>
-                        {getStatusBadge(appointment.status)}
+                        {getStatusBadge(localAppointment.status)}
                     </div>
                 </DialogHeader>
 
                 <div className="space-y-6">
+                    {/* Error display */}
+                    {error && (
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-red-800 text-sm">{error.message}</p>
+                        </div>
+                    )}
+
                     {/* Thông tin khách hàng */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium flex items-center gap-2">
@@ -128,28 +235,30 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         </h3>
                         <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                             <Avatar className="h-12 w-12">
-                                <AvatarImage src="/placeholder.svg" alt={appointment.customerName} />
-                                <AvatarFallback className="text-lg">{appointment.customerName.charAt(0)}</AvatarFallback>
+                                <AvatarImage src="/placeholder.svg" alt={localAppointment.customerName} />
+                                <AvatarFallback className="text-lg">{localAppointment.customerName.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                                <h4 className="font-medium text-lg">{appointment.customerName}</h4>
+                                <h4 className="font-medium text-lg">{localAppointment.customerName}</h4>
                                 <div className="space-y-2 mt-2">
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Phone className="h-4 w-4" />
-                                        <span>{appointment.customerPhone}</span>
+                                        <span>{localAppointment.customerPhone}</span>
 
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Mail className="h-4 w-4" />
-                                        <span>{appointment.customerEmail}</span>
+                                        <span>{localAppointment.customerEmail}</span>
 
                                     </div>
                                 </div>
                             </div>
-                            <Button variant="outline" size="sm" className="gap-1 cursor-pointer">
-                                <MessageSquare className="h-4 w-4" />
-                                Nhắn tin
-                            </Button>
+                            <Link href={ROUTES.VENDOR.CHAT}>
+                                <Button variant="outline" size="sm" className="gap-1 cursor-pointer">
+                                    <MessageSquare className="h-4 w-4" />
+                                    Nhắn tin
+                                </Button>
+                            </Link>
                         </div>
                     </div>
 
@@ -168,8 +277,8 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     <div>
                                         <p className="text-sm text-gray-500">Thời gian</p>
                                         <p className="font-medium">
-                                            {appointment.from && appointment.to
-                                                ? `${appointment.from} - ${appointment.to}`
+                                            {localAppointment.from && localAppointment.to
+                                                ? `${localAppointment.from} - ${localAppointment.to}`
                                                 : "Cả ngày"
                                             }
                                         </p>
@@ -181,7 +290,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     <Calendar className="h-4 w-4 text-gray-500" />
                                     <div>
                                         <p className="text-sm text-gray-500">Ngày chụp</p>
-                                        <p className="font-medium">{formatDate(appointment.date)}</p>
+                                        <p className="font-medium">{formatDate(localAppointment.date)}</p>
                                     </div>
                                 </div>
 
@@ -192,7 +301,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     <div className="flex-1">
                                         <p className="text-sm text-gray-500">Ghi chú khách hàng</p>
                                         <p className="font-medium text-sm leading-relaxed">
-                                            {appointment.notes || "Không có ghi chú"}
+                                            {localAppointment.notes || "Không có ghi chú"}
                                         </p>
                                     </div>
                                 </div>
@@ -211,21 +320,21 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="p-4 bg-green-50 rounded-lg">
                                 <p className="text-sm text-green-600 font-medium">Đã thanh toán</p>
-                                <p className="text-xl font-bold text-green-700">{formatCurrency(appointment.alreadyPaid)}</p>
+                                <p className="text-xl font-bold text-green-700">{formatPrice(localAppointment.alreadyPaid)}</p>
                             </div>
                             <div className="p-4 bg-orange-50 rounded-lg">
                                 <p className="text-sm text-orange-600 font-medium">Còn lại</p>
-                                <p className="text-xl font-bold text-orange-700">{formatCurrency(appointment.remain)}</p>
+                                <p className="text-xl font-bold text-orange-700">{formatPrice(localAppointment.remain)}</p>
                             </div>
                             <div className="p-4 bg-blue-50 rounded-lg">
                                 <p className="text-sm text-blue-600 font-medium">Tổng cộng</p>
-                                <p className="text-xl font-bold text-blue-700">{formatCurrency(appointment.total)}</p>
+                                <p className="text-xl font-bold text-blue-700">{formatPrice(localAppointment.total)}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Ghi chú */}
-                    {appointment.notes && (
+                    {localAppointment.notes && (
                         <>
                             <Separator />
                             <div className="space-y-3">
@@ -234,7 +343,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
                                     Ghi chú
                                 </h3>
                                 <div className="p-4 bg-gray-50 rounded-lg">
-                                    <p className="text-gray-700">{appointment.notes}</p>
+                                    <p className="text-gray-700">{localAppointment.notes}</p>
                                 </div>
                             </div>
                         </>
@@ -243,19 +352,46 @@ export default function AppointmentModal({ appointment, isOpen, onClose }: Appoi
 
                 <DialogFooter className="flex flex-col sm:flex-row gap-2">
                     <div className="flex gap-2 flex-1">
-                        <Button variant="outline" className="flex-1 gap-1 text-red-600 hover:text-red-700 cursor-pointer">
-                            <Trash2 className="h-4 w-4" />
-                            Hủy lịch
-                        </Button>
+                        {localAppointment.status === BOOKING_STATUS.PAID && (
+                            <Button variant="outline" className="flex-1 gap-1 text-red-600 hover:text-red-700 cursor-pointer">
+                                <Trash2 className="h-4 w-4" />
+                                Hủy lịch
+                            </Button>
+                        )}
+
                     </div>
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={onClose} className="cursor-pointer">
                             Đóng
                         </Button>
-                        {appointment.status === "chờ xử lý" && (
-                            <Button className="gap-1">
+                        {localAppointment.status === BOOKING_STATUS.PENDING && (
+                            <Button
+                                className="gap-1"
+                                onClick={() => handleConfirmAppointment(localAppointment.id)}
+                                disabled={updatingStatus}
+                            >
                                 <Calendar className="h-4 w-4" />
-                                Xác nhận lịch
+                                {updatingStatus ? "Đang xác nhận..." : "Xác nhận lịch"}
+                            </Button>
+                        )}
+                        {localAppointment.status === BOOKING_STATUS.IN_PROGRESS && (
+                            <Button
+                                className="gap-1"
+                                onClick={() => handleCompleteAppointment(localAppointment.id)}
+                                disabled={updatingStatus}
+                            >
+                                <Calendar className="h-4 w-4" />
+                                {updatingStatus ? "Đang xác nhận..." : "Hoàn thành lịch"}
+                            </Button>
+                        )}
+                        {localAppointment.status === BOOKING_STATUS.CONFIRMED && (
+                            <Button
+                                className="gap-1"
+                                onClick={() => handleProgressAppointment(localAppointment.id)}
+                                disabled={updatingStatus}
+                            >
+                                <Calendar className="h-4 w-4" />
+                                {updatingStatus ? "Đang xác nhận..." : "Đang thực hiện"}
                             </Button>
                         )}
                     </div>
