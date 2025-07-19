@@ -16,6 +16,7 @@ import AblumAfterShoot from "./components/AlbumAfterShoot";
 import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
 import { albumComponent } from "@constants/vendorAlbums";
+import { BOOKING } from "@constants/booking";
 
 
 const mockOrderData: IBookingDetail = {
@@ -189,7 +190,6 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const currentStatusIndex = completedStatuses.length - 1
 
     const qrURL = 'https://photogo.id.vn/booking/' + data.code
-    console.log(data);
 
     /**
      * Fetch vendor albums by booking ID using custom hook
@@ -280,6 +280,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     vendorAlbums={vendorAlbums}
                 />
 
+                {booking?.status === BOOKING.BOOKING_STATUS.PROGRESSING}
                 <AblumAfterShoot
                     id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
                     title="Khoảnh khắc hậu trường"

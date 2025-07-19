@@ -37,6 +37,7 @@ const GoogleCompletePage = () => {
             //#region Handle success
             if (status === 200) {
                 const session = await getSession() as unknown as METADATA.ISession;
+
                 switch (session?.user?.role?.name) {
                     case ROLE.CUSTOMER:
                         router.push(ROUTES.PUBLIC.HOME);
