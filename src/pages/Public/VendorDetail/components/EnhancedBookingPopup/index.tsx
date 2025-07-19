@@ -238,9 +238,34 @@ export default function EnhancedBookingPopup({
         }
     };
 
+
     const isBookingReady = isMultiDay
         ? (watchedDates && watchedDates.length > 0)
         : (watchedDate && watchedTime);
+
+    // Tính toán tăng giá nếu ngày đặt là ngày 20, 21, 22 (so với hôm nay là 19)
+    let bookingPrice = Number(serviceConcept?.price) || 0;
+    let isIncrease = false;
+    let daysDiff = 0;
+    if (isBookingReady) {
+        let compareDate;
+        if (isMultiDay && watchedDates && watchedDates.length > 0) {
+            compareDate = new Date(watchedDates[0]);
+        } else if (!isMultiDay && watchedDate) {
+            compareDate = new Date(watchedDate);
+        }
+        if (compareDate) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            compareDate.setHours(0,0,0,0);
+            daysDiff = Math.floor((compareDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            // Chỉ cộng thêm 10% nếu ngày đặt là 1, 2, hoặc 3 ngày sau hôm nay
+            if (daysDiff >= 1 && daysDiff <= 3) {
+                bookingPrice = Math.round(bookingPrice * 1.05);
+                isIncrease = true;
+            }
+        }
+    }
 
     // **FIX**: Prepare the correct prop for the calendar's visual state.
     // For range mode, it needs an object { from: Date, to: Date }.
@@ -300,52 +325,55 @@ export default function EnhancedBookingPopup({
                         </Card>
 
                         {/* Booking Summary */}
-                        {isBookingReady && (
-                            <Card className="border-green-200 bg-green-50">
-                                <CardHeader>
-                                    <CardTitle className="text-lg text-green-800">Tóm tắt đặt lịch</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    {isMultiDay ? (
-                                        <>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-green-700">Từ ngày:</span>
-                                                <span className="font-medium">{watchedDates ? new Date(watchedDates[0]).toLocaleDateString("vi-VN") : ""}</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-green-700">Đến ngày:</span>
-                                                <span className="font-medium">{watchedDates ? new Date(watchedDates[watchedDates.length - 1]).toLocaleDateString("vi-VN") : ""}</span>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-green-700">Ngày:</span>
-                                                <span className="font-medium">{watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-green-700">Giờ:</span>
-                                                <span className="font-medium">{selectedSlotData?.time}</span>
-                                            </div>
-                                        </>
-                                    )}
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-green-700">Dịch vụ:</span>
-                                        <span className="font-medium">{serviceConcept?.name}</span>
-                                    </div>
-                                    <Separator />
-                                    <div className="flex justify-between">
-                                        <span className="font-medium text-green-800">Tổng tiền:</span>
-                                        <span className="font-bold text-lg text-green-800">
-                                            {Number(serviceConcept?.price).toLocaleString("vi-VN", {
-                                                style: "currency",
-                                                currency: "VND",
-                                            })}
-                                        </span>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
+{isBookingReady && (
+    <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+            <CardTitle className="text-lg text-green-800">Tóm tắt đặt lịch</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+            {isMultiDay ? (
+                <>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-green-700">Từ ngày:</span>
+                        <span className="font-medium">{watchedDates ? new Date(watchedDates[0]).toLocaleDateString("vi-VN") : ""}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-green-700">Đến ngày:</span>
+                        <span className="font-medium">{watchedDates ? new Date(watchedDates[watchedDates.length - 1]).toLocaleDateString("vi-VN") : ""}</span>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-green-700">Ngày:</span>
+                        <span className="font-medium">{watchedDate ? new Date(watchedDate).toLocaleDateString("vi-VN") : ""}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-green-700">Giờ:</span>
+                        <span className="font-medium">{selectedSlotData?.time}</span>
+                    </div>
+                </>
+            )}
+            <div className="flex justify-between text-sm">
+                <span className="text-green-700">Dịch vụ:</span>
+                <span className="font-medium">{serviceConcept?.name}</span>
+            </div>
+            <Separator />
+            <div className="flex justify-between">
+                <span className="font-medium text-green-800">Tổng tiền:</span>
+                <span className="font-bold text-lg text-green-800">
+                    {bookingPrice.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                    })}
+                    {isIncrease && (
+                        <span className="ml-2 text-xs text-yellow-600 font-semibold">(+10% do đặt trước {daysDiff} ngày)</span>
+                    )}
+                </span>
+            </div>
+        </CardContent>
+    </Card>
+)}
                     </div>
 
                     {/* Column 2: Calendar */}
