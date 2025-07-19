@@ -43,7 +43,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
 
     const statusesToDisplay = isOrderCancelled
         ? allPossibleStatuses
-        : allPossibleStatuses.filter(s => s !== BOOKING.BOOKING_STATUS.CANCELLED);
+        : allPossibleStatuses?.filter(s => s !== BOOKING.BOOKING_STATUS.CANCELLED);
 
     return (
         <div
