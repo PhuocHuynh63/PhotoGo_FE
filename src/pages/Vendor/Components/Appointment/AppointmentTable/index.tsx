@@ -6,6 +6,7 @@ import { Button } from "@components/Atoms/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@components/Atoms/ui/avatar"
 import { MoreHorizontal } from "lucide-react"
 import { Card, CardContent } from "@components/Atoms/ui/card"
+import { BookingStatus } from "@constants/bookingStatus"
 
 interface Appointment {
     id: string
@@ -16,7 +17,7 @@ interface Appointment {
     to: string | null
     service: string
     location: string
-    status: "chờ xử lý" | "đã thanh toán" | "hoàn thành" | "đã hủy"
+    status: BookingStatus
     notes: string
 }
 
@@ -27,15 +28,14 @@ interface AppointmentTableProps {
 }
 
 export default function AppointmentTable({ appointments }: AppointmentTableProps) {
-    const [filter, setFilter] = useState<string>("all")
+    const [filter, setFilter] = useState<BookingStatus>(BookingStatus.PENDING)
 
     // Lọc lịch hẹn theo trạng thái
     const filteredAppointments = appointments?.filter((appointment) => {
-        if (filter === "all") return true
-        if (filter === "chờ xử lý") return appointment.status === "chờ xử lý"
-        if (filter === "đã thanh toán") return appointment.status === "đã thanh toán"
-        if (filter === "hoàn thành") return appointment.status === "hoàn thành"
-        if (filter === "đã hủy") return appointment.status === "đã hủy"
+        if (filter === BookingStatus.PENDING) return appointment.status === BookingStatus.PENDING
+        if (filter === BookingStatus.PAID) return appointment.status === BookingStatus.PAID
+        if (filter === BookingStatus.COMPLETED) return appointment.status === BookingStatus.COMPLETED
+        if (filter === BookingStatus.CANCELLED) return appointment.status === BookingStatus.CANCELLED
         return true
     })
 
@@ -48,28 +48,28 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
     // Hàm để hiển thị trạng thái
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "chờ xử lý":
+            case BookingStatus.PENDING:
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-yellow-400 mr-1.5"></span>
                         Chờ xử lý
                     </div>
                 )
-            case "đã thanh toán":
+            case BookingStatus.PAID:
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-green-100 text-green-800 hover:bg-green-100 text-xs">
                         <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
                         Đã thanh toán
                     </div>
                 )
-            case "hoàn thành":
+            case BookingStatus.COMPLETED:
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-green-400 mr-1.5"></span>
                         Hoàn thành
                     </div>
                 )
-            case "đã hủy":
+            case BookingStatus.CANCELLED:
                 return (
                     <div className="flex items-center justify-center px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs">
                         <span className="w-2 h-2 rounded-full bg-red-400 mr-1.5"></span>
@@ -85,34 +85,28 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
         <Card>
             <CardContent className="p-0">
                 <div className="border-b border-gray-200">
-                    <Tabs defaultValue="all" onValueChange={setFilter} className="w-full">
+                    <Tabs defaultValue={BookingStatus.PENDING} onValueChange={(value) => setFilter(value as BookingStatus)} className="w-full">
                         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
                             <TabsTrigger
-                                value="all"
-                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                            >
-                                Tất cả
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="chờ xử lý"
+                                value={BookingStatus.PENDING}
                                 className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Chờ xác nhận
                             </TabsTrigger>
                             <TabsTrigger
-                                value="đã thanh toán"
+                                value={BookingStatus.PAID}
                                 className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã xác nhận
                             </TabsTrigger>
                             <TabsTrigger
-                                value="hoàn thành"
+                                value={BookingStatus.COMPLETED}
                                 className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Hoàn thành
                             </TabsTrigger>
                             <TabsTrigger
-                                value="đã hủy"
+                                value={BookingStatus.CANCELLED}
                                 className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
                             >
                                 Đã hủy

@@ -4,35 +4,14 @@ import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/Atoms/ui/button"
 import { CalendarDays, List, AlertCircle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/Atoms/ui/alert"
-import CalendarView from "../Components/Calendars/CalendarView"
+import CalendarView, { type Appointment } from "../Components/Calendars/CalendarView"
 import CalendarSidebar from "../Components/Calendars/CalendarSidebar"
 import AppointmentTable from "../Components/Appointment/AppointmentTable"
 import AppointmentStats from "../Components/Appointment/AppointmentStats"
 import RecentAppointments from "../Components/Appointment/RecentAppointments"
 import { useLocationOverview, type Booking, type Slot } from "@/utils/hooks/useLocation/useLocationOverview"
 import { useVendorLocations } from "@/utils/hooks/useVendorLocations"
-
-interface Appointment {
-    id: string
-    title: string
-    customerName: string
-    customerPhone: string
-    customerEmail: string
-    service: string
-    package: string
-    date: string
-    from: string | null
-    to: string | null
-    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
-    color: string
-    notes: string
-    price: number
-    deposit: number
-    location: string
-    alreadyPaid: number
-    remain: number
-    total: number
-}
+import { BookingStatus } from "@constants/bookingStatus"
 
 interface WorkingHours {
     start: string
@@ -116,19 +95,27 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     // Helper functions để convert location overview data sang format của UI components
 
     const convertBookingToAppointment = (booking: Booking, slot: Slot): Appointment => {
-        const statusMap: Record<string, "đã thanh toán" | "chờ xử lý" | "đã hủy"> = {
-            "đã thanh toán": "đã thanh toán",
-            "chờ xử lý": "chờ xử lý",
-            "đã hủy": "đã hủy"
+        const statusMap: Record<string, BookingStatus> = {
+            "đã thanh toán": BookingStatus.PAID,
+            "chờ xử lý": BookingStatus.PENDING,
+            "chờ xác nhận": BookingStatus.PENDING,
+            "đã xác nhận": BookingStatus.CONFIRMED,
+            "đang thực hiện": BookingStatus.PROGRESSING,
+            "đã hoàn thành": BookingStatus.COMPLETED,
+            "đã hủy": BookingStatus.CANCELLED
         }
 
         const colorMap: Record<string, string> = {
             "đã thanh toán": "green",
             "chờ xử lý": "yellow",
-            "đã hủy": "red"
+            "đã hủy": "red",
+            "chờ xác nhận": "yellow",
+            "đã xác nhận": "blue",
+            "đang thực hiện": "green",
+            "đã hoàn thành": "green"
         }
 
-        const mappedStatus = statusMap[booking.status] || "chờ xử lý"
+        const mappedStatus = statusMap[booking.status] || BookingStatus.PENDING
 
         // Helper function to format time from "HH:MM:SS" to "HH:MM"
         const formatTime = (timeString: string | null) => {
@@ -153,8 +140,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             status: mappedStatus,
             color: colorMap[mappedStatus],
             notes: booking.notes || "",
-            price: 0, // Will be calculated based on service
-            deposit: 0,
             location: "Studio", // Default location
         }
     }
@@ -223,6 +208,13 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
         breakStart: "12:00",
         breakEnd: "13:00",
     }
+
+    // Handle appointment update from CalendarView
+    const handleAppointmentUpdate = useCallback((updatedAppointment: Appointment) => {
+        // Refetch data to get the latest state from server
+        console.log('Appointment updated:', updatedAppointment.id)
+        refetchLocation()
+    }, [refetchLocation])
 
     return (
         <div>
@@ -326,6 +318,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
                                     onLocationChange={handleLocationChange}
                                     onDateRangeChange={handleDateRangeChange}
                                     isLoading={locationLoading}
+                                    onAppointmentUpdate={handleAppointmentUpdate}
                                 />
                             </div>
                             <div className="space-y-4">

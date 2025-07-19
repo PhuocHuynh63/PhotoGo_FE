@@ -1,7 +1,8 @@
 import http from "@configs/fetch";
+import { BookingStatus } from "@constants/bookingStatus";
 
 const BookingService = {
-    createBooking: async (userId: string, serviceConceptId: string, data: any) => {
+    createBooking: async (userId: string, serviceConceptId: string, data: Record<string, unknown>) => {
         return await http.post(`/bookings?userId=${userId}&serviceConceptId=${serviceConceptId}`, data)
     },
     getBookingByUserId: async (userId: string, current: number = 1, pageSize: number = 10, sortBy: string = "createdAt", sortDirection: string = "DESC") => {
@@ -22,6 +23,11 @@ const BookingService = {
     getDiscountAmount: async (userId: string, serviceConceptId: string, voucherId: string, depositAmount: number, depositType: string) => {
         return await http.get(`/bookings/get-discount-amount?userId=${userId}&serviceConceptId=${serviceConceptId}&voucherId=${voucherId}&depositAmount=${depositAmount}&depositType=${depositType}`, {
             next: { revalidate: 10 }
+        })
+    },
+    updateBookingStatus: async (bookingId: string, status: BookingStatus) => {
+        return await http.patch(`/bookings/${bookingId}/update-status`, {
+            status
         })
     }
 }

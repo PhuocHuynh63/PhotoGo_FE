@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Clock, CheckCircle, XCircle, Calendar } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/Atoms/ui/select"
+import { BookingStatus } from "@constants/bookingStatus"
 
 interface Appointment {
     id: string
@@ -14,7 +15,7 @@ interface Appointment {
     to: string | null
     service: string
     location: string
-    status: "chờ xử lý" | "đã thanh toán" | "hoàn thành" | "đã hủy"
+    status: BookingStatus
     notes: string
 }
 
@@ -36,9 +37,9 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
     })
 
     // Đếm số lượng lịch hẹn theo trạng thái
-    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === "chờ xử lý").length
-    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === "đã thanh toán").length
-    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === "đã hủy").length
+    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.PENDING).length
+    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.CONFIRMED).length
+    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.CANCELLED).length
     const totalCount = filteredAppointments?.length
 
     return (
@@ -67,7 +68,7 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-blue-600">{confirmedCount}</p>
-                        <p className="text-xs text-blue-600">Đơn chờ xử lý</p>
+                        <p className="text-xs text-blue-600">Đơn chờ xác nhận</p>
                     </div>
                 </div>
 
@@ -77,7 +78,7 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-green-600">{pendingCount}</p>
-                        <p className="text-xs text-green-600">Đơn đã thanh toán</p>
+                        <p className="text-xs text-green-600">Đơn đã xác nhận</p>
                     </div>
                 </div>
 
