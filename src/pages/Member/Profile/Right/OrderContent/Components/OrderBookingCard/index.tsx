@@ -42,6 +42,8 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
     }
     // Get status badge color
     const getStatusBadge = (status: string) => {
+        console.log('Status:', status);
+
         switch (status) {
             case "đã thanh toán":
                 return <Badge variant="outline" className="text-blue-500 border-blue-200">Đã thanh toán</Badge>

@@ -16,6 +16,7 @@ import AblumAfterShoot from "./components/AlbumAfterShoot";
 import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
 import { albumComponent } from "@constants/vendorAlbums";
+import { BOOKING } from "@constants/booking";
 
 
 const mockOrderData: IBookingDetail = {
@@ -279,6 +280,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     vendorAlbums={vendorAlbums}
                 />
 
+                {booking?.status === BOOKING.BOOKING_STATUS.PROGRESSING}
                 <AblumAfterShoot
                     id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
                     title="Khoảnh khắc hậu trường"
