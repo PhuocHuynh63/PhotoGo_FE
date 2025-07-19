@@ -3,7 +3,7 @@ enum BOOKING_STATUS {
     PAID = 'đã thanh toán',
     PENDING = 'chờ xác nhận',
     CONFIRMED = 'đã xác nhận',
-    PROGRESSING = 'đang thực hiện',
+    IN_PROGRESS = 'đang thực hiện',
     COMPLETED = 'đã hoàn thành',
     CANCELLED = 'đã hủy',
     CANCELLED_TIMEOUT = 'đã hủy - quá hạn thanh toán',
