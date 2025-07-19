@@ -7,6 +7,7 @@ import { Badge } from "@/components/Atoms/ui/badge"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
 import AppointmentModal from "@pages/Vendor/Components/Calendars/AppointmentModal"
+import { BOOKING_STATUS } from "@constants/booking"
 import React from "react"
 
 export interface Appointment {
@@ -20,7 +21,7 @@ export interface Appointment {
     date: string
     from: string | null
     to: string | null
-    status: "đã thanh toán" | "chờ xử lý" | "đã hủy"
+    status: BOOKING_STATUS
     color: string
     notes: string
     alreadyPaid: number
@@ -48,6 +49,7 @@ interface CalendarViewProps {
     selectedLocationId: string
     onLocationChange: (locationId: string) => void
     onDateRangeChange?: (from: string, to: string) => void
+    onAppointmentUpdate?: (updatedAppointment: Appointment) => void
     isLoading?: boolean
 }
 
@@ -58,6 +60,7 @@ export default function CalendarView({
     selectedLocationId,
     onLocationChange,
     onDateRangeChange,
+    onAppointmentUpdate,
     isLoading = false
 }: CalendarViewProps) {
     // Use sessionStorage to persist currentDate across re-renders
@@ -70,11 +73,16 @@ export default function CalendarView({
         }
         return new Date()
     }
-
     const [currentDate, setCurrentDate] = useState(getInitialDate)
     const [viewMode, setViewMode] = useState<"week" | "day">("week")
     const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [localAppointments, setLocalAppointments] = useState<Appointment[]>(appointments)
+
+    // Update local appointments when props change
+    useEffect(() => {
+        setLocalAppointments(appointments)
+    }, [appointments])
 
     // Track component lifecycle
     useEffect(() => {
@@ -189,7 +197,7 @@ export default function CalendarView({
     // Lấy lịch hẹn cho ngày cụ thể
     const getAppointmentsForDate = (date: Date) => {
         const dateStr = date.toISOString().split("T")[0]
-        return appointments?.filter((apt) => apt?.date === dateStr)
+        return localAppointments?.filter((apt) => apt?.date === dateStr)
     }
 
     // Tính toán vị trí của appointment trong lưới
@@ -289,6 +297,15 @@ export default function CalendarView({
     const handleCloseModal = () => {
         setIsModalOpen(false)
         setSelectedAppointment(null)
+    }
+
+    const handleAppointmentUpdate = (updatedAppointment: Appointment) => {
+        setLocalAppointments(prevAppointments =>
+            prevAppointments.map(apt =>
+                apt.id === updatedAppointment.id ? updatedAppointment : apt
+            )
+        )
+        onAppointmentUpdate?.(updatedAppointment)
     }
 
     return (
@@ -474,7 +491,12 @@ export default function CalendarView({
                     </div>
                 )}
             </CardContent>
-            <AppointmentModal appointment={selectedAppointment} isOpen={isModalOpen} onClose={handleCloseModal} />
+            <AppointmentModal
+                appointment={selectedAppointment}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onAppointmentUpdate={handleAppointmentUpdate}
+            />
         </Card>
     )
 }
