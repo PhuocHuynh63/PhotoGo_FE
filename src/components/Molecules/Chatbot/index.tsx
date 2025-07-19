@@ -83,11 +83,13 @@ const Chatbot = () => {
 
             let botMessage = "";
             let conceptsToShow = null;
-            if (response.data.data.concepts_same) {
-                botMessage = response.data.data.example;
+
+            if (!response.data.data.isNoMatch) {
+                botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
                 conceptsToShow = response.data.data.concepts_same;
             } else {
-                botMessage = response.data.data.text || "Tôi không hiểu câu hỏi của bạn. Bạn có thể thử lại không?";
+                botMessage = response.data.data.suggestion;
+                conceptsToShow = response.data.data.concepts_suggested;
             }
             setMessages(prev => [
                 ...prev,
