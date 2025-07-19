@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown';
 import '@leenguyen/react-flip-clock-countdown/dist/index.css';
 import { CircleX } from "lucide-react";
-import { Button } from "@components/Atoms/ui/button";
-import Link from "next/link";
 import { BOOKING } from "@constants/booking";
 
 interface CountdownCardProps {
@@ -43,9 +41,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
             <motion.div
                 id="countdown-card-cancelled"
                 variants={cardVariants}
-                initial="hidden"
-                animate={isVisible ? "visible" : "hidden"}
-                className="lg:col-span-2 bg-red-50/50 border border-red-200 rounded-2xl shadow-lg p-8"
+                className="lg:col-span-2 flex items-center bg-red-50/50 border border-red-200 rounded-2xl shadow-lg p-8"
             >
                 <div className="text-center flex flex-col items-center">
                     <CircleX className="w-16 h-16 text-red-500 mb-4" strokeWidth={1.5} />

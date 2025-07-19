@@ -265,6 +265,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                         isVisible={isVisible["qr-card"]}
                         code={data.code}
                         qrURL={qrURL}
+                        status={data.status}
                     />
                 </div>
                 <TimelineCard
