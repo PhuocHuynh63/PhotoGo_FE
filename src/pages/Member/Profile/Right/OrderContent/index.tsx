@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { IInvoice } from "@models/invoice/common.model";
 import { IBooking } from "@models/booking/common.model";
 import BookingCard from "./Components/OrderBookingCard";
+import { BOOKING } from "@constants/booking";
 
 
 interface OrdersContentProps {
@@ -30,9 +31,9 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
     let filteredBookings = invoices?.map((invoice) => invoice.booking).filter((booking) => {
         const matchesTab =
             activeTab === "all" ||
-            (activeTab === "upcoming" && booking.status === "chờ xử lý") ||
-            (activeTab === "paid" && booking.status === "đã thanh toán") ||
-            (activeTab === "completed" && booking.status === "đã hoàn thành") ||
+            (activeTab === "upcoming" && booking.status === BOOKING.BOOKING_STATUS.PENDING) ||
+            (activeTab === "paid" && booking.status === BOOKING.BOOKING_STATUS.PAID) ||
+            (activeTab === "completed" && booking.status === BOOKING.BOOKING_STATUS.COMPLETED) ||
             (activeTab === "cancelled" && booking.status === "đã hủy")
         return matchesTab
     })
@@ -62,7 +63,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols- gap-2 bg-orange-100 p-1 rounded-xl max-w-2xl mx-auto mb-6">
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
-                    <TabsTrigger value="upcoming">Chờ xử lý</TabsTrigger>
+                    <TabsTrigger value="upcoming">Chờ xác nhận</TabsTrigger>
                     <TabsTrigger value="paid">Đã thanh toán</TabsTrigger>
                     <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
                     <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>

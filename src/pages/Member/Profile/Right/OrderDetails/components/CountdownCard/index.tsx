@@ -1,9 +1,11 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from "react";
-
+import { motion } from "framer-motion";
 import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown';
 import '@leenguyen/react-flip-clock-countdown/dist/index.css';
+import { CircleX } from "lucide-react";
+import { BOOKING } from "@constants/booking";
 
 interface CountdownCardProps {
     isVisible?: boolean;
@@ -11,6 +13,7 @@ interface CountdownCardProps {
     isMultiDay?: boolean;
     bookingDate?: string;
     bookingTime?: string;
+    status?: string;
 }
 
 const CountdownCard: React.FC<CountdownCardProps> = ({
@@ -18,7 +21,8 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
     targetDate,
     isMultiDay = false,
     bookingDate,
-    bookingTime
+    bookingTime,
+    status
 }) => {
     const [isClient, setIsClient] = useState(false);
 
@@ -26,6 +30,36 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
         setIsClient(true);
     }, []);
 
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
+
+    //UI: Giao diện khi đơn hàng/buổi chụp bị hủy
+    if (status === BOOKING.BOOKING_STATUS.CANCELLED || status === BOOKING.BOOKING_STATUS.CANCELLED_USER || status === BOOKING.BOOKING_STATUS.CANCELLED_VENDOR) {
+        return (
+            <motion.div
+                id="countdown-card-cancelled"
+                variants={cardVariants}
+                className="lg:col-span-2 flex items-center justify-center bg-red-50/50 border border-red-200 rounded-2xl shadow-lg p-8"
+            >
+                <div className="text-center flex flex-col items-center">
+                    <CircleX className="w-16 h-16 text-red-500 mb-4" strokeWidth={1.5} />
+                    <h3 className="text-2xl font-bold mb-2 text-red-800">
+                        {isMultiDay ? "Dịch vụ đã bị hủy" : "Buổi chụp đã bị hủy"}
+                    </h3>
+                    <p className="text-slate-600 mt-2 max-w-md">
+                        {isMultiDay
+                            ? <>Dịch vụ của bạn dự kiến bắt đầu vào ngày <strong>{bookingDate}</strong> đã không thể thực hiện.</>
+                            : <>Buổi chụp của bạn vào lúc <strong>{bookingTime}</strong> ngày <strong>{bookingDate}</strong> đã không thể thực hiện.</>
+                        }
+                    </p>
+                </div>
+            </motion.div>
+        );
+    }
+
+    //UI: Đơn hàng/buổi chụp sắp diễn ra
     return (
         <div
             id="countdown-card"
@@ -87,4 +121,4 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
     );
 };
 
-export default CountdownCard; 
+export default CountdownCard;
