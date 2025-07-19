@@ -1,4 +1,4 @@
-enum BOOKING_STATUS {
+export enum BOOKING_STATUS {
     NOT_PAID = 'chưa thanh toán',
     PAID = 'đã thanh toán',
     PENDING = 'chờ xác nhận',

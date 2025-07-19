@@ -7,7 +7,7 @@ import { Badge } from "@/components/Atoms/ui/badge"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Atoms/ui/select"
 import AppointmentModal from "@pages/Vendor/Components/Calendars/AppointmentModal"
-import { BookingStatus } from "@constants/bookingStatus"
+import { BOOKING_STATUS } from "@constants/booking"
 import React from "react"
 
 export interface Appointment {
@@ -21,7 +21,7 @@ export interface Appointment {
     date: string
     from: string | null
     to: string | null
-    status: BookingStatus
+    status: BOOKING_STATUS
     color: string
     notes: string
     alreadyPaid: number

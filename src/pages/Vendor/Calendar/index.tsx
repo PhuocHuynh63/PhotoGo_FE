@@ -11,7 +11,7 @@ import AppointmentStats from "../Components/Appointment/AppointmentStats"
 import RecentAppointments from "../Components/Appointment/RecentAppointments"
 import { useLocationOverview, type Booking, type Slot } from "@/utils/hooks/useLocation/useLocationOverview"
 import { useVendorLocations } from "@/utils/hooks/useVendorLocations"
-import { BookingStatus } from "@constants/bookingStatus"
+import { BOOKING_STATUS } from "@constants/booking"
 
 interface WorkingHours {
     start: string
@@ -95,14 +95,14 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     // Helper functions để convert location overview data sang format của UI components
 
     const convertBookingToAppointment = (booking: Booking, slot: Slot): Appointment => {
-        const statusMap: Record<string, BookingStatus> = {
-            "đã thanh toán": BookingStatus.PAID,
-            "chờ xử lý": BookingStatus.PENDING,
-            "chờ xác nhận": BookingStatus.PENDING,
-            "đã xác nhận": BookingStatus.CONFIRMED,
-            "đang thực hiện": BookingStatus.PROGRESSING,
-            "đã hoàn thành": BookingStatus.COMPLETED,
-            "đã hủy": BookingStatus.CANCELLED
+        const statusMap: Record<string, BOOKING_STATUS> = {
+            "đã thanh toán": BOOKING_STATUS.PAID,
+            "chờ xử lý": BOOKING_STATUS.PENDING,
+            "chờ xác nhận": BOOKING_STATUS.PENDING,
+            "đã xác nhận": BOOKING_STATUS.CONFIRMED,
+            "đang thực hiện": BOOKING_STATUS.IN_PROGRESS,
+            "đã hoàn thành": BOOKING_STATUS.COMPLETED,
+            "đã hủy": BOOKING_STATUS.CANCELLED
         }
 
         const colorMap: Record<string, string> = {
@@ -115,7 +115,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             "đã hoàn thành": "green"
         }
 
-        const mappedStatus = statusMap[booking.status] || BookingStatus.PENDING
+        const mappedStatus = statusMap[booking.status] || BOOKING_STATUS.PENDING
 
         // Helper function to format time from "HH:MM:SS" to "HH:MM"
         const formatTime = (timeString: string | null) => {

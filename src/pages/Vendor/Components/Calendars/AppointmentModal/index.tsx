@@ -25,7 +25,7 @@ import {
     User,
     Notebook,
 } from "lucide-react"
-import { BookingStatus } from "@constants/bookingStatus"
+import { BOOKING_STATUS } from "@constants/booking"
 import { useBooking } from "@utils/hooks/useBooking"
 import toast from "react-hot-toast"
 import React from "react"
@@ -45,7 +45,7 @@ interface Appointment {
     date: string
     from: string | null
     to: string | null
-    status: BookingStatus
+    status: BOOKING_STATUS
     color: string
     notes: string
     alreadyPaid: number
@@ -83,20 +83,20 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
     const handleConfirmAppointment = async (bookingId: string) => {
         try {
             console.log("confirm appointment", bookingId)
-            await updateBookingStatus(bookingId, BookingStatus.CONFIRMED)
-            
+            await updateBookingStatus(bookingId, BOOKING_STATUS.CONFIRMED)
+
             // Update local state immediately
             const updatedAppointment = {
                 ...localAppointment,
-                status: BookingStatus.CONFIRMED
+                status: BOOKING_STATUS.CONFIRMED
             }
             setLocalAppointment(updatedAppointment)
-            
+
             // Notify parent component
             if (onAppointmentUpdate) {
                 onAppointmentUpdate(updatedAppointment)
             }
-            
+
             toast.success("Đã xác nhận lịch hẹn thành công!")
             onClose() // Đóng modal sau khi xác nhận thành công
         } catch (err) {
@@ -107,31 +107,45 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case BookingStatus.PAID:
+            case BOOKING_STATUS.PAID:
                 return (
                     <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">
                         <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
                         {status}
                     </Badge>
                 )
-            case BookingStatus.PENDING:
+            case BOOKING_STATUS.PENDING:
                 return (
                     <Badge variant='outline' className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
                         <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1.5"></span>
                         {status}
                     </Badge>
                 )
-            case BookingStatus.CONFIRMED:
+            case BOOKING_STATUS.CONFIRMED:
                 return (
                     <Badge variant='outline' className="bg-blue-100 text-blue-800 hover:bg-blue-100">
                         <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>
                         {status}
                     </Badge>
                 )
-            case BookingStatus.CANCELLED:
+            case BOOKING_STATUS.CANCELLED:
                 return (
                     <Badge variant='outline' className="bg-red-100 text-red-800 hover:bg-red-100">
                         <span className="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>
+                        {status}
+                    </Badge>
+                )
+            case BOOKING_STATUS.IN_PROGRESS:
+                return (
+                    <Badge variant='outline' className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>
+                        {status}
+                    </Badge>
+                )
+            case BOOKING_STATUS.COMPLETED:
+                return (
+                    <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">
+                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
                         {status}
                     </Badge>
                 )
@@ -140,6 +154,55 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
         }
     }
 
+    const handleCompleteAppointment = async (bookingId: string) => {
+        try {
+            console.log("complete appointment", bookingId)
+            await updateBookingStatus(bookingId, BOOKING_STATUS.COMPLETED)
+
+            // Update local state immediately
+            const updatedAppointment = {
+                ...localAppointment,
+                status: BOOKING_STATUS.COMPLETED
+            }
+            setLocalAppointment(updatedAppointment)
+
+            // Notify parent component
+            if (onAppointmentUpdate) {
+                onAppointmentUpdate(updatedAppointment)
+            }
+
+            toast.success("Đã hoàn thành lịch hẹn thành công!")
+            onClose() // Đóng modal sau khi hoàn thành thành công
+        } catch (err) {
+            console.error("Error completing appointment:", err)
+            toast.error("Có lỗi xảy ra khi hoàn thành lịch hẹn")
+        }
+    }
+
+    const handleProgressAppointment = async (bookingId: string) => {
+        try {
+            console.log("progress appointment", bookingId)
+            await updateBookingStatus(bookingId, BOOKING_STATUS.IN_PROGRESS)
+
+            // Update local state immediately
+            const updatedAppointment = {
+                ...localAppointment,
+                status: BOOKING_STATUS.IN_PROGRESS
+            }
+            setLocalAppointment(updatedAppointment)
+
+            // Notify parent component
+            if (onAppointmentUpdate) {
+                onAppointmentUpdate(updatedAppointment)
+            }
+
+            toast.success("Đã tiến hành lịch hẹn thành công!")
+            onClose() // Đóng modal sau khi tiến hành thành công
+        } catch (err) {
+            console.error("Error progressing appointment:", err)
+            toast.error("Có lỗi xảy ra khi tiến hành lịch hẹn")
+        }
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -289,7 +352,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
 
                 <DialogFooter className="flex flex-col sm:flex-row gap-2">
                     <div className="flex gap-2 flex-1">
-                        {localAppointment.status === BookingStatus.PAID && (
+                        {localAppointment.status === BOOKING_STATUS.PAID && (
                             <Button variant="outline" className="flex-1 gap-1 text-red-600 hover:text-red-700 cursor-pointer">
                                 <Trash2 className="h-4 w-4" />
                                 Hủy lịch
@@ -301,7 +364,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
                         <Button variant="outline" onClick={onClose} className="cursor-pointer">
                             Đóng
                         </Button>
-                        {localAppointment.status === BookingStatus.PENDING && (
+                        {localAppointment.status === BOOKING_STATUS.PENDING && (
                             <Button
                                 className="gap-1"
                                 onClick={() => handleConfirmAppointment(localAppointment.id)}
@@ -309,6 +372,26 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
                             >
                                 <Calendar className="h-4 w-4" />
                                 {updatingStatus ? "Đang xác nhận..." : "Xác nhận lịch"}
+                            </Button>
+                        )}
+                        {localAppointment.status === BOOKING_STATUS.IN_PROGRESS && (
+                            <Button
+                                className="gap-1"
+                                onClick={() => handleCompleteAppointment(localAppointment.id)}
+                                disabled={updatingStatus}
+                            >
+                                <Calendar className="h-4 w-4" />
+                                {updatingStatus ? "Đang xác nhận..." : "Hoàn thành lịch"}
+                            </Button>
+                        )}
+                        {localAppointment.status === BOOKING_STATUS.CONFIRMED && (
+                            <Button
+                                className="gap-1"
+                                onClick={() => handleProgressAppointment(localAppointment.id)}
+                                disabled={updatingStatus}
+                            >
+                                <Calendar className="h-4 w-4" />
+                                {updatingStatus ? "Đang xác nhận..." : "Đang thực hiện"}
                             </Button>
                         )}
                     </div>

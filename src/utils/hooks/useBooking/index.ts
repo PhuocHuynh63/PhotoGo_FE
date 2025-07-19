@@ -3,7 +3,7 @@ import { IInvoice } from '@models/invoice/common.model';
 import { IBooking, IBookingDiscountAmount } from '@models/booking/common.model';
 import BookingService from '@services/booking';
 import { IBookingResponseModel } from '@models/booking/repsonse.model';
-import { BookingStatus } from '@constants/bookingStatus';
+import { BOOKING_STATUS } from '@constants/booking';
 
 // Enhanced useBooking hook with all booking operations
 export const useBooking = (invoices?: IInvoice[]) => {
@@ -48,7 +48,7 @@ export const useBooking = (invoices?: IInvoice[]) => {
     }, [invoices]);
 
     // Update booking status
-    const updateBookingStatus = useCallback(async (bookingId: string, status: BookingStatus) => {
+    const updateBookingStatus = useCallback(async (bookingId: string, status: BOOKING_STATUS) => {
         setUpdatingStatus(true);
         setError(null);
 

@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Clock, CheckCircle, XCircle, Calendar } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/Atoms/ui/select"
-import { BookingStatus } from "@constants/bookingStatus"
+import { BOOKING_STATUS } from "@constants/booking"
 
 interface Appointment {
     id: string
@@ -15,7 +15,7 @@ interface Appointment {
     to: string | null
     service: string
     location: string
-    status: BookingStatus
+    status: BOOKING_STATUS
     notes: string
 }
 
@@ -37,9 +37,9 @@ export default function AppointmentStats({ appointments }: AppointmentStatsProps
     })
 
     // Đếm số lượng lịch hẹn theo trạng thái
-    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.PENDING).length
-    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.CONFIRMED).length
-    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === BookingStatus.CANCELLED).length
+    const pendingCount = filteredAppointments?.filter((appointment) => appointment.status === BOOKING_STATUS.PENDING).length
+    const confirmedCount = filteredAppointments?.filter((appointment) => appointment.status === BOOKING_STATUS.CONFIRMED).length
+    const cancelledCount = filteredAppointments?.filter((appointment) => appointment.status === BOOKING_STATUS.CANCELLED).length
     const totalCount = filteredAppointments?.length
 
     return (

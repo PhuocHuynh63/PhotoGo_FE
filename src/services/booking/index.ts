@@ -1,5 +1,5 @@
 import http from "@configs/fetch";
-import { BookingStatus } from "@constants/bookingStatus";
+import { BOOKING_STATUS } from "@constants/booking";
 
 const BookingService = {
     createBooking: async (userId: string, serviceConceptId: string, data: Record<string, unknown>) => {
@@ -25,7 +25,7 @@ const BookingService = {
             next: { revalidate: 10 }
         })
     },
-    updateBookingStatus: async (bookingId: string, status: BookingStatus) => {
+    updateBookingStatus: async (bookingId: string, status: BOOKING_STATUS) => {
         return await http.patch(`/bookings/${bookingId}/update-status`, {
             status
         })

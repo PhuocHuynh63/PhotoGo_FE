@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@components/Atoms/ui/avatar"
 import { Badge } from "@components/Atoms/ui/badge"
-import { BookingStatus } from "@constants/bookingStatus"
+import { BOOKING_STATUS } from "@constants/booking"
+
 
 interface Appointment {
     id: string
@@ -14,7 +15,7 @@ interface Appointment {
     to: string | null
     service: string
     location: string
-    status: BookingStatus
+    status: BOOKING_STATUS
     notes: string
 }
 
@@ -37,15 +38,15 @@ export default function RecentAppointments({ appointments = [] }: RecentAppointm
     // Hàm để hiển thị trạng thái
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case BookingStatus.PENDING:
+            case BOOKING_STATUS.PENDING:
                 return (
                     <Badge variant='outline' className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 border-yellow-200">Chờ xác nhận</Badge>
                 )
-            case BookingStatus.PAID:
+            case BOOKING_STATUS.PAID:
                 return <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">Đã thanh toán</Badge>
-            case BookingStatus.COMPLETED:
+            case BOOKING_STATUS.COMPLETED:
                 return <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100 border-green-200">Hoàn thành</Badge>
-            case BookingStatus.CANCELLED:
+            case BOOKING_STATUS.CANCELLED:
                 return <Badge variant='outline' className="bg-red-100 text-red-800 hover:bg-red-100 border-red-200">Đã hủy</Badge>
             default:
                 return null
