@@ -185,7 +185,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
         return () => observer.disconnect()
     }, [])
 
-    const allPossibleStatuses = [BOOKING.BOOKING_STATUS.PENDING, BOOKING.BOOKING_STATUS.CONFIRMED, BOOKING.BOOKING_STATUS.IN_PROGRESS, BOOKING.BOOKING_STATUS.COMPLETED]
+    const allPossibleStatuses = [BOOKING.BOOKING_STATUS.PENDING, BOOKING.BOOKING_STATUS.CONFIRMED, BOOKING.BOOKING_STATUS.CANCELLED, BOOKING.BOOKING_STATUS.IN_PROGRESS, BOOKING.BOOKING_STATUS.COMPLETED]
     const completedStatuses = data.histories.map((h) => h.status.toLowerCase())
     const currentStatusIndex = completedStatuses.length - 1
 
@@ -271,7 +271,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                 <TimelineCard
                     isVisible={isVisible["timeline-card"]}
                     allPossibleStatuses={allPossibleStatuses}
-                    status={mockOrderData.status}
+                    status={data.status}
                     completedStatuses={completedStatuses}
                     currentStatusIndex={currentStatusIndex}
                 />

@@ -41,7 +41,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
             <motion.div
                 id="countdown-card-cancelled"
                 variants={cardVariants}
-                className="lg:col-span-2 flex items-center bg-red-50/50 border border-red-200 rounded-2xl shadow-lg p-8"
+                className="lg:col-span-2 flex items-center justify-center bg-red-50/50 border border-red-200 rounded-2xl shadow-lg p-8"
             >
                 <div className="text-center flex flex-col items-center">
                     <CircleX className="w-16 h-16 text-red-500 mb-4" strokeWidth={1.5} />
