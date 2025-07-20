@@ -1,24 +1,62 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Lock } from 'lucide-react'
+import { X, Lock, Check, Star, Calendar, Tag, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import Button from '@components/Atoms/Button'
 import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription/request.model'
-import { useUser } from '@stores/user/selectors'
+import { useSession } from '@stores/user/selectors'
+import { subscriptionService } from '@services/subcription'
+
+// PayOS type declaration
+declare global {
+    interface Window {
+        PayOS?: {
+            openPaymentDialog: (config: {
+                url: string;
+                onSuccess: (data: unknown) => void;
+                onError: (error: unknown) => void;
+                onClose: () => void;
+            }) => void;
+        };
+    }
+}
+
+interface SubscriptionData {
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+    priceForMonth: string;
+    priceForYear: string;
+    unit: string;
+    billingCycle: string;
+    planType: string;
+    isActive: boolean;
+    recommended: boolean;
+    imageUrl?: string;
+    icon?: React.ReactNode;
+    createdAt: string;
+    updatedAt: string;
+}
 
 interface PaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    subscription: any;
+    subscription: SubscriptionData;
 }
 
-export const PaymentModal = ({
+export default function PaymentModal({
     isOpen,
     onClose,
     subscription,
-}: PaymentModalProps) => {
+}: PaymentModalProps) {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+    const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
     const backdropVariants = {
         hidden: { opacity: 0 },
@@ -31,35 +69,111 @@ export const PaymentModal = ({
         exit: { opacity: 0, scale: 0.95, y: 50, transition: { duration: 0.2 } },
     };
 
-    const user = useUser();
-
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<ISubscriptionCreatePaymentLinkRequestModel>({
+    const session = useSession();
+    const { handleSubmit, setValue } = useForm<ISubscriptionCreatePaymentLinkRequestModel>({
         defaultValues: {
-            userId: user?.id || '',
+            userId: session?.user?.id || '',
             planId: subscription?.id || '',
-            type: subscription?.type || '',
+            type: 'thanh toán đầy đủ',
         }
     });
 
     // Reset form values khi subscription thay đổi
     React.useEffect(() => {
-        reset({
-            userId: user?.id || '',
-            planId: subscription?.id || '',
-            type: subscription?.type || '',
-        });
-    }, [subscription, user, reset]);
+        setValue('userId', session?.user?.id || '');
+        setValue('planId', subscription?.id || '');
+        setValue('type', 'thanh toán đầy đủ');
+        setError(null);
+        setPaymentUrl(null);
+        setShowPaymentDialog(false);
+    }, [subscription, session, setValue]);
 
-    const onSubmit = (data: ISubscriptionCreatePaymentLinkRequestModel) => {
-        console.log(data);
+    // Load PayOS script
+    useEffect(() => {
+        if (showPaymentDialog && paymentUrl) {
+            const script = document.createElement('script');
+            script.src = 'https://pay.payos.vn/v2/pay.js';
+            script.async = true;
+            script.onload = () => {
+                // Initialize PayOS dialog
+                if (window.PayOS) {
+                    window.PayOS.openPaymentDialog({
+                        url: paymentUrl,
+                        onSuccess: (data: unknown) => {
+                            console.log('Payment success:', data);
+                            onClose();
+                            // Có thể thêm toast notification hoặc redirect
+                        },
+                        onError: (error: unknown) => {
+                            console.error('Payment error:', error);
+                            setError('Thanh toán thất bại. Vui lòng thử lại.');
+                            setShowPaymentDialog(false);
+                        },
+                        onClose: () => {
+                            setShowPaymentDialog(false);
+                        }
+                    });
+                }
+            };
+            document.head.appendChild(script);
+
+            return () => {
+                // Cleanup script
+                const existingScript = document.querySelector('script[src="https://pay.payos.vn/v2/pay.js"]');
+                if (existingScript) {
+                    existingScript.remove();
+                }
+            };
+        }
+    }, [showPaymentDialog, paymentUrl, onClose]);
+
+    const onSubmit = async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
+        if (!session?.user?.id) {
+            setError('Vui lòng đăng nhập để tiếp tục');
+            return;
+        }
+        console.log(data)
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await subscriptionService.createPaymentLink(data);
+
+            const responseData = response as { data?: { paymentUrl?: string } };
+            if (responseData?.data?.paymentUrl) {
+                // Set payment URL and show dialog
+                setPaymentUrl(responseData.data.paymentUrl);
+                setShowPaymentDialog(true);
+            } else {
+                setError('Không thể tạo liên kết thanh toán. Vui lòng thử lại.');
+            }
+        } catch (err: unknown) {
+            console.error('Payment link creation error:', err);
+            const errorMessage = err instanceof Error
+                ? err.message
+                : 'Có lỗi xảy ra khi tạo liên kết thanh toán. Vui lòng thử lại.';
+            setError(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     }
-    //-------------------------------End-------------------------------//
+
+    // Parse HTML description to extract features
+    const parseFeatures = (htmlDescription: string): string[] => {
+        if (!htmlDescription) return [];
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlDescription, 'text/html');
+        const listItems = doc.querySelectorAll('li');
+        return Array.from(listItems).map(li => li.textContent || '').filter(text => text.trim());
+    };
+
+    const features = parseFeatures(subscription?.description);
 
     return (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400 bg-opacity-100 backdrop-blur-sm"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-400 bg-opacity-100 backdrop-blur-sm p-4"
                     variants={backdropVariants}
                     initial="hidden"
                     animate="visible"
@@ -67,7 +181,7 @@ export const PaymentModal = ({
                     onClick={onClose}
                 >
                     <motion.div
-                        className="relative bg- bg-white w-full max-w-md rounded-xl shadow-2xl m-4"
+                        className="relative bg-white w-full max-w-2xl rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto mt-16 sm:mt-0"
                         variants={modalVariants}
                         initial="hidden"
                         animate="visible"
@@ -77,34 +191,120 @@ export const PaymentModal = ({
                         {/* Nút đóng modal */}
                         <button
                             onClick={onClose}
-                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors"
+                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors z-10"
                             aria-label="Đóng"
+                            disabled={isLoading}
                         >
                             <X size={24} />
                         </button>
 
-                        <div className="p-8">
-                            <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Thanh toán an toàn</h2>
-                            <p className="text-center text-gray-500 mb-6">Thanh toán cho gói: <span className="font-semibold text-blue-600">{subscription.name}</span></p>
+                        <div className="p-4 sm:p-6 lg:p-8">
+                            {/* Header */}
+                            <div className="text-center mb-4 sm:mb-6">
+                                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Chi tiết gói đăng ký</h2>
+                                <p className="text-sm sm:text-base text-gray-500">Xem lại thông tin trước khi thanh toán</p>
+                            </div>
 
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                                {/* UserId */}
-                                <input type="hidden" {...register('userId')} className="w-full pl-10 pr-3 py-2.5 border" />
+                            {/* Error Message */}
+                            {error && (
+                                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <p className="text-sm text-red-600">{error}</p>
+                                </div>
+                            )}
 
-                                {/* PlanId */}
-                                <input type="hidden" {...register('planId')} className="w-full pl-10 pr-3 py-2.5 border" />
+                            {/* Subscription Details */}
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+                                    <div className="flex items-center space-x-3">
+                                        {subscription.icon && (
+                                            <div className="text-blue-600">
+                                                {subscription.icon}
+                                            </div>
+                                        )}
+                                        <div className="flex-1 items-center justify-center">
+                                            <h3 className="text-lg sm:text-xl font-bold text-gray-800">{subscription.name}</h3>
+                                            {subscription.recommended && (
+                                                <div className="flex items-center mt-1">
+                                                    <Star size={14} className="text-yellow-500 fill-current" />
+                                                    <span className="text-xs text-yellow-600 ml-1 font-medium">Gói được khuyến nghị</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-center sm:text-right flex items-end justify-center">
+                                        <div className="text-xl sm:text-2xl font-bold text-blue-600">{subscription.price}</div>
+                                        <div className="text-sm text-gray-500">{subscription.unit}</div>
+                                    </div>
+                                </div>
 
-                                {/* type */}
-                                <input type="hidden" {...register('type')} className="w-full pl-10 pr-3 py-2.5 border" />
+                                {/* Plan Type and Billing Cycle */}
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-4 gap-2">
+                                    <div className="flex items-center space-x-2">
+                                        <Tag size={16} className="text-gray-400 flex-shrink-0" />
+                                        <span>Loại: <span className="font-medium">{subscription.planType}</span></span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <Calendar size={16} className="text-gray-400 flex-shrink-0" />
+                                        <span>Chu kỳ: <span className="font-medium">{subscription.billingCycle}</span></span>
+                                    </div>
+                                </div>
 
-                                {/* Nút thanh toán */}
+                                {/* Price Details */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+                                    <div className="bg-white rounded-lg p-3">
+                                        <div className="text-gray-500">Giá theo tháng</div>
+                                        <div className="font-semibold text-gray-800">{subscription.priceForMonth} ₫</div>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3">
+                                        <div className="text-gray-500">Giá theo năm</div>
+                                        <div className="font-semibold text-gray-800">{subscription.priceForYear} ₫</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Features List */}
+                            {features.length > 0 && (
+                                <div className="mb-4 sm:mb-6">
+                                    <h4 className="text-base sm:text-lg font-semibold text-gray-800 mb-3">Tính năng bao gồm:</h4>
+                                    <div className="space-y-2">
+                                        {features.map((feature, index) => (
+                                            <div key={index} className="flex items-start space-x-3">
+                                                <Check size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
+                                                <span className="text-sm sm:text-base text-gray-700">{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Payment Form */}
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                {/* Payment Button */}
                                 <Button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300"
+                                    disabled={isLoading}
+                                    className="w-full bg-blue-600 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 >
-                                    <Lock size={18} className="mr-2" />
-                                    Thanh toán {subscription.price}
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 size={16} className="mr-2 flex-shrink-0 animate-spin" />
+                                            Đang xử lý...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Lock size={16} className="mr-2 flex-shrink-0" />
+                                            Thanh toán {subscription.price}
+                                        </>
+                                    )}
                                 </Button>
+
+                                {/* Security Notice */}
+                                <div className="text-center text-xs text-gray-500 mt-3 sm:mt-4">
+                                    <div className="flex items-center justify-center space-x-1">
+                                        <Lock size={12} className="text-gray-400 flex-shrink-0" />
+                                        <span>Thanh toán được bảo mật bởi SSL</span>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </motion.div>
@@ -112,4 +312,4 @@ export const PaymentModal = ({
             )}
         </AnimatePresence>
     );
-};
+}
