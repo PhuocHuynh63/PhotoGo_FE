@@ -103,7 +103,7 @@ export const BookingDetailModel = z.object({
         status: z.string(),
         changedAt: z.string(),
     })),
-    invoices: InvoiceModel,
+    invoices: z.array(InvoiceModel),
     disputes: z.array(z.object({
         id: z.string(),
         bookingId: z.string(),
