@@ -12,12 +12,12 @@ const PricingPackage = ({
     numberOfPackages = 3,
 }: any /* ICOMPONENTS.PricingPackage */) => {
 
-    
+
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
     const handleOpenModal = () => setModalOpen(true);
     const handleCloseModal = () => setModalOpen(false);
-
+    console.log(subscriptions)
     return (
         <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto items-start">
             {subscriptions.slice(0, numberOfPackages).map((pkg: any, index: number) => (
@@ -97,7 +97,7 @@ const PricingPackage = ({
             <PaymentModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
-                
+                subscription={subscriptions}
             />
         </div >
     )

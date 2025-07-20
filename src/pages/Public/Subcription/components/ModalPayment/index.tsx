@@ -2,23 +2,22 @@
 
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Lock, Mail, User, CreditCard } from 'lucide-react'
+import { X, Lock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import Button from '@components/Atoms/Button'
 import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription/request.model'
+import { useUser } from '@stores/user/selectors'
 
 interface PaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    productName: string;
-    productPrice: string;
+    subscription: any;
 }
 
 export const PaymentModal = ({
     isOpen,
     onClose,
-    productName,
-    productPrice,
+    subscription,
 }: PaymentModalProps) => {
 
     const backdropVariants = {
@@ -32,12 +31,24 @@ export const PaymentModal = ({
         exit: { opacity: 0, scale: 0.95, y: 50, transition: { duration: 0.2 } },
     };
 
+    const user = useUser();
 
-    /**
-     * This is the form for the payment modal
-     * @description Form
-     */
-    const { register, handleSubmit, formState: { errors } } = useForm<ISubscriptionCreatePaymentLinkRequestModel>();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<ISubscriptionCreatePaymentLinkRequestModel>({
+        defaultValues: {
+            userId: user?.id || '',
+            planId: subscription?.id || '',
+            type: subscription?.type || '',
+        }
+    });
+
+    // Reset form values khi subscription thay đổi
+    React.useEffect(() => {
+        reset({
+            userId: user?.id || '',
+            planId: subscription?.id || '',
+            type: subscription?.type || '',
+        });
+    }, [subscription, user, reset]);
 
     const onSubmit = (data: ISubscriptionCreatePaymentLinkRequestModel) => {
         console.log(data);
@@ -74,7 +85,7 @@ export const PaymentModal = ({
 
                         <div className="p-8">
                             <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Thanh toán an toàn</h2>
-                            <p className="text-center text-gray-500 mb-6">Thanh toán cho gói: <span className="font-semibold text-blue-600">{productName}</span></p>
+                            <p className="text-center text-gray-500 mb-6">Thanh toán cho gói: <span className="font-semibold text-blue-600">{subscription.name}</span></p>
 
                             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                                 {/* UserId */}
@@ -92,7 +103,7 @@ export const PaymentModal = ({
                                     className="w-full bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-blue-300"
                                 >
                                     <Lock size={18} className="mr-2" />
-                                    Thanh toán {productPrice}
+                                    Thanh toán {subscription.price}
                                 </Button>
                             </form>
                         </div>
