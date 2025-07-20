@@ -18,8 +18,8 @@ const PricingPackage = ({
 }: any /* ICOMPONENTS.PricingPackage */) => {
 
     return (
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
-            {subscriptions.slice(0, numberOfPackages).map((pkg: any, index: number) => (
+        <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto items-start">
+                {subscriptions.slice(0, numberOfPackages).map((pkg: any, index: number) => (
                 <Card
                     key={index}
                     className={cn(
@@ -52,15 +52,15 @@ const PricingPackage = ({
                             <h3 className="text-2xl font-bold">{pkg.name}</h3>
                         </div>
 
-                        <p className={cn("text-sm min-h-[40px]", pkg.recommended ? "text-slate-300" : "text-slate-600")}>
-                            {pkg.description}
-                        </p>
+                        <div className={cn("text-sm min-h-[40px]", pkg.recommended ? "text-slate-600" : "text-slate-600", "[&_ul]:list-disc [&_ul]:pl-5")}
+                            dangerouslySetInnerHTML={{ __html: pkg?.description || '' }}
+                        />
 
                         <div className="flex items-baseline mt-4">
-                            <span className="text-4xl font-extrabold tracking-tight">
+                            <span className="text-4xl font-extrabold tracking-tight text-black">
                                 {pkg.price}
                             </span>
-                            <span className={cn("ml-2 text-sm", pkg.recommended ? "text-slate-400" : "text-slate-500")}>
+                            <span className={cn("ml-2 text-sm", pkg.recommended ? "text-slate-500" : "text-slate-500")}>
                                 {pkg.unit}
                             </span>
                         </div>
@@ -68,12 +68,12 @@ const PricingPackage = ({
 
                     <CardContent className="p-8 pt-0 flex-1">
                         <ul className="space-y-4">
-                            {pkg.features.map((feature: any, i: number) => (
+                            {/* {pkg.description.map((feature: any, i: number) => (
                                 <li key={i} className="flex items-center">
                                     <Check className={cn("h-5 w-5 mr-3 flex-shrink-0", pkg.recommended ? "text-primary" : "text-slate-500")} />
                                     <span className={cn(pkg.recommended ? "text-slate-200" : "text-slate-700")}>{feature}</span>
                                 </li>
-                            ))}
+                            ))} */}
                         </ul>
                     </CardContent>
 

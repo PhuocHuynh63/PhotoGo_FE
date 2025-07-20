@@ -9,6 +9,7 @@ import { useReviewsByVendorId } from "@hooks/useReview"
 import Pagination from "./components/Pagination"
 import { useReviews, useVendor } from "@stores/vendor/selectors"
 import { IReviewPaginationResponse } from "@models/review/repsonse.model"
+import WriteReview from "./components/WriteReview"
 
 const VendorReviewsPage = () => {
   /**
