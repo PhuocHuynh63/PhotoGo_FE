@@ -65,12 +65,12 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
 
     // Phân loại voucher theo trạng thái đúng với backend
     const getVouchersByStatus = (status: string) => {
-        return vouchers?.filter(voucher => normalizeStatus(voucher?.status) === normalizeStatus(status));
+        return vouchers?.filter(voucher => normalizeStatus(voucher?.status) === normalizeStatus(status)) || [];
     };
 
     // Đếm số lượng voucher trong mỗi cột
     const getVoucherCount = (status: string) => {
-        return getVouchersByStatus(status)?.length;
+        return getVouchersByStatus(status)?.length || 0;
     };
 
     const handleEditVoucher = (voucher: IVoucherModel) => {
@@ -112,7 +112,7 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
                                         onEdit={() => handleEditVoucher(voucher)}
                                     />
                                 ))}
-                                {getVouchersByStatus(column.status)?.length === 0 && (
+                                {getVouchersByStatus(column.status).length === 0 && (
                                     <div className="text-center py-8 text-gray-500">
                                         <LucideIcon name="Inbox" className="mx-auto mb-2" iconSize={24} />
                                         <p className="text-sm">Không có voucher nào</p>
