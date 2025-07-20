@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Camera, Zap, Mountain } from 'lucide-react'
+import { Camera, Zap } from 'lucide-react'
 import TitlePricing from './components/Title'
 import SelectionPricing from './components/Selection'
 import PricingPackage from '@components/Organisms/PricingPackages'
@@ -46,6 +46,11 @@ const PricingPage = () => {
         const params = {
           isActive: true,
           planType: SUBSCRIPTION.PLAN_TYPE.MEMBERSHIP,
+          current: 1,
+          pageSize: 10,
+          name: '',
+          sortBy: 'price',
+          sortDirection: 'asc',
         }
         // Assuming the service returns an object with a data array, e.g., { data: [...] }
         const response = await subscriptionService.getSubscriptionPlans(params) as any
