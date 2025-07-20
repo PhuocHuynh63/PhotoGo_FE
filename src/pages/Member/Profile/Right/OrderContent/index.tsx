@@ -1,7 +1,5 @@
 "use client"
 
-import { Calendar } from "lucide-react";
-import Input from "@components/Atoms/Input";
 import { Tabs, TabsList, TabsTrigger } from "@components/Molecules/Tabs";
 import { useEffect, useState } from "react";
 import { IPagination } from "@models/metadata";
@@ -10,9 +8,7 @@ import { ReadonlyURLSearchParams, useRouter, useSearchParams } from "next/naviga
 import { IInvoiceModel } from "@models/invoice/common.model";
 import { IBooking } from "@models/booking/common.model";
 import BookingCard from "./Components/OrderBookingCard";
-import { useInvoiceByUserId } from "@utils/hooks/useInvoice";
-import { useSession } from "@stores/user/selectors";
-import { METADATA } from "../../../../../types/IMetadata";
+import { BOOKING } from "@constants/booking";
 
 
 interface OrdersContentProps {
@@ -55,10 +51,10 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols- gap-2 bg-orange-100 p-1 rounded-xl max-w-2xl mx-auto mb-6">
                     <TabsTrigger value="all">Tất cả</TabsTrigger>
-                    <TabsTrigger value="upcoming">Chờ xác nhận</TabsTrigger>
-                    <TabsTrigger value="paid">Đã thanh toán</TabsTrigger>
-                    <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
-                    <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
+                    <TabsTrigger value={BOOKING.BOOKING_STATUS.IN_PROGRESS}>Chờ xác nhận</TabsTrigger>
+                    <TabsTrigger value={BOOKING.BOOKING_STATUS.CONFIRMED}>Đã xác nhận</TabsTrigger>
+                    <TabsTrigger value={BOOKING.BOOKING_STATUS.COMPLETED}>Đã hoàn thành</TabsTrigger>
+                    {/* <TabsTrigger value={BOOKING.BOOKING_STATUS.}>Đã hủy</TabsTrigger> */}
                 </TabsList>
             </Tabs>
 
