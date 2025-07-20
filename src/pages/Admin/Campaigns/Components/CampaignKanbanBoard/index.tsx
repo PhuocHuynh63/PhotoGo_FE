@@ -40,21 +40,21 @@ const KANBAN_COLUMNS: KanbanColumn[] = [
 export default function CampaignKanbanBoard({ campaigns, onCampaignUpdate }: CampaignKanbanBoardProps) {
     // Phân loại campaign theo status boolean
     const getCampaignsByStatus = (status: boolean) => {
-        return campaigns?.filter(campaign => campaign.status === status);
+        return campaigns?.filter(campaign => campaign.status === status) || [];
     };
 
     // Đếm số lượng campaign trong mỗi cột
     const getCampaignCount = (status: boolean) => {
-        return getCampaignsByStatus(status)?.length;
+        return getCampaignsByStatus(status)?.length || 0;
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Kanban Board */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {KANBAN_COLUMNS.map((column) => (
-                    <Card key={column.id} className={`${column.bgColor} border-2`}>
-                        <CardHeader className="pb-3">
+                    <Card key={column.id} className={`${column.bgColor} border-2 min-h-[680px]`}>
+                        <CardHeader className="pb-4">
                             <CardTitle className="flex items-center justify-between text-lg">
                                 <div className="flex items-center gap-2">
                                     <LucideIcon
@@ -70,18 +70,22 @@ export default function CampaignKanbanBoard({ campaigns, onCampaignUpdate }: Cam
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
-                            <div className="space-y-3">
+                            <div className="space-y-5">
                                 {getCampaignsByStatus(column.status)?.map((campaign) => (
-                                    <CampaignCard
-                                        key={campaign.id}
-                                        campaign={campaign}
-                                        onEdit={() => alert('Chỉnh sửa campaign: ' + campaign.name)}
-                                    />
+                                    <div key={campaign.id} className="h-[350px]">
+                                        <CampaignCard
+                                            campaign={campaign}
+                                            onEdit={() => alert('Chỉnh sửa campaign: ' + campaign.name)}
+                                        />
+                                    </div>
                                 ))}
                                 {getCampaignsByStatus(column.status)?.length === 0 && (
-                                    <div className="text-center py-8 text-gray-500">
-                                        <LucideIcon name="Inbox" className="mx-auto mb-2" iconSize={24} />
-                                        <p className="text-sm">Không có chiến dịch nào</p>
+                                    <div className="text-center py-16 text-gray-500 h-[350px] flex items-center justify-center">
+                                        <div>
+                                            <LucideIcon name="Inbox" className="mx-auto mb-3" iconSize={32} />
+                                            <p className="text-base font-medium text-gray-600">Không có chiến dịch nào</p>
+                                            <p className="text-sm text-gray-400 mt-1">Tạo chiến dịch mới để bắt đầu</p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
