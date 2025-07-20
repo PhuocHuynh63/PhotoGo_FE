@@ -87,3 +87,15 @@ export const VendorByIdModel = z.object({
 export type IVendorById = z.TypeOf<typeof VendorByIdModel>;
 //----------------------End----------------------//
 
+export const VendorOfCampaignModel = z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+    description: z.string(),
+    logo: z.string().nullable(),
+    banner: z.string().nullable(),
+    status: z.string(),
+    priority: z.number(),
+    created_at: z.string(),
+    updated_at: z.string(),
+});
