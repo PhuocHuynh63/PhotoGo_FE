@@ -35,6 +35,9 @@ export default async function Orders({ searchParams }: OrdersProps) {
     const currentPage = Number(page) || 1;
     const invoices = await getInvoices(session.user.id, currentPage, 10, status, term) as IInvoiceListResponse;
 
+    if (!invoices || !invoices.data) {
+        return <div>No invoices found.</div>;
+    }
     const invoicesData = invoices?.data?.data as IInvoiceModel[] || []
     const paginationInvoices = invoices?.data?.pagination as IPagination || null
 

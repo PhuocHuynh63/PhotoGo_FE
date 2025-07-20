@@ -5,11 +5,7 @@ import { BookingModel } from "./common.model";
 /**
  * Model of BookingData
  */
-export const BookingDataModel = z.object({
-    data: BookingModel,
-});
-
-export const BookingResponseModel = BackendResponseModel(BookingDataModel);
+export const BookingResponseModel = BackendResponseModel(BookingModel);
 export type IBookingResponseModel = z.infer<typeof BookingResponseModel>;
 //----------------------End----------------------//
 

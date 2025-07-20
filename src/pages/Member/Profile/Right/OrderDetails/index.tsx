@@ -24,8 +24,6 @@ interface OrderDetailsProps {
 }
 
 export default function OrderDetails({ booking }: OrderDetailsProps) {
-    // Use provided data or fallback to mock data
-
     const [day, month, year] = booking?.date?.split("/") || [];
     const formattedDate = `${year}-${month}-${day}`
 
@@ -41,7 +39,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const [showFullDescription, setShowFullDescription] = useState(false)
     const router = useRouter()
 
-    const invoice = booking?.invoices as IInvoiceModel;
+    const invoice = booking?.invoices[0] as any;
 
     const firstName = booking?.fullName?.split(" ").pop() || booking?.fullName
 
@@ -167,7 +165,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
             />
             <main className="mt-8 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {booking?.date || '' < new Date().toLocaleDateString() &&
+                    {booking?.date && booking?.date < new Date().toLocaleDateString() &&
                         <CountdownCard
                             isVisible={isVisible["countdown-card"]}
                             targetDate={targetDate}
