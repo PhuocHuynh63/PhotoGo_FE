@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import { AvatarWithBorder } from "@components/Organisms/AvatarBorder";
 import type { Rank } from "@components/Organisms/AvatarBorder/rankStyles";
 import { useRouter, useSearchParams } from "next/navigation";
-import AddUserDialog from "../Components/AddUserDialog";
+import AddUserDialog from "./Components/AddUserDialog";
 
 const ROLE_OPTIONS = [
   { value: 'Tất cả', icon: 'User', name: 'Tất cả' },
@@ -21,7 +21,6 @@ const ROLE_OPTIONS = [
   { value: 'R003', icon: 'Brush', name: 'Trang điểm' },
   { value: 'R005', icon: 'Shield', name: 'Quản trị viên' },
   { value: 'R006', icon: 'Users', name: 'Nhân viên' },
-  { value: 'R007', icon: 'User', name: 'Khách vãng lai' },
   { value: 'R008', icon: 'Store', name: 'Chủ cửa hàng' },
 ];
 const STATUS_OPTIONS = [
@@ -128,74 +127,164 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
     }
   };
 
-
   const statusBox = (status: string) => {
     switch (status?.trim().toLowerCase()) {
       case 'hoạt động':
         return (
-          <span className="inline-flex items-center gap-1 bg-green-500 text-white rounded-full px-4 py-1 text-xs font-semibold shadow">
-            <LucideIcon name="CheckCircle" className="text-white" iconSize={14} />
+          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1.5 text-xs font-medium">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
             Hoạt động
           </span>
         );
       case 'không hoạt động':
         return (
-          <span className="inline-flex items-center gap-1 bg-gray-400 text-white rounded-full px-4 py-1 text-xs font-semibold shadow">
-            <LucideIcon name="PauseCircle" className="text-white" iconSize={14} />
+          <span className="inline-flex items-center gap-1.5 bg-gray-50 text-gray-600 border border-gray-200 rounded-full px-3 py-1.5 text-xs font-medium">
+            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
             Không hoạt động
           </span>
         );
-
       case 'bị tạm ngưng':
         return (
-          <span className="inline-flex items-center gap-1 bg-yellow-500 text-white rounded-full px-4 py-1 text-xs font-semibold shadow">
-            <LucideIcon name="Pause" className="text-white" iconSize={14} />
+          <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1.5 text-xs font-medium">
+            <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
             Tạm ngưng
           </span>
         );
       default:
-        return <span className="inline-flex items-center gap-1 bg-white text-gray-500 border border-gray-300 rounded-full px-4 py-1 text-xs">--</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 bg-slate-50 text-slate-500 border border-slate-200 rounded-full px-3 py-1.5 text-xs font-medium">
+            <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
+            --
+          </span>
+        );
     }
   };
 
   // Định nghĩa columns cho DataTable
   const columns: Column<IUser>[] = [
-    { id: 'id', header: 'ID', cell: (user) => user.id },
     {
-      id: 'avatar', header: 'Avatar', cell: (user) => {
+      id: 'id',
+      header: 'ID',
+      cell: (user) => (
+        <span className="font-mono text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded">
+          #{user.id}
+        </span>
+      )
+    },
+    {
+      id: 'avatar',
+      header: 'Avatar',
+      cell: (user) => {
         const validRanks: Rank[] = ['Đồng', 'Bạc', 'Vàng', 'Kim Cương'];
         const userRank = typeof user.rank === 'string' ? user.rank.trim() : '';
         const rank = validRanks.includes(userRank as Rank) ? (userRank as Rank) : undefined;
         return (
-          <AvatarWithBorder rank={rank}>
-            <Avatar src={user.avatarUrl || ''} alt={user.fullName} size={36} />
-          </AvatarWithBorder>
+          <div className="flex items-center gap-3">
+            <AvatarWithBorder rank={rank}>
+              <Avatar src={user.avatarUrl || ''} alt={user.fullName} size={40} />
+            </AvatarWithBorder>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-900">{user.fullName}</span>
+              <span className="text-xs text-gray-500">{user.email}</span>
+            </div>
+          </div>
         );
       }
     },
-    { id: 'fullName', header: 'Tên', cell: (user) => user.fullName },
-    { id: 'email', header: 'Email', cell: (user) => user.email },
-    { id: 'phoneNumber', header: 'Số điện thoại', cell: (user) => user.phoneNumber || '--' },
     {
-      id: 'role', header: 'Vai trò', cell: (user) => {
-        // mapping role id sang name tiếng Việt
+      id: 'fullName',
+      header: 'Tên',
+      cell: (user) => (
+        <div className="font-medium text-gray-900">{user.fullName}</div>
+      )
+    },
+    {
+      id: 'email',
+      header: 'Email',
+      cell: (user) => (
+        <div className="text-sm text-gray-600 font-mono">{user.email}</div>
+      )
+    },
+    {
+      id: 'phoneNumber',
+      header: 'Số điện thoại',
+      cell: (user) => (
+        <div className="text-sm text-gray-600">
+          {user.phoneNumber || (
+            <span className="text-gray-400 italic">Chưa cập nhật</span>
+          )}
+        </div>
+      )
+    },
+    {
+      id: 'role',
+      header: 'Vai trò',
+      cell: (user) => {
         const found = ROLE_OPTIONS.find(opt => opt.value === user.role?.id);
-        return found ? found.name : '--';
+        return (
+          <div className="flex items-center gap-2">
+            {found?.icon && (
+              <LucideIcon name={found.icon as any} iconSize={14} className="text-gray-400" />
+            )}
+            <span className="text-sm font-medium text-gray-700">
+              {found ? found.name : '--'}
+            </span>
+          </div>
+        );
       }
     },
-    { id: 'status', header: 'Trạng thái', cell: (user) => statusBox(user.status) },
-    { id: 'lastLoginAt', header: 'Lần đăng nhập cuối', cell: (user) => user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : '-' },
+    {
+      id: 'status',
+      header: 'Trạng thái',
+      cell: (user) => statusBox(user.status)
+    },
+    {
+      id: 'lastLoginAt',
+      header: 'Lần đăng nhập cuối',
+      cell: (user) => (
+        <div className="text-sm text-gray-600">
+          {user.lastLoginAt ? (
+            <div className="flex flex-col">
+              <span>{new Date(user.lastLoginAt).toLocaleDateString('vi-VN')}</span>
+              <span className="text-xs text-gray-400">
+                {new Date(user.lastLoginAt).toLocaleTimeString('vi-VN')}
+              </span>
+            </div>
+          ) : (
+            <span className="text-gray-400 italic">Chưa đăng nhập</span>
+          )}
+        </div>
+      )
+    },
     {
       id: 'actions',
       header: 'Thao tác',
       cell: (user) => (
-        <div className="flex gap-2">
-          <Button variant="outline" title="Khóa người dùng">
+        <div className="flex gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            title="Khóa/Mở khóa người dùng"
+            className="h-8 w-8 p-0 hover:bg-gray-50"
+          >
             {lockButton(user.status)}
           </Button>
-          <Button variant="outline" title="Xem chi tiết">
-            <LucideIcon name="Eye" iconSize={16} />
+          <Button
+            variant="outline"
+            size="sm"
+            title="Xem chi tiết"
+            className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-200"
+          >
+            <LucideIcon name="Eye" iconSize={14} className="text-blue-600" />
           </Button>
+          {/* <Button
+            variant="outline"
+            size="sm"
+            title="Chỉnh sửa"
+            className="h-8 w-8 p-0 hover:bg-green-50 hover:border-green-200"
+          >
+            <LucideIcon name="Edit" iconSize={14} className="text-green-600" />
+          </Button> */}
         </div>
       ),
     },
@@ -206,155 +295,201 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
     router.push(`?q=${value}`);
   };
 
-
-
   return (
-    <div className="p-6 space-y-6">
-      {/* Tiêu đề và nút thao tác */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h1>
-          <p className="text-gray-600 mt-1">Quản lý danh sách người dùng trong hệ thống</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="default" onClick={() => setOpenCreate(true)}>
-            <LucideIcon name="Plus" className="mr-1" /> Thêm người dùng
-          </Button>
-          <Button variant="outline">
-            <LucideIcon name="Download" className="mr-1" /> Download Excel
-          </Button>
-        </div>
-      </div>
-
-      {/* Search và nút Filter */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <Search
-          placeholder="Tìm kiếm người dùng..."
-          value={searchValue}
-          onChange={handleSearch}
-          searchWidth="100%"
-          className="flex-1 min-w-[250px] max-w-2xl"
-        />
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 min-w-[120px]"
-        >
-          <LucideIcon name="Filter" iconSize={16} />
-          Bộ lọc
-          {showFilters ? <LucideIcon name="ChevronUp" iconSize={16} /> : <LucideIcon name="ChevronDown" iconSize={16} />}
-        </Button>
-      </div>
-
-      {/* Filter và Sort (ẩn/hiện) */}
-      {showFilters && (
-        <div className="bg-white p-4 rounded-xl border border-blue-100 shadow space-y-4">
-          <div className="space-y-4">
-            {/* Filter Section */}
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Bộ lọc</h3>
-              <div className="flex flex-wrap gap-4">
-                <Select
-                  placeHolder="Trạng thái"
-                  height="h-10"
-                  selectIcon="Circle"
-                  value={tempStatus}
-                  onValueChange={setTempStatus}
-                  options={STATUS_OPTIONS}
-                  className="min-w-[160px] max-w-xs flex-1 border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
-                />
-                <Select
-                  placeHolder="Hạng"
-                  height="h-10"
-                  selectIcon="Star"
-                  value={tempRank}
-                  onValueChange={setTempRank}
-                  options={RANK_OPTIONS}
-                  className="min-w-[160px] max-w-xs flex-1 border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
-                />
-                <Select
-                  placeHolder="Vai trò"
-                  height="h-10"
-                  selectIcon="Users"
-                  value={tempRole}
-                  onValueChange={setTempRole}
-                  options={ROLE_OPTIONS}
-                  className="min-w-[160px] max-w-xs flex-1 border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
-                />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <LucideIcon name="Users" iconSize={20} className="text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Quản lý người dùng</h1>
+                  <p className="text-gray-600">Quản lý danh sách người dùng trong hệ thống</p>
+                </div>
               </div>
             </div>
-
-            {/* Divider */}
-            <div className="w-full h-px bg-gray-200"></div>
-
-            {/* Sort Section */}
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Sắp xếp</h3>
-              <div className="flex flex-wrap gap-4">
-                <Select
-                  placeHolder="Sắp xếp theo"
-                  height="h-10"
-                  selectIcon="ArrowUpDown"
-                  value={tempSortField}
-                  onValueChange={setTempSortField}
-                  options={SORT_FIELDS}
-                  className="min-w-[160px] max-w-xs flex-1 border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
-                />
-                <Select
-                  placeHolder="Tăng/Giảm dần"
-                  height="h-10"
-                  selectIcon={tempSortDirection === 'asc' ? 'ArrowUp' : tempSortDirection === 'desc' ? 'ArrowDown' : undefined}
-                  value={tempSortDirection}
-                  onValueChange={setTempSortDirection}
-                  options={SORT_DIRECTIONS}
-                  className="min-w-[120px] max-w-xs flex-1 border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
-                  disabled={!tempSortField}
-                />
-              </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="default"
+                onClick={() => setOpenCreate(true)}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25"
+              >
+                <LucideIcon name="Plus" className="mr-2" iconSize={16} />
+                Thêm người dùng
+              </Button>
+              <Button
+                variant="outline"
+                className="border-gray-200 hover:bg-gray-50"
+              >
+                <LucideIcon name="Download" className="mr-2" iconSize={16} />
+                Xuất Excel
+              </Button>
             </div>
           </div>
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-2 items-center justify-end pt-4 border-t border-gray-200">
+        {/* Search và Filter Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex-1 max-w-2xl">
+              <Search
+                placeholder="Tìm kiếm theo tên, email, số điện thoại..."
+                value={searchValue}
+                onChange={handleSearch}
+                searchWidth="100%"
+                className="w-full"
+              />
+            </div>
             <Button
               variant="outline"
-              className="bg-gray-100 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-200 border border-gray-300"
-              onClick={handleReset}
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${showFilters
+                  ? 'bg-blue-50 border-blue-200 text-blue-700'
+                  : 'border-gray-200 hover:bg-gray-50'
+                }`}
             >
-              Đặt lại
-            </Button>
-            <Button
-              variant="default"
-              className="bg-blue-500 text-white font-bold rounded-lg px-4 py-2 hover:bg-blue-600 shadow"
-              onClick={handleApply}
-            >
-              Áp dụng
+              <LucideIcon name="Filter" iconSize={16} />
+              Bộ lọc
+              <LucideIcon
+                name={showFilters ? "ChevronUp" : "ChevronDown"}
+                iconSize={16}
+                className="transition-transform duration-200"
+              />
             </Button>
           </div>
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="space-y-6">
+                {/* Filter Section */}
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <LucideIcon name="Filter" iconSize={16} className="text-blue-600" />
+                    Bộ lọc
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Select
+                      placeHolder="Trạng thái"
+                      height="h-11"
+                      selectIcon="Circle"
+                      value={tempStatus}
+                      onValueChange={setTempStatus}
+                      options={STATUS_OPTIONS}
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
+                    />
+                    <Select
+                      placeHolder="Vai trò"
+                      height="h-11"
+                      selectIcon="Users"
+                      value={tempRole}
+                      onValueChange={setTempRole}
+                      options={ROLE_OPTIONS}
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
+                    />
+                  </div>
+                </div>
+
+                {/* Sort Section */}
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <LucideIcon name="ArrowUpDown" iconSize={16} className="text-blue-600" />
+                    Sắp xếp
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Select
+                      placeHolder="Sắp xếp theo"
+                      height="h-11"
+                      selectIcon="ArrowUpDown"
+                      value={tempSortField}
+                      onValueChange={setTempSortField}
+                      options={SORT_FIELDS}
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
+                    />
+                    <Select
+                      placeHolder="Thứ tự"
+                      height="h-11"
+                      selectIcon={tempSortDirection === 'asc' ? 'ArrowUp' : tempSortDirection === 'desc' ? 'ArrowDown' : undefined}
+                      value={tempSortDirection}
+                      onValueChange={setTempSortDirection}
+                      options={SORT_DIRECTIONS}
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
+                      disabled={!tempSortField}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 items-center justify-end pt-4 border-t border-gray-100">
+                  <Button
+                    variant="outline"
+                    onClick={handleReset}
+                    className="w-full sm:w-auto border-gray-200 text-gray-600 hover:bg-gray-50"
+                  >
+                    <LucideIcon name="RotateCcw" className="mr-2" iconSize={16} />
+                    Đặt lại
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={handleApply}
+                    className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25"
+                  >
+                    <LucideIcon name="Check" className="mr-2" iconSize={16} />
+                    Áp dụng
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-      <AddUserDialog 
-        open={openCreate} 
-        onClose={() => setOpenCreate(false)} 
-        onSuccess={() => {
-          setOpenCreate(false);
-          router.refresh();
-        }}
-      />
-      {/* DataTable */}
-      <DataTable<IUser>
-        columns={columns}
-        data={users}
-        keyExtractor={(user) => user?.id}
-        pagination={{
-          currentPage: pagination?.current,
-          totalPages: pagination?.totalPage,
-          totalItems: pagination?.totalItem,
-          onPageChange: handlePageChange,
-          itemsPerPage: pagination?.pageSize,
-        }}
-        emptyState={<div>Không có người dùng nào</div>}
-      />
+
+        {/* DataTable Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <DataTable<IUser>
+            columns={columns}
+            data={users}
+            keyExtractor={(user) => user?.id}
+            pagination={{
+              currentPage: pagination?.current,
+              totalPages: pagination?.totalPage,
+              totalItems: pagination?.totalItem,
+              onPageChange: handlePageChange,
+              itemsPerPage: pagination?.pageSize,
+            }}
+            emptyState={
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <LucideIcon name="Users" iconSize={24} className="text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Không có người dùng nào</h3>
+                <p className="text-gray-500 mb-4">Hãy thử thay đổi bộ lọc hoặc tìm kiếm khác</p>
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  className="border-gray-200 hover:bg-gray-50"
+                >
+                  <LucideIcon name="RotateCcw" className="mr-2" iconSize={16} />
+                  Đặt lại bộ lọc
+                </Button>
+              </div>
+            }
+          />
+        </div>
+
+        {/* Add User Dialog */}
+        <AddUserDialog
+          open={openCreate}
+          onClose={() => setOpenCreate(false)}
+          onSuccess={() => {
+            setOpenCreate(false);
+            router.refresh();
+          }}
+        />
+      </div>
     </div>
   );
 } 

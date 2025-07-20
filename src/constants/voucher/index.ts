@@ -7,14 +7,14 @@ enum VOUCHER_STATUS {
 }
 
 enum VOUCHER_TYPE {
-    POINT = 'đổi điểm',
+    POINT = 'điểm',
     CAMPAIGN = 'chiến dịch',
     WHEEL = 'vòng quay may mắn',
 }
 
 enum VOUCHER_DISCOUNT_TYPE {
     PERCENT = 'phần trăm',
-    AMOUNT = 'số tiền',
+    AMOUNT = 'cố định',
 }
 
 const VOUCHER_STATUS_MAP = {
@@ -25,12 +25,13 @@ const VOUCHER_STATUS_MAP = {
 
 const VOUCHER_TYPE_MAP = {
     [VOUCHER_TYPE.POINT]: { name: 'Điểm', icon: 'Star' },
-    [VOUCHER_TYPE.CAMPAIGN]: { name: 'Tiền', icon: 'DollarSign' },
+    [VOUCHER_TYPE.CAMPAIGN]: { name: 'Chiến dịch', icon: 'Target' },
+    [VOUCHER_TYPE.WHEEL]: { name: 'Vòng quay may mắn', icon: 'Wheel' },
 };
 
 const VOUCHER_DISCOUNT_TYPE_MAP = {
     [VOUCHER_DISCOUNT_TYPE.PERCENT]: { name: 'Phần trăm', icon: 'Percent' },
-    [VOUCHER_DISCOUNT_TYPE.AMOUNT]: { name: 'Số tiền', icon: 'DollarSign' },
+    [VOUCHER_DISCOUNT_TYPE.AMOUNT]: { name: 'Cố định', icon: 'DollarSign' },
 };
 
 export const VOUCHER = {

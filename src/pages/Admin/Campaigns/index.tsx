@@ -66,6 +66,7 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
   const [showFilters, setShowFilters] = useState(false);
   const [pageSize] = useState(10);
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Đồng bộ state tạm với URL khi URL thay đổi
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
 
   // Hàm cập nhật query string khi bấm Áp dụng
   const handleApply = () => {
+    setIsLoading(true);
     const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
     if (tempStatus === 'true') params.set('status', 'true');
     else if (tempStatus === 'false') params.set('status', 'false');
@@ -91,10 +93,12 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
     params.set('pageSize', pageSize.toString());
     params.set('showAll', 'true');
     router.push(`?${params.toString()}`);
+    setTimeout(() => setIsLoading(false), 500);
   };
 
   // Đặt lại bộ lọc
   const handleReset = () => {
+    setIsLoading(true);
     setTempStatus('all');
     setTempSortField('');
     setTempSortDirection('');
@@ -105,6 +109,7 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
     params.set('current', '1');
     params.set('showAll', 'true');
     router.push(`?${params.toString()}`);
+    setTimeout(() => setIsLoading(false), 500);
   };
 
   // Phân trang
@@ -199,73 +204,77 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
     return () => observer.disconnect();
   }, [loaderRef, pagination, loadingMore, loadMore]);
 
+  // Tính toán stats cho header
+  const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+  const totalCampaigns = pagination?.totalItem || 0;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <span className="flex items-center gap-1">
-              <LucideIcon name="Target" iconSize={16} />
-              Campaigns
-            </span>
-            <LucideIcon name="ChevronRight" iconSize={14} />
-            <span className="text-gray-900 font-medium">Quản lý chiến dịch</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Header Section với gradient */}
+      <div className="max-w-7xl mx-auto px-6 mt-6">
+        <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl">
+          {/* Background pattern */}
+          <div className="absolute inset-0 bg-black/10">
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }}></div>
           </div>
 
-          {/* Main Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <LucideIcon name="Target" className="text-blue-600" iconSize={24} />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-1">Quản lý chiến dịch</h1>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <LucideIcon name="BarChart3" iconSize={14} />
-                    <span className="text-sm">Tổng cộng: {pagination?.totalItem || 0} chiến dịch</span>
-                  </div>
-                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                  <div className="flex items-center gap-1">
-                    <LucideIcon name="CheckCircle" iconSize={14} />
-                    <span className="text-sm">{campaigns.filter(c => c.status === 'active').length} đang hoạt động</span>
+          <div className="relative px-6 py-6">
+            {/* Main Header */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg border border-white/30 shadow-sm">
+                  <LucideIcon name="Target" className="text-white" iconSize={20} />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white mb-1 tracking-tight">Quản lý chiến dịch</h1>
+                  <div className="flex flex-wrap items-center gap-2 text-blue-100">
+                    <div className="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full">
+                      <LucideIcon name="BarChart3" iconSize={10} />
+                      <span className="text-xs font-medium">{totalCampaigns} chiến dịch</span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-green-500/20 px-2 py-0.5 rounded-full">
+                      <LucideIcon name="CheckCircle" iconSize={10} />
+                      <span className="text-xs font-medium">{activeCampaigns} đang hoạt động</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 px-4 py-2 border-gray-300 hover:bg-gray-50"
-              >
-                <LucideIcon name="Download" iconSize={16} />
-                Xuất báo cáo
-              </Button>
-              <Button
-                onClick={() => setOpenAddDialog(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 shadow-sm"
-              >
-                <LucideIcon name="Plus" iconSize={16} />
-                Tạo campaign
-              </Button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 px-3 py-2 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm transition-all duration-200 text-sm font-medium"
+                >
+                  <LucideIcon name="Download" iconSize={14} />
+                  Xuất báo cáo
+                </Button>
+                <Button
+                  onClick={() => setOpenAddDialog(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold text-sm"
+                >
+                  <LucideIcon name="Plus" iconSize={14} />
+                  Tạo campaign
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+
+
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Search và Filter Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex gap-3 flex-1">
               <div className="flex-1 min-w-[250px] max-w-2xl">
                 <Search
-                  placeholder="Tìm kiếm tên chiến dịch..."
+                  placeholder="🔍 Tìm kiếm tên chiến dịch..."
                   value={searchValue}
                   onChange={handleSearch}
                   searchWidth="100%"
@@ -276,7 +285,8 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 min-w-[120px] border-gray-300 hover:bg-gray-50"
+              className={`flex items-center gap-2 min-w-[140px] border-gray-200 hover:bg-gray-50 transition-all duration-200 ${showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : ''
+                }`}
             >
               <LucideIcon name="Filter" iconSize={16} />
               Bộ lọc
@@ -284,38 +294,39 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
             </Button>
           </div>
 
-          {/* Filter và Sort (ẩn/hiện) */}
-          {showFilters && (
-            <div className="mt-6 pt-6 border-t border-gray-200 space-y-6">
+          {/* Filter và Sort với animation */}
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${showFilters ? 'max-h-[500px] opacity-100 mt-6 pt-6 border-t border-gray-200' : 'max-h-0 opacity-0'
+            }`}>
+            <div className="space-y-6">
               {/* Bộ lọc */}
               <div>
-                <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <LucideIcon name="Filter" iconSize={16} />
-                  Bộ lọc
+                  Bộ lọc nâng cao
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Trạng thái</label>
                     <Select
                       placeHolder="Chọn trạng thái"
-                      height="h-10"
+                      height="h-11"
                       selectIcon="Circle"
                       value={tempStatus}
                       onValueChange={setTempStatus}
                       options={STATUS_OPTIONS}
-                      className="w-full border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ngày bắt đầu</label>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Ngày bắt đầu</label>
                     <DatePicker
                       value={tempStartDate ? new Date(tempStartDate) : null}
                       onChange={date => setTempStartDate(date ? date.toISOString().split('T')[0] : '')}
                       placeholder="Chọn ngày bắt đầu"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ngày kết thúc</label>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Ngày kết thúc</label>
                     <DatePicker
                       value={tempEndDate ? new Date(tempEndDate) : null}
                       onChange={date => setTempEndDate(date ? date.toISOString().split('T')[0] : '')}
@@ -323,21 +334,32 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
                     />
                   </div>
                   <div className="flex items-end">
-                    <div className="flex gap-2 w-full">
+                    <div className="flex gap-3 w-full">
                       <Button
                         variant="outline"
-                        className="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300"
+                        className="flex-1 bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-200 hover:scale-105"
                         onClick={handleReset}
+                        disabled={isLoading}
                       >
                         <LucideIcon name="RotateCcw" iconSize={14} />
                         Đặt lại
                       </Button>
                       <Button
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg"
                         onClick={handleApply}
+                        disabled={isLoading}
                       >
-                        <LucideIcon name="Check" iconSize={14} />
-                        Áp dụng
+                        {isLoading ? (
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Đang áp dụng...</span>
+                          </div>
+                        ) : (
+                          <>
+                            <LucideIcon name="Check" iconSize={14} />
+                            Áp dụng
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -346,63 +368,91 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
 
               {/* Sắp xếp */}
               <div>
-                <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <LucideIcon name="ArrowUpDown" iconSize={16} />
                   Sắp xếp
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo</label>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Sắp xếp theo</label>
                     <Select
                       placeHolder="Chọn trường sắp xếp"
-                      height="h-10"
+                      height="h-11"
                       selectIcon="ArrowUpDown"
                       value={tempSortField}
                       onValueChange={setTempSortField}
                       options={SORT_FIELDS}
-                      className="w-full border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Thứ tự</label>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Thứ tự</label>
                     <Select
                       placeHolder="Tăng/Giảm dần"
-                      height="h-10"
+                      height="h-11"
                       selectIcon={tempSortDirection === 'asc' ? 'ArrowUp' : tempSortDirection === 'desc' ? 'ArrowDown' : undefined}
                       value={tempSortDirection}
                       onValueChange={setTempSortDirection}
                       options={SORT_DIRECTIONS}
-                      className="w-full border border-gray-200 rounded-lg shadow-sm focus-within:border-blue-400 transition"
+                      className="w-full border border-gray-200 rounded-xl shadow-sm focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all duration-200"
                       disabled={!tempSortField}
                     />
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Kanban Board với loading state */}
+        <div className="bg-transparent">
+          {isLoading ? (
+            <div className="p-8">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <span className="text-gray-600 font-medium">Đang tải dữ liệu...</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <CampaignKanbanBoard campaigns={campaigns} />
           )}
         </div>
 
-        {/* Kanban Board */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <CampaignKanbanBoard campaigns={campaigns} />
-        </div>
-
-        {/* Loader cho infinite scroll */}
+        {/* Loader cho infinite scroll với cải thiện */}
         <div ref={loaderRef} className="flex justify-center py-6">
           {loadingMore ? (
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
-              <span>Đang tải thêm chiến dịch...</span>
+            <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-lg shadow-sm border border-gray-200">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+              <span className="text-gray-600 text-sm">Đang tải thêm chiến dịch...</span>
             </div>
           ) : pagination?.current < pagination?.totalPage ? (
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 bg-gray-50 px-4 py-3 rounded-lg border border-gray-200 text-gray-500">
               <LucideIcon name="ArrowDown" iconSize={16} />
-              <span>Kéo xuống để tải thêm chiến dịch</span>
+              <span className="text-sm">Kéo xuống để tải thêm chiến dịch</span>
+            </div>
+          ) : campaigns.length > 0 ? (
+            <div className="flex items-center gap-2 bg-green-50 px-4 py-3 rounded-lg border border-green-200 text-green-600">
+              <LucideIcon name="CheckCircle" iconSize={16} />
+              <span className="text-sm">Đã tải hết chiến dịch</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-gray-400">
-              <LucideIcon name="CheckCircle" iconSize={16} />
-              <span>Đã tải hết chiến dịch</span>
+            <div className="flex flex-col items-center gap-3 bg-gray-50 px-6 py-8 rounded-lg border border-gray-200">
+              <div className="p-3 bg-gray-100 rounded-full">
+                <LucideIcon name="Target" className="text-gray-400" iconSize={24} />
+              </div>
+              <div className="text-center">
+                <h3 className="text-base font-semibold text-gray-700 mb-1">Không có chiến dịch nào</h3>
+                <p className="text-gray-500 mb-3 text-sm">Bắt đầu tạo chiến dịch đầu tiên của bạn</p>
+                <Button
+                  onClick={() => setOpenAddDialog(true)}
+                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm"
+                >
+                  <LucideIcon name="Plus" iconSize={14} />
+                  Tạo chiến dịch mới
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -418,6 +468,6 @@ export default function AdminCampaignsPage({ campaigns: initialCampaigns = [], p
           await fetchLatestCampaigns();
         }}
       />
-    </div>
+    </div >
   );
 } 

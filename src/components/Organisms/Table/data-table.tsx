@@ -19,7 +19,7 @@ interface DataTableProps<T> {
   data: T[]
   isLoading?: boolean
   skeletonRows?: number
-  keyExtractor: (item: T) => string | number
+  keyExtractor: (item: T, index: number) => string | number
   pagination?: {
     currentPage: number
     totalPages: number
@@ -75,11 +75,11 @@ export function DataTable<T>({
             ) : data?.length > 0 ? (
               data?.map((item, index) => (
                 <TableRow
-                  key={keyExtractor(item)}
+                  key={keyExtractor(item, index)}
                   className="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900"
                 >
                   {columns.map((column) => (
-                    <TableCell key={`${keyExtractor(item)}-${column.id}`} className={cn("py-3", column.className)}>
+                    <TableCell key={`${keyExtractor(item, index)}-${column.id}`} className={cn("py-3", column.className)}>
                       {column.cell(item, index)}
                     </TableCell>
                   ))}

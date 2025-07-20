@@ -22,7 +22,7 @@ async function getUsers({ searchParams }: { searchParams: any }) {
 
 export default async function Page({ searchParams }: { searchParams?: any }) {
     const usersData = await getUsers({ searchParams });
-    console.log('usersData:', usersData);
+    // console.log('usersData:', usersData);
     if (!usersData || !usersData.data) {
         return <div>Không có dữ liệu người dùng hoặc có lỗi khi lấy dữ liệu.</div>;
     }
