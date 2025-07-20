@@ -12,3 +12,10 @@ export const CreateCampaignModel = z.object({
 
 export type ICreateCampaignModel = z.infer<typeof CreateCampaignModel>;
 
+export const InviteVendorToCampaignModel = z.object({
+    campaignId: z.string(),
+    vendorId: z.string(),
+});
+
+export type IInviteVendorToCampaignModel = z.infer<typeof InviteVendorToCampaignModel>;
+

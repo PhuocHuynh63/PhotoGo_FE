@@ -37,63 +37,96 @@ const formatDate = (date: string) => {
 
 export default function CampaignCard({ campaign }: CampaignCardProps) {
     const router = useRouter();
-    if (!campaign) return null; // Tránh lỗi khi campaign bị undefined
+    if (!campaign) return null;
+    
+    // Tính toán màu sắc cho progress bar dựa trên tiến độ
+    const getProgressColor = (progress: number) => {
+        if (progress >= 80) return 'bg-red-500';
+        if (progress >= 60) return 'bg-orange-500';
+        if (progress >= 40) return 'bg-yellow-500';
+        if (progress >= 20) return 'bg-blue-500';
+        return 'bg-green-500';
+    };
+
+    const progressColor = getProgressColor(campaign.progress);
+    
     return (
-        <Card className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer relative">
+        <Card className="bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer h-full">
             {/* Dấu chấm cam nếu đang diễn ra */}
             {campaign?.happened === 'Đang diễn ra' && (
-                <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-orange-500 z-10"></span>
+                <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-orange-500 z-10 animate-pulse"></span>
             )}
-            <CardContent className="p-4 pb-3">
+            
+            <CardContent className="p-5 h-full flex flex-col">
                 {/* Header */}
-                <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 text-base mb-1 line-clamp-1">{campaign.name}</h3>
-                    </div>
+                <div className="mb-4">
+                    <h3 className="font-semibold text-gray-900 text-lg mb-1 truncate">{campaign.name}</h3>
                 </div>
-                {/* Mô tả */}
-                <div className="text-gray-700 text-sm mb-2 line-clamp-2">{campaign.description}</div>
+                
                 {/* Ngày bắt đầu */}
-                <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                    <LucideIcon name="Calendar" iconSize={14} />
-                    <span>{formatDate(campaign.startDate)}</span>
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                    <div className="p-1.5 bg-blue-50 rounded-lg">
+                        <LucideIcon name="Calendar" iconSize={14} className="text-blue-600" />
+                    </div>
+                    <span className="font-medium">{formatDate(campaign.startDate)}</span>
                 </div>
+                
                 {/* Tiến độ */}
-                <div className="mb-2">
-                    <div className="flex items-center justify-between text-xs mb-1">
-                        <span>Tiến độ</span>
-                        <span className="font-semibold text-blue-600">{Math.round(campaign.progress)}%</span>
+                <div className="mb-5">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                        <span className="font-medium text-gray-700">Tiến độ</span>
+                        <span className="font-bold text-blue-600 text-lg">{Math.round(campaign.progress)}%</span>
                     </div>
-                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full bg-blue-500" style={{ width: `${campaign.progress}%` }} />
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                            className={`h-full ${progressColor} rounded-full transition-all duration-1000 ease-out`}
+                            style={{ width: `${campaign.progress}%` }}
+                        />
                     </div>
                 </div>
+                
                 {/* Tổng/Đã dùng/Còn lại */}
-                <div className="flex justify-between text-xs text-gray-700 mb-2">
-                    <div className="flex flex-col items-center">
-                        <span className="font-semibold">{campaign.totalVoucher.toLocaleString('vi-VN')}</span>
-                        <span className="text-gray-500">Tổng</span>
+                <div className="grid grid-cols-3 gap-3 mb-5 flex-1">
+                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                        <div className="font-bold text-lg text-gray-900 mb-1 truncate">
+                            {campaign.totalVoucher.toLocaleString('vi-VN')}
+                        </div>
+                        <div className="text-xs text-gray-500 font-medium">Tổng</div>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <span className="font-semibold">{campaign.usedVoucher.toLocaleString('vi-VN')}</span>
-                        <span className="text-gray-500">Đã dùng</span>
+                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                        <div className="font-bold text-lg text-blue-600 mb-1 truncate">
+                            {campaign.usedVoucher.toLocaleString('vi-VN')}
+                        </div>
+                        <div className="text-xs text-gray-500 font-medium">Đã dùng</div>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <span className="font-semibold">{campaign.remainingVoucher.toLocaleString('vi-VN')}</span>
-                        <span className="text-gray-500">Còn lại</span>
+                    <div className="bg-green-50 rounded-lg p-3 text-center">
+                        <div className="font-bold text-lg text-green-600 mb-1 truncate">
+                            {campaign.remainingVoucher.toLocaleString('vi-VN')}
+                        </div>
+                        <div className="text-xs text-gray-500 font-medium">Còn lại</div>
                     </div>
                 </div>
-                <div className="border-t pt-2 mt-2 flex items-center justify-between text-xs text-gray-500">
-                    <span>Kết thúc: {formatDate(campaign.endDate)}</span>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => { e.stopPropagation(); router.push(`/admin/campaigns/${campaign.id}`); }}
-                        className="h-8 w-8 p-0 hover:bg-gray-100"
-                        aria-label="Chỉnh sửa"
-                    >
-                        <LucideIcon name="Edit" iconSize={18} />
-                    </Button>
+                
+                {/* Footer */}
+                <div className="border-t border-gray-100 pt-3 mt-auto">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <LucideIcon name="Clock" iconSize={14} className="text-gray-400" />
+                            <span className="font-medium">Kết thúc: {formatDate(campaign.endDate)}</span>
+                        </div>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => { 
+                                e.stopPropagation(); 
+                                router.push(`/admin/campaigns/${campaign.id}`); 
+                            }}
+                            className="h-8 w-8 p-0 hover:bg-blue-50 hover:text-blue-600 hover:scale-110 transition-all duration-200 flex-shrink-0"
+                            aria-label="Chỉnh sửa"
+                        >
+                            <LucideIcon name="Edit" iconSize={16} />
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
         </Card>
