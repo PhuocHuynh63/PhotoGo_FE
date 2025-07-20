@@ -17,31 +17,33 @@ import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
 import { albumComponent } from "@constants/vendorAlbums";
 import { BOOKING } from "@constants/booking";
+import { IInvoiceModel } from "@models/invoice/common.model";
 
 interface OrderDetailsProps {
-    booking?: any;
+    booking?: IBookingDetail;
 }
 
 export default function OrderDetails({ booking }: OrderDetailsProps) {
     // Use provided data or fallback to mock data
 
-    const [day, month, year] = booking?.date.split("/")
+    const [day, month, year] = booking?.date?.split("/") || [];
     const formattedDate = `${year}-${month}-${day}`
 
     // Handle different booking types - multi-day vs single day
-    const isMultiDay = booking.serviceConcept?.conceptRangeType === "nhiều ngày"
+    const isMultiDay = booking?.serviceConcept?.conceptRangeType === "nhiều ngày"
     const targetDate = isMultiDay
         ? new Date(`${formattedDate}T00:00:00`).getTime() // For multi-day, use start of day
-        : booking.time
-            ? new Date(`${formattedDate}T${booking.time}`).getTime() // For single day with time
+        : booking?.time
+            ? new Date(`${formattedDate}T${booking?.time}`).getTime() // For single day with time
             : new Date(`${formattedDate}T00:00:00`).getTime() // Fallback to start of day
 
     const [isVisible, setIsVisible] = useState<Record<string, boolean>>({})
     const [showFullDescription, setShowFullDescription] = useState(false)
     const router = useRouter()
 
-    const invoice = booking.invoices[0]
-    const firstName = booking.fullName.split(" ").pop() || booking.fullName
+    const invoice = booking?.invoices as IInvoiceModel;
+
+    const firstName = booking?.fullName?.split(" ").pop() || booking?.fullName
 
     const handleBack = () => {
         router.back()
@@ -96,28 +98,28 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
         BOOKING.BOOKING_STATUS.COMPLETED
     ];
     const allPossibleStatuses = [BOOKING.BOOKING_STATUS.PENDING, BOOKING.BOOKING_STATUS.CONFIRMED, BOOKING.BOOKING_STATUS.CANCELLED, BOOKING.BOOKING_STATUS.IN_PROGRESS, BOOKING.BOOKING_STATUS.COMPLETED]
-    const currentActualStatus = booking.status.toLowerCase();
+    const currentActualStatus = booking?.status?.toLowerCase();
     const currentStatusIndex = TIMELINE_STATUS_ORDER.findIndex(s => s === currentActualStatus);
     const completedStatuses = (currentStatusIndex > -1)
         ? TIMELINE_STATUS_ORDER.slice(0, currentStatusIndex)
         : [];
     //-------------------------End-------------------------//
 
-    const qrURL = 'https://photogo.id.vn/booking/' + booking.code
+    const qrURL = 'https://photogo.id.vn/booking/' + booking?.code
 
     /**
      * Fetch vendor albums by booking ID using custom hook
      * This will retrieve albums related to the booking, including photos and behind-the-scenes content.
      */
     const { vendorAlbums, loading, fetchVendorAlbumsByBookingId } = useVendorAlbumsByBookingId({
-        bookingId: booking.id,
+        bookingId: booking?.id || "",
     })
 
     useEffect(() => {
-        if (booking.id) {
+        if (booking?.id) {
             fetchVendorAlbumsByBookingId()
         }
-    }, [booking.id, fetchVendorAlbumsByBookingId])
+    }, [booking?.id, fetchVendorAlbumsByBookingId])
     //-------------------------End--------------------//
 
     /**
@@ -128,13 +130,13 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
     const addressLocation = useAddressLocation();
     useEffect(() => {
         if (booking?.locationId && booking?.location) {
-            const address = `${booking?.location?.address}, ${booking?.location?.ward}, ${booking?.location.district}, ${booking?.location.city}, ${booking?.location.province}`
+            const address = `${booking?.location?.address}, ${booking?.location?.ward}, ${booking?.location?.district}, ${booking?.location?.city}, ${booking?.location?.province}`
             setAddressLocation({
                 id: booking?.locationId,
                 address: address
             });
         }
-    }, [location])
+    }, [booking?.location, booking?.locationId, setAddressLocation])
     //---------------------------End---------------------------//
 
     return (
@@ -158,34 +160,34 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
 
             <HeroSection
                 isVisible={isVisible["hero-section"]}
-                image={booking.serviceConcept.servicePackage.image}
-                firstName={firstName}
+                image={booking?.serviceConcept?.servicePackage?.image || ""}
+                firstName={firstName || ""}
                 addressLocation={addressLocation?.address || ""}
                 studioName={booking?.location?.vendor?.name}
             />
             <main className="mt-8 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {booking.date < new Date().toLocaleDateString() &&
+                    {booking?.date || '' < new Date().toLocaleDateString() &&
                         <CountdownCard
                             isVisible={isVisible["countdown-card"]}
                             targetDate={targetDate}
                             isMultiDay={isMultiDay}
-                            bookingDate={booking.date}
-                            bookingTime={booking.time}
-                            status={booking.status}
+                            bookingDate={booking?.date}
+                            bookingTime={booking?.time}
+                            status={booking?.status}
                         />
                     }
                     <QRCard
                         isVisible={isVisible["qr-card"]}
-                        code={booking.code}
+                        code={booking?.code || ''}
                         qrURL={qrURL}
-                        status={booking.status}
+                        status={booking?.status}
                     />
                 </div>
                 <TimelineCard
                     isVisible={isVisible["timeline-card"]}
                     allPossibleStatuses={allPossibleStatuses}
-                    status={booking.status}
+                    status={booking?.status}
                     completedStatuses={completedStatuses}
                     currentStatusIndex={currentStatusIndex}
                 />
@@ -216,15 +218,17 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                         invoice={invoice}
                     />
                     <div className="lg:col-span-2 space-y-8">
-                        <CustomerCard
-                            isVisible={isVisible["customer-card"]}
-                            user={booking.user}
-                            fullName={booking.fullName}
-                            email={booking.email}
-                        />
+                        {booking?.user && (
+                            <CustomerCard
+                                isVisible={isVisible["customer-card"]}
+                                user={booking?.user}
+                                fullName={booking?.fullName || ''}
+                                email={booking?.email || ''}
+                            />
+                        )}
                         <ServiceCard
                             isVisible={isVisible["service-card"]}
-                            description={booking.serviceConcept.description}
+                            description={booking?.serviceConcept?.description || ''}
                             showFullDescription={showFullDescription}
                             setShowFullDescription={setShowFullDescription}
                         />
