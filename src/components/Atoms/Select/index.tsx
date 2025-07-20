@@ -78,11 +78,14 @@ export default function Select({
 
                 <RadixSelect.Content
                     position="popper"
+                    side="top"
                     sideOffset={8}
                     align="start"
-                    className="z-[120] w-[var(--radix-select-trigger-width)] max-w-[95vw] sm:max-w-[400px] rounded-md border bg-white shadow-lg p-0"
+                    avoidCollisions={true}
+                    //container={document.body}
+                    className="z-[9999] w-[var(--radix-select-trigger-width)] max-w-[95vw] sm:max-w-[400px] rounded-md border bg-white shadow-lg p-0"
                 >
-                    <RadixSelect.Viewport className="p-1 z-40 max-h-[300px] overflow-y-auto">
+                    <RadixSelect.Viewport className="p-1 z-[9999] max-h-[300px] overflow-y-auto">
                         {/* Search input for searchable dropdowns */}
                         {searchable && (
                             <div className="sticky top-0 bg-white border-b border-gray-200 p-2">

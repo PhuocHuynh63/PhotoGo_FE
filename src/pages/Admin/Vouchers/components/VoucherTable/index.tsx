@@ -37,8 +37,8 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
 
     // Format price range
     const getPriceRange = (voucher: IVoucherModel) => {
-        const min = voucher?.minPrice.toLocaleString('vi-VN');
-        const max = voucher?.maxPrice.toLocaleString('vi-VN');
+        const min = voucher?.minPrice?.toLocaleString('vi-VN') || '0';
+        const max = voucher?.maxPrice?.toLocaleString('vi-VN') || '0';
         return `${min}đ - ${max}đ`;
     };
 
@@ -141,7 +141,7 @@ export default function VoucherTable({ vouchers, pagination, onPageChange, onVou
                                         </TableCell>
                                         <TableCell>
                                             <div className="text-sm font-medium">
-                                                {voucher?.quantity.toLocaleString('vi-VN')}
+                                                {voucher?.quantity?.toLocaleString('vi-VN') || '0'}
                                             </div>
                                         </TableCell>
                                         <TableCell>

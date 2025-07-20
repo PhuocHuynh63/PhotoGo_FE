@@ -32,8 +32,8 @@ const KANBAN_COLUMNS: KanbanColumn[] = [
         title: 'Không hoạt động',
         status: false,
         icon: 'PauseCircle',
-        color: 'text-blue-600',
-        bgColor: 'bg-blue-50 border-blue-200',
+        color: 'text-gray-600',
+        bgColor: 'bg-gray-50 border-gray-200',
     },
 ];
 
@@ -49,30 +49,30 @@ export default function CampaignKanbanBoard({ campaigns, onCampaignUpdate }: Cam
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6">
             {/* Kanban Board */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {KANBAN_COLUMNS.map((column) => (
-                    <Card key={column.id} className={`${column.bgColor} border-2 min-h-[680px]`}>
-                        <CardHeader className="pb-4">
-                            <CardTitle className="flex items-center justify-between text-lg">
+                    <Card key={column.id} className={`${column.bgColor} border min-h-[600px] shadow-sm`}>
+                        <CardHeader className="pb-3">
+                            <CardTitle className="flex items-center justify-between text-base">
                                 <div className="flex items-center gap-2">
                                     <LucideIcon
                                         name={column.icon as any}
                                         className={column.color}
-                                        iconSize={20}
+                                        iconSize={18}
                                     />
-                                    <span className={column.color}>{column.title}</span>
+                                    <span className={`${column.color} font-semibold`}>{column.title}</span>
                                 </div>
-                                <Badge variant="secondary" className="bg-white text-gray-700">
+                                <Badge variant="secondary" className="bg-white text-gray-700 text-xs font-medium">
                                     {getCampaignCount(column.status)}
                                 </Badge>
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
-                            <div className="space-y-5">
+                            <div className="space-y-4">
                                 {getCampaignsByStatus(column.status)?.map((campaign) => (
-                                    <div key={campaign.id} className="h-[350px]">
+                                    <div key={campaign.id} className="h-[345px]">
                                         <CampaignCard
                                             campaign={campaign}
                                             onEdit={() => alert('Chỉnh sửa campaign: ' + campaign.name)}
@@ -80,11 +80,11 @@ export default function CampaignKanbanBoard({ campaigns, onCampaignUpdate }: Cam
                                     </div>
                                 ))}
                                 {getCampaignsByStatus(column.status)?.length === 0 && (
-                                    <div className="text-center py-16 text-gray-500 h-[350px] flex items-center justify-center">
+                                    <div className="text-center py-12 text-gray-500 h-[320px] flex items-center justify-center">
                                         <div>
-                                            <LucideIcon name="Inbox" className="mx-auto mb-3" iconSize={32} />
-                                            <p className="text-base font-medium text-gray-600">Không có chiến dịch nào</p>
-                                            <p className="text-sm text-gray-400 mt-1">Tạo chiến dịch mới để bắt đầu</p>
+                                            <LucideIcon name="Inbox" className="mx-auto mb-2" iconSize={24} />
+                                            <p className="text-sm font-medium text-gray-600">Không có chiến dịch nào</p>
+                                            <p className="text-xs text-gray-400 mt-1">Tạo chiến dịch mới để bắt đầu</p>
                                         </div>
                                     </div>
                                 )}

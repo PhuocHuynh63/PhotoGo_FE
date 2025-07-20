@@ -80,9 +80,9 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
     // Get discount display
     const getDiscountDisplay = () => {
         if (voucher?.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT) {
-            return `${voucher?.discount_value}%`;
+            return `${voucher?.discount_value || 0}%`;
         }
-        return `${parseInt(voucher?.discount_value).toLocaleString('vi-VN')}đ`;
+        return `${parseInt(voucher?.discount_value || '0').toLocaleString('vi-VN')}đ`;
     };
 
     return (
@@ -128,7 +128,7 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                         <div className="text-right">
                             <p className="text-xs text-gray-600">Áp dụng</p>
                             <p className="text-sm font-medium text-gray-900">
-                                {voucher?.minPrice.toLocaleString('vi-VN')}đ - {voucher?.maxPrice.toLocaleString('vi-VN')}đ
+                                {voucher?.minPrice?.toLocaleString('vi-VN') || '0'}đ - {voucher?.maxPrice?.toLocaleString('vi-VN') || '0'}đ
                             </p>
                         </div>
                     </div>
@@ -138,7 +138,7 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
                         <span className="text-gray-600">Số lượng:</span>
-                        <span className="font-medium">{voucher?.quantity}</span>
+                        <span className="font-medium">{voucher?.quantity || 0}</span>
                     </div>
                     {voucher?.usedCount !== undefined && (
                         <div className="flex items-center justify-between text-xs">
