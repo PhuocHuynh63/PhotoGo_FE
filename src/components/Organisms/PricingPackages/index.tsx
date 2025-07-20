@@ -1,25 +1,26 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { cn } from '@helpers/CN'
-import { Check } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from '@components/Atoms/Card'
 import Button from '@components/Atoms/Button'
+import { PaymentModal } from '@pages/Public/Subcription/components/ModalPayment'
 
-// Giả sử ICOMPONENTS.PricingPackage được định nghĩa ở nơi khác
-// interface IPricingPackageProps {
-//   subscriptions: any[];
-//   numberOfPackages?: number;
-// }
 
 const PricingPackage = ({
     subscriptions,
     numberOfPackages = 3,
 }: any /* ICOMPONENTS.PricingPackage */) => {
 
+    
+    const [isModalOpen, setModalOpen] = useState<boolean>(false);
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
+
     return (
         <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto items-start">
-                {subscriptions.slice(0, numberOfPackages).map((pkg: any, index: number) => (
+            {subscriptions.slice(0, numberOfPackages).map((pkg: any, index: number) => (
                 <Card
                     key={index}
                     className={cn(
@@ -81,18 +82,24 @@ const PricingPackage = ({
                         <Button
                             className={cn(
                                 "w-full py-3 text-base font-semibold transition-transform duration-300 hover:scale-105",
-                                // Logic cho nút CTA
                                 pkg.recommended
                                     ? "bg-primary text-white hover:bg-primary/90"
                                     : "bg-white text-primary border-2 border-primary hover:bg-primary/10"
                             )}
+                            onClick={handleOpenModal}
                         >
                             Chọn Gói Này
                         </Button>
                     </CardFooter>
                 </Card>
             ))}
-        </div>
+
+            <PaymentModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                
+            />
+        </div >
     )
 }
 
