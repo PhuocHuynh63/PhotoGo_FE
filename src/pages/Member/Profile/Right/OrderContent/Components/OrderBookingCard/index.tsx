@@ -26,11 +26,13 @@ import { ROUTES } from "@routes";
 import { BOOKING } from "@constants/booking";
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import { IInvoiceModel } from "@models/invoice/common.model";
+import WriteReviewDialog from "../../../../../../../components/Molecules/WriteReviewDialog";
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean }) {
     const router = useRouter();
-    const [showCancelDialog, setShowCancelDialog] = useState(false)
-    const [showReportDialog, setShowReportDialog] = useState(false)
+    const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
+    const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
+    const [showReportDialog, setShowReportDialog] = useState<boolean>(false)
     const vendorId = invoice?.booking?.serviceConcept?.servicePackage?.vendorId
     const { concept, loading: conceptLoading } = useConcept(booking?.serviceConceptId);
     const { vendor, loading: vendorLoading } = useVendor(vendorId);
@@ -42,7 +44,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
      * Get a badge based on booking status
      * @param status - return a badge based on booking status
      * @returns Badge component with appropriate styling and text based on booking status
-     */
+    */
     const getStatusBadge = (status: string) => {
         switch (status) {
             case BOOKING.BOOKING_STATUS.IN_PROGRESS:
@@ -101,7 +103,16 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
         }
     };
 
-
+    /**
+     * Object review
+     * @returns Object review
+     */
+    const objectReview = {
+        userId: booking.userId,
+        vendorId: vendorId,
+        bookingId: booking.id,
+    }
+    //-------------------------End-------------------------//
     return (
         <Card className={`overflow-hidden ${isNew ? 'ring-2 ring-orange-400 scale-[1.01] transition-all duration-300 animate-new-pulse shadow-orange border-orange-400 border-2 animate-spin' : ''}`}>
             <div className="flex flex-col md:flex-row">
@@ -269,6 +280,10 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                                     </DialogContent>
                                 </Dialog>
                             </>
+                        )}
+
+                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && (
+                            <WriteReviewDialog showReviewDialog={showReviewDialog} setShowReviewDialog={setShowReviewDialog} objectReview={objectReview} />
                         )}
 
                         <DropdownMenu>
