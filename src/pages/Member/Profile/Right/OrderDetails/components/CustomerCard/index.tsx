@@ -1,14 +1,11 @@
 "use client"
 
+import { IUser } from "@models/user/common.model";
 import React from "react";
-
-interface User {
-    avatarUrl: string;
-}
 
 interface CustomerCardProps {
     isVisible?: boolean;
-    user: User;
+    user: IUser;
     fullName: string;
     email: string;
 }

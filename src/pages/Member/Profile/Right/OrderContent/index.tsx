@@ -9,6 +9,8 @@ import { IInvoiceModel } from "@models/invoice/common.model";
 import { IBooking } from "@models/booking/common.model";
 import BookingCard from "./Components/OrderBookingCard";
 import { BOOKING } from "@constants/booking";
+import Input from "@components/Atoms/Input";
+import { useDebounce } from "@utils/hooks/useDebounce";
 
 
 interface OrdersContentProps {
@@ -25,6 +27,21 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
     const router = useRouter();
     const searchParams = useSearchParams() as ReadonlyURLSearchParams;
     const currentPage = parseInt(searchParams.get('page') || '1', 10);
+    const [activeTab, setActiveTab] = useState(searchParams.get('status') || '');
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('term') || '');
+
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams);
+        params.set('status', activeTab);
+        params.set('term', debouncedSearchQuery);
+
+        params.set('page', '1');
+
+        router.push(`?${params.toString()}`);
+
+    }, [activeTab, debouncedSearchQuery]);
 
     const handlePageChange = (page: number) => {
         const params = new URLSearchParams(searchParams);
@@ -32,27 +49,27 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
         router.push(`?${params.toString()}`);
     };
     //-------------------------------End--------------------------------//
-    const [activeTab, setActiveTab] = useState("all")
 
 
     return (
         <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <h1 className="text-2xl font-bold mb-4 md:mb-0">Quản lý đơn hàng chụp ảnh</h1>
-                {/* <Input
+                <Input
                     icon="Search"
                     placeholder="Tìm kiếm đơn hàng theo tên, email..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-[300px]"
-                /> */}
+                />
             </div>
 
             <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols- gap-2 bg-orange-100 p-1 rounded-xl max-w-2xl mx-auto mb-6">
-                    <TabsTrigger value="all">Tất cả</TabsTrigger>
-                    <TabsTrigger value={BOOKING.BOOKING_STATUS.IN_PROGRESS}>Chờ xác nhận</TabsTrigger>
+                    <TabsTrigger value="">Tất cả</TabsTrigger>
+                    <TabsTrigger value={BOOKING.BOOKING_STATUS.PENDING}>Chờ xác nhận</TabsTrigger>
                     <TabsTrigger value={BOOKING.BOOKING_STATUS.CONFIRMED}>Đã xác nhận</TabsTrigger>
+                    <TabsTrigger value={BOOKING.BOOKING_STATUS.IN_PROGRESS}>Đang thực hiện</TabsTrigger>
                     <TabsTrigger value={BOOKING.BOOKING_STATUS.COMPLETED}>Đã hoàn thành</TabsTrigger>
                     {/* <TabsTrigger value={BOOKING.BOOKING_STATUS.}>Đã hủy</TabsTrigger> */}
                 </TabsList>

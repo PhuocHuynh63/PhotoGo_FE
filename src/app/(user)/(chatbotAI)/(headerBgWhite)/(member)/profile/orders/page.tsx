@@ -11,8 +11,8 @@ import { getServerSession } from "next-auth";
 import { IInvoiceModel } from "@models/invoice/common.model";
 
 
-async function getInvoices(userId: string, page: number = 1, pageSize: number = 10) {
-    return await InvoiceService.getInvoiceByUserId(userId, page, pageSize) as IInvoiceListResponse
+async function getInvoices(userId: string, page: number = 1, pageSize: number = 10, status?: string, term?: string) {
+    return await InvoiceService.getInvoiceByUserId(userId, page, pageSize, status, term) as IInvoiceListResponse
 }
 
 async function getBookingByPaymentOSId(paymentOSId: string) {
@@ -20,24 +20,24 @@ async function getBookingByPaymentOSId(paymentOSId: string) {
 }
 
 interface OrdersProps {
-    searchParams: {
+    searchParams: Promise<{
         id?: string;
         page?: string;
-    }
+        status?: string;
+        term?: string;
+    }>
 }
 
 export default async function Orders({ searchParams }: OrdersProps) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
-    const currentPage = Number(searchParams?.page) || 1;
+    const { page, status, term, id } = await searchParams;
+    
+    const currentPage = Number(page) || 1;
+    const invoices = await getInvoices(session.user.id, currentPage, 10, status, term) as IInvoiceListResponse;
 
-    const invoices = await getInvoices(session.user.id, currentPage) as IInvoiceListResponse
     const invoicesData = invoices?.data?.data as IInvoiceModel[] || []
     const paginationInvoices = invoices?.data?.pagination as IPagination || null
-    console.log('paginationInvoices', paginationInvoices);
 
-
-    console.log(invoicesData)
-    const { id } = await searchParams || {};
     let booking = null;
     if (id) {
         booking = await getBookingByPaymentOSId(id) as IBookingResponseModel

@@ -48,9 +48,6 @@ export const useInvoiceByUserId = ({ initInvoices, initPagination, userId }: Use
 
                 setListInvoice(data);
 
-
-                console.log('>>>>>>>>>', response.data?.pagination);
-
                 if (response.data?.pagination) {
                     setPagination({
                         current: fetchCurrent,
