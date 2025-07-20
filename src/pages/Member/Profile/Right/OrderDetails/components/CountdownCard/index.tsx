@@ -13,7 +13,7 @@ interface CountdownCardProps {
     isMultiDay?: boolean;
     bookingDate?: string;
     bookingTime?: string;
-    status?: string;
+    status?: any;
 }
 
 const CountdownCard: React.FC<CountdownCardProps> = ({
@@ -35,8 +35,15 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
     };
 
+    const isOrderCancelled = [
+        BOOKING.BOOKING_STATUS.CANCELLED,
+        BOOKING.BOOKING_STATUS.CANCELLED_USER,
+        BOOKING.BOOKING_STATUS.CANCELLED_VENDOR,
+        BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT
+    ].includes(status);
+
     //UI: Giao diện khi đơn hàng/buổi chụp bị hủy
-    if (status === BOOKING.BOOKING_STATUS.CANCELLED || status === BOOKING.BOOKING_STATUS.CANCELLED_USER || status === BOOKING.BOOKING_STATUS.CANCELLED_VENDOR) {
+    if (isOrderCancelled) {
         return (
             <motion.div
                 id="countdown-card-cancelled"
