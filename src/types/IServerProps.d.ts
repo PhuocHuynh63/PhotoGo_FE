@@ -35,4 +35,10 @@ declare namespace SERVERS {
     interface SearchPackagePageProps {
         searchParams: Promise<{ [key: string]: string | string[] | undefined }>
     }
+
+    interface CampaignDetailPageProps {
+        params: Promise<{
+            id: string;
+        }>;
+    }
 }
