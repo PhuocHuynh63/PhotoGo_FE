@@ -64,7 +64,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                 />
             </div>
 
-            <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveTab}>
+            <Tabs defaultValue="" className="mb-6" onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols- gap-2 bg-orange-100 p-1 rounded-xl max-w-2xl mx-auto mb-6">
                     <TabsTrigger value="">Tất cả</TabsTrigger>
                     <TabsTrigger value={BOOKING.BOOKING_STATUS.PENDING}>Chờ xác nhận</TabsTrigger>
