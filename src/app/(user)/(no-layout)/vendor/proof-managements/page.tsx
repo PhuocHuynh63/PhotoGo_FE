@@ -3,7 +3,7 @@ import ProofManagementPage from "@pages/Vendor/Proof";
 import invoiceService from "@services/invoice";
 import { METADATA } from "../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
-import { IInvoice } from "@models/invoice/common.model";
+import { IInvoiceModel } from "@models/invoice/common.model";
 import { IInvoiceListResponse } from "@models/invoice/response.model";
 import vendorService from "@services/vendors";
 import { IVendorResponse } from "@models/vendor/response.model";
@@ -83,7 +83,7 @@ interface Invoice {
 export default async function ProofManagement() {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     const invoices = await getInvoices(session.user.id) as IInvoiceListResponse
-    const invoicesData = invoices?.data?.data as IInvoice[] || []
+    const invoicesData = invoices?.data?.data as IInvoiceModel[] || []
     const vendor = await getLocationsByUserId(session.user.id) as IVendorResponse
     const locations = vendor.data?.locations || []
     return (
