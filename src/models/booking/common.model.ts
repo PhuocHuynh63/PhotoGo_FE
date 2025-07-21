@@ -1,6 +1,8 @@
 
 import { BOOKING } from "@constants/booking";
+import { InvoiceModel } from "@models/invoice/common.model";
 import { LocationModel } from "@models/location/common.model";
+import { UserModel } from "@models/user/common.model";
 import { z } from "zod";
 
 /**
@@ -36,6 +38,7 @@ export const BookingModel = z.object({
     userNote: z.string().optional(),
     created_at: z.string(),
     updated_at: z.string(),
+    isReview: z.boolean().optional(),
     user: z.object({
         id: z.string(),
         email: z.string().email(),
@@ -71,23 +74,7 @@ export const BookingDetailModel = z.object({
     code: z.string(),
     created_at: z.string(),
     updated_at: z.string(),
-    user: z.object({
-        id: z.string(),
-        email: z.string().email(),
-        passwordHash: z.string(),
-        oldPasswordHash: z.string().nullable(),
-        fullName: z.string(),
-        phoneNumber: z.string(),
-        avatarUrl: z.string(),
-        status: z.string(),
-        rank: z.string(),
-        multiplier: z.string(),
-        note: z.string().nullable(),
-        auth: z.string(),
-        lastLoginAt: z.string().nullable(),
-        createdAt: z.string(),
-        updatedAt: z.string(),
-    }),
+    user: UserModel,
     serviceConcept: z.object({
         id: z.string(),
         servicePackageId: z.string(),
@@ -117,22 +104,7 @@ export const BookingDetailModel = z.object({
         status: z.string(),
         changedAt: z.string(),
     })),
-    invoices: z.array(z.object({
-        id: z.string(),
-        bookingId: z.string(),
-        originalPrice: z.number(),
-        discountAmount: z.number(),
-        discountedPrice: z.number(),
-        taxAmount: z.number(),
-        feeAmount: z.number(),
-        payablePrice: z.number(),
-        depositAmount: z.number(),
-        remainingAmount: z.number(),
-        paidAmount: z.number(),
-        status: z.string(),
-        issuedAt: z.string(),
-        updatedAt: z.string(),
-    })),
+    invoices: z.array(InvoiceModel),
     disputes: z.array(z.object({
         id: z.string(),
         bookingId: z.string(),

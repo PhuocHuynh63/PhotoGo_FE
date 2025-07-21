@@ -7,15 +7,9 @@ import { IUser } from '@models/user/common.model';
 
 const UserProfileLayoutClient = ({
     user,
-    userOrders,
-    userFavorites,
-    userPromotions,
     children
 }: Readonly<{
     user: IUser;
-    userOrders: any;
-    userFavorites: any;
-    userPromotions: any;
     children: React.ReactNode;
 }>) => {
     const [activeTab, setActiveTab] = useState("rewards");
