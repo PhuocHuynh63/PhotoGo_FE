@@ -9,17 +9,18 @@ import { ROUTES } from '@routes';
 import paymentService from '@services/payment';
 import LoadingPage from '@components/Organisms/Loading';
 import { subscriptionService } from '@services/subcription';
+import { METADATA } from '../../../../types/IMetadata';
 
-const SuccessPage = () => {
+const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
     /**
      * Handle payment success of order
      */
+    const userId = session?.user?.id;
     const router = useRouter();
     const handlePaymentSuccess = async () => {
         const params = new URLSearchParams(window.location.search);
         const currentPaymentId = params.get("paymentId");
         const currentSubscriptionPaymentId = params.get("subscriptionPaymentId");
-        const userId = params.get("userId");
         const status = params.get("status");
         const code = params.get("code");
         const payosId = params.get("id");
