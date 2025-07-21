@@ -55,7 +55,7 @@ export default function PaymentModal({
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+    const [paymentLink, setPaymentLink] = useState<string | null>(null);
     const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
     const backdropVariants = {
@@ -84,13 +84,14 @@ export default function PaymentModal({
         setValue('planId', subscription?.id || '');
         setValue('type', 'thanh toán đầy đủ');
         setError(null);
-        setPaymentUrl(null);
+        setPaymentLink(null);
         setShowPaymentDialog(false);
     }, [subscription, session, setValue]);
 
     // Load PayOS script
     useEffect(() => {
-        if (showPaymentDialog && paymentUrl) {
+        if (showPaymentDialog && paymentLink) {
+            console.log(paymentLink)
             const script = document.createElement('script');
             script.src = 'https://pay.payos.vn/v2/pay.js';
             script.async = true;
@@ -98,7 +99,7 @@ export default function PaymentModal({
                 // Initialize PayOS dialog
                 if (window.PayOS) {
                     window.PayOS.openPaymentDialog({
-                        url: paymentUrl,
+                        url: paymentLink,
                         onSuccess: (data: unknown) => {
                             console.log('Payment success:', data);
                             onClose();
@@ -125,7 +126,7 @@ export default function PaymentModal({
                 }
             };
         }
-    }, [showPaymentDialog, paymentUrl, onClose]);
+    }, [showPaymentDialog, paymentLink, onClose]);
 
     const onSubmit = async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
         if (!session?.user?.id) {
@@ -138,11 +139,11 @@ export default function PaymentModal({
 
         try {
             const response = await subscriptionService.createPaymentLink(data);
-
-            const responseData = response as { data?: { paymentUrl?: string } };
-            if (responseData?.data?.paymentUrl) {
+            const responseData = response as { data?: { paymentLink?: string } };
+            if (responseData?.data?.paymentLink) {
                 // Set payment URL and show dialog
-                setPaymentUrl(responseData.data.paymentUrl);
+                window.open(responseData.data.paymentLink, '_blank');
+                setPaymentLink(responseData.data.paymentLink);
                 setShowPaymentDialog(true);
             } else {
                 setError('Không thể tạo liên kết thanh toán. Vui lòng thử lại.');

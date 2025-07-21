@@ -794,3 +794,15 @@
         background-position: 0% 50%;
     }
 }
+
+
+.shimmer-profile-subscription {
+    background: linear-gradient(120deg, transparent 30%, #fff8 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: shimmerMove 2.5s infinite linear;
+    opacity: 0.5;
+}
+@keyframes shimmerMove {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+}

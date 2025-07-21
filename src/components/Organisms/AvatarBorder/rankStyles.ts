@@ -7,9 +7,9 @@ export const rankConfigs: Record<Rank, {
 }> = {
 
     'Đồng': {
-        className: '',
-        color: '',
-        icon: ''
+        className: 'diamond-border',
+        color: '#00ffff',
+        icon: 'Crown'
     },
 
     'Bạc': {

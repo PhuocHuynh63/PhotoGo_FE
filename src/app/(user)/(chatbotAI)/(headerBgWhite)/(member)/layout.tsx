@@ -19,17 +19,10 @@ export default async function UserProfileLayout({
 }>) {
     const session = await getServerSession(authOptions) as METADATA.ISession;
     let userData: IUser | undefined;
-    const userOrders: any[] = [];
-    const userFavorites: any[] = [];
-    const userPromotions: any[] = [];
 
     if (session?.user?.id) {
         const user = await getAUser(session.user.id) as IUserResponse;
         userData = user?.data as IUser | undefined;
-
-        // userOrders = await getUserOrders(session.user.id);
-        // userFavorites = await getUserFavorites(session.user.id);
-        // userPromotions = await getUserPromotions(session.user.id);
     }
 
     if (!userData) {
@@ -38,7 +31,7 @@ export default async function UserProfileLayout({
 
     return (
         <>
-            <UserProfileLayoutClient user={userData} userOrders={userOrders} userFavorites={userFavorites} userPromotions={userPromotions}>
+            <UserProfileLayoutClient user={userData} >
                 {children}
             </UserProfileLayoutClient>
         </>
