@@ -8,136 +8,159 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@routes';
 import paymentService from '@services/payment';
 import LoadingPage from '@components/Organisms/Loading';
+import { subscriptionService } from '@services/subcription';
+import { METADATA } from '../../../../types/IMetadata'; // Ensure this path is correct
 
-const SuccessPage = () => {
-    /**
-     * Handle payment success of order
-     */
+const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
     const router = useRouter();
-    let paymentId = null;
-    let subscriptionPaymentId = null;
-    const handlePaymentSuccess = async () => {
+    const userId = session?.user?.id;
+
+    // ALL HOOKS MUST BE AT THE TOP LEVEL
+    const [currentTime, setCurrentTime] = useState(''); // Moved this up
+    const [pageData, setPageData] = useState<{
+        paymentId: string | null;
+        subscriptionPaymentId: string | null;
+        status: string | null;
+        code: string | null;
+        payosId: string | null;
+        cancel: string | null;
+        orderCode: string | null;
+    } | null>(null);
+
+    const [loadingApi, setLoadingApi] = useState(true);
+
+    // Main useEffect for API calls and initial parsing
+    useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        paymentId = params.get("paymentId");
-        subscriptionPaymentId = params.get("subscriptionPaymentId");
+        const currentPaymentId = params.get("paymentId");
+        const currentSubscriptionPaymentId = params.get("subscriptionPaymentId");
         const status = params.get("status");
         const code = params.get("code");
         const payosId = params.get("id");
         const cancel = params.get("cancel");
         const orderCode = params.get("orderCode");
-        // console.log(paymentId, status, code, payosId, cancel, orderCode)
 
-        if (!paymentId || !status || !code || !payosId || !cancel || !orderCode || !subscriptionPaymentId) {
-            router.push(ROUTES.PUBLIC.HOME);
-            return;
-        }
-
-        const data = {
+        // Set the parsed data state once
+        setPageData({
+            paymentId: currentPaymentId,
+            subscriptionPaymentId: currentSubscriptionPaymentId,
             status,
             code,
-            id: payosId,
-            cancel: Boolean(cancel),
-            orderCode
+            payosId,
+            cancel,
+            orderCode,
+        });
+
+        const processPayment = async () => {
+            if (currentPaymentId && status && code && payosId && cancel !== null && orderCode) {
+                const data = {
+                    status,
+                    code,
+                    id: payosId,
+                    cancel: Boolean(cancel),
+                    orderCode
+                };
+                await paymentService.paymentSuccess(currentPaymentId, data);
+                const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
+                router.push(ordersUrl);
+            } else if (currentSubscriptionPaymentId) {
+                const data = {
+                    subscriptionPaymentId: currentSubscriptionPaymentId,
+                    cancel: Boolean(cancel),
+                    orderCode: orderCode || '',
+                    status: status === 'PAID' ? 'đã thanh toán' : '',
+                    code: code || '',
+                    id: payosId || '',
+                    userId: userId || ''
+                };
+                await subscriptionService.subscriptionSuccess(data);
+                setLoadingApi(false); // API call done, allow rendering the subscription success page
+            } else {
+                router.push(ROUTES.PUBLIC.HOME);
+            }
         };
 
-        await paymentService.paymentSuccess(paymentId, data) as { statusCode: number };
-        // if (response.statusCode === 200) {
-        const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
-        router.push(ordersUrl);
-        return;
-        // } else {
-        //     router.push(ROUTES.PUBLIC.HOME);
-        //     return;
-        // }
-    }
+        processPayment();
+    }, [router, userId]); // Dependencies for useEffect
 
+    // useEffect for confetti and current time - ALWAYS CALLED
     useEffect(() => {
-        handlePaymentSuccess();
-    }, [router]);
+        // Only run confetti logic if it's a subscription payment
+        if (!pageData?.subscriptionPaymentId) {
+            return; // Exit if not a subscription payment, so confetti doesn't run unnecessarily
+        }
 
-    if (paymentId) {
-        return (
-            <LoadingPage />
-        )
-    }
-    //-------------------------End-------------------------//
+        const updateTime = () => {
+            const now = new Date();
+            const timeString = now.toLocaleString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+            setCurrentTime(timeString);
+        };
 
-    if (subscriptionPaymentId) {
-        /**
-         * Handle confetti
-         */
-        const [currentTime, setCurrentTime] = useState('');
+        updateTime();
 
-        useEffect(() => {
-            const updateTime = () => {
-                const now = new Date();
-                const timeString = now.toLocaleString('vi-VN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                });
-                setCurrentTime(timeString);
-            };
+        const createConfetti = () => {
+            const colors = [
+                '#ff6b35', '#f7931e', '#ffab00', '#ff8a50', '#ffc947',
+                '#ff69b4', '#9370db', '#32cd32', '#00ced1', '#ff4757',
+                '#3742fa', '#2ed573', '#ffa502', '#ff6348', '#5f27cd'
+            ];
 
-            updateTime();
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = styles.confetti;
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = '0s';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
 
-            // Tạo confetti động
-            const createConfetti = () => {
-                const colors = [
-                    '#ff6b35', '#f7931e', '#ffab00', '#ff8a50', '#ffc947',
-                    '#ff69b4', '#9370db', '#32cd32', '#00ced1', '#ff4757',
-                    '#3742fa', '#2ed573', '#ffa502', '#ff6348', '#5f27cd'
-                ];
+                    const shapeType = Math.floor(Math.random() * 4);
+                    if (shapeType === 0) {
+                        confetti.style.borderRadius = '50%';
+                    } else if (shapeType === 1) {
+                        confetti.style.borderRadius = '0';
+                        confetti.style.transform = 'rotate(45deg)';
+                    } else if (shapeType === 2) {
+                        confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+                    } else {
+                        confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)';
+                    }
 
-                for (let i = 0; i < 30; i++) {
+                    const container = document.querySelector(`.${styles.confettiContainer}`);
+                    if (container) {
+                        container.appendChild(confetti);
+                    }
+
                     setTimeout(() => {
-                        const confetti = document.createElement('div');
-                        confetti.className = styles.confetti;
-                        confetti.style.left = Math.random() * 100 + '%';
-                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        confetti.style.animationDelay = '0s';
-                        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                        confetti.remove();
+                    }, 6000);
+                }, i * 50);
+            }
+        };
 
-                        // Random shapes
-                        const shapeType = Math.floor(Math.random() * 4);
-                        if (shapeType === 0) {
-                            confetti.style.borderRadius = '50%'; // Circle
-                        } else if (shapeType === 1) {
-                            confetti.style.borderRadius = '0'; // Square
-                            confetti.style.transform = 'rotate(45deg)';
-                        } else if (shapeType === 2) {
-                            confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)'; // Triangle
-                        } else {
-                            confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)'; // Diamond
-                        }
+        const initialTimeout = setTimeout(createConfetti, 500);
+        const confettiInterval = setInterval(createConfetti, 8000);
 
-                        // Append to fixed container
-                        const container = document.querySelector(`.${styles.confettiContainer}`);
-                        if (container) {
-                            container.appendChild(confetti);
-                        }
+        return () => {
+            clearTimeout(initialTimeout);
+            clearInterval(confettiInterval);
+        };
+    }, [pageData?.subscriptionPaymentId]); // Add pageData?.subscriptionPaymentId to dependency array
 
-                        setTimeout(() => {
-                            confetti.remove();
-                        }, 6000);
-                    }, i * 50);
-                }
-            };
 
-            // Confetti burst ban đầu
-            const initialTimeout = setTimeout(createConfetti, 500);
+    // Render logic based on states
+    if (loadingApi || pageData === null) { // Add pageData === null check to show loading initially
+        return <LoadingPage />;
+    }
 
-            // Lặp lại confetti
-            const confettiInterval = setInterval(createConfetti, 8000);
-
-            return () => {
-                clearTimeout(initialTimeout);
-                clearInterval(confettiInterval);
-            };
-        }, []);
-
+    // Now that loadingApi is false and pageData is set, check if it's a subscription payment to render its specific UI
+    if (pageData.subscriptionPaymentId) { // No optional chaining needed here, as pageData is guaranteed not null
         return (
             <div className={styles.pageWrapper}>
                 <Head>
@@ -146,9 +169,7 @@ const SuccessPage = () => {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 </Head>
 
-                {/* Container cho confetti và particles - fixed để không ảnh hưởng scroll */}
                 <div className={styles.confettiContainer}>
-                    {/* Static confetti */}
                     {[...Array(15)].map((_, i) => (
                         <div
                             key={i}
@@ -161,7 +182,6 @@ const SuccessPage = () => {
                         />
                     ))}
 
-                    {/* Floating particles */}
                     {[...Array(8)].map((_, i) => (
                         <div
                             key={`particle-${i}`}
@@ -177,28 +197,23 @@ const SuccessPage = () => {
                     ))}
                 </div>
 
-                {/* Main content */}
                 <div className={styles.mainContent}>
                     <div className={styles.successCard}>
-                        {/* Success Icon */}
                         <div className={styles.successIcon}>
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                             </svg>
                         </div>
 
-                        {/* Title */}
                         <h1 className={styles.successTitle}>
                             🎉 Chúc Mừng! 🎉
                         </h1>
 
-                        {/* Message */}
                         <p className={styles.successMessage}>
                             Cảm ơn bạn đã tin tưởng và mua gói dịch vụ của chúng tôi.<br />
                             Thanh toán của bạn đã được xử lý thành công!
                         </p>
 
-                        {/* Order Details */}
                         <div className={styles.orderDetails}>
                             <h3>📋 Thông tin đơn hàng</h3>
                             <div className={styles.detailRow}>
@@ -219,7 +234,6 @@ const SuccessPage = () => {
                             </div>
                         </div>
 
-                        {/* Next Steps */}
                         <div className={styles.nextSteps}>
                             <h3>🚀 Bước tiếp theo</h3>
                             <ul>
@@ -229,12 +243,8 @@ const SuccessPage = () => {
                             </ul>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className={styles.actionButtons}>
-                            <Link href="/dashboard" className={`${styles.btn} ${styles.btnPrimary}`}>
-                                Xem đơn hàng
-                            </Link>
-                            <Link href="/" className={`${styles.btn} ${styles.btnSecondary}`}>
+                            <Link href={ROUTES.PUBLIC.HOME} className={`${styles.btn} ${styles.btnSecondary}`}>
                                 Về trang chủ
                             </Link>
                         </div>
@@ -243,6 +253,9 @@ const SuccessPage = () => {
             </div>
         );
     }
+
+    // Fallback for cases where neither ID is found after loading, or if it's a regular payment that didn't redirect immediately.
+    return null;
 };
 
 export default SuccessPage;

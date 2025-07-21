@@ -57,7 +57,7 @@ export const useNotifications = ({
                 current: currentPage.toString(),
                 pageSize: pageSize.toString()
             });
-            
+
             if (type) {
                 queryParams.append('type', type);
             }
@@ -66,7 +66,6 @@ export const useNotifications = ({
             if (response && typeof response === 'object' && 'data' in response) {
                 const responseData = response as { data: { data: ICOMPONENTS.Notification[] } };
                 const newNotifications = responseData.data?.data || [];
-                console.log(newNotifications)
                 if (currentPage === 1) {
                     // Nếu là trang đầu tiên, thay thế toàn bộ danh sách
                     setNotifications(newNotifications);
@@ -90,7 +89,7 @@ export const useNotifications = ({
         try {
             // Call API to mark as read
             await notificationService.markAsRead(notificationId.toString());
-            
+
             // Update local state
             setNotifications(prevNotifications =>
                 prevNotifications.map(notification =>
@@ -109,7 +108,7 @@ export const useNotifications = ({
         try {
             // Call API to mark all as read
             await notificationService.markAllAsRead();
-            
+
             // Update local state
             setNotifications(prevNotifications =>
                 prevNotifications.map(notification => ({
@@ -205,13 +204,13 @@ export const useNotificationTabs = (): UseNotificationTabsReturn => {
                 current: '1',
                 pageSize: '10'
             });
-            
+
             const photoQueryParams = new URLSearchParams({
                 current: '1',
                 pageSize: '10',
                 type: 'nhắc nhở chụp hình'
             });
-            
+
             await Promise.all([
                 notificationService.getNotifications(allQueryParams.toString()),
                 notificationService.getNotifications(photoQueryParams.toString())

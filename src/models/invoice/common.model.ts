@@ -30,3 +30,14 @@ export const InvoiceModel = z.object({
 
 export type IInvoiceModel = z.TypeOf<typeof InvoiceModel>
 //----------------------End----------------------//
+
+/*
+* Invoice Statistics Models
+*/
+export const InvoiceStatisticsModel = z.object({
+    pendingInvoices: z.number(),
+    partiallyPaidInvoices: z.number(),
+    paidInvoices: z.number(),
+    cancelledInvoices: z.number(),
+});
+//----------------------End----------------------//

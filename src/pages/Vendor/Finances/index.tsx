@@ -7,13 +7,21 @@ import RevenueReports from "@pages/Vendor/Components/Finances/RevenueReport"
 import InvoiceList from "@pages/Vendor/Components/Finances/InvoiceList"
 import TaxReports from "@pages/Vendor/Components/Finances/TaxReport"
 import TransactionHistory from "@pages/Vendor/Components/Finances/TransactionHistory"
-import UnpaidInvoices from "@pages/Vendor/Components/Finances/UnpaidInvoice"
 import BankAccounts from "@pages/Vendor/Components/Finances/BankAccount"
 import MonthlyRevenue from "@pages/Vendor/Components/Finances/MonthlyRevenue"
 import FinancialSummary from "@pages/Vendor/Components/Finances/FinancialSummary"
 import RecentTransactions from "@pages/Vendor/Components/Finances/RecentTransactions"
+import { useFinanceOverview } from "@utils/hooks/useFinance/useFinanceOverview"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/Atoms/ui/select"
+import { useState } from "react"
+import { useEffect } from "react";
+import { ILocation } from "@models/location/common.model"
+import { Alert, AlertTitle, AlertDescription } from "@components/Atoms/ui/alert";
+import LucideIcon from "@components/Atoms/LucideIcon";
+import { Loader2 } from "lucide-react";
+import { IFinanceOverview } from "@models/overview/common.model"
 
-export default function FinancePage() {
+export default function FinancePage({ locations = [] }: { locations: ILocation[] }) {
     // Lấy dữ liệu tài chính từ server
     const financeData = {
         overview: {
@@ -311,6 +319,45 @@ export default function FinancePage() {
             },
         ],
     }
+    const [selectedLocationId, setSelectedLocationId] = useState<string>(locations?.[0]?.id || "");
+    const [currentTab, setCurrentTab] = useState("overview");
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const [selectedYear, setSelectedYear] = useState(currentYear);
+    const [startDate, setStartDate] = useState<Date | null>(new Date(`${currentYear}-01-01`));
+    const [endDate, setEndDate] = useState<Date | null>(new Date(`${currentYear}-12-31`));
+
+    useEffect(() => {
+        setStartDate(new Date(`${selectedYear}-01-01`));
+        setEndDate(new Date(`${selectedYear}-12-31`));
+    }, [selectedYear]);
+
+    function formatDateDMY(date: Date) {
+        const d = date.getDate().toString().padStart(2, '0');
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}-${m}-${y}`;
+    }
+
+    function isFinanceOverview(data: unknown): data is IFinanceOverview {
+        return (
+            typeof data === 'object' &&
+            data !== null &&
+            'totalRevenue' in data &&
+            typeof (data as { totalRevenue?: unknown }).totalRevenue === 'number'
+        );
+    }
+
+    const { data, loading, error, refetch } = useFinanceOverview({
+        locationId: selectedLocationId,
+        startDate: startDate ? formatDateDMY(startDate) : formatDateDMY(new Date()),
+        endDate: endDate ? formatDateDMY(endDate) : formatDateDMY(new Date()),
+        type: 'finance'
+    });
+
+    useEffect(() => {
+        refetch();
+    }, [selectedLocationId, startDate, endDate, refetch]);
 
     return (
 
@@ -318,57 +365,145 @@ export default function FinancePage() {
             <h2 className="text-xl font-semibold">Tài chính</h2>
             <p className="text-sm text-gray-500">Quản lý tài chính và giao dịch của bạn</p>
 
-            <Tabs defaultValue="overview" className="mt-6">
-                <TabsList >
-                    <TabsTrigger
-                        value="overview"
-                        className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
-                    >
-                        Tổng quan
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="transactions"
-                        className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
-                    >
-                        Giao dịch
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="invoices"
-                        className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
-                    >
-                        Hóa đơn
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="reports"
-                        className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
-                    >
-                        Báo cáo
-                    </TabsTrigger>
-                </TabsList>
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+                    <div className="flex flex-col items-center">
+                        <div className="animate-spin w-4 h-4">
+                            <Loader2 className="animate-spin" />
+                        </div>
+                        <span className="mt-4 text-gray-100 text-lg animate-pulse drop-shadow">Đang tải dữ liệu...</span>
+                    </div>
+                </div>
+            )}
+            {error && (
+                <div className="flex justify-center py-4">
+                    <Alert variant="destructive" className="max-w-md w-full flex items-center gap-3">
+                        <LucideIcon name="AlertCircle" iconColor="#ef4444" iconSize={24} className="shrink-0" />
+                        <div>
+                            <AlertTitle className="text-red-600">Đã xảy ra lỗi</AlertTitle>
+                            <AlertDescription className="mb-2">Không thể tải dữ liệu. Vui lòng thử lại.</AlertDescription>
+                            <button
+                                onClick={() => refetch()}
+                                className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded shadow"
+                            >
+                                Thử lại
+                            </button>
+                        </div>
+                    </Alert>
+                </div>
+            )}
+            {!loading && !error && (
+                <button className="mb-2 px-3 py-1 bg-orange-500 text-white rounded" onClick={() => refetch()}>Làm mới</button>
+            )}
+
+            <Tabs value={currentTab} onValueChange={setCurrentTab} className="mt-6">
+                <div className="flex flex-col md:flex-row md:justify-between gap-2 md:gap-0">
+                    <div className="flex gap-2">
+                        <TabsList className="">
+                            <TabsTrigger
+                                value="overview"
+                                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
+                            >
+                                Tổng quan
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="transactions"
+                                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
+                            >
+                                Giao dịch
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="invoices"
+                                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
+                            >
+                                Hóa đơn
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="reports"
+                                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-orange-500 data-[state=active]:shadow-none"
+                            >
+                                Báo cáo
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Select
+                            value={selectedLocationId}
+                            onValueChange={value => setSelectedLocationId(value)}
+                            disabled={!Array.isArray(locations) || locations.length === 0}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={
+                                    !Array.isArray(locations) || locations.length === 0
+                                        ? "Không có địa điểm"
+                                        : "Chọn địa điểm"
+                                } />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Array.isArray(locations) && locations.map((location) => (
+                                    <SelectItem key={location.id} value={location.id}>
+                                        {location.address}, {location.ward}, {location.district}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <div>
+                            <Select
+                                value={selectedYear.toString()}
+                                onValueChange={y => setSelectedYear(Number(y))}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Chọn năm" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {years.map(y => (
+                                        <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                </div>
 
                 <TabsContent value="overview" className="space-y-6">
-                    <FinanceOverview data={financeData.overview} />
+                    <FinanceOverview
+                        totalRevenue={isFinanceOverview(data) ? data.totalRevenue : 0}
+                        pendingPayments={isFinanceOverview(data) ? data.pendingPayments : 0}
+                    />
 
                     <BankAccounts accounts={financeData.bankAccounts} availableBalance={financeData.overview.availableBalance} />
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <MonthlyRevenue data={financeData.monthlyRevenue} />
-                        <FinancialSummary data={financeData.financialSummary} />
+                        <MonthlyRevenue data={isFinanceOverview(data) ? data.monthlyRevenue : []} />
+                        <FinancialSummary data={isFinanceOverview(data) ? data.financialInfo : {
+                            thisMonthRevenue: 0,
+                            thisMonthProfit: 0,
+                            profitRatio: 0,
+                            taxRate: 0,
+                            profitGrowth: 0,
+                            revenueGrowth: 0
+                        }} />
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <RecentTransactions transactions={financeData.recentTransactions} />
-                        <UnpaidInvoices invoices={financeData.unpaidInvoices} />
+                        <RecentTransactions
+                            transactions={isFinanceOverview(data) ? data.recentTransactions : []}
+                            onViewAll={() => setCurrentTab("transactions")}
+                        />
+                        <InvoiceList invoices={isFinanceOverview(data) ? data.invoiceStatistics : {
+                            pendingInvoices: 0,
+                            partiallyPaidInvoices: 0,
+                            paidInvoices: 0,
+                            cancelledInvoices: 0
+                        }} />
                     </div>
                 </TabsContent>
 
                 <TabsContent value="transactions">
-                    <TransactionHistory transactions={financeData.allTransactions} />
+                    <TransactionHistory transactions={isFinanceOverview(data) ? data.recentTransactions : []} />
                 </TabsContent>
 
-                <TabsContent value="invoices">
-                    <InvoiceList invoices={financeData.invoices} />
-                </TabsContent>
+
 
                 <TabsContent value="reports" className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -379,8 +514,7 @@ export default function FinancePage() {
             </Tabs>
 
 
-
-        </div>
+        </div >
 
     )
 }
