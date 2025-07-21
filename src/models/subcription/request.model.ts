@@ -15,3 +15,16 @@ export const SubscriptionPlanRequestModel = z.object({
 
 export type ISubscriptionPlanRequestModel = z.infer<typeof SubscriptionPlanRequestModel>;
 //----------------------End----------------------//
+
+
+/**
+ * Model of SubscriptionCreatePaymentLinkRequest
+ */
+export const SubscriptionCreatePaymentLinkRequestModel = z.object({
+    planId: z.string(),
+    userId: z.string(),
+    type: z.string(),
+});
+
+export type ISubscriptionCreatePaymentLinkRequestModel = z.infer<typeof SubscriptionCreatePaymentLinkRequestModel>;
+//----------------------End----------------------//

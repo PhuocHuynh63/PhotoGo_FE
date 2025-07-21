@@ -7,11 +7,7 @@ import TipTapEditor from '@components/Organisms/TipTapEditor'
 import { MessageCircle } from 'lucide-react'
 import React, { useState } from 'react'
 
-type WriteReviewProps = {
-    activeTab: string;
-}
-
-const WriteReview = ({ activeTab }: WriteReviewProps) => {
+const WriteReview = () => {
     const [newReview, setNewReview] = useState<string>("");
 
     /**
@@ -26,7 +22,7 @@ const WriteReview = ({ activeTab }: WriteReviewProps) => {
     //----------------------End----------------------//
 
     return (
-        <Card className={`shadow-lg ${activeTab !== "write" && activeTab !== "reviews" ? "hidden md:block" : ""}`}>
+        <Card className={`shadow-lg`}>
             <CardHeader className="p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-semibold flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />

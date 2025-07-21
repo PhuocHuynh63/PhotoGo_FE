@@ -19,6 +19,11 @@ const PUBLIC = {
     SUPPORT: '/support',
     PAYMENT_ERROR: '/payment/error',
     PAYMENT_SUCCESS: '/payment/successful',
+    SUBSCRIPTION: {
+        ROOT: '/subscription',
+        MEMBERSHIP: '/subscription/membership',
+        VENDOR: '/subscription/vendor',
+    },
 };
 
 const USER = {
@@ -41,9 +46,12 @@ const VENDOR = {
     ROOT: '/vendor',
     DASHBOARD: '/vendor/dashboard',
     PROFILE: '/vendor/profile',
-    STATISTICS: '/vendor/statistics',
+    STATISTICS: {
+        ROOT: '/vendor/statistics',
+        BOOKING: '/vendor/statistics/booking',
+        FINANCE: '/vendor/statistics/finance',
+    },
     CALENDAR: '/vendor/calendar',
-    FINANCE: '/vendor/finance',
     SERVICES: '/vendor/services',
     BRANCHES: '/vendor/branches',
     SERVICE_STATISTICS: '/vendor/service-statistics',

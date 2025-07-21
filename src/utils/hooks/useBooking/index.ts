@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { IInvoice } from '@models/invoice/common.model';
+import { IInvoiceModel } from '@models/invoice/common.model';
 import { IBooking, IBookingDiscountAmount } from '@models/booking/common.model';
 import BookingService from '@services/booking';
 import { IBookingResponseModel } from '@models/booking/repsonse.model';
 import { BOOKING_STATUS } from '@constants/booking';
 
 // Enhanced useBooking hook with all booking operations
-export const useBooking = (invoices?: IInvoice[]) => {
+export const useBooking = (invoices?: IInvoiceModel[]) => {
     const [bookings, setBookings] = useState<IBooking[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
@@ -168,7 +168,7 @@ export const useBooking = (invoices?: IInvoice[]) => {
 };
 
 // Legacy hook for backward compatibility
-export const useBookingLegacy = (invoices: IInvoice[]) => {
+export const useBookingLegacy = (invoices: IInvoiceModel[]) => {
     const [bookings, setBookings] = useState<IBooking[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);

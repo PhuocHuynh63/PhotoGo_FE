@@ -1,5 +1,4 @@
 import { IBooking } from "@models/booking/common.model";
-import { IInvoice } from "@models/invoice/common.model";
 import { useConcept } from "@utils/hooks/useConcept/useConcept";
 import { useState } from "react";
 import BookingCardSkeleton from "../OrderSkeleton";
@@ -25,11 +24,15 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { ROUTES } from "@routes";
 import { BOOKING } from "@constants/booking";
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
+import { IInvoiceModel } from "@models/invoice/common.model";
+import WriteReviewDialog from "../../../../../../../components/Molecules/WriteReviewDialog";
 
-export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoice, isNew?: boolean }) {
+export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean }) {
     const router = useRouter();
-    const [showCancelDialog, setShowCancelDialog] = useState(false)
-    const [showReportDialog, setShowReportDialog] = useState(false)
+    const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
+    const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
+    const [showReportDialog, setShowReportDialog] = useState<boolean>(false)
     const vendorId = invoice?.booking?.serviceConcept?.servicePackage?.vendorId
     const { concept, loading: conceptLoading } = useConcept(booking?.serviceConceptId);
     const { vendor, loading: vendorLoading } = useVendor(vendorId);
@@ -37,20 +40,21 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
         return <BookingCardSkeleton />;
     }
 
-    // Format price to VND
-    const formatPrice = (price: number | string) => {
-        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(price)).replace("₫", "đ")
-    }
-    // Get status badge color
+    /**
+     * Get a badge based on booking status
+     * @param status - return a badge based on booking status
+     * @returns Badge component with appropriate styling and text based on booking status
+    */
     const getStatusBadge = (status: string) => {
-        console.log('Status:', status);
-
         switch (status) {
             case BOOKING.BOOKING_STATUS.IN_PROGRESS:
                 return <Badge variant="outline" className="text-blue-500 border-blue-200">Đang thực hiện</Badge>
             case BOOKING.BOOKING_STATUS.COMPLETED:
                 return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
             case BOOKING.BOOKING_STATUS.CANCELLED:
+            case BOOKING.BOOKING_STATUS.CANCELLED_USER:
+            case BOOKING.BOOKING_STATUS.CANCELLED_VENDOR:
+            case BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT:
                 return <Badge variant="outline" className="text-red-500 border-red-200">Đã hủy</Badge>
             case BOOKING.BOOKING_STATUS.PENDING:
                 return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Chờ xác nhận</Badge>
@@ -58,6 +62,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                 return <Badge>{status}</Badge>
         }
     }
+    //-------------------------End-------------------------//
 
     const getVendorSlug = async (serviceConceptId: string): Promise<{ slug: string, location: string } | null> => {
         try {
@@ -98,7 +103,16 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
         }
     };
 
-
+    /**
+     * Object review
+     * @returns Object review
+     */
+    const objectReview = {
+        userId: booking.userId,
+        vendorId: vendorId,
+        bookingId: booking.id,
+    }
+    //-------------------------End-------------------------//
     return (
         <Card className={`overflow-hidden ${isNew ? 'ring-2 ring-orange-400 scale-[1.01] transition-all duration-300 animate-new-pulse shadow-orange border-orange-400 border-2 animate-spin' : ''}`}>
             <div className="flex flex-col md:flex-row">
@@ -145,25 +159,25 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             )}
 
 
-                            {invoice.booking.date && invoice.booking.time ? (
+                            {invoice?.booking?.date && invoice?.booking?.time ? (
                                 <div className="flex flex-wrap gap-4 mt-4">
                                     <div className="flex items-center">
                                         <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                                        <span className="text-sm">{invoice.booking.date}</span>
+                                        <span className="text-sm">{invoice?.booking?.date}</span>
                                     </div>
                                     <div className="flex items-center">
                                         <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
-                                        <span className="text-sm">{invoice.booking.time}</span>
+                                        <span className="text-sm">{invoice?.booking?.time}</span>
 
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-sm mt-1">
-                                    {invoice.booking.serviceConcept?.numberOfDays && invoice.booking.serviceConcept.numberOfDays > 1 && invoice.booking.date ? (
+                                    {invoice?.booking?.serviceConcept?.numberOfDays && invoice?.booking?.serviceConcept?.numberOfDays > 1 && invoice?.booking?.date ? (
                                         (() => {
-                                            const startDate = new Date(invoice.booking.date.split('/').reverse().join('-'));
+                                            const startDate = new Date(invoice?.booking?.date.split('/').reverse().join('-'));
                                             const endDate = new Date(startDate);
-                                            endDate.setDate(startDate.getDate() + invoice.booking.serviceConcept.numberOfDays - 1);
+                                            endDate.setDate(startDate.getDate() + invoice?.booking?.serviceConcept?.numberOfDays - 1);
                                             const formatDate = (date: Date) => {
                                                 return date.toLocaleDateString('vi-VN', {
                                                     day: '2-digit',
@@ -189,8 +203,8 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                         <div className="mt-4 md:mt-0 text-right">
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <div className="text-lg font-bold text-orange-600">{formatPrice(invoice.remainingAmount)}</div>
-                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(invoice.payablePrice)}</div>
+                                    <div className="text-lg font-bold text-orange-600">{formatPrice(invoice?.remainingAmount)}</div>
+                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(invoice?.payablePrice)}</div>
                                 </div>
                                 {/* {booking.invoice.discountAmount > 0 && (
                                     <div>
@@ -208,13 +222,13 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                                 </div> */}
                             </div>
                             <div className="text-xs text-muted-foreground mt-4">Loại: {booking.sourceType}</div>
-                            {invoice.booking.serviceConcept.conceptRangeType === 'một ngày' ? (
+                            {invoice?.booking?.serviceConcept?.conceptRangeType === 'một ngày' ? (
                                 <div className="text-xs text-muted-foreground mt-1">
-                                    {invoice.booking.serviceConcept.duration} phút
+                                    {invoice?.booking?.serviceConcept?.duration} phút
                                 </div>
                             ) : (
                                 <div className="text-xs text-muted-foreground mt-1">
-                                    {invoice.booking.serviceConcept.numberOfDays} ngày
+                                    {invoice?.booking?.serviceConcept?.numberOfDays} ngày
                                 </div>
                             )}
                         </div>
@@ -227,8 +241,8 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             <Button variant="outline" className="bg-blue-600 hover:bg-blue-700 hover:text-white text-white">Xem chi tiết</Button>
                         </Link>
 
-                        {booking.status === BOOKING.BOOKING_STATUS.NOT_PAID && invoice.payments?.[0]?.paymentOSId && (
-                            <Link href={`https://pay.payos.vn/web/${invoice.payments[0].paymentOSId.trim()}`} target="_blank" rel="noopener noreferrer">
+                        {booking.status === BOOKING.BOOKING_STATUS.NOT_PAID && invoice?.payments?.[0]?.paymentOSId && (
+                            <Link href={`https://pay.payos.vn/web/${invoice?.payments[0]?.paymentOSId.trim()}`} target="_blank" rel="noopener noreferrer">
                                 <Button variant="outline" className="bg-green-600 hover:bg-green-700 hover:text-white text-white">
                                     Thanh toán
                                 </Button>
@@ -266,6 +280,10 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                                     </DialogContent>
                                 </Dialog>
                             </>
+                        )}
+
+                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && booking.isReview && (
+                            <WriteReviewDialog showReviewDialog={showReviewDialog} setShowReviewDialog={setShowReviewDialog} objectReview={objectReview} />
                         )}
 
                         <DropdownMenu>
