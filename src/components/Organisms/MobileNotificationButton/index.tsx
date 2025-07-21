@@ -2,7 +2,7 @@
 
 import LucideIcon from "@components/Atoms/LucideIcon";
 import { useMemo } from "react";
-import { useNotifications } from "@utils/hooks/useNotifications";
+import { useNotifications } from "@utils/hooks/useNotification";
 
 interface MobileNotificationButtonProps {
     isNotificationOpen: boolean;

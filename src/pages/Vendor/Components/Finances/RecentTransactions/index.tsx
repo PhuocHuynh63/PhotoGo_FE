@@ -4,22 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/c
 import { Button } from "@components/Atoms/ui/button"
 import { Badge } from "@components/Atoms/ui/badge"
 import { FileText, ChevronRight } from "lucide-react"
-
-interface Transaction {
-    id: string
-    type: "booking" | "payment" | "refund" | "withdrawal"
-    description: string
-    date: string
-    time: string
-    amount: number
-    status: "pending" | "completed" | "cancelled"
-}
+import { BOOKING_STATUS } from "@constants/booking"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
+import { IFinanceOverview } from "@models/overview/common.model"
 
 interface RecentTransactionsProps {
-    transactions: Transaction[]
+    transactions: IFinanceOverview["recentTransactions"]
+    onViewAll: () => void
 }
 
-export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
+export default function RecentTransactions({ transactions, onViewAll }: RecentTransactionsProps) {
     // Lấy 5 giao dịch gần nhất
     const recentTransactions = transactions?.slice(0, 5)
 
@@ -29,13 +23,10 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
         return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
     }
 
-    // Hàm để hiển thị số tiền
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
+    // Hàm để hiển thị giờ:phút từ date string
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
     }
 
     // Hàm để hiển thị màu số tiền
@@ -47,18 +38,17 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
     const getAmountSign = (amount: number) => {
         return amount >= 0 ? "+" : ""
     }
-
     // Hàm để hiển thị trạng thái
-    const getStatusBadge = (status: string) => {
+    const getStatusBadge = (status: BOOKING_STATUS) => {
         switch (status) {
-            case "completed":
-                return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Đã hoàn thành</Badge>
-            case "pending":
-                return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Đang xử lý</Badge>
-            case "cancelled":
-                return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Đã hủy</Badge>
+            case BOOKING_STATUS.COMPLETED:
+                return <Badge variant='outline' className="bg-green-100 text-green-800 hover:bg-green-100">Đã hoàn thành</Badge>
+            case BOOKING_STATUS.IN_PROGRESS:
+                return <Badge variant='outline' className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Đang xử lý</Badge>
+            case BOOKING_STATUS.CANCELLED:
+                return <Badge variant='outline' className="bg-red-100 text-red-800 hover:bg-red-100">Đã hủy</Badge>
             default:
-                return null
+                return <Badge variant='outline' className="bg-gray-100 text-gray-800 hover:bg-gray-100">{status}</Badge>
         }
     }
 
@@ -66,14 +56,14 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
         <Card className="bg-white">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-lg font-medium">Giao dịch gần đây</CardTitle>
-                <Button variant="ghost" size="sm" className="h-8">
+                <Button variant="ghost" size="sm" className="h-8" onClick={onViewAll}>
                     <span>Xem tất cả</span>
                     <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {recentTransactions?.map((transaction) => (
+                    {recentTransactions && recentTransactions.length > 0 ? recentTransactions.map((transaction) => (
                         <div
                             key={transaction.id}
                             className="flex items-center gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0"
@@ -88,19 +78,29 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                                     <div>
                                         <p className="font-medium">{transaction.description}</p>
                                         <p className="text-xs text-gray-500">
-                                            {formatDate(transaction.date)} - {transaction.time}
+                                            {formatDate(transaction.date)} - {formatTime(transaction.date)}
                                         </p>
+                                        <div className="mt-1">{getStatusBadge(transaction.status as BOOKING_STATUS)}</div>
                                     </div>
                                     <div className="text-right">
                                         <p className={`font-medium ${getAmountColor(transaction.amount)}`}>
                                             {getAmountSign(transaction.amount)}
-                                            {formatCurrency(transaction.amount)}
+                                            {formatPrice(transaction.amount)}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="flex flex-col items-center justify-center py-10 text-gray-500 gap-2">
+                            <svg width="64" height="64" fill="none" viewBox="0 0 64 64">
+                                <rect width="64" height="64" rx="12" fill="#F3F4F6" />
+                                <path d="M20 44V36C20 34.8954 20.8954 34 22 34H42C43.1046 34 44 34.8954 44 36V44" stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" />
+                                <circle cx="32" cy="28" r="6" stroke="#A1A1AA" strokeWidth="2" />
+                            </svg>
+                            <span>Không có giao dịch nào</span>
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>

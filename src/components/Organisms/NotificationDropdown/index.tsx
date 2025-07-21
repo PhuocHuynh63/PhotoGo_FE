@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import LucideIcon from "@components/Atoms/LucideIcon";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatRelativeTime } from "@utils/helpers/Date";
-import { useNotificationTabs } from "@utils/hooks/useNotifications";
+import { useNotificationTabs } from "@utils/hooks/useNotification";
 import { Badge } from "@components/Atoms/ui/badge";
 
 interface NotificationDropdownProps {
