@@ -11,6 +11,8 @@ interface SubscriptionFilterProps {
     name: string;
     isActive: string;
     planType: string;
+    sortBy?: string;
+    sortDirection?: string;
   };
   onFilterChange: (key: string, value: string) => void;
   onClearFilters: () => void;
