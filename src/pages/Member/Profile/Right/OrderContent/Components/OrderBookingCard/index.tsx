@@ -30,7 +30,6 @@ import WriteReviewDialog from "../../../../../../../components/Molecules/WriteRe
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean }) {
     const router = useRouter();
-    console.log(invoice)
     const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
     const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
     const [showReportDialog, setShowReportDialog] = useState<boolean>(false)
@@ -287,7 +286,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             </>
                         )}
 
-                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && booking.isReview && (
+                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && (
                             <WriteReviewDialog showReviewDialog={showReviewDialog} setShowReviewDialog={setShowReviewDialog} objectReview={objectReview} />
                         )}
 
