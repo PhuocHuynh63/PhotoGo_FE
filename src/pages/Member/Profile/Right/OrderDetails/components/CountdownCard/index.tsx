@@ -40,6 +40,7 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
      * - Cancelled
      * - In Progress
      * - Completed
+     * 
      */
     const isOrderCancelled = [
         BOOKING.BOOKING_STATUS.CANCELLED,
