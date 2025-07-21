@@ -286,7 +286,7 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                             </>
                         )}
 
-                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && invoice.isReview && (
+                        {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && (
                             <WriteReviewDialog showReviewDialog={showReviewDialog} setShowReviewDialog={setShowReviewDialog} objectReview={objectReview} />
                         )}
 
