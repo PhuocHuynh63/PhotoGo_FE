@@ -36,7 +36,7 @@ const formatCurrency = (amount: string | number): string => {
 
 // --- Main Component ---
 
-const PricingPage = ({ session }: { session: METADATA.ISession }) => {
+const PricingPage = ({ session, isMembership }: { session: METADATA.ISession, isMembership: boolean }) => {
   // State to manage billing cycle selection ('month' or 'year')
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('month')
   // State to store subscription plans fetched from the API
@@ -48,7 +48,7 @@ const PricingPage = ({ session }: { session: METADATA.ISession }) => {
       try {
         const params = {
           isActive: true,
-          planType: SUBSCRIPTION.PLAN_TYPE.MEMBERSHIP,
+          planType: isMembership ? SUBSCRIPTION.PLAN_TYPE.MEMBERSHIP : SUBSCRIPTION.PLAN_TYPE.VENDOR,
           current: 1,
           pageSize: 3,
           name: "",

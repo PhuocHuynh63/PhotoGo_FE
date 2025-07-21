@@ -19,6 +19,11 @@ const PUBLIC = {
     SUPPORT: '/support',
     PAYMENT_ERROR: '/payment/error',
     PAYMENT_SUCCESS: '/payment/successful',
+    SUBSCRIPTION: {
+        ROOT: '/subscription',
+        MEMBERSHIP: '/subscription/membership',
+        VENDOR: '/subscription/vendor',
+    },
 };
 
 const USER = {
