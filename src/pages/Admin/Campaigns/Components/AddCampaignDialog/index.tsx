@@ -46,23 +46,23 @@ export default function AddCampaignDialog({ open, onClose, onSuccess }: AddCampa
                 const [year, month, day] = dateStr.split('-');
                 return `${day}/${month}/${year}`;
             };
-            
+
             const apiData = {
                 ...formData,
                 startDate: formatDateForApi(formData.startDate as string),
                 endDate: formatDateForApi(formData.endDate as string)
             };
-            
+
             console.log('Sending to API:', apiData);
             await campaignService.createCampaign(apiData as ICreateCampaignModel);
             toast.success('Tạo campaign thành công');
-            
+
             // Đóng dialog và reset form
             setFormData({ name: '', description: '', startDate: '', endDate: '' });
-            
+
             // Gọi onSuccess và tự động làm mới trang sau 500ms
             onSuccess();
-            
+
             // Thêm reload trang sau khi tạo thành công để đảm bảo dữ liệu mới
             setTimeout(() => {
                 window.location.reload();
@@ -112,7 +112,7 @@ export default function AddCampaignDialog({ open, onClose, onSuccess }: AddCampa
                                 <Label htmlFor="startDate">Ngày bắt đầu *</Label>
                                 <DatePicker
                                     value={formData.startDate ? new Date(formData.startDate) : null}
-                                    onChange={(date) => handleInputChange('startDate', date ? date.toISOString().split('T')[0] : '')}
+                                    onChange={(date) => handleInputChange('startDate', date ? date.toLocaleDateString('en-CA') : '')}
                                     placeholder="Chọn ngày bắt đầu"
                                 />
                             </div>
@@ -120,7 +120,7 @@ export default function AddCampaignDialog({ open, onClose, onSuccess }: AddCampa
                                 <Label htmlFor="endDate">Ngày kết thúc *</Label>
                                 <DatePicker
                                     value={formData.endDate ? new Date(formData.endDate) : null}
-                                    onChange={(date) => handleInputChange('endDate', date ? date.toISOString().split('T')[0] : '')}
+                                    onChange={(date) => handleInputChange('endDate', date ? date.toLocaleDateString('en-CA') : '')}
                                     placeholder="Chọn ngày kết thúc"
                                 />
                             </div>

@@ -151,45 +151,10 @@ export default function AdminVendorsPage({ vendors, pagination }: AdminVendorsPa
   const [openDialog, setOpenDialog] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Debounce search
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
-
-  // Debounce effect cho search
+  // Đồng bộ state search với URL khi searchParams thay đổi (ví dụ khi chuyển trang)
   useEffect(() => {
-    setIsSearching(true);
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setIsSearching(false);
-    }, 500); // 500ms delay
-
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  // Effect để tự động search khi debouncedSearch thay đổi
-  useEffect(() => {
-    if (debouncedSearch !== searchParams?.get('name')) {
-      const params = new URLSearchParams();
-
-      // Giữ lại các filter hiện tại
-      if (searchParams) {
-        searchParams.forEach((value, key) => {
-          if (key !== 'name' && key !== 'current') {
-            params.set(key, value);
-          }
-        });
-      }
-
-      // Thêm search term mới
-      if (debouncedSearch) {
-        params.set("name", debouncedSearch);
-      }
-
-      // Reset về trang 1 khi search
-      params.set("current", "1");
-
-      router.push(`?${params.toString()}`);
-    }
-  }, [debouncedSearch, router, searchParams]);
+    setSearch(searchParams?.get('name') || '');
+  }, [searchParams]);
 
   const handleSuccess = () => {
     setOpenDialog(false);

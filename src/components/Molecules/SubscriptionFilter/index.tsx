@@ -25,8 +25,8 @@ const SubscriptionFilter: React.FC<SubscriptionFilterProps> = ({
 }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-        {/* Search by Name */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+        {/* Search Section */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
             Tìm kiếm theo tên
@@ -42,8 +42,7 @@ const SubscriptionFilter: React.FC<SubscriptionFilterProps> = ({
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
         </div>
-
-        {/* Filter by Active Status */}
+        {/* Filter Section */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
             Lọc theo trạng thái hoạt động
@@ -57,41 +56,68 @@ const SubscriptionFilter: React.FC<SubscriptionFilterProps> = ({
             ]}
             placeHolder="--"
           />
-        </div>
-
-        {/* Filter by Plan Type */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-gray-700 mt-2 block">
             Loại gói đăng ký
           </label>
           <Select
             value={filters.planType || undefined}
             onValueChange={(value: string) => onFilterChange("planType", value || "")}
             options={[
-              { value: "user", name: "Người dùng" },
-              { value: "vendor", name: "Nhà cung cấp" }
+              { value: "người dùng", name: "Người dùng" },
+              { value: "nhà cung cấp", name: "Nhà cung cấp" }
             ]}
             placeHolder="--"
           />
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Button
-            onClick={onSearch}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-          >
-            <Filter className="w-4 h-4" />
-            Áp dụng bộ lọc
-          </Button>
-          <Button
-            onClick={onClearFilters}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Đặt lại
-          </Button>
+        {/* Sort Section */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Sắp xếp theo trường
+          </label>
+          <Select
+            value={filters.sortBy || undefined}
+            onValueChange={(value: string) => onFilterChange("sortBy", value || "")}
+            options={[
+              { value: "createdAt", name: "Ngày tạo" },
+              { value: "updatedAt", name: "Ngày cập nhật" },
+              { value: "name", name: "Tên gói" },
+              { value: "priceForMonth", name: "Giá tháng" },
+              { value: "priceForYear", name: "Giá năm" },
+              { value: "planType", name: "Loại gói" },
+              { value: "billingCycle", name: "Chu kỳ thanh toán" }
+            ]}
+            placeHolder="--"
+          />
+          <label className="text-sm font-medium text-gray-700 mt-2 block">
+            Hướng sắp xếp
+          </label>
+          <Select
+            value={filters.sortDirection || undefined}
+            onValueChange={(value: string) => onFilterChange("sortDirection", value || "")}
+            options={[
+              { value: "ASC", name: "Tăng dần" },
+              { value: "DESC", name: "Giảm dần" }
+            ]}
+            placeHolder="--"
+          />
         </div>
+      </div>
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-3 mt-6">
+        <Button
+          onClick={onSearch}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+        >
+          <Filter className="w-4 h-4" />
+          Áp dụng bộ lọc
+        </Button>
+        <Button
+          onClick={onClearFilters}
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+        >
+          <RotateCcw className="w-4 h-4" />
+          Đặt lại
+        </Button>
       </div>
     </div>
   );

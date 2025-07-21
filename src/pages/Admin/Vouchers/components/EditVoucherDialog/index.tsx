@@ -29,7 +29,11 @@ interface EditVoucherDialogProps {
 
 const DISCOUNT_TYPE_OPTIONS = Object.values(VOUCHER.DISCOUNT_TYPE).map((type) => ({ name: type, value: type }));
 const STATUS_OPTIONS = Object.values(VOUCHER.STATUS).map((status) => ({ name: status, value: status }));
-const VOUCHER_TYPE_OPTIONS = Object.values(VOUCHER.TYPE).map((type) => ({ name: type, value: type }));
+const VOUCHER_TYPE_OPTIONS = [
+    { name: VOUCHER.TYPE.CAMPAIGN, value: VOUCHER.TYPE.CAMPAIGN },
+    { name: VOUCHER.TYPE.POINT, value: VOUCHER.TYPE.POINT },
+    { name: VOUCHER.TYPE.WHEEL, value: VOUCHER.TYPE.WHEEL },
+];
 
 export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }: EditVoucherDialogProps) {
     const form = useForm<IEditVoucher>({
@@ -81,7 +85,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-5xl max-h-[90vh] overflow-y-auto" style={{ maxWidth: '1100px', width: '100%' }}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <LucideIcon name="Edit" className="text-blue-600" />
@@ -168,7 +172,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                             <FormItem>
                                                 <FormLabel>Giá trị đơn hàng tối thiểu</FormLabel>
                                                 <FormControl>
-                                                    <Input type="number" placeholder="VD: 500000" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))}/>
+                                                    <Input type="number" placeholder="VD: 500000" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -181,7 +185,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                             <FormItem>
                                                 <FormLabel>Giá trị đơn hàng tối đa</FormLabel>
                                                 <FormControl>
-                                                    <Input type="number" placeholder="VD: 2000000" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))}/>
+                                                    <Input type="number" placeholder="VD: 2000000" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -203,7 +207,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                                 <FormControl>
                                                     <DatePicker
                                                         value={field.value ? new Date(field.value) : null}
-                                                        onChange={(date: any) => field.onChange(date?.toISOString())}
+                                                        onChange={(date) => field.onChange(date ? date.toLocaleDateString('en-CA') : '')}
                                                         placeholder="Chọn ngày bắt đầu"
                                                     />
                                                 </FormControl>
@@ -220,7 +224,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                                 <FormControl>
                                                     <DatePicker
                                                         value={field.value ? new Date(field.value) : null}
-                                                        onChange={(date: any) => field.onChange(date?.toISOString())}
+                                                        onChange={(date) => field.onChange(date ? date.toLocaleDateString('en-CA') : '')}
                                                         placeholder="Chọn ngày kết thúc"
                                                     />
                                                 </FormControl>
@@ -247,24 +251,28 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                                     value={field.value}
                                                     options={VOUCHER_TYPE_OPTIONS}
                                                 />
-                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-                                    {watchedType !== VOUCHER.TYPE.CAMPAIGN && (
+                                    {watchedType === VOUCHER.TYPE.POINT && (
                                         <FormField
                                             control={form.control}
                                             name="point"
                                             render={({ field }: { field: any }) => (
                                                 <FormItem>
-                                                    <FormLabel>Điểm</FormLabel>
+                                                    <FormLabel>Số điểm cần để đổi *</FormLabel>
                                                     <FormControl>
-                                                        <Input type="number" placeholder="VD: 100" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))}/>
+                                                        <Input type="number" placeholder="VD: 100" {...field} onChange={(e: any) => field.onChange(e.target.value === '' ? null : Number(e.target.value))} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
+                                    )}
+                                    {watchedType === VOUCHER.TYPE.WHEEL && (
+                                        <div className="space-y-2">
+                                            <FormLabel className="text-pink-600">Voucher này sẽ được phát qua vòng quay may mắn.</FormLabel>
+                                        </div>
                                     )}
                                     <FormField
                                         control={form.control}
@@ -308,7 +316,7 @@ export default function EditVoucherDialog({ voucher, open, onClose, onSuccess }:
                                     <>
                                         <LucideIcon name="Loader2" className="mr-2 animate-spin" />
                                         Đang lưu...
-                                    </> 
+                                    </>
                                 ) : (
                                     <>
                                         <LucideIcon name="Save" className="mr-2" />

@@ -15,10 +15,10 @@ export default function CreateVoucherFlow({ open, onClose, onSuccess }: CreateVo
     const [showSelector, setShowSelector] = useState(true)
     const [selectedVoucherType, setSelectedVoucherType] = useState<{
         discount_type: "phần trăm" | "cố định"
-        voucher_type: "điểm" | "tiền"
+        voucher_type: "điểm" | "tiền" | "vòng quay may mắn"
     } | null>(null)
 
-    const handleVoucherTypeSelect = (discountType: "phần trăm" | "cố định", voucherType: "điểm" | "tiền") => {
+    const handleVoucherTypeSelect = (discountType: "phần trăm" | "cố định", voucherType: "điểm" | "tiền" | "vòng quay may mắn") => {
         setSelectedVoucherType({ discount_type: discountType, voucher_type: voucherType })
         setShowSelector(false)
     }
@@ -52,6 +52,7 @@ export default function CreateVoucherFlow({ open, onClose, onSuccess }: CreateVo
         const voucherTypeMap = {
             "điểm": VOUCHER.TYPE.POINT,
             "tiền": VOUCHER.TYPE.CAMPAIGN,
+            "vòng quay may mắn": VOUCHER.TYPE.WHEEL,
         }
 
         return {
