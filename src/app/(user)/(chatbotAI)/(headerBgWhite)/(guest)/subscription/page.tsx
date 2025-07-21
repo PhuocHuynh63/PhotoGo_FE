@@ -1,10 +1,6 @@
-import SubscriptionPage from "@pages/Public/Subcription";
+import { ROUTES } from "@routes";
+import { redirect } from "next/navigation";
 
-export default function Subscription() {
-
-    return (
-        <>
-            <SubscriptionPage />
-        </>
-    )
+export default async function Subscription() {
+    redirect(ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP)
 }

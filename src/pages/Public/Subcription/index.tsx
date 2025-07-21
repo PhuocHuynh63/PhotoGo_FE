@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Camera, Zap, Mountain } from 'lucide-react'
+import { Camera, Zap } from 'lucide-react'
 import TitlePricing from './components/Title'
 import SelectionPricing from './components/Selection'
 import PricingPackage from '@components/Organisms/PricingPackages'
 import { subscriptionService } from '@services/subcription' // Assuming this path is correct
 import { SUBSCRIPTION } from '@constants/subscriptions' // Assuming this path is correct
+import { METADATA } from '../../../types/IMetadata'
+import { useSetSession } from '@stores/user/selectors'
 
 // --- Helper Functions ---
 
@@ -34,22 +36,28 @@ const formatCurrency = (amount: string | number): string => {
 
 // --- Main Component ---
 
-const PricingPage = () => {
+const PricingPage = ({ session, isMembership }: { session: METADATA.ISession, isMembership: boolean }) => {
   // State to manage billing cycle selection ('month' or 'year')
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('month')
   // State to store subscription plans fetched from the API
   const [packages, setPackages] = useState<any[]>([])
-
+  const setSession = useSetSession()
   useEffect(() => {
+    setSession(session)
     const fetchSubscriptions = async () => {
       try {
         const params = {
           isActive: true,
-          planType: SUBSCRIPTION.PLAN_TYPE.MEMBERSHIP,
+          planType: isMembership ? SUBSCRIPTION.PLAN_TYPE.MEMBERSHIP : SUBSCRIPTION.PLAN_TYPE.VENDOR,
+          current: 1,
+          pageSize: 3,
+          name: "",
+          sortBy: 'createdAt',
+          sortDirection: 'asc',
         }
         // Assuming the service returns an object with a data array, e.g., { data: [...] }
         const response = await subscriptionService.getSubscriptionPlans(params) as any
-
+        console.log(response)
         // --- This mapping adds UI-specific details to your API data ---
         const uiDataMap: { [key: string]: any } = {
           'Membership': {
@@ -64,13 +72,12 @@ const PricingPage = () => {
             recommended: false,
           }
         };
-
+        console.log(uiDataMap)
         // Assuming response.data is the array of subscription plans
-        const formattedPackages = (response.data || [response]).map((plan: any) => ({
+        const formattedPackages = (response.data.data || [response]).map((plan: any) => ({
           ...plan,
           ...(uiDataMap[plan.name] || uiDataMap['Default'])
         }));
-
         setPackages(formattedPackages)
       } catch (err) {
         console.error("Failed to fetch subscription plans:", err)
@@ -87,7 +94,6 @@ const PricingPage = () => {
     price: billingCycle === 'month' ? formatCurrency(pkg.priceForMonth) : formatCurrency(pkg.priceForYear),
     unit: billingCycle === 'month' ? '/ tháng' : '/ năm',
   }))
-
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen w-full relative isolate overflow-hidden">
       <div
