@@ -15,8 +15,10 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
     const router = useRouter();
     const userId = session?.user?.id;
 
-    // Use a single state to store parsed URL parameters
-    const [pageState, setPageState] = useState<{
+    // Initial state setup: Parse URL params once.
+    // loadingApi should start true, and only turn false AFTER the API call completes
+    // AND it's a subscription payment that needs to render the success UI.
+    const [pageData, setPageData] = useState<{
         paymentId: string | null;
         subscriptionPaymentId: string | null;
         status: string | null;
@@ -24,17 +26,9 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         payosId: string | null;
         cancel: string | null;
         orderCode: string | null;
-        loadingApi: boolean;
-    }>({
-        paymentId: null,
-        subscriptionPaymentId: null,
-        status: null,
-        code: null,
-        payosId: null,
-        cancel: null,
-        orderCode: null,
-        loadingApi: true,
-    });
+    } | null>(null); // Start as null, indicating we haven't even parsed params yet
+
+    const [loadingApi, setLoadingApi] = useState(true); // Manually control loading state
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -46,8 +40,8 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         const cancel = params.get("cancel");
         const orderCode = params.get("orderCode");
 
-        // Update the pageState with parsed parameters
-        setPageState({
+        // Set the parsed data state once
+        setPageData({
             paymentId: currentPaymentId,
             subscriptionPaymentId: currentSubscriptionPaymentId,
             status,
@@ -55,12 +49,11 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
             payosId,
             cancel,
             orderCode,
-            loadingApi: true, 
         });
 
         const processPayment = async () => {
+            // Check if it's a regular payment that needs redirect
             if (currentPaymentId && status && code && payosId && cancel !== null && orderCode) {
-                // Handle regular payment success
                 const data = {
                     status,
                     code,
@@ -71,9 +64,10 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                 await paymentService.paymentSuccess(currentPaymentId, data);
                 const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
                 router.push(ordersUrl);
-                return; // Stop further execution for regular payment
-            } else if (currentSubscriptionPaymentId) {
-                // Handle subscription payment success
+                // No need to setLoadingApi(false) here, as we are redirecting
+            }
+            // Check if it's a subscription payment that needs API call and then render
+            else if (currentSubscriptionPaymentId) {
                 const data = {
                     subscriptionPaymentId: currentSubscriptionPaymentId,
                     cancel: Boolean(cancel),
@@ -84,26 +78,24 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     userId: userId || ''
                 };
                 await subscriptionService.subscriptionSuccess(data);
-                setPageState(prevState => ({ ...prevState, loadingApi: false })); // API call done, allow rendering
-                // No redirect for subscription success page, it renders below
-            } else {
-                // Neither paymentId nor subscriptionPaymentId found
+                setLoadingApi(false); // API call done, allow rendering the subscription success page
+            }
+            // If neither is found, redirect to home
+            else {
                 router.push(ROUTES.PUBLIC.HOME);
-                return;
             }
         };
 
-        processPayment(); // Execute the payment processing logic
-    }, [router, userId]); // Dependencies for useEffect to re-run if router or userId changes
+        processPayment();
+    }, [router, userId]); // Dependencies for useEffect
 
-    // Conditional rendering based on the state
-    if (pageState.loadingApi) {
-        // Show loading page while API call is in progress for either type of payment
+    // Render logic based on states
+    if (loadingApi) {
         return <LoadingPage />;
     }
 
-    // After API call, if it's a subscription payment, render the success page
-    if (pageState.subscriptionPaymentId) {
+    // Now that loadingApi is false, check if it's a subscription payment to render its specific UI
+    if (pageData?.subscriptionPaymentId) {
         const [currentTime, setCurrentTime] = useState('');
 
         useEffect(() => {
