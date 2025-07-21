@@ -45,7 +45,7 @@ async function getVouchers({ searchParams }: { searchParams: any }) {
 
         return { vouchers, pagination };
     } catch (error) {
-        console.error('Error fetching vouchers:', error);
+        //console.error('Error fetching vouchers:', error);
         return {
             vouchers: [],
             pagination: {
