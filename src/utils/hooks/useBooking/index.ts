@@ -227,8 +227,9 @@ export const useBookingGetDiscountAmount = ({ userId, serviceConceptId, voucherI
         setLoading(true);
         setError(null);
 
-        try {
-            const response = await BookingService.getDiscountAmount(userId, serviceConceptId, voucherId, depositAmount, depositType) as { data: IBookingDiscountAmount };
+        try {       
+            const date = new Date().toLocaleDateString('en-GB');
+            const response = await BookingService.getDiscountAmount(userId, serviceConceptId, voucherId, depositAmount, depositType, date) as { data: IBookingDiscountAmount };
             setPrice(response.data);
         } catch (err) {
             setError(err instanceof Error ? err : new Error('Failed to fetch discount amount'));

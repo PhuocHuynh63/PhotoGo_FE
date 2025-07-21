@@ -30,12 +30,8 @@ const DISCOUNT_TYPE_OPTIONS = [
 ];
 
 const SORT_FIELDS = [
-  { value: 'code', name: 'Mã voucher' },
-  { value: 'discount_value', name: 'Giá trị giảm' },
-  { value: 'quantity', name: 'Số lượng' },
-  { value: 'start_date', name: 'Ngày bắt đầu' },
-  { value: 'end_date', name: 'Ngày kết thúc' },
   { value: 'created_at', name: 'Ngày tạo' },
+  { value: 'updated_at', name: 'Ngày cập nhật' },
 ];
 
 const SORT_DIRECTIONS = [

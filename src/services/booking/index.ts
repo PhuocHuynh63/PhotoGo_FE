@@ -20,8 +20,8 @@ const BookingService = {
             next: { revalidate: 10 }
         })
     },
-    getDiscountAmount: async (userId: string, serviceConceptId: string, voucherId: string, depositAmount: number, depositType: string) => {
-        return await http.get(`/bookings/get-discount-amount?userId=${userId}&serviceConceptId=${serviceConceptId}&voucherId=${voucherId}&depositAmount=${depositAmount}&depositType=${depositType}`, {
+    getDiscountAmount: async (userId: string, serviceConceptId: string, voucherId: string, depositAmount: number, depositType: string, date: string) => {
+        return await http.get(`/bookings/get-discount-amount?userId=${userId}&serviceConceptId=${serviceConceptId}&voucherId=${voucherId}&depositAmount=${depositAmount}&depositType=${depositType}&date=${date}`, {
             next: { revalidate: 10 }
         })
     },

@@ -33,12 +33,26 @@ const voucherTypes = [
     description: "Voucher giảm số tiền cố định, khách hàng cần điểm để đổi",
     icon: <BadgePercent className="text-orange-500 text-4xl" />,
   },
+  {
+    discount_type: "phần trăm",
+    voucher_type: "vòng quay may mắn",
+    title: "Giảm % - Vòng quay may mắn",
+    description: "Voucher giảm theo phần trăm, nhận qua vòng quay may mắn",
+    icon: <Gift className="text-pink-500 text-4xl" />,
+  },
+  {
+    discount_type: "cố định",
+    voucher_type: "vòng quay may mắn",
+    title: "Giảm cố định - Vòng quay may mắn",
+    description: "Voucher giảm số tiền cố định, nhận qua vòng quay may mắn",
+    icon: <Gift className="text-yellow-500 text-4xl" />,
+  },
 ];
 
 interface VoucherTypeSelectorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (discountType: "phần trăm" | "cố định", voucherType: "điểm" | "tiền") => void;
+  onSelect: (discountType: "phần trăm" | "cố định", voucherType: "điểm" | "tiền" | "vòng quay may mắn") => void;
 }
 
 export default function VoucherTypeSelector({ open, onOpenChange, onSelect }: VoucherTypeSelectorProps) {

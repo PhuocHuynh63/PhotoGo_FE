@@ -1,5 +1,5 @@
 import http from "@configs/fetch"
-import { ISubscriptionCreatePaymentLinkRequestModel, ISubscriptionPlanRequestModel } from "@models/subcription/request.model"
+import { ISubscriptionCreatePaymentLinkRequestModel, ISubscriptionPlanRequestModel, ISubscriptionSuccessRequestModel } from "@models/subcription/request.model"
 
 export const subscriptionService = {
     createSubscriptionPlan: async (data: ISubscriptionPlanRequestModel) => {
@@ -47,5 +47,9 @@ export const subscriptionService = {
 
     createPaymentLink: async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
         return await http.post("/subscriptions/create-payment-link", data)
+    },
+
+    subscriptionSuccess: async (data: ISubscriptionSuccessRequestModel) => {
+        return await http.post("/subscriptions/payos-callback", data)
     }
 }
