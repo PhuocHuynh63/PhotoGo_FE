@@ -17,7 +17,6 @@ import { useVendorAlbumsByBookingId } from "@utils/hooks/useVendorAlbums";
 import { useAddressLocation, useSetAddressLocation } from "@stores/vendor/selectors";
 import { albumComponent } from "@constants/vendorAlbums";
 import { BOOKING } from "@constants/booking";
-import { IInvoiceModel } from "@models/invoice/common.model";
 
 interface OrderDetailsProps {
     booking?: IBookingDetail;
@@ -190,7 +189,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     currentStatusIndex={currentStatusIndex}
                 />
 
-                {booking?.status === BOOKING.BOOKING_STATUS.COMPLETED &&
+                {(booking?.status === BOOKING.BOOKING_STATUS.COMPLETED) &&
                     <AblumAfterShoot
                         id={albumComponent.ALBUM_AFTER_SHOOT}
                         title="Album ảnh của bạn"
@@ -200,7 +199,7 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     />
                 }
 
-                {booking?.status === BOOKING.BOOKING_STATUS.IN_PROGRESS &&
+                {(booking?.status === BOOKING.BOOKING_STATUS.IN_PROGRESS || booking?.status === BOOKING.BOOKING_STATUS.COMPLETED) &&
                     <AblumAfterShoot
                         id={albumComponent.ALBUM_AFTER_SHOOT_BTS}
                         title="Khoảnh khắc hậu trường"
