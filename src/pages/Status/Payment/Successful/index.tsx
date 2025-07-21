@@ -9,15 +9,34 @@ import { ROUTES } from '@routes';
 import paymentService from '@services/payment';
 import LoadingPage from '@components/Organisms/Loading';
 import { subscriptionService } from '@services/subcription';
-import { METADATA } from '../../../../types/IMetadata';
+import { METADATA } from '../../../../types/IMetadata'; // Ensure this path is correct
 
 const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
-    /**
-     * Handle payment success of order
-     */
-    const userId = session?.user?.id;
     const router = useRouter();
-    const handlePaymentSuccess = async () => {
+    const userId = session?.user?.id;
+
+    // Use a single state to store parsed URL parameters
+    const [pageState, setPageState] = useState<{
+        paymentId: string | null;
+        subscriptionPaymentId: string | null;
+        status: string | null;
+        code: string | null;
+        payosId: string | null;
+        cancel: string | null;
+        orderCode: string | null;
+        loadingApi: boolean;
+    }>({
+        paymentId: null,
+        subscriptionPaymentId: null,
+        status: null,
+        code: null,
+        payosId: null,
+        cancel: null,
+        orderCode: null,
+        loadingApi: true,
+    });
+
+    useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const currentPaymentId = params.get("paymentId");
         const currentSubscriptionPaymentId = params.get("subscriptionPaymentId");
@@ -26,65 +45,65 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         const payosId = params.get("id");
         const cancel = params.get("cancel");
         const orderCode = params.get("orderCode");
-        // console.log(paymentId, status, code, payosId, cancel, orderCode)
 
-        if (currentPaymentId && status && code && payosId && cancel && orderCode) {
-            const data = {
-                status,
-                code,
-                id: payosId,
-                cancel: Boolean(cancel),
-                orderCode
-            };
+        // Update the pageState with parsed parameters
+        setPageState({
+            paymentId: currentPaymentId,
+            subscriptionPaymentId: currentSubscriptionPaymentId,
+            status,
+            code,
+            payosId,
+            cancel,
+            orderCode,
+            loadingApi: true, 
+        });
 
-            await paymentService.paymentSuccess(currentPaymentId, data) as { statusCode: number };
-            // if (response.statusCode === 200) {
-            const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
-            router.push(ordersUrl);
-            return;
-        } else if (currentSubscriptionPaymentId) {
-            const data = {
-                subscriptionPaymentId: currentSubscriptionPaymentId,
-                cancel: Boolean(cancel),
-                orderCode: orderCode || '',
-                status: status === 'PAID' ? 'đã thanh toán' : '',
-                code: code || '',
-                id: payosId || '',
-                userId: userId || ''
-            };
-            await subscriptionService.subscriptionSuccess(data) as { statusCode: number };
-            return;
-        } else {
-            router.push(ROUTES.PUBLIC.HOME);
-            return;
-        }
-    }
+        const processPayment = async () => {
+            if (currentPaymentId && status && code && payosId && cancel !== null && orderCode) {
+                // Handle regular payment success
+                const data = {
+                    status,
+                    code,
+                    id: payosId,
+                    cancel: Boolean(cancel),
+                    orderCode
+                };
+                await paymentService.paymentSuccess(currentPaymentId, data);
+                const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
+                router.push(ordersUrl);
+                return; // Stop further execution for regular payment
+            } else if (currentSubscriptionPaymentId) {
+                // Handle subscription payment success
+                const data = {
+                    subscriptionPaymentId: currentSubscriptionPaymentId,
+                    cancel: Boolean(cancel),
+                    orderCode: orderCode || '',
+                    status: status === 'PAID' ? 'đã thanh toán' : '',
+                    code: code || '',
+                    id: payosId || '',
+                    userId: userId || ''
+                };
+                await subscriptionService.subscriptionSuccess(data);
+                setPageState(prevState => ({ ...prevState, loadingApi: false })); // API call done, allow rendering
+                // No redirect for subscription success page, it renders below
+            } else {
+                // Neither paymentId nor subscriptionPaymentId found
+                router.push(ROUTES.PUBLIC.HOME);
+                return;
+            }
+        };
 
-    useEffect(() => {
-        handlePaymentSuccess();
-    }, []);
-    //-------------------------End-------------------------//
+        processPayment(); // Execute the payment processing logic
+    }, [router, userId]); // Dependencies for useEffect to re-run if router or userId changes
 
-    /**
-     * Handle payment success of order
-     */
-    const [currentPaymentIdState, setCurrentPaymentIdState] = useState(null);
-    const [currentSubscriptionPaymentIdState, setCurrentSubscriptionPaymentIdState] = useState(null);
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        setCurrentPaymentIdState(params.get("paymentId") as null);
-        setCurrentSubscriptionPaymentIdState(params.get("subscriptionPaymentId") as null);
-    }, []);
-    //-------------------------End-------------------------//
-
-    if (currentPaymentIdState) {
+    // Conditional rendering based on the state
+    if (pageState.loadingApi) {
+        // Show loading page while API call is in progress for either type of payment
         return <LoadingPage />;
     }
 
-    if (currentSubscriptionPaymentIdState) {
-        /**
-         * Handle confetti
-         */
+    // After API call, if it's a subscription payment, render the success page
+    if (pageState.subscriptionPaymentId) {
         const [currentTime, setCurrentTime] = useState('');
 
         useEffect(() => {
@@ -102,7 +121,6 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
 
             updateTime();
 
-            // Tạo confetti động
             const createConfetti = () => {
                 const colors = [
                     '#ff6b35', '#f7931e', '#ffab00', '#ff8a50', '#ffc947',
@@ -119,20 +137,18 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                         confetti.style.animationDelay = '0s';
                         confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
 
-                        // Random shapes
                         const shapeType = Math.floor(Math.random() * 4);
                         if (shapeType === 0) {
-                            confetti.style.borderRadius = '50%'; // Circle
+                            confetti.style.borderRadius = '50%';
                         } else if (shapeType === 1) {
-                            confetti.style.borderRadius = '0'; // Square
+                            confetti.style.borderRadius = '0';
                             confetti.style.transform = 'rotate(45deg)';
                         } else if (shapeType === 2) {
-                            confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)'; // Triangle
+                            confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
                         } else {
-                            confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)'; // Diamond
+                            confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)';
                         }
 
-                        // Append to fixed container
                         const container = document.querySelector(`.${styles.confettiContainer}`);
                         if (container) {
                             container.appendChild(confetti);
@@ -145,10 +161,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                 }
             };
 
-            // Confetti burst ban đầu
             const initialTimeout = setTimeout(createConfetti, 500);
-
-            // Lặp lại confetti
             const confettiInterval = setInterval(createConfetti, 8000);
 
             return () => {
@@ -165,9 +178,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 </Head>
 
-                {/* Container cho confetti và particles - fixed để không ảnh hưởng scroll */}
                 <div className={styles.confettiContainer}>
-                    {/* Static confetti */}
                     {[...Array(15)].map((_, i) => (
                         <div
                             key={i}
@@ -180,7 +191,6 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                         />
                     ))}
 
-                    {/* Floating particles */}
                     {[...Array(8)].map((_, i) => (
                         <div
                             key={`particle-${i}`}
@@ -196,28 +206,23 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     ))}
                 </div>
 
-                {/* Main content */}
                 <div className={styles.mainContent}>
                     <div className={styles.successCard}>
-                        {/* Success Icon */}
                         <div className={styles.successIcon}>
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                             </svg>
                         </div>
 
-                        {/* Title */}
                         <h1 className={styles.successTitle}>
                             🎉 Chúc Mừng! 🎉
                         </h1>
 
-                        {/* Message */}
                         <p className={styles.successMessage}>
                             Cảm ơn bạn đã tin tưởng và mua gói dịch vụ của chúng tôi.<br />
                             Thanh toán của bạn đã được xử lý thành công!
                         </p>
 
-                        {/* Order Details */}
                         <div className={styles.orderDetails}>
                             <h3>📋 Thông tin đơn hàng</h3>
                             <div className={styles.detailRow}>
@@ -238,7 +243,6 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                             </div>
                         </div>
 
-                        {/* Next Steps */}
                         <div className={styles.nextSteps}>
                             <h3>🚀 Bước tiếp theo</h3>
                             <ul>
@@ -248,7 +252,6 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                             </ul>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className={styles.actionButtons}>
                             <Link href="/dashboard" className={`${styles.btn} ${styles.btnPrimary}`}>
                                 Xem đơn hàng
@@ -262,6 +265,9 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
             </div>
         );
     }
+
+    // Fallback for cases where neither ID is found after loading
+    return null; // Or a generic error/fallback page if needed
 };
 
 export default SuccessPage;
