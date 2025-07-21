@@ -41,7 +41,8 @@ const SummaryInformation = () => {
         serviceConceptId: serviceConcept?.id || '',
         voucherId: selectedVoucher?.voucher.id || '',
         depositAmount: formBooking.depositAmount,
-        depositType: VOUCHER.DISCOUNT_TYPE.PERCENT
+        depositType: VOUCHER.DISCOUNT_TYPE.PERCENT,
+        date: formBooking.date || ''
     });
     //----------------------End----------------------//
 
