@@ -128,7 +128,7 @@ const SummaryInformation = () => {
                             <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
                         </div>
 
-                        {price?.rushFee && (
+                        {price && price.rushFee > 0 && (
                             <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-[#fffaf5] border border-[#f0a06a]/20 mb-2">
                                 <span className="text-[#f0a06a] font-semibold flex items-center gap-2">
                                     <Clock className="h-4 w-4" />
