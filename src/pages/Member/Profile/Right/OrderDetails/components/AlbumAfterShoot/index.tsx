@@ -67,6 +67,11 @@ const AblumAfterShoot = ({ id, title, subTitle, skeletonCount, vendorAlbums, isL
               />
             ))
           }
+          {getImages().length === 0 && (
+            <div className="col-span-full text-center">
+              <p className="text-gray-500">Hiện tại chưa có ảnh</p>
+            </div>
+          )}
         </div>
       </Card>
       {lightboxImages.length > 0 && (

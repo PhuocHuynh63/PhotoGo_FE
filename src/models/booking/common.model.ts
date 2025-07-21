@@ -38,6 +38,7 @@ export const BookingModel = z.object({
     userNote: z.string().optional(),
     created_at: z.string(),
     updated_at: z.string(),
+    isReview: z.boolean().optional(),
     user: z.object({
         id: z.string(),
         email: z.string().email(),

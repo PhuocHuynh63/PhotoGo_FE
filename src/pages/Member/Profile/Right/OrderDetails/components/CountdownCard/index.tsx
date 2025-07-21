@@ -35,6 +35,13 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
     };
 
+    /**
+     * Check if the current order 
+     * - Cancelled
+     * - In Progress
+     * - Completed
+     * 
+     */
     const isOrderCancelled = [
         BOOKING.BOOKING_STATUS.CANCELLED,
         BOOKING.BOOKING_STATUS.CANCELLED_USER,
@@ -42,7 +49,12 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
         BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT
     ].includes(status);
 
-    //UI: Giao diện khi đơn hàng/buổi chụp bị hủy
+    const isOrderInProgress = status === BOOKING.BOOKING_STATUS.IN_PROGRESS;
+    const isOrderCompleted = status === BOOKING.BOOKING_STATUS.COMPLETED;
+    //-------------------------End-------------------------//
+
+
+    // UI: Giao diện khi đơn hàng/buổi chụp bị hủy
     if (isOrderCancelled) {
         return (
             <motion.div
@@ -59,6 +71,54 @@ const CountdownCard: React.FC<CountdownCardProps> = ({
                         {isMultiDay
                             ? <>Dịch vụ của bạn dự kiến bắt đầu vào ngày <strong>{bookingDate}</strong> đã không thể thực hiện.</>
                             : <>Buổi chụp của bạn vào lúc <strong>{bookingTime}</strong> ngày <strong>{bookingDate}</strong> đã không thể thực hiện.</>
+                        }
+                    </p>
+                </div>
+            </motion.div>
+        );
+    }
+
+    // UI: Giao diện khi đơn hàng/buổi chụp đang diễn ra
+    if (isOrderInProgress) {
+        return (
+            <motion.div
+                id="countdown-card-inprogress"
+                variants={cardVariants}
+                className="lg:col-span-2 flex items-center justify-center bg-blue-50/50 border border-blue-200 rounded-2xl shadow-lg p-8"
+            >
+                <div className="text-center flex flex-col items-center">
+                    <svg className="w-16 h-16 text-blue-500 mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" /><path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <h3 className="text-2xl font-bold mb-2 text-blue-800">
+                        {isMultiDay ? "Dịch vụ đang diễn ra" : "Buổi chụp đang diễn ra"}
+                    </h3>
+                    <p className="text-slate-600 mt-2 max-w-md">
+                        {isMultiDay
+                            ? <>Dịch vụ của bạn đã bắt đầu từ ngày <strong>{bookingDate}</strong> và đang được thực hiện.</>
+                            : <>Buổi chụp của bạn vào lúc <strong>{bookingTime}</strong> ngày <strong>{bookingDate}</strong> đang được thực hiện.</>
+                        }
+                    </p>
+                </div>
+            </motion.div>
+        );
+    }
+
+    // UI: Giao diện khi đơn hàng/buổi chụp đã hoàn thành
+    if (isOrderCompleted) {
+        return (
+            <motion.div
+                id="countdown-card-completed"
+                variants={cardVariants}
+                className="lg:col-span-2 flex items-center justify-center bg-green-50/50 border border-green-200 rounded-2xl shadow-lg p-8"
+            >
+                <div className="text-center flex flex-col items-center">
+                    <svg className="w-16 h-16 text-green-500 mb-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" /><path d="M9 12l2 2l4 -4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <h3 className="text-2xl font-bold mb-2 text-green-800">
+                        {isMultiDay ? "Dịch vụ đã hoàn thành" : "Buổi chụp đã hoàn thành"}
+                    </h3>
+                    <p className="text-slate-600 mt-2 max-w-md">
+                        {isMultiDay
+                            ? <>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Hy vọng bạn đã có trải nghiệm tuyệt vời!</>
+                            : <>Buổi chụp của bạn đã hoàn thành. Cảm ơn bạn đã tin tưởng và lựa chọn chúng tôi!</>
                         }
                     </p>
                 </div>

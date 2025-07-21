@@ -243,13 +243,13 @@ const WriteReviewDialog = ({ showReviewDialog, setShowReviewDialog, objectReview
                     </div>
 
                     <DialogFooter>
-                        <Button
+                        <button
                             type="button"
-                            variant="outline"
                             onClick={handleCancel}
+                            className="bg-transparent hover:bg-transparent hover:text-black text-white"
                         >
                             Hủy
-                        </Button>
+                        </button>
                         <Button
                             type="submit"
                             className="bg-orange-600 hover:bg-orange-700 text-white"
