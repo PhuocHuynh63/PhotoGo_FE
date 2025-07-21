@@ -227,8 +227,8 @@ export const useBookingGetDiscountAmount = ({ userId, serviceConceptId, voucherI
         setLoading(true);
         setError(null);
 
-        try {
-            const date = new Date().toISOString();
+        try {       
+            const date = new Date().toLocaleDateString('en-GB');
             const response = await BookingService.getDiscountAmount(userId, serviceConceptId, voucherId, depositAmount, depositType, date) as { data: IBookingDiscountAmount };
             setPrice(response.data);
         } catch (err) {
