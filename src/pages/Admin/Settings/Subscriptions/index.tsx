@@ -20,13 +20,15 @@ interface AdminSettingsSubscriptionsPageProps {
     name: string;
     isActive: string;
     planType: string;
+    sortBy: string;
+    sortDirection: string;
   };
 }
 
 export default function AdminSettingsSubscriptionsPage({
   initialData = [],
   initialError = null,
-  initialFilters = { name: '', isActive: '', planType: '' }
+  initialFilters = { name: '', isActive: '', planType: '', sortBy: 'name', sortDirection: 'asc' }
 }: AdminSettingsSubscriptionsPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,12 +52,22 @@ export default function AdminSettingsSubscriptionsPage({
     name?: string;
     isActive?: boolean;
     planType?: string;
+    sortBy?: string;
+    sortDirection?: string;
   }) => {
     try {
       setLoading(true);
-      const response = await subscriptionService.getSubscriptionPlans(filterParams);
-      const data = response as any;
-      setSubscriptions(data.data || data || []);
+      const response = await subscriptionService.getSubscriptionPlans({
+        ...filterParams,
+        sortBy: filterParams?.sortBy || undefined,
+        sortDirection: filterParams?.sortDirection || undefined,
+      });
+      // Đảm bảo subscriptions luôn là mảng
+      let arr: ISubscriptionPlanModel[] = [];
+      if (Array.isArray((response as any).data?.data)) {
+        arr = (response as any).data.data;
+      }
+      setSubscriptions(arr);
     } catch (error) {
       console.error("Error fetching subscriptions:", error);
       toast.error("Không thể tải danh sách gói đăng ký");
@@ -71,13 +83,15 @@ export default function AdminSettingsSubscriptionsPage({
   const handleFilterChange = (key: string, value: string) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-    
+
     // Update URL with new filters
     const params = new URLSearchParams();
     if (newFilters.name) params.set('name', newFilters.name);
     if (newFilters.isActive) params.set('isActive', newFilters.isActive);
     if (newFilters.planType) params.set('planType', newFilters.planType);
-    
+    if (newFilters.sortBy) params.set('sortBy', newFilters.sortBy);
+    if (newFilters.sortDirection) params.set('sortDirection', newFilters.sortDirection);
+
     const queryString = params.toString();
     const newUrl = queryString ? `?${queryString}` : '';
     router.push(`/admin/settings/subscriptions${newUrl}`);
@@ -89,9 +103,19 @@ export default function AdminSettingsSubscriptionsPage({
       name: "",
       isActive: "",
       planType: "",
+      sortBy: "name",
+      sortDirection: "asc",
     };
     setFilters(clearedFilters);
     router.push('/admin/settings/subscriptions');
+    // Gọi lại API với filter mặc định
+    fetchSubscriptions({
+      name: "",
+      isActive: undefined,
+      planType: undefined,
+      sortBy: "name",
+      sortDirection: "asc",
+    });
   };
 
   // Handle search with current filters
@@ -100,6 +124,8 @@ export default function AdminSettingsSubscriptionsPage({
       name: filters.name || undefined,
       isActive: filters.isActive ? filters.isActive === 'true' : undefined,
       planType: filters.planType || undefined,
+      sortBy: filters.sortBy || undefined,
+      sortDirection: filters.sortDirection || undefined,
     };
     fetchSubscriptions(filterParams);
   };
@@ -139,7 +165,7 @@ export default function AdminSettingsSubscriptionsPage({
   const handleDialogSave = async (data: ISubscriptionPlanRequestModel) => {
     try {
       setDialogLoading(true);
-      
+
       if (editingSubscription) {
         // Update existing subscription
         await subscriptionService.updateSubscriptionPlan(editingSubscription.id, data);
@@ -149,7 +175,7 @@ export default function AdminSettingsSubscriptionsPage({
         await subscriptionService.createSubscriptionPlan(data);
         toast.success(`Đã tạo gói mới: ${data.name}`);
       }
-      
+
       // Refresh data
       handleSearch();
       setDialogOpen(false);
@@ -243,7 +269,7 @@ export default function AdminSettingsSubscriptionsPage({
         <div>
           Hiển thị {filteredSubscriptions.length} trong tổng số {subscriptions.length} gói đăng ký
         </div>
-        {(filters.name || filters.isActive || filters.planType) && (
+        {(filters.name || filters.isActive || filters.planType || filters.sortBy || filters.sortDirection) && (
           <div className="text-blue-600">
             Đã áp dụng bộ lọc
           </div>

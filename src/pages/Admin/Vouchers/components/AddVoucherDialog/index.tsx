@@ -27,6 +27,11 @@ const DISCOUNT_TYPE_OPTIONS = [
     { value: VOUCHER.DISCOUNT_TYPE.AMOUNT, icon: 'DollarSign', name: 'Số tiền' },
 ];
 
+const TYPE_OPTIONS = [
+    { value: VOUCHER.TYPE.CAMPAIGN, icon: 'Target', name: 'Chiến dịch' },
+    { value: VOUCHER.TYPE.POINT, icon: 'Star', name: 'Điểm' },
+    { value: VOUCHER.TYPE.WHEEL, icon: 'Gift', name: 'Vòng quay may mắn' },
+];
 
 
 export default function AddVoucherDialog({ open, onClose, onSuccess, initialData, onBack }: AddVoucherDialogProps) {
@@ -41,6 +46,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
         start_date: '',
         end_date: '',
         status: VOUCHER.STATUS.INACTIVE,
+        type: initialData?.type || VOUCHER.TYPE.CAMPAIGN,
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -86,7 +92,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full max-w-3xl max-h-[90vh] overflow-y-auto" style={{ maxWidth: '900px', width: '100%' }}>
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <LucideIcon name="Plus" className="text-blue-600" />
@@ -98,7 +104,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                     {/* Section 1: Basic Info & Description */}
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="code">Mã voucher *</Label>
                                 <Input
                                     id="code"
@@ -108,7 +114,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                                     maxLength={20}
                                 />
                             </div>
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="quantity">Số lượng *</Label>
                                 <Input
                                     id="quantity"
@@ -120,10 +126,37 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                                     max={1000000}
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="type">Loại voucher *</Label>
+                                <Select
+                                    placeHolder="Chọn loại voucher"
+                                    value={formData.type}
+                                    onValueChange={(value) => handleInputChange('type', value)}
+                                    options={TYPE_OPTIONS}
+                                />
+                            </div>
+                            {formData.type === VOUCHER.TYPE.POINT && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="point">Số điểm cần để đổi *</Label>
+                                    <Input
+                                        id="point"
+                                        type="number"
+                                        value={formData.point || 0}
+                                        onChange={(e) => handleInputChange('point', parseInt(e.target.value) || 0)}
+                                        placeholder="VD: 100"
+                                        min={0}
+                                    />
+                                </div>
+                            )}
+                            {formData.type === VOUCHER.TYPE.WHEEL && (
+                                <div className="space-y-2">
+                                    <Label className="text-pink-600">Voucher này sẽ được phát qua vòng quay may mắn.</Label>
+                                </div>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="description">Mô tả chi tiết *</Label>
-                             <TipTapEditor
+                            <TipTapEditor
                                 value={formData.description || ''}
                                 onChange={(value) => handleInputChange('description', value)}
                                 placeholder="Nhập mô tả, điều kiện áp dụng cho voucher..."
@@ -131,11 +164,11 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                         </div>
                     </div>
 
-                     {/* Section 2: Discount Rules */}
+                    {/* Section 2: Discount Rules */}
                     <div className="border-t pt-6 space-y-4">
-                         <h3 className="text-lg font-medium">Quy tắc giảm giá</h3>
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="space-y-2">
+                        <h3 className="text-lg font-medium">Quy tắc giảm giá</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
                                 <Label htmlFor="discount_type">Loại giảm giá *</Label>
                                 <Select
                                     placeHolder="Chọn loại giảm giá"
@@ -144,7 +177,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                                     options={DISCOUNT_TYPE_OPTIONS}
                                 />
                             </div>
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="discount_value">Giá trị giảm *</Label>
                                 <Input
                                     id="discount_value"
@@ -156,7 +189,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                                     max={formData.discount_type === VOUCHER.DISCOUNT_TYPE.PERCENT ? 100 : undefined}
                                 />
                             </div>
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="minPrice">Áp dụng cho đơn hàng từ (VNĐ)</Label>
                                 <Input
                                     id="minPrice"
@@ -167,7 +200,7 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                                     min={0}
                                 />
                             </div>
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="maxPrice">Giảm giá tối đa (VNĐ)</Label>
                                 <Input
                                     id="maxPrice"
@@ -181,27 +214,27 @@ export default function AddVoucherDialog({ open, onClose, onSuccess, initialData
                         </div>
                     </div>
 
-                     {/* Section 3: Date Range */}
+                    {/* Section 3: Date Range */}
                     <div className="border-t pt-6 space-y-4">
-                         <h3 className="text-lg font-medium">Thời gian áp dụng</h3>
+                        <h3 className="text-lg font-medium">Thời gian áp dụng</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="start_date">Ngày bắt đầu *</Label>
-                            <DatePicker
-                                value={formData.start_date ? new Date(formData.start_date) : null}
-                                onChange={(date) => handleInputChange('start_date', date ? date.toISOString().split('T')[0] : '')}
-                                placeholder="Chọn ngày bắt đầu"
-                            />
-                        </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="start_date">Ngày bắt đầu *</Label>
+                                <DatePicker
+                                    value={formData.start_date ? new Date(formData.start_date) : null}
+                                    onChange={(date) => handleInputChange('start_date', date ? date.toLocaleDateString('en-CA') : '')}
+                                    placeholder="Chọn ngày bắt đầu"
+                                />
+                            </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="end_date">Ngày kết thúc *</Label>
-                            <DatePicker
-                                value={formData.end_date ? new Date(formData.end_date) : null}
-                                onChange={(date) => handleInputChange('end_date', date ? date.toISOString().split('T')[0] : '')}
-                                placeholder="Chọn ngày kết thúc"
-                            />
-                        </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="end_date">Ngày kết thúc *</Label>
+                                <DatePicker
+                                    value={formData.end_date ? new Date(formData.end_date) : null}
+                                    onChange={(date) => handleInputChange('end_date', date ? date.toLocaleDateString('en-CA') : '')}
+                                    placeholder="Chọn ngày kết thúc"
+                                />
+                            </div>
                         </div>
                     </div>
 

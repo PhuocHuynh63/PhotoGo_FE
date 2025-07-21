@@ -18,15 +18,17 @@ export const subscriptionService = {
         name?: string;
         isActive?: boolean;
         planType?: string;
+        sortBy?: string;
+        sortDirection?: string;
     }) => {
         const queryParams = new URLSearchParams();
         if (params?.name) queryParams.append('name', params.name);
         if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
         if (params?.planType) queryParams.append('planType', params.planType);
-        
+        if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+        if (params?.sortDirection) queryParams.append('sortDirection', params.sortDirection);
         const queryString = queryParams.toString();
         const url = queryString ? `/subscription-plans?${queryString}` : '/subscription-plans';
-        
         return await http.get(url, {
             cache: 'no-store'
         })
