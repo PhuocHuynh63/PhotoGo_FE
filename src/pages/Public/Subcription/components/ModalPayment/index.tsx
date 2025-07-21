@@ -182,7 +182,7 @@ export default function PaymentModal({
                     onClick={onClose}
                 >
                     <motion.div
-                        className="relative bg-white w-full max-w-2xl rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto mt-16 sm:mt-0"
+                        className="mt-20 scrollbar-none relative bg-white w-full max-w-2xl rounded-xl shadow-2xl max-h-[80vh] overflow-y-auto"
                         variants={modalVariants}
                         initial="hidden"
                         animate="visible"
