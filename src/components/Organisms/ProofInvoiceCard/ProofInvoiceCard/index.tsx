@@ -217,6 +217,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         size="lg"
                                         className="bg-orange-500 hover:bg-orange-600"
                                         disabled={!(isInProgress || isCompleted)}
+                                    // disabled={invoice?.booking?.date !== new Date().toISOString().slice(0, 10)}
                                     >
                                         <Camera className="h-4 w-4 mr-2" />
                                         Upload bằng chứng
