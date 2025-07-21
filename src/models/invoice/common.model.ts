@@ -17,6 +17,7 @@ export const InvoiceModel = z.object({
     discountedPrice: z.number(),
     taxAmount: z.number(),
     feeAmount: z.number(),
+    isReview: z.boolean(),
     payablePrice: z.number(),
     depositAmount: z.number(),
     remainingAmount: z.number(),
