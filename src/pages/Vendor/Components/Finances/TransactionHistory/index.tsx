@@ -7,19 +7,11 @@ import { Input } from "@components/Atoms/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/Atoms/ui/select"
 import { Badge } from "@components/Atoms/ui/badge"
 import { Download, Search, Filter } from "lucide-react"
-
-interface Transaction {
-    id: string
-    date: string
-    time: string
-    description: string
-    category: string
-    status: string
-    amount: number
-}
+import { IFinanceOverview } from "@models/overview/common.model"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 
 interface TransactionHistoryProps {
-    transactions: Transaction[]
+    transactions: IFinanceOverview["recentTransactions"]
 }
 
 export default function TransactionHistory({ transactions }: TransactionHistoryProps) {
@@ -34,9 +26,10 @@ export default function TransactionHistory({ transactions }: TransactionHistoryP
             transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
 
         const matchesStatus = statusFilter === "all" || transaction.status === statusFilter
-        const matchesCategory = categoryFilter === "all" || transaction.category === categoryFilter
+        // Loại bỏ category filter vì không có trường category
+        // const matchesCategory = categoryFilter === "all" || transaction.category === categoryFilter
 
-        return matchesSearch && matchesStatus && matchesCategory
+        return matchesSearch && matchesStatus // && matchesCategory
     })
 
     // Hàm để hiển thị ngày
@@ -45,13 +38,10 @@ export default function TransactionHistory({ transactions }: TransactionHistoryP
         return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
     }
 
-    // Hàm để hiển thị số tiền
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
+    // Hàm để hiển thị giờ:phút từ date string
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr)
+        return date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })
     }
 
     // Hàm để hiển thị màu số tiền
@@ -59,48 +49,28 @@ export default function TransactionHistory({ transactions }: TransactionHistoryP
         return amount >= 0 ? "text-green-600" : "text-red-600"
     }
 
-    // Hàm để hiển thị trạng thái
+    // Hàm để hiển thị dấu trước số tiền
+    const getAmountSign = (amount: number) => {
+        return amount >= 0 ? "+" : ""
+    }
+
+    // Hàm để hiển thị trạng thái (giống RecentTransactions)
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "Hoàn thành":
                 return (
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
-                        Hoàn thành
-                    </Badge>
+                    <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Đã hoàn thành</Badge>
                 )
             case "Chờ xử lý":
                 return (
-                    <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>
-                        Chờ xử lý
-                    </Badge>
+                    <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Đang xử lý</Badge>
                 )
             case "Đã hủy":
                 return (
-                    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                        <span className="w-2 h-2 rounded-full bg-red-500 mr-1.5"></span>
-                        Đã hủy
-                    </Badge>
+                    <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">Đã hủy</Badge>
                 )
             default:
-                return null
-        }
-    }
-
-    // Hàm để hiển thị trạng thái của danh mục
-    const getCategoryBadge = (category: string) => {
-        switch (category) {
-            case "Đặt cọc":
-                return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Đặt cọc</Badge>
-            case "Thanh toán còn lại":
-                return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Thanh toán còn lại</Badge>
-            case "Chuyển khoản":
-                return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Chuyển khoản</Badge>
-            case "Hoàn tiền":
-                return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Hoàn tiền</Badge>
-            default:
-                return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">{category}</Badge>
+                return <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">{status}</Badge>
         }
     }
 
@@ -165,27 +135,44 @@ export default function TransactionHistory({ transactions }: TransactionHistoryP
                                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Mã GD</th>
                                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Ngày</th>
                                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Mô tả</th>
-                                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Loại</th>
+                                {/* <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Loại</th> */}
                                 <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Trạng thái</th>
                                 <th className="text-right py-3 px-4 text-sm font-medium text-gray-500">Số tiền</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredTransactions?.map((transaction) => (
-                                <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
-                                    <td className="py-3 px-4 font-medium">{transaction.id}</td>
-                                    <td className="py-3 px-4">
-                                        <div>{formatDate(transaction.date)}</div>
-                                        <div className="text-xs text-gray-500">{transaction.time}</div>
-                                    </td>
-                                    <td className="py-3 px-4">{transaction.description}</td>
-                                    <td className="py-3 px-4">{getCategoryBadge(transaction.category)}</td>
-                                    <td className="py-3 px-4">{getStatusBadge(transaction.status)}</td>
-                                    <td className={`py-3 px-4 text-right font-medium ${getAmountColor(transaction.amount)}`}>
-                                        {formatCurrency(transaction.amount)}
+                            {filteredTransactions && filteredTransactions.length > 0 ? (
+                                filteredTransactions.map((transaction) => (
+                                    <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                        <td className="py-3 px-4 font-medium">{transaction.id}</td>
+                                        <td className="py-3 px-4">
+                                            <div>{formatDate(transaction.date)}</div>
+                                            <div className="text-xs text-gray-500">{formatTime(transaction.date)}</div>
+                                        </td>
+                                        <td className="py-3 px-4">{transaction.description}</td>
+                                        {/* <td className="py-3 px-4">{getCategoryBadge(transaction.category)}</td> */}
+                                        <td className="py-3 px-4">{getStatusBadge(transaction.status)}</td>
+                                        <td className={`py-3 px-4 text-right font-medium ${getAmountColor(transaction.amount)}`}>
+                                            {getAmountSign(transaction.amount)}
+                                            {formatPrice(transaction.amount)}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="py-10 text-center text-gray-500">
+                                        <div className="flex flex-col items-center justify-center gap-2">
+                                            {/* SVG minh họa */}
+                                            <svg width="64" height="64" fill="none" viewBox="0 0 64 64">
+                                                <rect width="64" height="64" rx="12" fill="#F3F4F6" />
+                                                <path d="M20 44V36C20 34.8954 20.8954 34 22 34H42C43.1046 34 44 34.8954 44 36V44" stroke="#A1A1AA" strokeWidth="2" strokeLinecap="round" />
+                                                <circle cx="32" cy="28" r="6" stroke="#A1A1AA" strokeWidth="2" />
+                                            </svg>
+                                            <span>Không có giao dịch nào</span>
+                                        </div>
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -2,25 +2,15 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
 import { Progress } from "@components/Atoms/ui/progress"
+import { IFinanceOverview } from "@models/overview/common.model"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import { ArrowUpRight } from "lucide-react"
 
 interface FinancialSummaryProps {
-    data: {
-        monthlyRevenue: number
-        monthlyProfit: number
-        profitMargin: number
-        taxRate: number
-    }
+    data: IFinanceOverview["financialInfo"]
 }
 
 export default function FinancialSummary({ data }: FinancialSummaryProps) {
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
-    }
 
     return (
         <Card className="bg-white">
@@ -31,31 +21,31 @@ export default function FinancialSummary({ data }: FinancialSummaryProps) {
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <span className="text-sm text-gray-500">Doanh thu tháng này</span>
-                        <span className="text-lg font-medium">{formatCurrency(data?.monthlyRevenue)}</span>
+                        <span className="text-lg font-medium">{formatPrice(data?.thisMonthRevenue)}</span>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-green-600">
                         <ArrowUpRight className="h-3 w-3" />
-                        <span>Tăng 8.5% so với tháng trước</span>
+                        <span>Tăng {data?.revenueGrowth}% so với tháng trước</span>
                     </div>
                 </div>
 
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <span className="text-sm text-gray-500">Lợi nhuận tháng này (gộp)</span>
-                        <span className="text-lg font-medium">{formatCurrency(data?.monthlyProfit)}</span>
+                        <span className="text-lg font-medium">{formatPrice(data?.thisMonthProfit)}</span>
                     </div>
                     <div className="flex items-center gap-1 text-xs text-green-600">
                         <ArrowUpRight className="h-3 w-3" />
-                        <span>Tăng 5.2% so với tháng trước</span>
+                        <span>Tăng {data?.profitGrowth}% so với tháng trước</span>
                     </div>
                 </div>
 
                 <div>
                     <div className="flex justify-between items-center mb-1">
                         <span className="text-sm text-gray-500">Tỷ lệ lợi nhuận / doanh thu</span>
-                        <span className="text-lg font-medium">{data?.profitMargin}%</span>
+                        <span className="text-lg font-medium">{data?.profitRatio}%</span>
                     </div>
-                    <Progress value={data?.profitMargin} className="h-2" />
+                    <Progress value={data?.profitRatio} className="h-2" />
                 </div>
 
                 <div>

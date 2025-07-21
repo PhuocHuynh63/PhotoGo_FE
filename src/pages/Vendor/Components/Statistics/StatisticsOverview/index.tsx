@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
+import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import { Calendar, DollarSign, Users, CheckCircle, XCircle, Clock } from "lucide-react"
 
 interface StatisticsOverviewProps {
@@ -15,13 +16,6 @@ interface StatisticsOverviewProps {
 }
 
 export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-            maximumFractionDigits: 0,
-        }).format(amount)
-    }
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -42,7 +36,7 @@ export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
                     <DollarSign className="h-4 w-4 text-gray-500" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{formatCurrency(data?.totalRevenue)}</div>
+                    <div className="text-2xl font-bold">{formatPrice(data?.totalRevenue)}</div>
                     <p className="text-xs text-gray-500">Tổng doanh thu</p>
                 </CardContent>
             </Card>
@@ -66,7 +60,9 @@ export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
                 <CardContent>
                     <div className="text-2xl font-bold">{data?.completedBookings}</div>
                     <p className="text-xs text-gray-500">
-                        {Math.round((data?.completedBookings / data?.totalBookings) * 100)}% tổng số lịch hẹn
+                        {data?.totalBookings > 0
+                            ? Math.round((data?.completedBookings / data?.totalBookings) * 100)
+                            : 0}% tổng số lịch hẹn
                     </p>
                 </CardContent>
             </Card>
@@ -79,7 +75,9 @@ export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
                 <CardContent>
                     <div className="text-2xl font-bold">{data?.cancelledBookings}</div>
                     <p className="text-xs text-gray-500">
-                        {Math.round((data?.cancelledBookings / data?.totalBookings) * 100)}% tổng số lịch hẹn
+                        {data?.totalBookings > 0
+                            ? Math.round((data?.cancelledBookings / data?.totalBookings) * 100)
+                            : 0}% tổng số lịch hẹn
                     </p>
                 </CardContent>
             </Card>
@@ -92,7 +90,9 @@ export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
                 <CardContent>
                     <div className="text-2xl font-bold">{data?.pendingBookings}</div>
                     <p className="text-xs text-gray-500">
-                        {Math.round((data?.pendingBookings / data?.totalBookings) * 100)}% tổng số lịch hẹn
+                        {data?.totalBookings > 0
+                            ? Math.round((data?.pendingBookings / data?.totalBookings) * 100)
+                            : 0}% tổng số lịch hẹn
                     </p>
                 </CardContent>
             </Card>
