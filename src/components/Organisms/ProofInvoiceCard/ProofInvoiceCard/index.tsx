@@ -13,6 +13,7 @@ import toast from "react-hot-toast"
 import albumVendorService from "@services/albumVendor"
 import { type Invoice } from "@utils/hooks/useAlbumData"
 import { IAlbumResponseModel } from "@models/album/response.model"
+import { BOOKING_STATUS } from "@constants/booking"
 
 interface ProofInvoiceCardProps {
     invoice: Invoice;
@@ -50,8 +51,8 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
 
     // Determine status
     const status = invoice?.booking?.status || invoice?.status;
-    const isInProgress = status === 'in_progress';
-    const isCompleted = status === 'completed';
+    const isInProgress = status === BOOKING_STATUS.IN_PROGRESS;
+    const isCompleted = status === BOOKING_STATUS.COMPLETED;
 
     const handleUploadProof = async () => {
         if (!uploadModal.invoice) {
