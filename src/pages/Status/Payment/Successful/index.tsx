@@ -15,9 +15,8 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
     const router = useRouter();
     const userId = session?.user?.id;
 
-    // Initial state setup: Parse URL params once.
-    // loadingApi should start true, and only turn false AFTER the API call completes
-    // AND it's a subscription payment that needs to render the success UI.
+    // ALL HOOKS MUST BE AT THE TOP LEVEL
+    const [currentTime, setCurrentTime] = useState(''); // Moved this up
     const [pageData, setPageData] = useState<{
         paymentId: string | null;
         subscriptionPaymentId: string | null;
@@ -26,10 +25,11 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         payosId: string | null;
         cancel: string | null;
         orderCode: string | null;
-    } | null>(null); // Start as null, indicating we haven't even parsed params yet
+    } | null>(null);
 
-    const [loadingApi, setLoadingApi] = useState(true); // Manually control loading state
+    const [loadingApi, setLoadingApi] = useState(true);
 
+    // Main useEffect for API calls and initial parsing
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const currentPaymentId = params.get("paymentId");
@@ -52,7 +52,6 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         });
 
         const processPayment = async () => {
-            // Check if it's a regular payment that needs redirect
             if (currentPaymentId && status && code && payosId && cancel !== null && orderCode) {
                 const data = {
                     status,
@@ -64,10 +63,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                 await paymentService.paymentSuccess(currentPaymentId, data);
                 const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?id=${payosId}`;
                 router.push(ordersUrl);
-                // No need to setLoadingApi(false) here, as we are redirecting
-            }
-            // Check if it's a subscription payment that needs API call and then render
-            else if (currentSubscriptionPaymentId) {
+            } else if (currentSubscriptionPaymentId) {
                 const data = {
                     subscriptionPaymentId: currentSubscriptionPaymentId,
                     cancel: Boolean(cancel),
@@ -79,9 +75,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                 };
                 await subscriptionService.subscriptionSuccess(data);
                 setLoadingApi(false); // API call done, allow rendering the subscription success page
-            }
-            // If neither is found, redirect to home
-            else {
+            } else {
                 router.push(ROUTES.PUBLIC.HOME);
             }
         };
@@ -89,79 +83,84 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         processPayment();
     }, [router, userId]); // Dependencies for useEffect
 
+    // useEffect for confetti and current time - ALWAYS CALLED
+    useEffect(() => {
+        // Only run confetti logic if it's a subscription payment
+        if (!pageData?.subscriptionPaymentId) {
+            return; // Exit if not a subscription payment, so confetti doesn't run unnecessarily
+        }
+
+        const updateTime = () => {
+            const now = new Date();
+            const timeString = now.toLocaleString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+            setCurrentTime(timeString);
+        };
+
+        updateTime();
+
+        const createConfetti = () => {
+            const colors = [
+                '#ff6b35', '#f7931e', '#ffab00', '#ff8a50', '#ffc947',
+                '#ff69b4', '#9370db', '#32cd32', '#00ced1', '#ff4757',
+                '#3742fa', '#2ed573', '#ffa502', '#ff6348', '#5f27cd'
+            ];
+
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = styles.confetti;
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = '0s';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+
+                    const shapeType = Math.floor(Math.random() * 4);
+                    if (shapeType === 0) {
+                        confetti.style.borderRadius = '50%';
+                    } else if (shapeType === 1) {
+                        confetti.style.borderRadius = '0';
+                        confetti.style.transform = 'rotate(45deg)';
+                    } else if (shapeType === 2) {
+                        confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+                    } else {
+                        confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)';
+                    }
+
+                    const container = document.querySelector(`.${styles.confettiContainer}`);
+                    if (container) {
+                        container.appendChild(confetti);
+                    }
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 6000);
+                }, i * 50);
+            }
+        };
+
+        const initialTimeout = setTimeout(createConfetti, 500);
+        const confettiInterval = setInterval(createConfetti, 8000);
+
+        return () => {
+            clearTimeout(initialTimeout);
+            clearInterval(confettiInterval);
+        };
+    }, [pageData?.subscriptionPaymentId]); // Add pageData?.subscriptionPaymentId to dependency array
+
+
     // Render logic based on states
-    if (loadingApi) {
+    if (loadingApi || pageData === null) { // Add pageData === null check to show loading initially
         return <LoadingPage />;
     }
 
-    // Now that loadingApi is false, check if it's a subscription payment to render its specific UI
-    if (pageData?.subscriptionPaymentId) {
-        const [currentTime, setCurrentTime] = useState('');
-
-        useEffect(() => {
-            const updateTime = () => {
-                const now = new Date();
-                const timeString = now.toLocaleString('vi-VN', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                });
-                setCurrentTime(timeString);
-            };
-
-            updateTime();
-
-            const createConfetti = () => {
-                const colors = [
-                    '#ff6b35', '#f7931e', '#ffab00', '#ff8a50', '#ffc947',
-                    '#ff69b4', '#9370db', '#32cd32', '#00ced1', '#ff4757',
-                    '#3742fa', '#2ed573', '#ffa502', '#ff6348', '#5f27cd'
-                ];
-
-                for (let i = 0; i < 30; i++) {
-                    setTimeout(() => {
-                        const confetti = document.createElement('div');
-                        confetti.className = styles.confetti;
-                        confetti.style.left = Math.random() * 100 + '%';
-                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        confetti.style.animationDelay = '0s';
-                        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-
-                        const shapeType = Math.floor(Math.random() * 4);
-                        if (shapeType === 0) {
-                            confetti.style.borderRadius = '50%';
-                        } else if (shapeType === 1) {
-                            confetti.style.borderRadius = '0';
-                            confetti.style.transform = 'rotate(45deg)';
-                        } else if (shapeType === 2) {
-                            confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
-                        } else {
-                            confetti.style.clipPath = 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)';
-                        }
-
-                        const container = document.querySelector(`.${styles.confettiContainer}`);
-                        if (container) {
-                            container.appendChild(confetti);
-                        }
-
-                        setTimeout(() => {
-                            confetti.remove();
-                        }, 6000);
-                    }, i * 50);
-                }
-            };
-
-            const initialTimeout = setTimeout(createConfetti, 500);
-            const confettiInterval = setInterval(createConfetti, 8000);
-
-            return () => {
-                clearTimeout(initialTimeout);
-                clearInterval(confettiInterval);
-            };
-        }, []);
-
+    // Now that loadingApi is false and pageData is set, check if it's a subscription payment to render its specific UI
+    if (pageData.subscriptionPaymentId) { // No optional chaining needed here, as pageData is guaranteed not null
         return (
             <div className={styles.pageWrapper}>
                 <Head>
@@ -245,10 +244,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <Link href="/dashboard" className={`${styles.btn} ${styles.btnPrimary}`}>
-                                Xem đơn hàng
-                            </Link>
-                            <Link href="/" className={`${styles.btn} ${styles.btnSecondary}`}>
+                            <Link href={ROUTES.PUBLIC.HOME} className={`${styles.btn} ${styles.btnSecondary}`}>
                                 Về trang chủ
                             </Link>
                         </div>
@@ -258,8 +254,8 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
         );
     }
 
-    // Fallback for cases where neither ID is found after loading
-    return null; // Or a generic error/fallback page if needed
+    // Fallback for cases where neither ID is found after loading, or if it's a regular payment that didn't redirect immediately.
+    return null;
 };
 
 export default SuccessPage;
