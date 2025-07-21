@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { ROUTES } from '@routes';
 import paymentService from '@services/payment';
 import LoadingPage from '@components/Organisms/Loading';
+import { subscriptionService } from '@services/subcription';
 
 const SuccessPage = () => {
     /**
@@ -18,6 +19,7 @@ const SuccessPage = () => {
         const params = new URLSearchParams(window.location.search);
         const currentPaymentId = params.get("paymentId");
         const currentSubscriptionPaymentId = params.get("subscriptionPaymentId");
+        const userId = params.get("userId");
         const status = params.get("status");
         const code = params.get("code");
         const payosId = params.get("id");
@@ -40,6 +42,16 @@ const SuccessPage = () => {
             router.push(ordersUrl);
             return;
         } else if (currentSubscriptionPaymentId) {
+            const data = {
+                subscriptionPaymentId: currentSubscriptionPaymentId,
+                cancel: Boolean(cancel),
+                orderCode: orderCode || '',
+                status: status || '',
+                code: code || '',
+                id: payosId || '',
+                userId: userId || ''
+            };
+            await subscriptionService.subscriptionSuccess(data) as { statusCode: number };
             return;
         } else {
             router.push(ROUTES.PUBLIC.HOME);
