@@ -228,23 +228,19 @@ export default function CalendarView({
     }
 
     // Hàm để hiển thị màu theo trạng thái
-    const getStatusColor = (status: string, color: string) => {
-        const baseColors = {
-            blue: "bg-blue-500",
-            green: "bg-green-500",
-            yellow: "bg-yellow-500",
-            purple: "bg-purple-500",
-            indigo: "bg-indigo-500",
-            red: "bg-red-500",
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case BOOKING_STATUS.PENDING: // Chờ xử lý
+                return "bg-yellow-100 border-yellow-300 text-yellow-800"
+            case BOOKING_STATUS.CONFIRMED: // Đã xác nhận
+                return "bg-blue-100 border-blue-300 text-blue-800"
+            case BOOKING_STATUS.IN_PROGRESS: // Đang thực hiện
+                return "bg-purple-100 border-purple-300 text-purple-800"
+            case BOOKING_STATUS.COMPLETED: // Đã hoàn thành
+                return "bg-green-100 border-green-300 text-green-800"
+            default:
+                return "bg-gray-100 border-gray-300 text-gray-800"
         }
-
-        if (status === "chờ xử lý") {
-            return "bg-yellow-100 border-yellow-300 text-yellow-800"
-        } else if (status === "đã hủy") {
-            return "bg-red-100 border-red-300 text-red-800"
-        }
-
-        return `${baseColors[color as keyof typeof baseColors]} text-white`
     }
 
     // Navigation functions
@@ -419,7 +415,7 @@ export default function CalendarView({
                                                 return (
                                                     <div
                                                         key={appointment.id}
-                                                        className={`absolute left-1 right-1 rounded-md border-l-4 p-2 cursor-pointer z-20 ${getStatusColor(appointment.status, appointment.color)} ${position.isFullDay ? 'border-2 border-dashed' : ''}`}
+                                                        className={`absolute left-1 right-1 rounded-md border-l-4 p-2 cursor-pointer z-20 ${getStatusColor(appointment.status)} ${position.isFullDay ? 'border-2 border-dashed' : ''}`}
                                                         style={{
                                                             top: `${position.top}px`,
                                                             height: `${position.height}px`,
@@ -453,7 +449,7 @@ export default function CalendarView({
                                 getAppointmentsForDate(currentDate)?.map((appointment) => (
                                     <div
                                         key={appointment.id}
-                                        className={`p-4 rounded-lg border-l-4 cursor-pointer ${getStatusColor(appointment.status, appointment.color)}`}
+                                        className={`p-4 rounded-lg border-l-4 cursor-pointer ${getStatusColor(appointment.status)}`}
                                         onClick={() => handleAppointmentClick(appointment)}
                                     >
                                         <div className="flex justify-between items-start">

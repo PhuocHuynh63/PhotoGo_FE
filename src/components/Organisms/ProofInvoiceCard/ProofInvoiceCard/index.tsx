@@ -48,9 +48,29 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
         setBehindTheScenes([])
     }
 
+    // Determine status
+    const status = invoice?.booking?.status || invoice?.status;
+    const isInProgress = status === 'in_progress';
+    const isCompleted = status === 'completed';
+
     const handleUploadProof = async () => {
-        if (!uploadModal.invoice || (photos.length === 0 && behindTheScenes.length === 0 && !driveLink.trim())) {
-            toast.error("Vui lòng thêm ít nhất một ảnh hoặc link Google Drive")
+        if (!uploadModal.invoice) {
+            toast.error("Vui lòng chọn hóa đơn để upload")
+            return
+        }
+        // Validate theo trạng thái
+        if (isInProgress) {
+            if (behindTheScenes.length === 0) {
+                toast.error("Vui lòng thêm ít nhất một ảnh behind the scene")
+                return
+            }
+        } else if (isCompleted) {
+            if (photos.length === 0 && behindTheScenes.length === 0 && !driveLink.trim()) {
+                toast.error("Vui lòng thêm ít nhất một ảnh, behind the scene hoặc link Google Drive")
+                return
+            }
+        } else {
+            toast.error("Chỉ được upload khi trạng thái là đang thực hiện hoặc đã hoàn thành")
             return
         }
         const album = await albumVendorService.getAlbumByBookingId(invoice.bookingId) as IAlbumResponseModel
@@ -64,27 +84,21 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
         setIsUploading(true)
         try {
             const formData = new FormData()
-
-            // Add required fields
             formData.append('locationId', invoice.booking.locationId)
 
-
-            // Add optional Google Drive link
-            if (driveLink.trim()) {
+            if (isCompleted && driveLink.trim()) {
                 formData.append('driveLink', driveLink.trim())
             }
-
-            // Add photos (max 3)
-            photos.slice(0, 3).forEach((file) => {
-                formData.append('photos', file)
-            })
-
-            // Add behind the scenes (max 3)
+            if (isCompleted) {
+                photos.slice(0, 3).forEach((file) => {
+                    formData.append('photos', file)
+                })
+            }
+            // always allow behind the scenes if any
             behindTheScenes.slice(0, 3).forEach((file) => {
                 formData.append('behindTheScenes', file)
             })
 
-            // Call actual API
             const response = await albumVendorService.uploadAlbum(albumId, formData)
 
             if (response && typeof response === 'object' && 'data' in response) {
@@ -93,7 +107,6 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                 setBehindTheScenes([])
                 setDriveLink("")
                 setUploadModal({ open: false })
-                // Refresh data after successful upload
                 onUploadSuccess?.()
             } else {
                 throw new Error('Upload failed')
@@ -194,7 +207,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                         </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                        {invoice?.needsProof ? (
+                        {invoice?.needsProof && (isInProgress || isCompleted) ? (
                             <Dialog
                                 open={uploadModal.open && uploadModal.invoice?.id === invoice?.id}
                                 onOpenChange={(open) => setUploadModal({ open, invoice: open ? invoice : undefined })}
@@ -203,7 +216,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                     <Button
                                         size="lg"
                                         className="bg-orange-500 hover:bg-orange-600"
-                                        // disabled={invoice?.booking?.date !== new Date().toISOString().slice(0, 10)}
+                                        disabled={!(isInProgress || isCompleted)}
                                     >
                                         <Camera className="h-4 w-4 mr-2" />
                                         Upload bằng chứng
@@ -225,95 +238,99 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                     </DialogHeader>
                                     <div className="space-y-8">
                                         {/* Google Drive Link Section */}
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-2">
-                                                <ImagePlus className="h-5 w-5 text-blue-600" />
-                                                <Label className="text-lg font-semibold">Link Google Drive (tùy chọn)</Label>
+                                        {isCompleted && (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <ImagePlus className="h-5 w-5 text-blue-600" />
+                                                    <Label className="text-lg font-semibold">Link Google Drive (tùy chọn)</Label>
+                                                </div>
+                                                <Input
+                                                    type="url"
+                                                    placeholder="Nhập link Google Drive (ví dụ: https://drive.google.com/file/d/...)"
+                                                    value={driveLink}
+                                                    onChange={(e) => setDriveLink(e.target.value)}
+                                                    className="h-12"
+                                                />
                                             </div>
-                                            <Input
-                                                type="url"
-                                                placeholder="Nhập link Google Drive (ví dụ: https://drive.google.com/file/d/...)"
-                                                value={driveLink}
-                                                onChange={(e) => setDriveLink(e.target.value)}
-                                                className="h-12"
-                                            />
-                                        </div>
+                                        )}
 
                                         {/* Photos Section */}
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-2">
-                                                <Camera className="h-5 w-5 text-green-600" />
-                                                <Label className="text-lg font-semibold">Ảnh chính (tối đa 3 ảnh)</Label>
-                                                <Badge variant="secondary">{photos.length}/3</Badge>
-                                            </div>
-
-                                            <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center transition-colors hover:border-green-400 bg-green-50/50">
-                                                <Camera className="h-10 w-10 text-green-600 mx-auto mb-3" />
-                                                <p className="font-medium text-green-800 mb-1">Upload ảnh chính</p>
-                                                <p className="text-sm text-green-600 mb-3">JPG, PNG, GIF (tối đa 3 ảnh)</p>
-                                                <Input
-                                                    type="file"
-                                                    multiple
-                                                    accept="image/*"
-                                                    onChange={(e) => {
-                                                        const files = Array.from(e.target.files || [])
-                                                        if (files.length > 0) {
-                                                            setPhotos((prev) => [...prev, ...files].slice(0, 3))
-                                                        }
-                                                    }}
-                                                    className="hidden"
-                                                    id={`photos-upload-${invoice?.id}`}
-                                                />
-                                                <Label htmlFor={`photos-upload-${invoice?.id}`}>
-                                                    <Button variant="outline" className="bg-white hover:bg-green-50" asChild>
-                                                        <span>Chọn ảnh chính</span>
-                                                    </Button>
-                                                </Label>
-                                            </div>
-
-                                            {photos.length > 0 && (
-                                                <div className="space-y-3">
-                                                    <div className="flex items-center justify-between">
-                                                        <Label className="font-medium text-green-800">
-                                                            Ảnh chính đã chọn ({photos.length}/3)
-                                                        </Label>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={clearAllPhotos}
-                                                            className="text-red-600 hover:text-red-700"
-                                                        >
-                                                            <Trash2 className="h-4 w-4 mr-1" />
-                                                            Xóa tất cả
-                                                        </Button>
-                                                    </div>
-                                                    <div className="grid grid-cols-3 gap-3">
-                                                        {photos.map((file, index) => (
-                                                            <div key={index} className="relative group">
-                                                                <img
-                                                                    src={URL.createObjectURL(file)}
-                                                                    alt={`Photo ${index + 1}`}
-                                                                    className="w-full h-32 object-cover rounded-lg border-2 border-green-200"
-                                                                />
-                                                                <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="destructive"
-                                                                        className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
-                                                                        onClick={() => removePhoto(index)}
-                                                                    >
-                                                                        <X className="h-4 w-4" />
-                                                                    </Button>
-                                                                </div>
-                                                                <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
-                                                                    {index + 1}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                        {isCompleted && (
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Camera className="h-5 w-5 text-green-600" />
+                                                    <Label className="text-lg font-semibold">Ảnh chính (tối đa 3 ảnh)</Label>
+                                                    <Badge variant="secondary">{photos.length}/3</Badge>
                                                 </div>
-                                            )}
-                                        </div>
+
+                                                <div className="border-2 border-dashed border-green-300 rounded-lg p-6 text-center transition-colors hover:border-green-400 bg-green-50/50">
+                                                    <Camera className="h-10 w-10 text-green-600 mx-auto mb-3" />
+                                                    <p className="font-medium text-green-800 mb-1">Upload ảnh chính</p>
+                                                    <p className="text-sm text-green-600 mb-3">JPG, PNG, GIF (tối đa 3 ảnh)</p>
+                                                    <Input
+                                                        type="file"
+                                                        multiple
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            const files = Array.from(e.target.files || [])
+                                                            if (files.length > 0) {
+                                                                setPhotos((prev) => [...prev, ...files].slice(0, 3))
+                                                            }
+                                                        }}
+                                                        className="hidden"
+                                                        id={`photos-upload-${invoice?.id}`}
+                                                    />
+                                                    <Label htmlFor={`photos-upload-${invoice?.id}`}>
+                                                        <Button variant="outline" className="bg-white hover:bg-green-50" asChild>
+                                                            <span>Chọn ảnh chính</span>
+                                                        </Button>
+                                                    </Label>
+                                                </div>
+
+                                                {photos.length > 0 && (
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center justify-between">
+                                                            <Label className="font-medium text-green-800">
+                                                                Ảnh chính đã chọn ({photos.length}/3)
+                                                            </Label>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={clearAllPhotos}
+                                                                className="text-red-600 hover:text-red-700"
+                                                            >
+                                                                <Trash2 className="h-4 w-4 mr-1" />
+                                                                Xóa tất cả
+                                                            </Button>
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-3">
+                                                            {photos.map((file, index) => (
+                                                                <div key={index} className="relative group">
+                                                                    <img
+                                                                        src={URL.createObjectURL(file)}
+                                                                        alt={`Photo ${index + 1}`}
+                                                                        className="w-full h-32 object-cover rounded-lg border-2 border-green-200"
+                                                                    />
+                                                                    <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="destructive"
+                                                                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+                                                                            onClick={() => removePhoto(index)}
+                                                                        >
+                                                                            <X className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                    <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                                                                        {index + 1}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* Behind The Scenes Section */}
                                         <div className="space-y-4">
@@ -408,7 +425,11 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                             </Button>
                                             <Button
                                                 onClick={handleUploadProof}
-                                                disabled={(photos.length === 0 && behindTheScenes.length === 0 && !driveLink.trim()) || isUploading}
+                                                disabled={
+                                                    (isInProgress && behindTheScenes.length === 0) ||
+                                                    (isCompleted && (photos.length === 0 && behindTheScenes.length === 0 && !driveLink.trim())) ||
+                                                    isUploading
+                                                }
                                                 size="lg"
                                                 className="bg-orange-500 hover:bg-orange-600"
                                             >
