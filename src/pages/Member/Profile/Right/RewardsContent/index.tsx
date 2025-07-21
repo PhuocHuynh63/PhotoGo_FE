@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ComingSoon from "@components/Molecules/ComingSoon";
+import { IUser } from "@models/user/common.model";
 
 const mockData = [{
     level: 0,
@@ -53,11 +54,9 @@ const mockData = [{
     btnText: "Nâng hạng"
 }]
 
-interface User {
-    rank?: string;
-}
 
-export default function RewardsContent({ user }: { user: User }) {
+
+export default function RewardsContent({ user }: { user: IUser }) {
     // const [carouselApi, setCarouselApi] = useState<CarouselApi>();
     // const userRank = user?.rank?.toLowerCase() || 'đồng'; // Default to 'đồng' if no rank
 

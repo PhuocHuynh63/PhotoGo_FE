@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent } from "@components/Atoms/Card"
+import { Card, CardContent, CardFooter } from "@components/Atoms/Card"
 import {
     ChevronRight, Ticket, Wallet, Star, ShoppingBag,
     MessageSquare, Heart, KeyRound,
@@ -14,6 +14,7 @@ import { ROUTES } from "@routes"
 import { AvatarWithBorder } from "@components/Organisms/AvatarBorder"
 import { Avatar } from "@components/Molecules/Avatar"
 import { Rank } from "@components/Organisms/AvatarBorder/rankStyles"
+import Link from "next/link"
 
 const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
@@ -28,17 +29,8 @@ const menuItems = [
 
 const getRankGradient = (rank: string) => {
     switch (rank.toLowerCase()) {
-        case 'đồng':
-            return 'from-[#b87333] via-[#d49a6a] to-[#8c6239]';  // Đồng đậm
-        case 'bạc':
-            return 'from-[#b0b0b0] via-[#e0e0e0] to-[#8c8c8c]'; // Bạc đậm
-        case 'vàng':
-            return 'from-[#d4af37] via-[#f7e27e] to-[#b8860b]'; // Vàng đậm
-        case 'kim cương':
-            return 'from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]';
-        // Kim cương xanh đậm
         default:
-            return 'from-gray-300 via-gray-200 to-gray-400'; // Default
+            return 'from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]';
     }
 };
 
@@ -63,8 +55,9 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     const router = useRouter();
     const pathname = usePathname();
     const currentTab = pathname?.split('/').pop() || 'profile';
-    const userRank = user?.rank || ''; // Use empty string if no rank
-    const gradientClass = getRankGradient(userRank);    const profileRoutes: { [key: string]: string } = {
+    const userRank = 'Kim Cương'; // Use empty string if no rank
+    const gradientClass = getRankGradient(userRank);
+    const profileRoutes: { [key: string]: string } = {
         'promotions': ROUTES.USER.PROFILE.PROMOTIONS,
         'change-password': ROUTES.USER.PROFILE.CHANGE_PASSWORD,
         'rewards': ROUTES.USER.PROFILE.REWARDS,
@@ -116,17 +109,13 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         <CardContent className="flex items-center justify-center flex-col">
                             <div className="w-28 h-7 my-2 inline-flex items-stretch border rounded-full overflow-hidden" style={{ borderColor: getRankColor(userRank) }}>
                                 <div className="relative text-white mx-auto my-auto text-sm font-bold border-r-0">
-                                    <div className="text-sm font-bold" style={{ color: getRankColor(userRank) }}>{userRank || 'Chưa có rank'}</div>
+                                    <div className="text-sm font-bold" style={{ color: getRankColor(userRank) }}>{user?.hasSubscription ? 'Đã mua gói' : <Link href={ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP}>Đăng ký ngay</Link>}</div>
                                 </div>
                             </div>
-
-                            <Button
-                                className="text-blue-400 flex items-center text-sm line-clamp-1 opacity-90 bg-none bd-none shadow-none hover:bg-none"
-                                onClick={() => router.push('/profile/rewards')}
-                            >
-                                Xem ưu đãi thành viên <ChevronRight size={14} />
-                            </Button>
                         </CardContent>
+                        <CardFooter className="flex items-center justify-center">
+                            Gói đẳn cấp vjppro
+                        </CardFooter>
                     </Card>
                 </div>
             </div>
@@ -155,19 +144,18 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                             transition={{ duration: 1 }}
                             className={["orders", "reviews", "favorites", "change-password"].includes(tab) && tab === "orders" ? "pt-3 border-t" : ""}
                         >                            <Button
-                                onClick={() => {
-                                    const route = profileRoutes[tab];
-                                    if (route) {
-                                        router.push(route);
-                                    }
-                                }}
-                                className={`bg-none shadow-none hover:bg-none ${
-                                    currentTab === tab
-                                        ? "text-primary font-medium"
-                                        : "text-gray-700 hover:text-primary"
+                            onClick={() => {
+                                const route = profileRoutes[tab];
+                                if (route) {
+                                    router.push(route);
+                                }
+                            }}
+                            className={`bg-none shadow-none hover:bg-none ${currentTab === tab
+                                ? "text-primary font-medium"
+                                : "text-gray-700 hover:text-primary"
                                 }`}
-                                variant="ghost"
-                            >
+                            variant="ghost"
+                        >
                                 <Icon className={`w-5 h-5 mr-3`} />
                                 <span>{label}</span>
                             </Button>
