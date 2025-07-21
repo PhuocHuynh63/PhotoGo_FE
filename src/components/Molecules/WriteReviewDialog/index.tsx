@@ -68,17 +68,11 @@ const WriteReviewDialog = ({ showReviewDialog, setShowReviewDialog, objectReview
         });
 
         try {
-            const formattedData = {
-                userId: objectReview.userId,
-                vendorId: objectReview.vendorId,
-                bookingId: objectReview.bookingId,
-                rating: Number(data.rating),
-                comment: data.comment
-            };
-            const response = await reviewService.createReview(formattedData) as any;
+            const response = await reviewService.createReview(formData) as any;
+            console.log(response);
 
-            if (response.status === 200 || response.status === 201) {
-                toast.success('Đánh giá thành công');
+            if (response.statusCode === 200 || response.statusCode === 201) {
+                toast.success(response.message);
                 setShowReviewDialog(false);
                 reset();
                 setUploadedFiles([]);

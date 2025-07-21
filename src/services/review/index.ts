@@ -32,7 +32,7 @@ const reviewService = {
         })
     },
 
-    createReview: async (review: ICreateReviewModel) => {
+    createReview: async (review: any) => {
         return await http.post(`/reviews`, review)
     },
 
