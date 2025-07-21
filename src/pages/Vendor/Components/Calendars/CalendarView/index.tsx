@@ -196,7 +196,12 @@ export default function CalendarView({
 
     // Lấy lịch hẹn cho ngày cụ thể
     const getAppointmentsForDate = (date: Date) => {
-        const dateStr = date.toISOString().split("T")[0]
+        // Lấy ngày theo local time, format YYYY-MM-DD
+        const year = date.getFullYear()
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        const dateStr = `${year}-${month}-${day}`
+
         return localAppointments?.filter((apt) => apt?.date === dateStr)
     }
 
