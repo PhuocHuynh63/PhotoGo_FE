@@ -30,6 +30,7 @@ import WriteReviewDialog from "../../../../../../../components/Molecules/WriteRe
 
 export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean }) {
     const router = useRouter();
+    console.log(invoice)
     const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
     const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
     const [showReportDialog, setShowReportDialog] = useState<boolean>(false)
@@ -201,25 +202,29 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                         </div>
 
                         <div className="mt-4 md:mt-0 text-right">
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="text-lg font-bold text-orange-600">{formatPrice(invoice?.remainingAmount)}</div>
-                                    <div className="text-sm font-bold line-through text-gray-500">{formatPrice(invoice?.payablePrice)}</div>
-                                </div>
-                                {/* {booking.invoice.discountAmount > 0 && (
-                                    <div>
-                                        <div className="text-sm text-muted-foreground">Giảm giá:</div>
-                                        <div className="text-green-600">-{formatPrice(booking.invoice.discountAmount)}</div>
+                            <div className="flex flex-col items-end space-y-1">
+                                {/* Tổng tiền */}
+                                {invoice?.paidAmount < invoice?.payablePrice && (
+                                    <div className="text-xs text-muted-foreground">
+                                        Tổng tiền: <span className="line-through">{formatPrice(invoice?.payablePrice)}</span>
                                     </div>
                                 )}
-                                <div>
-                                    <div className="text-sm text-muted-foreground">Thuế (VAT):</div>
-                                    <div>{formatPrice(booking.invoice.taxAmount)}</div>
-                                </div>
-                                <div>
-                                    <div className="text-sm text-muted-foreground">Đã đặt cọc:</div>
-                                    <div className="text-blue-600">{formatPrice(booking.invoice.depositAmount)}</div>
-                                </div> */}
+                                {/* Nếu đã thanh toán đủ */}
+                                {invoice?.paidAmount === invoice?.payablePrice ? (
+                                    <div className="text-base font-bold text-green-600">
+                                        Đã thanh toán đủ: {formatPrice(invoice?.payablePrice)}
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="text-base font-bold text-green-600">
+                                            Đã thanh toán: <span>{formatPrice(invoice?.paidAmount)}</span>
+                                            <span className="ml-1">({((invoice?.paidAmount / invoice?.payablePrice) * 100).toFixed(0)}%)</span>
+                                        </div>
+                                        <div className="text-base font-bold text-orange-600">
+                                            Còn lại: <span>{formatPrice(invoice?.remainingAmount)}</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                             <div className="text-xs text-muted-foreground mt-4">Loại: {booking.sourceType}</div>
                             {invoice?.booking?.serviceConcept?.conceptRangeType === 'một ngày' ? (

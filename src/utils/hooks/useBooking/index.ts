@@ -214,9 +214,10 @@ type UseBookingGetDiscountAmountProps = {
     voucherId: string;
     depositAmount: number;
     depositType: string;
+    date: string;
 };
 
-export const useBookingGetDiscountAmount = ({ userId, serviceConceptId, voucherId, depositAmount, depositType }: UseBookingGetDiscountAmountProps) => {
+export const useBookingGetDiscountAmount = ({ userId, serviceConceptId, voucherId, depositAmount, depositType, date }: UseBookingGetDiscountAmountProps) => {
     const [price, setPrice] = useState<IBookingDiscountAmount | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
@@ -228,7 +229,6 @@ export const useBookingGetDiscountAmount = ({ userId, serviceConceptId, voucherI
         setError(null);
 
         try {       
-            const date = new Date().toLocaleDateString('en-GB');
             const response = await BookingService.getDiscountAmount(userId, serviceConceptId, voucherId, depositAmount, depositType, date) as { data: IBookingDiscountAmount };
             setPrice(response.data);
         } catch (err) {

@@ -25,9 +25,9 @@ export default function DateStatsCard({ selectedDate, onDateChange, needsProofCo
                     <CustomDatePicker
                         value={selectedDate}
                         onChange={onDateChange}
-                    dayPickerProps={{
-                        disabled: (date: Date) => date > new Date(),
-                    }}
+                    // dayPickerProps={{
+                    //     disabled: (date: Date) => date > new Date(),
+                    // }}
                     />
                     <p className="text-xs text-muted-foreground mt-1">{(selectedDateStr)}</p>
                 </CardContent>

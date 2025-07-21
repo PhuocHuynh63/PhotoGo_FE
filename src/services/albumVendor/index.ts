@@ -13,8 +13,8 @@ const albumVendorService = {
         })
     },
 
-    getAlbumByBookingId: async (bookingId: string, current: number, pageSize: number, sortBy: string, sortDirection: string) => {
-        return await http.get(`/vendor-albums/album/booking/${bookingId}?current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`, {
+    getAlbumByBookingId: async (bookingId: string) => {
+        return await http.get(`/vendor-albums/album/booking/${bookingId}`, {
             next: { revalidate: 10 }
         })
     }

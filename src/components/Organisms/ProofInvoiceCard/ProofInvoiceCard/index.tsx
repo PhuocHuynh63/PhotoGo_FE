@@ -11,7 +11,8 @@ import { Label } from "@components/Atoms/ui/label"
 import React from "react"
 import toast from "react-hot-toast"
 import albumVendorService from "@services/albumVendor"
-import { type Invoice, type ApiResponse } from "@utils/hooks/useAlbumData"
+import { type Invoice } from "@utils/hooks/useAlbumData"
+import { IAlbumResponseModel } from "@models/album/response.model"
 
 interface ProofInvoiceCardProps {
     invoice: Invoice;
@@ -52,8 +53,8 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
             toast.error("Vui lòng thêm ít nhất một ảnh hoặc link Google Drive")
             return
         }
-        const album = await albumVendorService.getAlbumByBookingId(invoice.bookingId, 1, 10, "createdAt", "DESC") as ApiResponse
-        const albumId = album?.data?.data[0]?.id
+        const album = await albumVendorService.getAlbumByBookingId(invoice.bookingId) as IAlbumResponseModel
+        const albumId = album?.data?.id;
 
         if (!albumId) {
             toast.error("Không tìm thấy album cho booking này")
@@ -199,7 +200,11 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                 onOpenChange={(open) => setUploadModal({ open, invoice: open ? invoice : undefined })}
                             >
                                 <DialogTrigger asChild>
-                                    <Button size="lg" className="bg-orange-500 hover:bg-orange-600">
+                                    <Button
+                                        size="lg"
+                                        className="bg-orange-500 hover:bg-orange-600"
+                                        disabled={invoice?.booking?.date !== new Date().toISOString().slice(0, 10)}
+                                    >
                                         <Camera className="h-4 w-4 mr-2" />
                                         Upload bằng chứng
                                     </Button>
