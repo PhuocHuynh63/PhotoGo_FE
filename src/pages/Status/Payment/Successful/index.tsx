@@ -47,7 +47,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                 subscriptionPaymentId: currentSubscriptionPaymentId,
                 cancel: Boolean(cancel),
                 orderCode: orderCode || '',
-                status: status || '',
+                status: status === 'PAID' ? 'đã thanh toán' : '',
                 code: code || '',
                 id: payosId || '',
                 userId: userId || ''
