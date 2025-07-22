@@ -23,6 +23,7 @@ import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
 import MobileNotificationButton from "../MobileNotificationButton";
 import { USER } from "@constants/user";
+import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
 
 
 export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader) {
@@ -122,18 +123,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                 </div>
             </motion.div>
             {!user?.subscription && (
-                <button className="cursor-pointer relative px-6 py-2 text-white font-semibold rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 animate-gradient" onClick={() => router.push(ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP)}>
-                    <div
-                        className="absolute inset-0 animate-pulse"
-                        style={{
-                            background:
-                                "linear-gradient(270deg, #8B5CF6, #A855F7, #EC4899, #F97316, #EAB308, #84CC16, #10B981, #06B6D4)",
-                            backgroundSize: "400% 400%",
-                            animation: "gradient 3s ease infinite",
-                        }}
-                    />
-                    <span className="relative z-10">🔥 Ưu đãi hội viên</span>
-                </button>
+                <ButtonServiceOffer roleName={user?.role?.name} />
             )}
             {/* Cart Button */}
             <motion.div
