@@ -129,14 +129,14 @@ const SummaryInformation = () => {
                         </div>
 
                         {selectedVoucher && (
-                            <div className="flex justify-between font-sm">
+                            <div className="flex justify-between">
                                 <span>Giảm giá</span>
-                                <span>-{price?.discount.toLocaleString()}đ</span>
+                                <span className="font-medium">-{price?.discount.toLocaleString()}đ</span>
                             </div>
                         )}
-                        <div className="flex justify-between font-sm">
+                        <div className="flex justify-between">
                             <span>Đặt cọc ({selectedDeposit}%)</span>
-                            <span>-{price?.depositAmount.toLocaleString()}đ</span>
+                            <span className="font-medium">-{price?.depositAmount.toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Số tiền còn lại</span>
@@ -144,7 +144,7 @@ const SummaryInformation = () => {
                         </div>
 
                         <div className="flex justify-between text-[#f0a06a] font-medium">
-                            <span>Số tiền cần thanh toán ({selectedDeposit}%)</span>
+                            <span>Số tiền cần thanh toán</span>
                             <span>{price?.totalPayable.toLocaleString()}đ</span>
                         </div>
                     </div>
@@ -205,7 +205,7 @@ const SummaryInformation = () => {
                         </Button>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }
