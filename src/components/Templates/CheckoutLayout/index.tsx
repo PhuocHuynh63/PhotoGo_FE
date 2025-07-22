@@ -4,7 +4,7 @@ import Header from "@pages/Member/Checkout/components/Header";
 import Policy from "@pages/Member/Checkout/components/Policy";
 import HeaderCheckout from "@pages/Member/Checkout/Header";
 import SummaryInformation from "@pages/Member/Checkout/Right/SummaryInformation";
-import { useCheckoutStep, useFormBooking, useSetCheckoutSession, useSetFormBooking } from "@stores/checkout/selectors";
+import { useCheckoutStep, useFormBooking, useSetCheckoutSession, useSetCheckoutStep, useSetFormBooking } from "@stores/checkout/selectors";
 import { useSetUser } from "@stores/user/selectors";
 import { PAGES } from "../../../types/IPages";
 import { useEffect } from "react";
@@ -22,6 +22,7 @@ export default function CheckoutLayoutClient({
      * Define variables
      */
     const currentStep = useCheckoutStep();
+    const setCurrentStep = useSetCheckoutStep();
     const setUser = useSetUser();
 
     useEffect(() => {
@@ -120,6 +121,7 @@ export default function CheckoutLayoutClient({
                 duration: 0,
                 serviceTypes: []
             });
+            setCurrentStep(1);
         }
     }, [checkoutSession]);
     //----------------------End----------------------//
