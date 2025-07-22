@@ -135,13 +135,15 @@ const SummaryInformation = () => {
                             </div>
                         )}
 
-                        <div className="flex justify-between text-sm">
-                            <span>Tổng tiền sau khi giảm giá</span>
-                            <span className="font-medium">{price?.priceAfterDiscount.toLocaleString()}đ</span>
-                        </div>
+                        {price?.discount && price?.discount > 0 && (<>
+                            <div className="flex justify-between text-sm">
+                                <span>Tổng tiền sau khi giảm giá</span>
+                                <span className="font-medium">{price?.priceAfterDiscount.toLocaleString()}đ</span>
+                            </div>
 
-                        <Separator className="my-6" />
-
+                            <Separator className="my-6" />
+                        </>
+                        )}
                         <div className="flex justify-between text-sm">
                             <span>Đặt cọc ({selectedDeposit}%)</span>
                             <span className="font-medium">-{price?.depositAmount.toLocaleString()}đ</span>
