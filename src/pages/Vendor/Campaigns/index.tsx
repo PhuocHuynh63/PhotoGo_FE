@@ -231,7 +231,7 @@ const AcceptCampaignInvite = () => {
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <Link href={ROUTES.PUBLIC.HOME} className={`${styles.btn} ${styles.btnSecondary}`}>
+                            <Link href={ROUTES.VENDOR.PROFILE} className={`${styles.btn} ${styles.btnSecondary}`}>
                                 Về trang chủ
                             </Link>
                         </div>
