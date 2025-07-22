@@ -196,7 +196,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                                 <TabsTrigger
                                     value="points"
                                     className="cursor-pointer flex items-center justify-center gap-1 sm:gap-2 h-10 sm:h-12 px-2 sm:px-3 text-xs sm:text-sm font-medium rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-gray-900 text-gray-600 transition-all w-full max-w-full break-words"
-                                    onClick={() => setVoucherType(VOUCHER.TYPE.POINT)}
+                                    onClick={() => setVoucherType(VOUCHER.TYPE.EXCHANGE_POINTS)}
                                 >
                                     <Star className="w-4 h-4 flex-shrink-0 hidden sm:inline" />
                                     <span className="truncate break-words w-full max-w-full">Voucher điểm</span>

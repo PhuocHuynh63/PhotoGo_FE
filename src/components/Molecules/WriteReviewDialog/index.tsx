@@ -19,9 +19,10 @@ type WriteReviewDialogProps = {
         vendorId: string;
         bookingId: string;
     };
+    onReviewSuccess: () => void;
 };
 
-const WriteReviewDialog = ({ showReviewDialog, setShowReviewDialog, objectReview }: WriteReviewDialogProps) => {
+const WriteReviewDialog = ({ showReviewDialog, setShowReviewDialog, objectReview, onReviewSuccess }: WriteReviewDialogProps) => {
 
     /**
      * This function is used to handle the form
@@ -69,13 +70,13 @@ const WriteReviewDialog = ({ showReviewDialog, setShowReviewDialog, objectReview
 
         try {
             const response = await reviewService.createReview(formData) as any;
-            console.log(response);
 
             if (response.statusCode === 200 || response.statusCode === 201) {
                 toast.success(response.message);
                 setShowReviewDialog(false);
                 reset();
                 setUploadedFiles([]);
+                onReviewSuccess();
             } else {
                 const errorMessage = response.data?.message || 'Đánh giá thất bại';
                 toast.error(errorMessage);
