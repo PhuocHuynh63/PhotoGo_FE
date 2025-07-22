@@ -9,49 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import AppointmentModal from "@pages/Vendor/Components/Calendars/AppointmentModal"
 import { BOOKING_STATUS } from "@constants/booking"
 import React from "react"
-
-export interface Appointment {
-    id: string
-    title: string
-    customerName: string
-    customerPhone: string
-    customerEmail: string
-    service: string
-    package: string
-    date: string
-    from: string | null
-    to: string | null
-    status: BOOKING_STATUS
-    color: string
-    notes: string
-    alreadyPaid: number
-    remain: number
-    total: number
-    location: string
-}
-
-interface WorkingHours {
-    start: string
-    end: string
-    breakStart: string
-    breakEnd: string
-}
-
-interface Location {
-    id: string
-    name: string
-}
-
-interface CalendarViewProps {
-    appointments: Appointment[]
-    workingHours: WorkingHours
-    locations: Location[]
-    selectedLocationId: string
-    onLocationChange: (locationId: string) => void
-    onDateRangeChange?: (from: string, to: string) => void
-    onAppointmentUpdate?: (updatedAppointment: Appointment) => void
-    isLoading?: boolean
-}
+import { PAGES } from "../../../../../types/IPages"
 
 export default function CalendarView({
     appointments,
@@ -62,7 +20,7 @@ export default function CalendarView({
     onDateRangeChange,
     onAppointmentUpdate,
     isLoading = false
-}: CalendarViewProps) {
+}: PAGES.ICalendarViewProps) {
     // Use sessionStorage to persist currentDate across re-renders
     const getInitialDate = () => {
         if (typeof window !== 'undefined') {
@@ -73,11 +31,12 @@ export default function CalendarView({
         }
         return new Date()
     }
+    console.log(appointments)
     const [currentDate, setCurrentDate] = useState(getInitialDate)
     const [viewMode, setViewMode] = useState<"week" | "day">("week")
-    const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+    const [selectedAppointment, setSelectedAppointment] = useState<PAGES.Appointment | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [localAppointments, setLocalAppointments] = useState<Appointment[]>(appointments)
+    const [localAppointments, setLocalAppointments] = useState<PAGES.Appointment[]>(appointments)
 
     // Update local appointments when props change
     useEffect(() => {
@@ -137,9 +96,9 @@ export default function CalendarView({
     }
 
     // Update date range when component mounts or view mode changes
-    React.useEffect(() => {
+    useEffect(() => {
         updateDateRange(currentDate)
-    }, [currentDate, viewMode])
+    }, [currentDate])
 
     // Tạo range ngày cho appointment nhiều ngày
     const getMultiDayRange = (fromDate: string, toDate?: string) => {
@@ -166,7 +125,7 @@ export default function CalendarView({
     }
 
     // Kiểm tra xem appointment có phải là booking nhiều ngày không
-    const isMultiDayBooking = (appointment: Appointment) => {
+    const isMultiDayBooking = (appointment: PAGES.Appointment) => {
         // Kiểm tra nếu from và to có format DD/MM/YYYY (nhiều ngày) thay vì HH:MM (trong ngày)
         if (appointment.from && appointment.to) {
             // Nếu chứa dấu '/' thì là date format (DD/MM/YYYY), không phải time format (HH:MM)
@@ -206,7 +165,7 @@ export default function CalendarView({
     }
 
     // Tính toán vị trí của appointment trong lưới
-    const getAppointmentPosition = (appointment: Appointment) => {
+    const getAppointmentPosition = (appointment: PAGES.Appointment) => {
         // Nếu from hoặc endTime là null, đây là booking full ngày
         if (!appointment?.from || !appointment?.to) {
             const workStart = Number.parseInt(workingHours?.start?.split(":")[0] || "00")
@@ -290,7 +249,7 @@ export default function CalendarView({
         }
     }
 
-    const handleAppointmentClick = (appointment: Appointment) => {
+    const handleAppointmentClick = (appointment: PAGES.Appointment) => {
         setSelectedAppointment(appointment)
         setIsModalOpen(true)
     }
@@ -300,7 +259,7 @@ export default function CalendarView({
         setSelectedAppointment(null)
     }
 
-    const handleAppointmentUpdate = (updatedAppointment: Appointment) => {
+    const handleAppointmentUpdate = (updatedAppointment: PAGES.Appointment) => {
         setLocalAppointments(prevAppointments =>
             prevAppointments.map(apt =>
                 apt.id === updatedAppointment.id ? updatedAppointment : apt

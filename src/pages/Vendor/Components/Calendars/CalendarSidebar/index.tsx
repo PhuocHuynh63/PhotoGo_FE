@@ -4,38 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/Atoms/ui/
 import { Button } from "@/components/Atoms/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/Atoms/ui/avatar"
 import { Calendar, Clock, Users, DollarSign, MessageSquare } from "lucide-react"
+import { PAGES } from "../../../../../types/IPages"
 
-interface TodayAppointment {
-    id: string
-    customerName: string
-    service: string
-    time: string
-    status: string
-}
 
-interface UpcomingAppointment {
-    id: string
-    customerName: string
-    service: string
-    date: string
-    time: string
-    status: string
-}
-
-interface Stats {
-    totalThisWeek: number
-    confirmedThisWeek: number
-    pendingThisWeek: number
-    revenueThisWeek: number
-}
-
-interface CalendarSidebarProps {
-    todayAppointments: TodayAppointment[]
-    upcomingAppointments: UpcomingAppointment[]
-    stats: Stats
-}
-
-export default function CalendarSidebar({ todayAppointments, upcomingAppointments, stats }: CalendarSidebarProps) {
+export default function CalendarSidebar({ todayAppointments, stats }: PAGES.ICalendarSidebarProps) {
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat("vi-VN", {
@@ -104,7 +76,7 @@ export default function CalendarSidebar({ todayAppointments, upcomingAppointment
                 <CardContent>
                     {todayAppointments?.length > 0 ? (
                         <div className="space-y-3">
-                            {todayAppointments?.map((appointment) => (
+                            {todayAppointments?.map((appointment: PAGES.TodayAppointment) => (
                                 <div key={appointment?.id} className="p-3 bg-gray-50 rounded-lg">
                                     <div className="flex items-start gap-3">
                                         <Avatar className="h-8 w-8">

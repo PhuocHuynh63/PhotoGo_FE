@@ -139,4 +139,84 @@ declare namespace PAGES {
     interface IPromotionPageProps {
         session: METADATA.ISession;
     }
+
+    export interface Appointment {
+        id: string
+        title: string
+        customerName: string
+        customerPhone: string
+        customerEmail: string
+        service: string
+        package: string
+        date: string
+        from: string | null
+        to: string | null
+        status: BOOKING_STATUS
+        color: string
+        notes: string
+        alreadyPaid: number
+        remain: number
+        total: number
+        location: string
+        userId: string
+    }
+
+    interface WorkingHours {
+        start: string
+        end: string
+        breakStart: string
+        breakEnd: string
+    }
+
+    interface Location {
+        id: string
+        name: string
+    }
+
+    interface ICalendarViewProps {
+        appointments: Appointment[]
+        workingHours: WorkingHours
+        locations: Location[]
+        selectedLocationId: string
+        onLocationChange: (locationId: string) => void
+        onDateRangeChange?: (from: string, to: string) => void
+        onAppointmentUpdate?: (updatedAppointment: Appointment) => void
+        isLoading?: boolean
+    }
+
+    interface TodayAppointment {
+        id: string
+        customerName: string
+        service: string
+        time: string
+        status: string
+    }
+
+    interface UpcomingAppointment {
+        id: string
+        customerName: string
+        service: string
+        date: string
+        time: string
+        status: string
+    }
+
+    interface Stats {
+        totalThisWeek: number
+        confirmedThisWeek: number
+        pendingThisWeek: number
+        revenueThisWeek: number
+    }
+    interface ICalendarSidebarProps {
+        todayAppointments: TodayAppointment[]
+        upcomingAppointments: UpcomingAppointment[]
+        stats: Stats
+    }
+
+    interface AppointmentModalProps {
+        appointment: Appointment | null
+        isOpen: boolean
+        onClose: () => void
+        onAppointmentUpdate?: (updatedAppointment: Appointment) => void
+    }
 }

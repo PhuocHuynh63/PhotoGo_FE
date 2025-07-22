@@ -19,6 +19,8 @@ import { IServiceConceptResponseModel } from "@models/serviceConcepts/response.m
 import packageService from "@services/packageServices";
 import { IServicePackageResponse } from "@models/servicePackages/response.model";
 import { IVendor } from "@models/vendor/common.model";
+import { SERVICE_CONCEPT } from "@constants/serviceConcept";
+import { ROUTES } from "@routes";
 
 export default function FavoritesContent({ itemsData, favoritePagination }: { itemsData: IFavoriteDetailModel[], favoritePagination: IPagination }) {
     const router = useRouter();
@@ -104,7 +106,7 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
         params.set('page', page.toString());
 
         // Update URL with new search params, without forcing a navigation
-        router.replace(`/profile/favorites?${params.toString()}`, { scroll: false });
+        router.replace(`${ROUTES.USER.PROFILE.FAVORITES}?${params.toString()}`, { scroll: false });
     };
 
     return (
@@ -150,12 +152,10 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
 
                                         <div className="p-4 space-y-1">
                                             <h3 className="font-semibold text-lg truncate">{item.serviceConcept.name}</h3>
-                                            <p className="text-sm text-gray-500 line-clamp-2 text-ellipsis h-10">
-                                                <div
-                                                    className="text-muted-foreground prose prose-sm max-w-none line-clamp-2 overflow-hidden h-12"
-                                                    dangerouslySetInnerHTML={{ __html: item.serviceConcept.description || '' }}
-                                                />
-                                            </p>
+                                            <div
+                                                className="text-muted-foreground prose prose-sm max-w-none line-clamp-2 overflow-hidden h-12"
+                                                dangerouslySetInnerHTML={{ __html: item.serviceConcept.description || '' }}
+                                            />
 
                                             <div className="flex items-center justify-between mt-2 flex-wrap gap-1">
                                                 {/* <div className="flex items-center text-yellow-500">
@@ -171,7 +171,8 @@ export default function FavoritesContent({ itemsData, favoritePagination }: { it
                                             </div>
 
                                             <div className="text-xs text-gray-500 mt-2">
-                                                Thời gian: {item.serviceConcept.duration} phút
+                                                {item.serviceConcept.conceptRangeType === SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.ONE_DAY && `Thời gian: ${item.serviceConcept.duration} phút`}
+                                                {item.serviceConcept.conceptRangeType === SERVICE_CONCEPT.CONCEPT_RANGE_TYPE.MANY_DAYS && `Thời gian: ${item.serviceConcept.numberOfDays} ngày`}
                                             </div>
 
                                             <Button

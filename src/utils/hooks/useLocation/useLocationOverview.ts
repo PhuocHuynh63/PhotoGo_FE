@@ -19,6 +19,7 @@ export interface Booking {
     alreadyPaid: number;
     remain: number;
     total: number;
+    userId: string;
 }
 
 export interface Slot {
