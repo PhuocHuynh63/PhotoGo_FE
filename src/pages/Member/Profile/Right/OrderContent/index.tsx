@@ -50,6 +50,14 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
     };
     //-------------------------------End--------------------------------//
 
+    /**
+     * This function will be called after a successful review submission
+     * to refresh the list of orders.
+     */
+    const handleReviewSuccess = () => {
+        router.refresh();
+    };
+    //-------------------------------End--------------------------------//
 
     return (
         <div className="container mx-auto">
@@ -97,6 +105,7 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                                 booking={invoice?.booking as unknown as IBooking}
                                 invoice={invoice}
                                 isNew={isNew}
+                                onReviewSuccess={handleReviewSuccess}
                             />
                         );
                     })}

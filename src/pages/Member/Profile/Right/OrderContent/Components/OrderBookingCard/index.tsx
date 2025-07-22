@@ -28,7 +28,7 @@ import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import { IInvoiceModel } from "@models/invoice/common.model";
 import WriteReviewDialog from "../../../../../../../components/Molecules/WriteReviewDialog";
 
-export default function BookingCard({ booking, invoice, isNew }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean }) {
+export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean, onReviewSuccess: () => void }) {
     const router = useRouter();
     const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
     const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
@@ -287,7 +287,11 @@ export default function BookingCard({ booking, invoice, isNew }: { booking: IBoo
                         )}
 
                         {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && invoice?.isReview && (
-                            <WriteReviewDialog showReviewDialog={showReviewDialog} setShowReviewDialog={setShowReviewDialog} objectReview={objectReview} />
+                            <WriteReviewDialog
+                                showReviewDialog={showReviewDialog}
+                                setShowReviewDialog={setShowReviewDialog}
+                                objectReview={objectReview} onReviewSuccess={onReviewSuccess}
+                            />
                         )}
 
                         <DropdownMenu>
