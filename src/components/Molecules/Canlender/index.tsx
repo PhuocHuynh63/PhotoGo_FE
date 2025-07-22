@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent } from "@components/Atoms/ui/card"
 import { Button } from "@components/Atoms/ui/button"
-import { Badge } from "@components/Atoms/ui/badge"
 
 interface DateRange {
     from: Date;
@@ -97,11 +96,15 @@ export default function CustomCalendar({
                         if (!date) return <div key={index} />;
 
                         const dayAvailability = getDateAvailability(date);
-                        const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
 
-                        // Logic chọn ngày được đơn giản hóa:
-                        // Một ngày có thể chọn nếu nó không phải quá khứ VÀ có trong danh sách availability
-                        const canSelect = !isPast && !!dayAvailability;
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        tomorrow.setHours(0, 0, 0, 0);
+                        const isPastOrToday = date < tomorrow;
+                        
+                        // A date can be selected if it's not past/today AND is in the availability list.
+                        const canSelect = !isPastOrToday && !!dayAvailability;
+
 
                         let isSelected = false, isStart = false, isEnd = false, isInRange = false;
                         if (mode === 'range' && selected && 'from' in selected) {
@@ -115,7 +118,7 @@ export default function CustomCalendar({
 
                         const cellClasses = `
                             relative p-2 h-16 border rounded-md transition-all duration-200 flex flex-col justify-center items-center
-                            ${isPast || !dayAvailability ? "bg-muted/50 text-muted-foreground cursor-not-allowed" : "cursor-pointer"}
+                            ${isPastOrToday || !dayAvailability ? "bg-muted/50 text-muted-foreground cursor-not-allowed" : "cursor-pointer"}
                             ${isToday(date) && !isSelected && !isInRange ? "border-primary" : ""}
                             ${canSelect && !isSelected && !isInRange ? "hover:bg-accent" : ""}
                             ${mode === 'single' && isSelected ? "bg-primary text-primary-foreground" : ""}
