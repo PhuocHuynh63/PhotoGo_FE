@@ -202,7 +202,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" >
             <div className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between border-b p-4">
                     <h2 className="text-xl font-semibold">Giỏ hàng của bạn</h2>
