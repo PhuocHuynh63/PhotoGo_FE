@@ -57,8 +57,8 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
     }, [filter])
 
     // Tính toán phân trang
-    const totalPages = Math.ceil(filteredAppointments.length / pageSize)
-    const paginatedAppointments = filteredAppointments.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    const totalPages = Math.ceil(filteredAppointments?.length / pageSize)
+    const paginatedAppointments = filteredAppointments?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
     // Hàm để hiển thị ngày
     const formatDate = (dateStr: string) => {
