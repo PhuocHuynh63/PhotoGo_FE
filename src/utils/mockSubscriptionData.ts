@@ -1,4 +1,4 @@
-import { ISubscriptionPlanModel } from "@models/subcription/common.model";
+import { ISubscriptionPlanModel } from "@models/subcription_plan/common.model";
 
 // Mock data for testing the subscription settings page
 export const mockSubscriptionData: ISubscriptionPlanModel[] = [

@@ -8,8 +8,8 @@ import SubscriptionFilter from "@components/Molecules/SubscriptionFilter";
 import SubscriptionTable from "@components/Organisms/SubscriptionTable";
 import SubscriptionDialog from "@components/Organisms/SubscriptionDialog";
 import { subscriptionService } from "@services/subcription";
-import { ISubscriptionPlanModel } from "@models/subcription/common.model";
-import { ISubscriptionPlanRequestModel } from "@models/subcription/request.model";
+import { ISubscriptionPlanModel } from "@models/subcription_plan/common.model";
+import { ISubscriptionPlanRequestModel } from "@models/subcription_plan/request.model";
 import { Plus, RefreshCw, RotateCcw } from "lucide-react";
 import { toast } from "react-hot-toast";
 
