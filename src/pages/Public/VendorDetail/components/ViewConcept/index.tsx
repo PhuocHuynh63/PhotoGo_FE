@@ -123,10 +123,8 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
         setIsAddingToCart(true);
         try {
             await addToCart(selectedConceptObject.id, cartId, userId);
-            toast.success("Đã thêm vào giỏ hàng!");
         } catch (error: unknown) {
             console.error('Error in handleAddToCart:', error);
-            toast.error("Lỗi: không thể thêm vào giỏ hàng");
         } finally {
             setIsAddingToCart(false);
         }
@@ -163,7 +161,7 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                             {isFavoriteActionLoading ? (
                                 <Loader2 size={20} className="animate-spin" />
                             ) : (
-                                <Heart size={20} className={cn("transition-all", isCurrentConceptInFavorites ? 'text-red-500 fill-current' : 'text-gray-600')} />
+                                <Heart size={20} className={cn("transition-all cursor-pointer", isCurrentConceptInFavorites ? 'text-red-500 fill-current' : 'text-gray-600')} />
                             )}
                         </button>
                         <button onClick={() => onOpenChange?.(false)} className="cursor-pointer p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Close">

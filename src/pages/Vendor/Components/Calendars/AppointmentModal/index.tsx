@@ -28,51 +28,25 @@ import {
 import { BOOKING_STATUS } from "@constants/booking"
 import { useBooking } from "@utils/hooks/useBooking"
 import toast from "react-hot-toast"
-import React from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ROUTES } from "@routes"
 import { formatDate } from "@utils/helpers/Date"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
+import { PAGES } from "../../../../../types/IPages"
 
-interface Appointment {
-    id: string
-    title: string
-    customerName: string
-    customerPhone: string
-    customerEmail: string
-    service: string
-    package: string
-    date: string
-    from: string | null
-    to: string | null
-    status: BOOKING_STATUS
-    color: string
-    notes: string
-    alreadyPaid: number
-    remain: number
-    total: number
-    location: string
-}
-
-interface AppointmentModalProps {
-    appointment: Appointment | null
-    isOpen: boolean
-    onClose: () => void
-    onAppointmentUpdate?: (updatedAppointment: Appointment) => void
-}
-
-export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: AppointmentModalProps) {
+export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: PAGES.AppointmentModalProps) {
     // const [isEditing, setIsEditing] = useState(false)
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
-    const [localAppointment, setLocalAppointment] = React.useState<Appointment | null>(appointment)
-
+    const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
+    console.log(appointment)
     // Update local appointment when prop changes
-    React.useEffect(() => {
+    useEffect(() => {
         setLocalAppointment(appointment)
     }, [appointment])
 
     // Clear error when modal opens/closes
-    React.useEffect(() => {
+    useEffect(() => {
         if (isOpen) {
             clearError()
         }
@@ -253,7 +227,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
                                     </div>
                                 </div>
                             </div>
-                            <Link href={ROUTES.VENDOR.CHAT}>
+                            <Link href={`${ROUTES.VENDOR.CHAT}/${localAppointment.userId}`}>
                                 <Button variant="outline" size="sm" className="gap-1 cursor-pointer">
                                     <MessageSquare className="h-4 w-4" />
                                     Nhắn tin

@@ -1,5 +1,5 @@
 import http from "@configs/fetch"
-import { ISubscriptionCreatePaymentLinkRequestModel, ISubscriptionPlanRequestModel, ISubscriptionSuccessRequestModel } from "@models/subcription/request.model"
+import { ISubscriptionCreatePaymentLinkRequestModel, ISubscriptionPlanRequestModel, ISubscriptionSuccessRequestModel } from "@models/subcription_plan/request.model"
 
 export const subscriptionService = {
     createSubscriptionPlan: async (data: ISubscriptionPlanRequestModel) => {

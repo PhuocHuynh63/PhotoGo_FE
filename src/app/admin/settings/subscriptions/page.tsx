@@ -1,6 +1,6 @@
 import AdminSettingsSubscriptionsPage from "@pages/Admin/Settings/Subscriptions";
 import { subscriptionService } from "@services/subcription";
-import { ISubscriptionPlanModel } from "@models/subcription/common.model";
+import { ISubscriptionPlanModel } from "@models/subcription_plan/common.model";
 
 interface PageProps {
   searchParams: Promise<{

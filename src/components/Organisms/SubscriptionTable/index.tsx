@@ -6,7 +6,7 @@ import { BadgeWrapper } from "@components/Atoms/Badge/BadgeWrapper";
 import Button from "@components/Atoms/Button";
 // Switch component will be implemented later
 import { Edit } from "lucide-react";
-import { ISubscriptionPlanModel } from "@models/subcription/common.model";
+import { ISubscriptionPlanModel } from "@models/subcription_plan/common.model";
 
 interface SubscriptionTableProps {
   subscriptions: ISubscriptionPlanModel[];
@@ -69,7 +69,7 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Tên gói
               </th>
-              
+
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Loại gói
               </th>
@@ -116,7 +116,7 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
                       {subscription.name}
                     </div>
                   </td>
-                  
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       {getPlanTypeBadge(subscription.planType)}
@@ -139,19 +139,16 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => onToggleStatus(subscription.id, subscription.isActive)}
-                        className={`w-10 h-6 rounded-full transition-colors ${
-                          subscription.isActive ? 'bg-green-500' : 'bg-gray-300'
-                        }`}
+                        className={`w-10 h-6 rounded-full transition-colors ${subscription.isActive ? 'bg-green-500' : 'bg-gray-300'
+                          }`}
                       >
-                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${
-                          subscription.isActive ? 'translate-x-5' : 'translate-x-1'
-                        }`} />
+                        <div className={`w-4 h-4 bg-white rounded-full transition-transform ${subscription.isActive ? 'translate-x-5' : 'translate-x-1'
+                          }`} />
                       </button>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        subscription.isActive 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${subscription.isActive
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
                         {subscription.isActive ? 'Hoạt động' : 'Không hoạt động'}
                       </span>
                     </div>

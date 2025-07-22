@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@components/Atoms/Car
 import Button from '@components/Atoms/Button'
 import PaymentModal from '@pages/Public/Subcription/components/ModalPayment'
 import { Check, Star, Zap, Crown, Camera } from 'lucide-react'
+import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 
 interface SubscriptionData {
     id: string;
@@ -124,7 +125,7 @@ const PricingPackage = ({
                                     "text-sm mt-1",
                                     pkg.recommended ? "text-white/70" : "text-gray-400"
                                 )}>
-                                    Tiết kiệm {pkg.priceForYear} ₫/năm
+                                    Tiết kiệm {formatPrice(Number(pkg.priceForYear))} /năm
                                 </p>
                             )}
                         </div>

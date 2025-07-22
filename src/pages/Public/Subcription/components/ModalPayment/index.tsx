@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Check, Star, Calendar, Tag, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import Button from '@components/Atoms/Button'
-import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription/request.model'
+import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription_plan/request.model'
 import { useSession } from '@stores/user/selectors'
 import { subscriptionService } from '@services/subcription'
+import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 
 // PayOS type declaration
 declare global {
@@ -254,11 +255,11 @@ export default function PaymentModal({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
                                     <div className="bg-white rounded-lg p-3">
                                         <div className="text-gray-500">Giá theo tháng</div>
-                                        <div className="font-semibold text-gray-800">{subscription.priceForMonth} ₫</div>
+                                        <div className="font-semibold text-gray-800">{formatPrice(Number(subscription.priceForMonth))}</div>
                                     </div>
                                     <div className="bg-white rounded-lg p-3">
                                         <div className="text-gray-500">Giá theo năm</div>
-                                        <div className="font-semibold text-gray-800">{subscription.priceForYear} ₫</div>
+                                        <div className="font-semibold text-gray-800">{formatPrice(Number(subscription.priceForYear))}</div>
                                     </div>
                                 </div>
                             </div>

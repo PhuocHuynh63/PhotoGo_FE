@@ -7,6 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@components/Atoms/ui/avatar
 import { MoreHorizontal } from "lucide-react"
 import { Card, CardContent } from "@components/Atoms/ui/card"
 import { BOOKING_STATUS } from "@constants/booking"
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationPrevious,
+    PaginationNext,
+} from "@/components/Atoms/ui/pagination"
+import React from "react"
 
 interface Appointment {
     id: string
@@ -28,16 +37,28 @@ interface AppointmentTableProps {
 }
 
 export default function AppointmentTable({ appointments }: AppointmentTableProps) {
-    const [filter, setFilter] = useState<BOOKING_STATUS>(BOOKING_STATUS.PENDING)
+    const [filter, setFilter] = useState<string>("all")
+    const [currentPage, setCurrentPage] = useState(1)
+    const pageSize = 10 // Số dòng mỗi trang
 
     // Lọc lịch hẹn theo trạng thái
     const filteredAppointments = appointments?.filter((appointment) => {
+        if (filter === "all") return true
         if (filter === BOOKING_STATUS.PENDING) return appointment.status === BOOKING_STATUS.PENDING
         if (filter === BOOKING_STATUS.PAID) return appointment.status === BOOKING_STATUS.PAID
         if (filter === BOOKING_STATUS.COMPLETED) return appointment.status === BOOKING_STATUS.COMPLETED
         if (filter === BOOKING_STATUS.CANCELLED) return appointment.status === BOOKING_STATUS.CANCELLED
         return true
     })
+
+    // Reset về trang 1 khi filter thay đổi
+    React.useEffect(() => {
+        setCurrentPage(1)
+    }, [filter])
+
+    // Tính toán phân trang
+    const totalPages = Math.ceil(filteredAppointments.length / pageSize)
+    const paginatedAppointments = filteredAppointments.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
     // Hàm để hiển thị ngày
     const formatDate = (dateStr: string) => {
@@ -85,8 +106,14 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
         <Card>
             <CardContent className="p-0">
                 <div className="border-b border-gray-200">
-                    <Tabs defaultValue={BOOKING_STATUS.PENDING} onValueChange={(value) => setFilter(value as BOOKING_STATUS)} className="w-full">
+                    <Tabs defaultValue="all" onValueChange={(value) => setFilter(value)} className="w-full">
                         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+                            <TabsTrigger
+                                value="all"
+                                className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                            >
+                                Tất cả
+                            </TabsTrigger>
                             <TabsTrigger
                                 value={BOOKING_STATUS.PENDING}
                                 className="cursor-pointer rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
@@ -128,7 +155,7 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredAppointments?.map((appointment) => (
+                            {(paginatedAppointments as Appointment[])?.map((appointment: Appointment) => (
                                 <tr key={appointment.id} className="border-b border-gray-200 hover:bg-gray-50">
                                     <td className="whitespace-nowrap px-4 py-3 font-medium">{appointment.id}</td>
                                     <td className="px-4 py-3">
@@ -166,6 +193,49 @@ export default function AppointmentTable({ appointments }: AppointmentTableProps
                         </tbody>
                     </table>
                 </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="py-4 flex justify-center">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault()
+                                            setCurrentPage(p => Math.max(1, p - 1))
+                                        }}
+                                        aria-disabled={currentPage === 1}
+                                    />
+                                </PaginationItem>
+                                {Array.from({ length: totalPages }).map((_, idx) => (
+                                    <PaginationItem key={idx}>
+                                        <PaginationLink
+                                            href="#"
+                                            isActive={currentPage === idx + 1}
+                                            onClick={e => {
+                                                e.preventDefault()
+                                                setCurrentPage(idx + 1)
+                                            }}
+                                        >
+                                            {idx + 1}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+                                <PaginationItem>
+                                    <PaginationNext
+                                        href="#"
+                                        onClick={e => {
+                                            e.preventDefault()
+                                            setCurrentPage(p => Math.min(totalPages, p + 1))
+                                        }}
+                                        aria-disabled={currentPage === totalPages}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

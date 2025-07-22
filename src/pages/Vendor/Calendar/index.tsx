@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/Atoms/ui/button"
 import { CalendarDays, List, AlertCircle, Loader2 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/Atoms/ui/alert"
-import CalendarView, { type Appointment } from "../Components/Calendars/CalendarView"
+import CalendarView from "../Components/Calendars/CalendarView"
 import CalendarSidebar from "../Components/Calendars/CalendarSidebar"
 import AppointmentTable from "../Components/Appointment/AppointmentTable"
 import AppointmentStats from "../Components/Appointment/AppointmentStats"
@@ -12,13 +12,8 @@ import RecentAppointments from "../Components/Appointment/RecentAppointments"
 import { useLocationOverview, type Booking, type Slot } from "@/utils/hooks/useLocation/useLocationOverview"
 import { useVendorLocations } from "@/utils/hooks/useVendorLocations"
 import { BOOKING_STATUS } from "@constants/booking"
+import { PAGES } from "../../../types/IPages"
 
-interface WorkingHours {
-    start: string
-    end: string
-    breakStart: string
-    breakEnd: string
-}
 
 export default function CalendarManagement({ vendorId }: { vendorId: string | undefined }) {
     const [viewMode, setViewMode] = useState<"calendar" | "appointments">("calendar")
@@ -94,7 +89,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     }
     // Helper functions để convert location overview data sang format của UI components
 
-    const convertBookingToAppointment = (booking: Booking, slot: Slot): Appointment => {
+    const convertBookingToAppointment = (booking: Booking, slot: Slot): PAGES.Appointment => {
         const statusMap: Record<string, BOOKING_STATUS> = {
             "đã thanh toán": BOOKING_STATUS.PAID,
             "chờ xử lý": BOOKING_STATUS.PENDING,
@@ -106,13 +101,12 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
         }
 
         const colorMap: Record<string, string> = {
-            "đã thanh toán": "green",
-            "chờ xử lý": "yellow",
-            "đã hủy": "red",
-            "chờ xác nhận": "yellow",
-            "đã xác nhận": "blue",
-            "đang thực hiện": "green",
-            "đã hoàn thành": "green"
+            [BOOKING_STATUS.PAID]: "green",
+            [BOOKING_STATUS.PENDING]: "yellow",
+            [BOOKING_STATUS.CANCELLED]: "red",
+            [BOOKING_STATUS.CONFIRMED]: "blue",
+            [BOOKING_STATUS.IN_PROGRESS]: "green",
+            [BOOKING_STATUS.COMPLETED]: "green"
         }
 
         const mappedStatus = statusMap[booking.status] || BOOKING_STATUS.PENDING
@@ -129,6 +123,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             customerName: booking.fullName,
             customerPhone: booking.phone,
             customerEmail: booking.email,
+            userId: booking.userId,
             service: booking.service,
             package: "Gói Tiêu Chuẩn", // Default package
             date: slot.date,
@@ -175,11 +170,12 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     }
 
     // Convert location overview data sang format cho UI components
-    const appointments: Appointment[] = locationOverview
+    const appointments: PAGES.Appointment[] = locationOverview
         ? locationOverview.slots.flatMap((slot: Slot) =>
             slot.bookings.map((booking: Booking) => convertBookingToAppointment(booking, slot))
         )
         : []
+    console.log(appointments)
     const todayAppointments = locationOverview
         ? convertToTodayAppointments(locationOverview.todayBookings)
         : []
@@ -202,7 +198,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             revenueThisWeek: 0
         }
 
-    const workingHours: WorkingHours = {
+    const workingHours: PAGES.WorkingHours = {
         start: "08:00",
         end: "18:00",
         breakStart: "12:00",
@@ -210,7 +206,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     }
 
     // Handle appointment update from CalendarView
-    const handleAppointmentUpdate = useCallback((updatedAppointment: Appointment) => {
+    const handleAppointmentUpdate = useCallback((updatedAppointment: PAGES.Appointment) => {
         // Refetch data to get the latest state from server
         console.log('Appointment updated:', updatedAppointment.id)
         refetchLocation()
