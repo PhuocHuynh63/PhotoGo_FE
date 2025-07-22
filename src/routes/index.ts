@@ -24,6 +24,9 @@ const PUBLIC = {
         MEMBERSHIP: '/subscription/membership',
         VENDOR: '/subscription/vendor',
     },
+    CAMPAIGNS: {
+        VOUCHERS: '/campaigns/vouchers',
+    },
 };
 
 const USER = {

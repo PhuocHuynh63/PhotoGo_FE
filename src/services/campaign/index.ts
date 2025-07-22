@@ -12,10 +12,6 @@ export const campaignService = {
     getCampaigns: async (searchParams: URLSearchParams) => {
         return await http.get(`/campaigns?${searchParams.toString()}`, {
             cache: "no-store",
-            headers: {
-                "Cache-Control": "no-cache, no-store, must-revalidate",
-                "Pragma": "no-cache"
-            }
         });
     },
 
@@ -68,5 +64,16 @@ export const campaignService = {
         });
     },
 
+    getAllCampaignAndVoucher: async () => {
+        return await http.get(`/campaigns/all`, {
+            next: { revalidate: 10 },
+        });
+    },
+
+    addUserToCampaign: async (campaignId: string, userId: string) => {
+        return await http.post(`/campaigns/${campaignId}/users/${userId}`, {}, {
+            next: { revalidate: 10 },
+        });
+    },
 
 };

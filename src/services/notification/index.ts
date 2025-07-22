@@ -7,12 +7,12 @@ const notificationService = {
         })
     },
     markAsRead: async (notificationId: string) => {
-        return await http.patch(`/notifications/mark-as-read/${notificationId}`, {
+        return await http.patch(`/notifications/mark-as-read/me/${notificationId}`, {
             cache: 'no-store'
         })
     },
     markAllAsRead: async () => {
-        return await http.patch(`/notifications/mark-all-as-read`, {
+        return await http.patch(`/notifications/mark-all-read/me`, {
             cache: 'no-store'
         })
     }
