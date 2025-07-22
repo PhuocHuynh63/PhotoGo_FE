@@ -129,12 +129,12 @@ const SummaryInformation = () => {
                         </div>
 
                         {selectedVoucher && (
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Giảm giá</span>
-                                <span className="font-medium">-{price?.discount.toLocaleString()}đ</span>
+                            <div className="flex justify-between font-sm">
+                                <span>Giảm giá</span>
+                                <span>-{price?.discount.toLocaleString()}đ</span>
                             </div>
                         )}
-                        <div className="flex justify-between font-medium">
+                        <div className="flex justify-between font-sm">
                             <span>Đặt cọc ({selectedDeposit}%)</span>
                             <span>-{price?.depositAmount.toLocaleString()}đ</span>
                         </div>
