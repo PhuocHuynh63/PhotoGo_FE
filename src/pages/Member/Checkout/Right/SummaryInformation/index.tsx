@@ -123,41 +123,29 @@ const SummaryInformation = () => {
                     <Separator className="my-6" />
 
                     <div className="space-y-2 mb-6">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Tạm tính</span>
-                            <span className="font-medium">{Number(serviceConcept.price).toLocaleString()}đ</span>
-                        </div>
-
-                        {price && price.rushFee > 0 && (
-                            <div className="flex justify-between items-center py-2 px-3 rounded-lg bg-[#fffaf5] border border-[#f0a06a]/20 mb-2">
-                                <span className="text-[#f0a06a] font-semibold flex items-center gap-2">
-                                    <Clock className="h-4 w-4" />
-                                    Phụ phí gấp
-                                </span>
-                                <span className="font-medium text-[#f0a06a]">+{price?.rushFee.toLocaleString()}đ</span>
-                            </div>
-                        )}
-
                         <div className="flex justify-between">
                             <span className="text-gray-500">Tổng tiền</span>
-                            <span className="font-medium">{price?.totalPayable.toLocaleString()}đ</span>
+                            <span className="font-medium">{price?.finalPrice.toLocaleString()}đ</span>
                         </div>
-
-                        <Separator className="my-6" />
 
                         {selectedVoucher && (
                             <div className="flex justify-between">
-                                <span className="text-[#f0a06a] font-semibold">Giảm giá</span>
-                                <span className="font-medium text-[#f0a06a]">-{price?.discount.toLocaleString()}đ</span>
+                                <span className="font-semibold">Giảm giá</span>
+                                <span className="font-medium">-{price?.discount.toLocaleString()}đ</span>
                             </div>
                         )}
-                        <div className="flex justify-between text-[#f0a06a] font-medium">
+                        <div className="flex justify-between font-medium">
                             <span>Đặt cọc ({selectedDeposit}%)</span>
                             <span>-{price?.depositAmount.toLocaleString()}đ</span>
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-gray-500">Số tiền còn lại</span>
                             <span className="font-medium">{price?.remainingAmount.toLocaleString()}đ</span>
+                        </div>
+
+                        <div className="flex justify-between text-[#f0a06a] font-medium">
+                            <span>Số tiền cần thanh toán ({selectedDeposit}%)</span>
+                            <span>{price?.totalPayable.toLocaleString()}đ</span>
                         </div>
                     </div>
 
