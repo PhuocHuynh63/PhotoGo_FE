@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell } from "lucide-react"
+import { Bell, Menu } from "lucide-react"
 import { IUser } from "@models/user/common.model"
 import {
     DropdownMenu,
@@ -15,11 +15,17 @@ import { ROUTES } from "@routes"
 import { useRouter } from "next/navigation"
 import { Avatar } from "@components/Molecules/Avatar"
 
-export default function Header({ userData }: { userData: IUser }) {
+export default function Header({ userData, setSidebarOpen }: { userData: IUser, setSidebarOpen: (open: boolean) => void }) {
     const router = useRouter()
     return (
         <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Quản lý hồ sơ</h1>
+            <div className="flex items-center gap-2">
+                {/* Hamburger menu for mobile */}
+                <button className="md:hidden p-2 rounded-md border border-gray-200 bg-white mr-2" onClick={() => setSidebarOpen(true)} aria-label="Mở menu">
+                    <Menu className="w-6 h-6 text-gray-700" />
+                </button>
+                <h1 className="text-2xl font-bold">Quản lý hồ sơ</h1>
+            </div>
 
             <div className="flex items-center gap-4">
                 {/* <div className="relative">
