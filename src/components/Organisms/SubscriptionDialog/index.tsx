@@ -7,8 +7,8 @@ import Button from "@components/Atoms/Button";
 import Input from "@components/Atoms/Input";
 import Select from "@components/Atoms/Select";
 import TipTapEditor from "@components/Organisms/TipTapEditor";
-import { ISubscriptionPlanModel } from "@models/subcription/common.model";
-import { ISubscriptionPlanRequestModel } from "@models/subcription/request.model";
+import { ISubscriptionPlanModel } from "@models/subcription_plan/common.model";
+import { ISubscriptionPlanRequestModel } from "@models/subcription_plan/request.model";
 
 interface SubscriptionDialogProps {
   isOpen: boolean;
@@ -136,10 +136,10 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="max-w-3xl w-full max-h-[90vh] overflow-y-auto rounded-xl p-6 resize-none"
-        style={{ 
-          resize: 'none', 
+        style={{
+          resize: 'none',
           userSelect: 'none',
           minWidth: '768px',
           maxWidth: '768px',
@@ -162,7 +162,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
             <Input
               type="text"
               value={formData.name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleInputChange("name", e.target.value)
               }
               placeholder="Nhập tên gói đăng ký"
@@ -201,7 +201,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
               <Input
                 type="number"
                 value={formData.priceForMonth}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("priceForMonth", Number(e.target.value))
                 }
                 placeholder="0"
@@ -223,7 +223,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
               <Input
                 type="number"
                 value={formData.priceForYear}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleInputChange("priceForYear", Number(e.target.value))
                 }
                 placeholder="0"

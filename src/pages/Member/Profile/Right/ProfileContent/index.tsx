@@ -53,7 +53,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
         setIsEditing(false)
     }
 
-    const hasSubscription = (user as any)?.hasSubscription // hoặc logic thực tế của bạn
+    const hasSubscription = Boolean(user?.subscription)
 
     return (
         <div className="container mx-auto">
@@ -113,7 +113,7 @@ export default function ProfileContent({ user }: { user: IUser }) {
                             </div>
                             <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="rank">Gói đăng ký</Label>
-                                <Input id="rank" value={user?.hasSubscription ? 'Đã mua gói' : 'Chưa mua gói'} disabled />
+                                <Input id="rank" value={user?.subscription ? 'Đã mua gói' : 'Chưa mua gói'} disabled />
                             </div>
                         </div>
 

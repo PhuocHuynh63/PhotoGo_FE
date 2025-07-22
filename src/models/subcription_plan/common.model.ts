@@ -17,3 +17,4 @@ export const SubscriptionPlanModel = z.object({
 });
 
 export type ISubscriptionPlanModel = z.infer<typeof SubscriptionPlanModel>;
+

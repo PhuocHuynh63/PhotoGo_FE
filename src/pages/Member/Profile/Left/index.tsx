@@ -109,7 +109,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         <CardContent className="flex items-center justify-center flex-col">
                             <div className="w-28 h-7 my-2 inline-flex items-stretch border rounded-full overflow-hidden" style={{ borderColor: getRankColor(userRank) }}>
                                 <div className="relative text-white mx-auto my-auto text-sm font-bold border-r-0">
-                                    <div className="text-sm font-bold" style={{ color: getRankColor(userRank) }}>{user?.hasSubscription ? 'Đã mua gói' : <Link href={ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP}>Đăng ký ngay</Link>}</div>
+                                    <div className="text-sm font-bold" style={{ color: getRankColor(userRank) }}>{user?.subscription ? 'Đã mua gói' : <Link href={ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP}>Đăng ký ngay</Link>}</div>
                                 </div>
                             </div>
                         </CardContent>

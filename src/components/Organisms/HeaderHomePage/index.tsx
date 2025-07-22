@@ -121,7 +121,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                     />
                 </div>
             </motion.div>
-            {user && user.role?.id === USER.USER_ROLES_ID.CUSTOMER && (
+            {!user?.subscription && (
                 <button className="cursor-pointer relative px-6 py-2 text-white font-semibold rounded-lg overflow-hidden transition-all duration-300 hover:scale-105 animate-gradient" onClick={() => router.push(ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP)}>
                     <div
                         className="absolute inset-0 animate-pulse"

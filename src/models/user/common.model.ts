@@ -12,12 +12,12 @@ export const UserModel = z.object({
     avatarUrl: z.string().optional(),
     auth: z.string().optional(),
     note: z.string().optional(),
-    hasSubscription: z.boolean().optional(),
     createdAt: z.string(),
     lastLoginAt: z.string(),
     role: RoleModel,
     rank: z.string(),
     status: z.string(),
+    subscription: z.string().optional(),
     updatedAt: z.string(),
 })
 export type IUser = z.TypeOf<typeof UserModel>
