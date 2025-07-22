@@ -62,7 +62,11 @@ export const campaignService = {
         });
     },
 
-
+    acceptCampaignInvite: async (token: string) => {
+        return await http.get(`/campaigns/confirm-invite?token=${token}`, {
+            next: { revalidate: 10 },
+        });
+    },
 
 
 };
