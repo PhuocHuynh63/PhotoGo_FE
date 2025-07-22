@@ -8,6 +8,7 @@ enum VOUCHER_STATUS {
 
 enum VOUCHER_TYPE {
     POINT = 'điểm',
+    EXCHANGE_POINTS = 'đổi điểm',
     CAMPAIGN = 'chiến dịch',
     WHEEL = 'vòng quay may mắn',
 }
