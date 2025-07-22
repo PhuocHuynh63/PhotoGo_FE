@@ -11,11 +11,19 @@ export const CreateCampaignModel = z.object({
 });
 
 export type ICreateCampaignModel = z.infer<typeof CreateCampaignModel>;
+//----------------------------End-----------------------------//
 
+/*
+* Model of Invite vendor to campaign
+*/
 export const InviteVendorToCampaignModel = z.object({
     campaignId: z.string(),
     vendorId: z.string(),
 });
 
 export type IInviteVendorToCampaignModel = z.infer<typeof InviteVendorToCampaignModel>;
+//----------------------------End-----------------------------//
 
+/*
+* Model of accept invite to campaign
+*/
