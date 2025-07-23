@@ -175,7 +175,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             slot.bookings.map((booking: Booking) => convertBookingToAppointment(booking, slot))
         )
         : []
-    (appointments)
     const todayAppointments = locationOverview
         ? convertToTodayAppointments(locationOverview.todayBookings)
         : []
