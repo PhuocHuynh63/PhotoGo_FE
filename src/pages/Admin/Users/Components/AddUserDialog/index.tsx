@@ -138,10 +138,10 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
         <div className="p-6 space-y-6">
           {/* Personal Information Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+            {/* <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
               <LucideIcon name="User" iconSize={16} className="text-blue-600" />
               <h3 className="font-semibold text-gray-800">Thông tin cá nhân</h3>
-            </div>
+            </div> */}
 
             <div className="grid gap-4">
               <div className="space-y-2">
@@ -188,10 +188,10 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
 
           {/* Security Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+            {/* <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
               <LucideIcon name="Lock" iconSize={16} className="text-blue-600" />
               <h3 className="font-semibold text-gray-800">Bảo mật</h3>
-            </div>
+            </div> */}
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
@@ -210,10 +210,10 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
 
           {/* Role & Status Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+            {/* <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
               <LucideIcon name="Settings" iconSize={16} className="text-blue-600" />
               <h3 className="font-semibold text-gray-800">Cấu hình</h3>
-            </div>
+            </div> */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -249,7 +249,7 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
 
         {/* Footer */}
         <DialogFooter className="bg-gray-50 px-6 py-4 border-t border-gray-100">
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <div className="flex flex-col sm:flex-row gap-3 w-full justify-end">
             <Button
               variant="outline"
               onClick={handleClose}

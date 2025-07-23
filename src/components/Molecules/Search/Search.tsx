@@ -42,7 +42,7 @@ const Search: React.FC<ICOMPONENTS.SearchProps> = ({
         if (debouncedSearchTerm !== value) {
             onChange?.(debouncedSearchTerm);
         }
-    }, [debouncedSearchTerm]);
+    }, [debouncedSearchTerm, value, onChange]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
