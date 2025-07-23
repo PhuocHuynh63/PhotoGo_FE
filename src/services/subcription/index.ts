@@ -1,5 +1,6 @@
 import http from "@configs/fetch"
 import { ISubscriptionCreatePaymentLinkRequestModel, ISubscriptionPlanRequestModel, ISubscriptionSuccessRequestModel } from "@models/subcription_plan/request.model"
+import { ROUTES } from "@routes"
 
 export const subscriptionService = {
     createSubscriptionPlan: async (data: ISubscriptionPlanRequestModel) => {
@@ -45,11 +46,31 @@ export const subscriptionService = {
         })
     },
 
+    getSubscriptionHistoryByUserId: async (userId: string, params?: {
+        current?: number;
+        pageSize?: number;
+        sortBy?: string;
+        sortDirection?: string;
+        action?: string;
+    }) => {
+        const queryParams = new URLSearchParams();
+        if (params?.current) queryParams.append('current', params.current.toString());
+        if (params?.pageSize) queryParams.append('pageSize', params.pageSize.toString());
+        if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+        if (params?.sortDirection) queryParams.append('sortDirection', params.sortDirection);
+        if (params?.action) queryParams.append('action', params.action);
+        const queryString = queryParams.toString();
+        const url = queryString ? `/subscriptions/history/${userId}?${queryString}` : `/subscriptions/history/${userId}`;
+        return await http.get(url, {
+            cache: 'no-store'
+        })
+    },
+
     createPaymentLink: async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
         return await http.post("/subscriptions/create-payment-link", data)
     },
 
     subscriptionSuccess: async (data: ISubscriptionSuccessRequestModel) => {
         return await http.post("/subscriptions/payos-callback", data)
-    }
+    },
 }
