@@ -208,7 +208,12 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                         </div>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                        {invoice?.needsProof && (isInProgress || isCompleted) ? (
+                        {(
+                            // Đang diễn ra: chỉ kiểm tra behindTheScenes
+                            (isInProgress && (!Array.isArray(invoice?.behindTheScenes) || invoice.behindTheScenes.length === 0))
+                            // Đã hoàn thành: kiểm tra photos và driveLink
+                            || (isCompleted && Array.isArray(invoice?.photos) && invoice.photos.length === 0 && invoice?.driveLink == null)
+                        ) ? (
                             <Dialog
                                 open={uploadModal.open && uploadModal.invoice?.id === invoice?.id}
                                 onOpenChange={(open) => setUploadModal({ open, invoice: open ? invoice : undefined })}
@@ -218,7 +223,6 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         size="lg"
                                         className="bg-orange-500 hover:bg-orange-600"
                                         disabled={!(isInProgress || isCompleted)}
-                                    // disabled={invoice?.booking?.date !== new Date().toISOString().slice(0, 10)}
                                     >
                                         <Camera className="h-4 w-4 mr-2" />
                                         Upload bằng chứng
@@ -239,7 +243,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-8">
-                                        {/* Google Drive Link Section */}
+                                        {/* Google Drive Link Section - chỉ cho phép khi đã hoàn thành */}
                                         {isCompleted && (
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-2">
@@ -256,7 +260,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                             </div>
                                         )}
 
-                                        {/* Photos Section */}
+                                        {/* Photos Section - chỉ cho phép khi đã hoàn thành */}
                                         {isCompleted && (
                                             <div className="space-y-4">
                                                 <div className="flex items-center gap-2">
@@ -334,81 +338,108 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                             </div>
                                         )}
 
-                                        {/* Behind The Scenes Section */}
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-2">
-                                                <Eye className="h-5 w-5 text-purple-600" />
-                                                <Label className="text-lg font-semibold">Ảnh behind the scenes (tối đa 3 ảnh)</Label>
-                                                <Badge variant="secondary">{behindTheScenes.length}/3</Badge>
-                                            </div>
-
-                                            <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center transition-colors hover:border-purple-400 bg-purple-50/50">
-                                                <Eye className="h-10 w-10 text-purple-600 mx-auto mb-3" />
-                                                <p className="font-medium text-purple-800 mb-1">Upload ảnh behind the scenes</p>
-                                                <p className="text-sm text-purple-600 mb-3">JPG, PNG, GIF (tối đa 3 ảnh)</p>
-                                                <Input
-                                                    type="file"
-                                                    multiple
-                                                    accept="image/*"
-                                                    onChange={(e) => {
-                                                        const files = Array.from(e.target.files || [])
-                                                        if (files.length > 0) {
-                                                            setBehindTheScenes((prev) => [...prev, ...files].slice(0, 3))
-                                                        }
-                                                    }}
-                                                    className="hidden"
-                                                    id={`behind-scenes-upload-${invoice?.id}`}
-                                                />
-                                                <Label htmlFor={`behind-scenes-upload-${invoice?.id}`}>
-                                                    <Button variant="outline" className="bg-white hover:bg-purple-50" asChild>
-                                                        <span>Chọn ảnh behind the scenes</span>
-                                                    </Button>
-                                                </Label>
-                                            </div>
-
-                                            {behindTheScenes.length > 0 && (
-                                                <div className="space-y-3">
-                                                    <div className="flex items-center justify-between">
-                                                        <Label className="font-medium text-purple-800">
-                                                            Behind the scenes đã chọn ({behindTheScenes.length}/3)
-                                                        </Label>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={clearAllBehindTheScenes}
-                                                            className="text-red-600 hover:text-red-700"
-                                                        >
-                                                            <Trash2 className="h-4 w-4 mr-1" />
-                                                            Xóa tất cả
-                                                        </Button>
-                                                    </div>
-                                                    <div className="grid grid-cols-3 gap-3">
-                                                        {behindTheScenes.map((file, index) => (
-                                                            <div key={index} className="relative group">
-                                                                <img
-                                                                    src={URL.createObjectURL(file)}
-                                                                    alt={`Behind scenes ${index + 1}`}
-                                                                    className="w-full h-32 object-cover rounded-lg border-2 border-purple-200"
-                                                                />
-                                                                <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
-                                                                    <Button
-                                                                        size="sm"
-                                                                        variant="destructive"
-                                                                        className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
-                                                                        onClick={() => removeBehindTheScene(index)}
-                                                                    >
-                                                                        <X className="h-4 w-4" />
-                                                                    </Button>
-                                                                </div>
-                                                                <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded">
-                                                                    {index + 1}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                        {/* Behind The Scenes Section - chỉ cho phép upload nếu chưa có ảnh hậu trường */}
+                                        {(isInProgress || isCompleted) && (!invoice.behindTheScenes || invoice.behindTheScenes.length === 0) && (
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-2">
+                                                    <Eye className="h-5 w-5 text-purple-600" />
+                                                    <Label className="text-lg font-semibold">Ảnh behind the scenes (tối đa 3 ảnh)</Label>
+                                                    <Badge variant="secondary">{behindTheScenes.length}/3</Badge>
                                                 </div>
-                                            )}
-                                        </div>
+
+                                                <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center transition-colors hover:border-purple-400 bg-purple-50/50">
+                                                    <Eye className="h-10 w-10 text-purple-600 mx-auto mb-3" />
+                                                    <p className="font-medium text-purple-800 mb-1">Upload ảnh behind the scenes</p>
+                                                    <p className="text-sm text-purple-600 mb-3">JPG, PNG, GIF (tối đa 3 ảnh)</p>
+                                                    <Input
+                                                        type="file"
+                                                        multiple
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            const files = Array.from(e.target.files || [])
+                                                            if (files.length > 0) {
+                                                                setBehindTheScenes((prev) => [...prev, ...files].slice(0, 3))
+                                                            }
+                                                        }}
+                                                        className="hidden"
+                                                        id={`behind-scenes-upload-${invoice?.id}`}
+                                                    />
+                                                    <Label htmlFor={`behind-scenes-upload-${invoice?.id}`}>
+                                                        <Button variant="outline" className="bg-white hover:bg-purple-50" asChild>
+                                                            <span>Chọn ảnh behind the scenes</span>
+                                                        </Button>
+                                                    </Label>
+                                                </div>
+
+                                                {behindTheScenes.length > 0 && (
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center justify-between">
+                                                            <Label className="font-medium text-purple-800">
+                                                                Behind the scenes đã chọn ({behindTheScenes.length}/3)
+                                                            </Label>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={clearAllBehindTheScenes}
+                                                                className="text-red-600 hover:text-red-700"
+                                                            >
+                                                                <Trash2 className="h-4 w-4 mr-1" />
+                                                                Xóa tất cả
+                                                            </Button>
+                                                        </div>
+                                                        <div className="grid grid-cols-3 gap-3">
+                                                            {behindTheScenes.map((file, index) => (
+                                                                <div key={index} className="relative group">
+                                                                    <img
+                                                                        src={URL.createObjectURL(file)}
+                                                                        alt={`Behind scenes ${index + 1}`}
+                                                                        className="w-full h-32 object-cover rounded-lg border-2 border-purple-200"
+                                                                    />
+                                                                    <div className="absolute inset-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center">
+                                                                        <Button
+                                                                            size="sm"
+                                                                            variant="destructive"
+                                                                            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+                                                                            onClick={() => removeBehindTheScene(index)}
+                                                                        >
+                                                                            <X className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                    <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded">
+                                                                        {index + 1}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Luôn hiển thị ảnh hậu trường từ API nếu có */}
+                                        {invoice?.behindTheScenes && invoice?.behindTheScenes.length > 0 && (
+                                            <div>
+                                                <Label className="text-base font-medium mb-3 block">
+                                                    Behind the scenes ({invoice?.behindTheScenes.length} ảnh)
+                                                </Label>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {invoice?.behindTheScenes.map((image, index) => (
+                                                        <div key={index} className="relative">
+                                                            <img
+                                                                src={image || "/placeholder.svg"}
+                                                                alt={`Behind scenes ${index + 1}`}
+                                                                className="w-full h-32 object-cover rounded-lg border-2 border-purple-200 hover:scale-105 transition-transform cursor-pointer"
+                                                                onClick={() => window.open(image, "_blank")}
+                                                                onError={(e) => {
+                                                                    console.error('Error loading behind scenes image:', image);
+                                                                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Action Buttons */}
                                         <div className="flex justify-end gap-3 pt-6 border-t">
@@ -475,8 +506,8 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="space-y-6">
-                                        {/* Drive Link */}
-                                        {invoice?.driveLink && (
+                                        {/* Drive Link - chỉ show khi đã hoàn thành */}
+                                        {isCompleted && invoice?.driveLink && (
                                             <div>
                                                 <Label className="text-base font-medium mb-3 block">Link Google Drive</Label>
                                                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -492,8 +523,8 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                             </div>
                                         )}
 
-                                        {/* Main Photos */}
-                                        {invoice?.photos && invoice?.photos.length > 0 && (
+                                        {/* Main Photos - chỉ show khi đã hoàn thành */}
+                                        {isCompleted && invoice?.photos && invoice?.photos.length > 0 && (
                                             <div>
                                                 <Label className="text-base font-medium mb-3 block">
                                                     Ảnh chính ({invoice?.photos.length} ảnh)
@@ -517,7 +548,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                             </div>
                                         )}
 
-                                        {/* Behind The Scenes */}
+                                        {/* Behind The Scenes - show cho cả IN_PROGRESS và COMPLETED */}
                                         {invoice?.behindTheScenes && invoice?.behindTheScenes.length > 0 && (
                                             <div>
                                                 <Label className="text-base font-medium mb-3 block">
@@ -543,7 +574,7 @@ export default function ProofInvoiceCard({ invoice, uploadModal, setUploadModal,
                                         )}
 
                                         {/* Fallback to proofImages for backwards compatibility */}
-                                        {(!invoice?.photos || invoice?.photos.length === 0) && invoice?.proofImages && invoice?.proofImages.length > 0 && (
+                                        {isCompleted && (!invoice?.photos || invoice?.photos.length === 0) && invoice?.proofImages && invoice?.proofImages.length > 0 && (
                                             <div>
                                                 <Label className="text-base font-medium mb-3 block">
                                                     Ảnh bằng chứng ({invoice?.proofImages.length} ảnh)
