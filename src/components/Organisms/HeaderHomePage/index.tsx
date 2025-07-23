@@ -383,7 +383,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                                         </Link>
                                         <div
                                             onClick={() => handleLogout()}
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500 z-[1001]"
                                         >
                                             <LucideIcon name="LogOut" iconSize={20} />
                                             <span>Đăng xuất</span>
