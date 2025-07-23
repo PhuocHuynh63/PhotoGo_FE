@@ -78,11 +78,6 @@ const adminNavItems: SidebarItem[] = [
         icon: "Wallet2",
         children: [
             {
-                title: "Tổng quan",
-                path: ROUTES.ADMIN.FINANCE.ROOT,
-                icon: "PieChart",
-            },
-            {
                 title: "Thanh toán",
                 path: ROUTES.ADMIN.FINANCE.PAYMENTS.LIST,
                 icon: "CreditCard",
@@ -91,6 +86,17 @@ const adminNavItems: SidebarItem[] = [
                 title: "Giao dịch",
                 path: ROUTES.ADMIN.FINANCE.TRANSACTIONS.LIST,
                 icon: "ArrowLeftRight",
+            },
+        ],
+    },
+    {
+        title: "Điểm",
+        icon: "Star",
+        children: [
+            {
+                title: "Điểm",
+                path: ROUTES.ADMIN.POINTS.LIST,
+                icon: "Ticket",
             },
         ],
     },
@@ -108,26 +114,13 @@ const adminNavItems: SidebarItem[] = [
                 path: ROUTES.ADMIN.SETTINGS.SERVICE_TYPES,
                 icon: "FileText",
             },
-            {
-                title: "Chính sách",
-                path: ROUTES.ADMIN.SETTINGS.POLICIES,
-                icon: "FileText",
-            },
-            {
-                title: "Loyalty",
-                path: ROUTES.ADMIN.SETTINGS.LOYALTY,
-                icon: "Heart",
-            },
+            
             {
                 title: "Gói đăng ký",
                 path: ROUTES.ADMIN.SETTINGS.SUBSCRIPTIONS,
                 icon: "Repeat",
             },
-            {
-                title: "Hoa hồng",
-                path: ROUTES.ADMIN.SETTINGS.COMMISSION,
-                icon: "Percent",
-            },
+
         ],
     },
 ];

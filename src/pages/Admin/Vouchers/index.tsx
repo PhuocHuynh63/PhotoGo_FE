@@ -90,7 +90,7 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const searchValue = searchParams?.get('q') || '';
+  const searchValue = searchParams?.get('term') || '';
   const statusValue = searchParams?.get('status') || '';
   const typeValue = searchParams?.get('type') || '';
   const discountTypeValue = searchParams?.get('discountType') || '';
@@ -163,9 +163,9 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
   const handleSearch = (value: string) => {
     const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
     if (value) {
-      params.set('q', value);
+      params.set('term', value);
     } else {
-      params.delete('q');
+      params.delete('term');
     }
     params.set('current', '1');
     params.set('pageSize', pageSize.toString());
@@ -192,7 +192,7 @@ export default function AdminVouchersPage({ vouchers: initialVouchers, paginatio
       // Lấy lại các filter hiện tại từ searchParams nếu cần
       params.set("current", (pagination?.current + 1).toString());
       params.set("pageSize", pageSize.toString());
-      if (searchValue) params.set("q", searchValue);
+      if (searchValue) params.set("term", searchValue);
       if (statusValue) params.set("status", statusValue);
       if (typeValue) params.set("type", typeValue);
       if (discountTypeValue) params.set("discountType", discountTypeValue);

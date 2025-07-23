@@ -41,4 +41,9 @@ declare namespace SERVERS {
             id: string;
         }>;
     }
+
+    interface PointsPageProps {
+        params: Promise<{ id: string }>;
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }> | undefined;
+    }
 }

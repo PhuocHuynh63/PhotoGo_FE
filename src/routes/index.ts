@@ -103,7 +103,6 @@ const ADMIN = {
         DETAIL: '/admin/vouchers/:slug',
     },
     FINANCE: {
-        ROOT: '/admin/finance',
         PAYMENTS: {
             LIST: '/admin/finance/payments',
             DETAIL: '/admin/finance/payments/:slug',
@@ -113,14 +112,14 @@ const ADMIN = {
             DETAIL: '/admin/finance/transactions/:slug',
         },
     },
+    POINTS: {
+        LIST: '/admin/points',
+        DETAIL: '/admin/points/:slug',
+    },
     SETTINGS: {
-        ROOT: '/admin/settings',
         CATEGORIES: '/admin/settings/categories',
         SERVICE_TYPES: '/admin/settings/serviceType',
-        POLICIES: '/admin/settings/policies',
-        LOYALTY: '/admin/settings/loyalty',
         SUBSCRIPTIONS: '/admin/settings/subscriptions',
-        COMMISSION: '/admin/settings/commission',
     },
 };
 
