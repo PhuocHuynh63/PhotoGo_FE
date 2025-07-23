@@ -52,12 +52,17 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
             case BOOKING.BOOKING_STATUS.COMPLETED:
                 return <Badge variant="outline" className="text-green-500 border-green-200">Hoàn thành</Badge>
             case BOOKING.BOOKING_STATUS.CANCELLED:
-            case BOOKING.BOOKING_STATUS.CANCELLED_USER:
-            case BOOKING.BOOKING_STATUS.CANCELLED_VENDOR:
-            case BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT:
                 return <Badge variant="outline" className="text-red-500 border-red-200">Đã hủy</Badge>
+            case BOOKING.BOOKING_STATUS.CANCELLED_USER:
+                return <Badge variant="outline" className="text-purple-500 border-purple-200">Người dùng hủy</Badge>
+            case BOOKING.BOOKING_STATUS.CANCELLED_VENDOR:
+                return <Badge variant="outline" className="text-orange-500 border-orange-200">Nhà cung cấp hủy</Badge>
+            case BOOKING.BOOKING_STATUS.CANCELLED_TIMEOUT:
+                return <Badge variant="outline" className="text-gray-500 border-gray-200">Hủy do hết thời gian</Badge>
             case BOOKING.BOOKING_STATUS.PENDING:
                 return <Badge variant="outline" className="text-yellow-500 border-yellow-200">Chờ xác nhận</Badge>
+            case BOOKING.BOOKING_STATUS.NOT_PAID:
+                return <Badge variant="outline" className="text-pink-500 border-pink-200">Chưa thanh toán</Badge>
             default:
                 return <Badge>{status}</Badge>
         }
