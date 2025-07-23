@@ -173,7 +173,7 @@ export default function NotificationDropdown({
                             <h3 className="text-lg font-semibold text-gray-900">Thông báo</h3>
                             {unreadCount > 0 && (
                                 <Badge variant="outline" className="ml-2 text-xs ">
-                                    {unreadCount} mới
+                                    {unreadCount}
                                 </Badge>
                             )}
                         </div>
