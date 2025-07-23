@@ -34,7 +34,6 @@ export default async function Orders({ searchParams }: OrdersProps) {
 
     const currentPage = Number(page) || 1;
     const invoices = await getInvoices(session.user.id, currentPage, 10, status, term) as IInvoiceListResponse;
-    console.log(invoices)
 
     if (!invoices || !invoices.data) {
         return <div>No invoices found.</div>;
@@ -47,7 +46,6 @@ export default async function Orders({ searchParams }: OrdersProps) {
         booking = await getBookingByPaymentOSId(id) as IBookingResponseModel
     }
     const bookingData = booking?.data as unknown as IBooking || null
-    console.log(bookingData)
 
     return (
         <>

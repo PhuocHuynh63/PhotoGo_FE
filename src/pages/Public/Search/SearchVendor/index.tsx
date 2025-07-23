@@ -70,7 +70,7 @@ export default function SearchVendor({ vendors, categories, locations }: { vendo
 
   return (
     <motion.div
-      className="bg-gray-50 min-h-screen"
+      className="bg-gray-50 min-h-screen mt-14"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

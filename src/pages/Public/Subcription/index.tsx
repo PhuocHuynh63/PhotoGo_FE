@@ -57,7 +57,7 @@ const PricingPage = ({ session, isMembership }: { session: METADATA.ISession, is
         }
         // Assuming the service returns an object with a data array, e.g., { data: [...] }
         const response = await subscriptionService.getSubscriptionPlans(params) as any
-        console.log(response)
+        // console.log(response)
         // --- This mapping adds UI-specific details to your API data ---
         const uiDataMap: { [key: string]: any } = {
           'Membership': {
@@ -72,7 +72,7 @@ const PricingPage = ({ session, isMembership }: { session: METADATA.ISession, is
             recommended: false,
           }
         };
-        console.log(uiDataMap)
+        // console.log(uiDataMap)
         // Assuming response.data is the array of subscription plans
         const formattedPackages = (response.data.data || [response]).map((plan: any) => ({
           ...plan,

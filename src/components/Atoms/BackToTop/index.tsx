@@ -47,7 +47,6 @@ export default function BackToTop({ containerRef, size = 64 }: BackToTopProps) {
       setVisible(scrollTop > 100) // Reduced threshold to make it appear sooner
 
       // For debugging purposes only
-      // console.log('Scroll position:', scrollTop, 'Visible:', scrollTop > 100)
     }
 
     // Set default container ref if containerRef is not provided

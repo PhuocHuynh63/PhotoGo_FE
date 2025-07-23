@@ -15,7 +15,7 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCart, useFetchCartByUserId } from "@stores/cart/selectors";
 
 import { AvatarWithBorder } from "../AvatarBorder";
@@ -24,9 +24,10 @@ import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
 import MobileNotificationButton from "../MobileNotificationButton";
 import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
+import CampaignsMarquee from "../CampaignMarquee";
+import { useCampaigns } from "@utils/hooks/useCampaign";
 
 export default function Header({ user, servicePackages }: PAGES.IHeader) {
-    const router = useRouter();
     const cartState = useCart()
     const fetchCartByUserId = useFetchCartByUserId();
     //#region States
@@ -36,6 +37,20 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
     const [isOpenCart, setIsOpenCart] = useState(false);
     const pathname = usePathname();
     //#endregion
+
+    const {
+        campaigns,
+        fetchCampaigns,
+    } = useCampaigns({
+        current: 1,
+        pageSize: 100,
+        sortBy: "created_at",
+        sortDirection: "asc",
+        status: "true",
+        startDate: "01/01/2025",
+        endDate: "31/12/2026",
+        showAll: "false",
+    });
 
     //#region Mock Data
     const cartItems = cartState?.data || [];
@@ -52,9 +67,12 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
         }
     }, [user?.id, fetchCartByUserId]);
 
+    useEffect(() => {
+        fetchCampaigns();
+        setIsLoaded(true);
+    }, [pathname]);
+
     //#endregion
-
-
 
     //#region Event Handlers
     const handleOpenNotification = () => {
@@ -384,84 +402,92 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
     //#endregion
 
     return (
-        <header
-            className={`header p-4 px-4 md:px-8 w-full rounded-b-sm sticky top-0 z-40 transition-all duration-300 ease-in-out  bg-white shadow-xl`}
-        >
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 1 }}
+        <>
+
+            <header
+                className={`header p-4 px-4 md:px-8 w-full rounded-b-sm sticky top-0 z-40 transition-all duration-300 ease-in-out  bg-white shadow-xl`}
             >
-                <div className="flex justify-between items-center">
-                    {/* Logo */}
-                    <div>
-                        <Link href={ROUTES.PUBLIC.HOME}>
-                            <Image
-                                src={"https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"}
-                                alt="logo"
-                                width={60}
-                                height={60}
-                                style={{ width: "auto", height: "auto" }}
-                                priority
-                            />
-                        </Link>
-                    </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 1 }}
+                >
+                    <div className="flex justify-between items-center">
+                        {/* Logo */}
+                        <div>
+                            <Link href={ROUTES.PUBLIC.HOME}>
+                                <Image
+                                    src={"https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_black_otpabv.svg"}
+                                    alt="logo"
+                                    width={60}
+                                    height={60}
+                                    style={{ width: "auto", height: "auto" }}
+                                    priority
+                                />
+                            </Link>
+                        </div>
 
-                    {/* Desktop Navigation */}
-                    {renderDesktopNavigation()}
+                        {/* Desktop Navigation */}
+                        {renderDesktopNavigation()}
 
-                    {/* Right Section */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            className="md:hidden p-2 rounded-md hover:bg-gray-100"
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                        {/* Right Section */}
+                        <div className="flex items-center gap-4">
+                            <button
+                                className="md:hidden p-2 rounded-md hover:bg-gray-100"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             >
-                                {isMobileMenuOpen ? (
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                ) : (
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                )}
-                            </svg>
-                        </button>
+                                <svg
+                                    className="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    {isMobileMenuOpen ? (
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    ) : (
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 6h16M4 12h16M4 18h16"
+                                        />
+                                    )}
+                                </svg>
+                            </button>
 
-                        <div className="hidden md:block">
-                            {user ? renderUserMenu() : (
-                                <div className="flex gap-2">
-                                    {/* <Link href={ROUTES.AUTH.REGISTER}>
+                            <div className="hidden md:block">
+                                {user ? renderUserMenu() : (
+                                    <div className="flex gap-2">
+                                        {/* <Link href={ROUTES.AUTH.REGISTER}>
                                         <Button className="bg-primary text-white">Đăng ký</Button>
                                     </Link> */}
-                                    <Link href={ROUTES.AUTH.LOGIN}>
-                                        <Button className="bg-primary text-white relative group overflow-hidden">
-                                            <span className="relative z-10">Đăng nhập</span>
-                                            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
-                                        </Button>
-                                    </Link>
-                                </div>
-                            )}
+                                        <Link href={ROUTES.AUTH.LOGIN}>
+                                            <Button className="bg-primary text-white relative group overflow-hidden">
+                                                <span className="relative z-10">Đăng nhập</span>
+                                                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </motion.div>
+                </motion.div>
 
-            {/* Mobile Menu */}
-            {renderMobileMenu()}
-        </header>
+                {/* Mobile Menu */}
+                {renderMobileMenu()}
+            </header>
+
+            {/* PHẦN MARQUEE */}
+            <div className="fixed top-[80px] left-0 w-full z-40">
+                <CampaignsMarquee campaigns={campaigns || []} />
+            </div>
+        </>
     );
 }

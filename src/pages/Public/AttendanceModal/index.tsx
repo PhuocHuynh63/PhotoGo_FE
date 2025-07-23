@@ -121,7 +121,6 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
 
             // Call API để điểm danh
             const response = await attendanceService.checkIn(userId)
-            console.log(response)
 
             // Chỉ cập nhật UI khi điểm danh thành công
             if (response && (response as ApiResponse)?.statusCode === 201) {
@@ -146,11 +145,11 @@ const AttendanceBoard = ({ isLoggedIn, userId, onClose, attendance }: Attendance
 
                 // Kiểm tra nếu hoàn thành cả tuần (7 ngày)
                 if (newCheckedDaysInWeek === 7) {
-                    console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
-                    console.log("✨ Bạn đã hoàn thành toàn bộ tuần!")
-                    console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
-                    console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
-                    console.log("🎯 Thành tích mới: Weekly Photography Master!")
+                    // console.log("🎉📸 CHÚC MỪNG NHIẾP ẢNH GIA XUẤT SẮC! 📸🎉")
+                    // console.log("✨ Bạn đã hoàn thành toàn bộ tuần!")
+                    // console.log("🏆 Phần thưởng đặc biệt: Unlock Premium Features!")
+                    // console.log("📷 Hãy tiếp tục hành trình sáng tạo của mình!")
+                    // console.log("🎯 Thành tích mới: Weekly Photography Master!")
 
                     setTimeout(() => {
                         setShowCelebration(true)

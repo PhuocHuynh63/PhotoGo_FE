@@ -121,7 +121,6 @@ const ProfileAttendanceBoard = ({ attendance, checkAttendance, isLoggedIn, userI
     const [localAttendanceData, setLocalAttendanceData] = useState<AttendanceRecord[] | null>(null);
     const [consecutiveDays, setConsecutiveDays] = useState(0);
     const router = useRouter();
-    console.log(isLoggedIn)
     // Cập nhật consecutiveDays khi attendance thay đổi - tính số ngày đã điểm danh trong tuần
     useEffect(() => {
         if (!isLoggedIn || !userId) return;

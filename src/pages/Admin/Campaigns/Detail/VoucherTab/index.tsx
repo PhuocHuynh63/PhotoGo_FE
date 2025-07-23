@@ -57,8 +57,8 @@ export default function VoucherTab({ campaignId }: { campaignId: string }) {
             });
 
             const res: any = await campaignService.getVoucherOfCampaign(campaignId, params);
-            console.log('Assigned vouchers response:', res);
-            console.log('Assigned vouchers data:', res?.data?.vouchers);
+            // console.log('Assigned vouchers response:', res);
+            // console.log('Assigned vouchers data:', res?.data?.vouchers);
             setAssignedVouchers(res?.data?.vouchers || []);
         } catch (error) {
             console.error('Lỗi khi tải voucher đã gán:', error);
@@ -68,8 +68,8 @@ export default function VoucherTab({ campaignId }: { campaignId: string }) {
     const fetchAvailableVouchers = async () => {
         try {
             const res: any = await campaignService.getVoucherAvailable();
-            console.log('Available vouchers response:', res);
-            console.log('Available vouchers data:', res?.data);
+            // console.log('Available vouchers response:', res);
+            // console.log('Available vouchers data:', res?.data);
             setAvailableVouchers(res?.data || []);
         } catch (error) {
             console.error('Lỗi khi tải voucher khả dụng:', error);
