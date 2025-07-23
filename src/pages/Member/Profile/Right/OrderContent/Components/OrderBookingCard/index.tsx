@@ -27,8 +27,13 @@ import { BOOKING } from "@constants/booking";
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat";
 import { IInvoiceModel } from "@models/invoice/common.model";
 import WriteReviewDialog from "../../../../../../../components/Molecules/WriteReviewDialog";
+import paymentService from "@services/payment";
 
 export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean, onReviewSuccess: () => void }) {
+    console.log('invoice', invoice);
+    console.log('booking', booking);
+
+
     const router = useRouter();
     const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
     const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)
@@ -107,6 +112,18 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
             toast.error('Lỗi khi xem chi tiết');
         }
     };
+
+    const handlePaymentRemaining = async () => {
+        try {
+            const response = await paymentService.paymentRemaining(invoice.id) as any;
+
+            if (response.statusCode === 201 || response.statusCode === 200) {
+                window.open(response.data.checkoutUrl, '_blank');
+            }
+        } catch (error) {
+            console.error('Error payment remaining:', error);
+        }
+    }
 
     /**
      * Object review
@@ -290,6 +307,13 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
                                 </Dialog>
                             </>
                         )}
+
+                        {(booking.status === BOOKING.BOOKING_STATUS.IN_PROGRESS || booking.status === BOOKING.BOOKING_STATUS.COMPLETED)
+                            && booking.depositAmount !== '100.00' && invoice?.status === BOOKING.BOOKING_STATUS.PAID && (
+                                <Button variant="outline" className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white" onClick={() => handlePaymentRemaining()}>
+                                    Thanh toán số tiền còn lại
+                                </Button>
+                            )}
 
                         {booking.status === BOOKING.BOOKING_STATUS.COMPLETED && invoice?.isReview && (
                             <WriteReviewDialog
