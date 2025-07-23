@@ -163,7 +163,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
         return cartItems
             .filter((item: ICOMPONENTS.CartItem) => selectedItems.includes(item.id))
             ?.reduce((total: number, item: ICOMPONENTS.CartItem) => {
-                const price = parseFloat(item.serviceConcept.price) || 0;
+                const price = parseFloat(item.finalPrice) || 0;
                 return total + price;
             }, 0);
     }
@@ -188,13 +188,13 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
 
     const handleCheckout = () => {
         if (selectedItems.length !== 1) {
-            toast.error("Vui lòng chọn đúng 1 dịch vụ để thanh toán");
+            toast.error("Vui lòng chọn đúng 1 gói dịch vụ để thanh toán");
             return;
         }
 
         const selectedItem = cartItems.find((item: ICOMPONENTS.CartItem) => item.id === selectedItems[0]);
         if (!selectedItem) {
-            toast.error("Không tìm thấy dịch vụ đã chọn");
+            toast.error("Không tìm thấy gói dịch vụ đã chọn");
             return;
         }
 
@@ -297,7 +297,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                                                                         {renderItemDetails(item)}
                                                                     </div>
                                                                     <div className="flex items-center gap-2 justify-center">
-                                                                        <div className="font-medium">{formatPrice(parseFloat(item.serviceConcept.price))}</div>
+                                                                        <div className="font-medium">{formatPrice(parseFloat(item.finalPrice))}</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -356,7 +356,7 @@ export default function ShoppingCartModal({ isOpen, onClose, servicePackages }: 
                                     onClick={handleCheckout}
                                     disabled={selectedItems.length !== 1}
                                 >
-                                    Thanh toán
+                                    Thanh toán ({formatPrice(calculateTotal())})
                                 </Button>
                             </div>
                         </div>

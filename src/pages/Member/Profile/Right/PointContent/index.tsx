@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { HelpCircle } from "lucide-react"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@components/Atoms/ui/tooltip"
 import Button from "@components/Atoms/Button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Molecules/Tabs"
 import { motion } from 'framer-motion'
@@ -108,7 +109,7 @@ export default function PointsPage({ point, pointTransaction, pagination, onPage
                 <div className="text-center py-12">
                     <div className="flex justify-center">
                         <Image
-                            src="/placeholder.svg?height=120&width=120"
+                            src="https://res.cloudinary.com/dodtzdovx/image/upload/v1753246902/empty-wallet-remove-svgrepo-com_oy37ui.svg"
                             alt="Empty jar"
                             width={120}
                             height={120}
@@ -184,11 +185,21 @@ export default function PointsPage({ point, pointTransaction, pagination, onPage
                 </div>
 
                 {/* Help button */}
-                <Button
-                    className="absolute top-2 right-2 text-white/80 hover:text-white hover:bg-white/10"
-                >
-                    <HelpCircle className="h-5 w-5" />
-                </Button>
+                <TooltipProvider>
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                className="absolute top-2 right-2 text-white/80 hover:text-white hover:bg-white/10"
+                            >
+                                <HelpCircle className="h-5 w-5" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                            Thông tin về điểm thưởng
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
 
                 {/* Content */}
                 <div className="relative text-center text-white">

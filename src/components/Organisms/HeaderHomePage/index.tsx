@@ -55,8 +55,6 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
     //#region Mock Data
     const cartItems = cartState?.data || [];
     //#endregion
-    console.log(campaigns)
-    // Removed getCampaigns and its usage
 
     //#region Effects
     useEffect(() => {
