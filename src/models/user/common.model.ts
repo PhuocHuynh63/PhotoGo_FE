@@ -1,3 +1,4 @@
+import { SubscriptionModel } from '@models/subscription/common.model';
 import { RoleModel } from './../role/common.model';
 import { z } from "zod";
 
@@ -17,7 +18,7 @@ export const UserModel = z.object({
     role: RoleModel,
     rank: z.string(),
     status: z.string(),
-    subscription: z.string().optional(),
+    subscription: SubscriptionModel,
     updatedAt: z.string(),
 })
 export type IUser = z.TypeOf<typeof UserModel>

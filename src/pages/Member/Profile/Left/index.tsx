@@ -4,7 +4,8 @@ import { Card, CardContent, CardFooter } from "@components/Atoms/Card"
 import {
     ChevronRight, Ticket, Wallet, Star, ShoppingBag,
     MessageSquare, Heart, KeyRound,
-    Calendar
+    Calendar,
+    Crown
 } from "lucide-react"
 import { PAGES } from '../../../../types/IPages'
 import Button from "@components/Atoms/Button"
@@ -19,6 +20,7 @@ import Link from "next/link"
 const menuItems = [
     { tab: "promotions", label: "Mã ưu đãi", icon: Ticket },
     { tab: "points", label: "Điểm tích lũy", icon: Wallet },
+    { tab: "subscription", label: "Gói dịch vụ", icon: Crown },
     { tab: "rewards", label: "PhotoGo Rewards", icon: Star },
     { tab: "attendance", label: "Điểm danh", icon: Calendar },
     { tab: "orders", label: "Đơn hàng", icon: ShoppingBag },
@@ -64,8 +66,9 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
         'favorites': ROUTES.USER.PROFILE.FAVORITES,
         'orders': ROUTES.USER.PROFILE.ORDERS,
         'reviews': ROUTES.USER.PROFILE.REVIEWS,
-        'points': '/profile/points', // Add missing routes
-        'attendance': '/profile/attendance', // Add missing routes
+        'points': ROUTES.USER.PROFILE.POINTS,
+        'attendance': ROUTES.USER.PROFILE.ATTENDANCE,
+        'subscription': ROUTES.USER.PROFILE.SUBSCRIPTION,
     };
 
     return (
