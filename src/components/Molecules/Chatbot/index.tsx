@@ -117,7 +117,7 @@ const Chatbot = () => {
 
     return (
         <div ref={chatContainerRef} className={clsx(
-            'fixed z-[1000] bottom-0 left-5 right-5',
+            'fixed z-1 bottom-0 left-5 right-5',
             'flex flex-col items-end',
             'md:bottom-5 md:left-auto md:w-auto'
         )}>

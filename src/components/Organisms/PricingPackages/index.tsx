@@ -7,6 +7,10 @@ import Button from '@components/Atoms/Button'
 import PaymentModal from '@pages/Public/Subcription/components/ModalPayment'
 import { Check, Star, Zap, Crown, Camera } from 'lucide-react'
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
+import { useUser } from '@stores/user/selectors'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@routes'
+import { IUser } from '@models/user/common.model'
 
 interface SubscriptionData {
     id: string;
@@ -35,10 +39,15 @@ const PricingPackage = ({
     subscriptions,
     numberOfPackages = 3,
 }: PricingPackageProps) => {
+    const router = useRouter();
+    const user = useUser() as IUser;
 
-    const [isModalOpen, setModalOpen] = useState<boolean>(false);
     const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionData | null>(null);
 
+    /**
+     * Handle open modal
+     */
+    const [isModalOpen, setModalOpen] = useState<boolean>(false);
     const handleOpenModal = (subscription: SubscriptionData) => {
         setSelectedSubscription(subscription);
         setModalOpen(true);
@@ -48,6 +57,15 @@ const PricingPackage = ({
         setModalOpen(false);
         setSelectedSubscription(null);
     };
+    //------------------------------End------------------------------//
+
+    /**
+     * Handle manage subscription
+     */
+    const handleManageSubscription = () => {
+        router.push(ROUTES.USER.PROFILE.SUBSCRIPTION);
+    }
+    //------------------------------End------------------------------//
 
     // Icon mapping for different plan types
     const getPlanIcon = (planType: string) => {
@@ -157,18 +175,33 @@ const PricingPackage = ({
                     </CardContent>
 
                     <CardFooter className="p-6 lg:p-8 pt-0">
-                        <Button
-                            className={cn(
-                                "w-full py-3 lg:py-4 text-sm lg:text-base font-semibold transition-all duration-300",
-                                "hover:scale-105 focus:outline-none focus:ring-4",
-                                pkg.recommended
-                                    ? "bg-white text-blue-600 hover:bg-gray-50 focus:ring-white/20 shadow-lg"
-                                    : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300 shadow-lg"
-                            )}
-                            onClick={() => handleOpenModal(pkg)}
-                        >
-                            {pkg.recommended ? 'Chọn Gói Này' : 'Chọn Gói Này'}
-                        </Button>
+                        {user?.subscription?.id ? (
+                            <Button
+                                className={cn(
+                                    "w-full py-3 lg:py-4 text-sm lg:text-base font-semibold transition-all duration-300",
+                                    "hover:scale-105 focus:outline-none focus:ring-4",
+                                    pkg.recommended
+                                        ? "bg-white text-blue-600 hover:bg-gray-50 focus:ring-white/20 shadow-lg"
+                                        : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300 shadow-lg"
+                                )}
+                                onClick={handleManageSubscription}
+                            >
+                                Quản lý gói dịch vụ của bạn
+                            </Button>
+                        ) : (
+                            <Button
+                                className={cn(
+                                    "w-full py-3 lg:py-4 text-sm lg:text-base font-semibold transition-all duration-300",
+                                    "hover:scale-105 focus:outline-none focus:ring-4",
+                                    pkg.recommended
+                                        ? "bg-white text-blue-600 hover:bg-gray-50 focus:ring-white/20 shadow-lg"
+                                        : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-300 shadow-lg"
+                                )}
+                                onClick={() => handleOpenModal(pkg)}
+                            >
+                                Chọn Gói Này
+                            </Button>
+                        )}
                     </CardFooter>
                 </Card>
             ))}

@@ -9,14 +9,13 @@ import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
 import { useSetAddressLocation, useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
-import { useSetSession } from '@stores/user/selectors';
+import { useSetUser } from '@stores/user/selectors';
 import { useSearchParams } from 'next/navigation';
-import Chatbot from '@components/Molecules/Chatbot';
 
 const VendorDetailLayoutPage = ({
     children,
     vendor,
-    session,
+    user,
     concept,
     review,
 }: PAGES.IVendorDetailPageProps) => {
@@ -51,25 +50,25 @@ const VendorDetailLayoutPage = ({
      * @returns {void}
      */
     const setVendor = useSetVendor();
-    const setSession = useSetSession();
+    const setUser = useSetUser();
     const setConceptImages = useSetServiceConceptImages();
     const setReviews = useSetReviews();
     const reset = () => {
         setVendor(null);
-        setSession(null);
+        setUser(null);
         setConceptImages([]);
         setAddressLocation({ id: '', address: '' });
     }
 
     useEffect(() => {
         setVendor(vendor);
-        setSession(session);
+        setUser(user);
         setConceptImages(concept.data?.data || []);
         setReviews(review);
         return () => {
             reset();
         }
-    }, [vendor, session, concept, setVendor, setSession, setConceptImages]);
+    }, [vendor, user, concept, setVendor, setUser, setConceptImages]);
     //---------------------------End---------------------------//
 
     return (
@@ -104,7 +103,7 @@ const VendorDetailLayoutPage = ({
                     >
                         <VendorContactInformation />
                         <GoogleMapVendor />
-                        <SimilarVendor />
+                        {/* <SimilarVendor /> */}
                     </motion.div>
                 </div>
             </div>
