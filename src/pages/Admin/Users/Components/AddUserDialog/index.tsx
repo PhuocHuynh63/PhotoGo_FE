@@ -61,8 +61,8 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
     const userData: IAdminCreateUserRequest = {
       fullName: newUser.fullName.trim(),
       email: newUser.email.trim(),
-      passwordHash: newUser.password,
-      phoneNumber: newUser.phoneNumber.trim(),
+      password: newUser.password,
+      //phoneNumber: newUser.phoneNumber.trim(),
       roleId: newUser.role,
       status: newUser.status,
     };
@@ -171,7 +171,7 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
                 />
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700">
                   Số điện thoại
                 </Label>
@@ -182,7 +182,7 @@ export default function AddUserDialog({ open, onClose, onSuccess }: AddUserDialo
                   placeholder="0123456789"
                   className="h-11 border-gray-200 rounded-xl focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 
