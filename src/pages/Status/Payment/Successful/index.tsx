@@ -73,8 +73,10 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     id: payosId || '',
                     userId: userId || ''
                 };
-                await subscriptionService.subscriptionSuccess(data);
-                setLoadingApi(false); // API call done, allow rendering the subscription success page
+                const res = await subscriptionService.subscriptionSuccess(data);
+                console.log(res)
+
+                setLoadingApi(true); // API call done, allow rendering the subscription success page
             } else {
                 router.push(ROUTES.PUBLIC.HOME);
             }
