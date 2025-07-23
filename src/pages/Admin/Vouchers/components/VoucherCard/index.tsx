@@ -146,12 +146,12 @@ export default function VoucherCard({ voucher, onEdit }: VoucherCardProps) {
                             <span className="font-medium">{voucher?.usedCount}</span>
                         </div>
                     )}
-                    {voucher?.point && (
+                    {voucher?.type === 'điểm' && (
                         <div className="flex items-center justify-between text-xs">
                             <span className="text-gray-600">Điểm yêu cầu:</span>
                             <span className="font-medium flex items-center gap-1">
                                 <LucideIcon name="Star" iconSize={12} className="text-yellow-500" />
-                                {voucher?.point}
+                                {voucher?.point ?? 0}
                             </span>
                         </div>
                     )}

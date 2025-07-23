@@ -31,6 +31,12 @@ const userService = {
         return await http.get<IAdminGetUsersResponse>(`/users${query}`, {
             cache: 'no-store'
         });
+    },
+
+    lockUser: async (userId: string, status: string) => {
+        return await http.patch(`/users/${userId}/status`, { status }, {
+            cache: 'no-store'
+        })
     }
 }
 

@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 async function getVouchers({ searchParams }: { searchParams: any }) {
     const resolvedParams = await searchParams;
     const params: Record<string, any> = {};
-    if (typeof resolvedParams.q === "string") params.q = resolvedParams.q;
+    if (typeof resolvedParams.term === "string") params.term = resolvedParams.term;
     if (typeof resolvedParams.status === "string") params.status = resolvedParams.status;
     if (typeof resolvedParams.type === "string") params.type = resolvedParams.type;
     if (typeof resolvedParams.discountType === "string") params.discountType = resolvedParams.discountType;

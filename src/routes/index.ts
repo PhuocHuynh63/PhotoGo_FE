@@ -39,6 +39,9 @@ const USER = {
         FAVORITES: '/profile/favorites',
         ORDERS: '/profile/orders',
         REVIEWS: '/profile/reviews',
+        POINTS: '/profile/points',
+        ATTENDANCE: '/profile/attendance',
+        SUBSCRIPTION: '/profile/subscription',
     },
     CHECKOUT: '/checkout/:id',
     CHAT_ROOT: '/chat',
@@ -78,6 +81,7 @@ const VENDOR = {
         MY_TICKETS: '/vendor/support/history',
         FAQ: '/vendor/support/faq',
     },
+    SUBSCRIPTION: '/vendor/subscription',
 };
 
 const ADMIN = {
@@ -100,7 +104,6 @@ const ADMIN = {
         DETAIL: '/admin/vouchers/:slug',
     },
     FINANCE: {
-        ROOT: '/admin/finance',
         PAYMENTS: {
             LIST: '/admin/finance/payments',
             DETAIL: '/admin/finance/payments/:slug',
@@ -110,14 +113,14 @@ const ADMIN = {
             DETAIL: '/admin/finance/transactions/:slug',
         },
     },
+    POINTS: {
+        LIST: '/admin/points',
+        DETAIL: '/admin/points/:slug',
+    },
     SETTINGS: {
-        ROOT: '/admin/settings',
         CATEGORIES: '/admin/settings/categories',
         SERVICE_TYPES: '/admin/settings/serviceType',
-        POLICIES: '/admin/settings/policies',
-        LOYALTY: '/admin/settings/loyalty',
         SUBSCRIPTIONS: '/admin/settings/subscriptions',
-        COMMISSION: '/admin/settings/commission',
     },
 };
 

@@ -2,7 +2,7 @@ import { IPagination } from "@models/metadata";
 import { IPoint, IPointTransaction } from "@models/point/common.model";
 import { IPointResponse, IPointTransactionResponse } from "@models/point/response.model";
 import PointsPage from "@pages/Member/Profile/Right/PointContent"
-import pointService from "@services/point";
+import { pointService } from "@services/point";
 
 async function getPoint() {
     const response = await pointService.getPoint();

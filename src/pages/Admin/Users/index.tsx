@@ -13,6 +13,9 @@ import { AvatarWithBorder } from "@components/Organisms/AvatarBorder";
 import type { Rank } from "@components/Organisms/AvatarBorder/rankStyles";
 import { useRouter, useSearchParams } from "next/navigation";
 import AddUserDialog from "./Components/AddUserDialog";
+import userService from "@services/user";
+import { toast } from "react-hot-toast";
+import ConfirmDialog from "@components/Atoms/ConfirmDialog";
 
 const ROLE_OPTIONS = [
   { value: 'Tất cả', icon: 'User', name: 'Tất cả' },
@@ -72,6 +75,14 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
   const [tempSortDirection, setTempSortDirection] = useState(sortDirectionValue);
   const [showFilters, setShowFilters] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
+  // State loading cho từng user khi thao tác lock/unlock
+  const [lockingUserIds, setLockingUserIds] = useState<string[]>([]);
+  // State cho popup xác nhận
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    user?: IUser;
+    nextStatus?: string;
+  }>({ open: false });
 
   // Đồng bộ state tạm với URL khi URL thay đổi
   useEffect(() => {
@@ -157,6 +168,54 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             --
           </span>
         );
+    }
+  };
+
+  // Hàm xử lý lock/unlock user
+  const handleToggleUserStatus = async (user: IUser) => {
+    if (!user?.id) return;
+    setLockingUserIds((prev) => [...prev, user.id]);
+    const currentStatus = user.status?.trim().toLowerCase();
+    const nextStatus = currentStatus === "bị tạm ngưng" ? "hoạt động" : "bị tạm ngưng";
+    try {
+      await userService.lockUser(user.id, nextStatus);
+      toast.success(
+        nextStatus === "hoạt động"
+          ? "Đã cho phép người dùng hoạt động trở lại!"
+          : "Đã tạm ngưng người dùng!"
+      );
+      router.refresh();
+    } catch (err) {
+      toast.error("Có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      setLockingUserIds((prev) => prev.filter((id) => id !== user.id));
+    }
+  };
+
+  // Hàm mở popup xác nhận
+  const handleOpenConfirm = (user: IUser) => {
+    const currentStatus = user.status?.trim().toLowerCase();
+    const nextStatus = currentStatus === "bị tạm ngưng" ? "hoạt động" : "bị tạm ngưng";
+    setConfirmDialog({ open: true, user, nextStatus });
+  };
+
+  // Hàm xác nhận đổi trạng thái
+  const handleConfirmChangeStatus = async () => {
+    if (!confirmDialog.user?.id || !confirmDialog.nextStatus) return;
+    setLockingUserIds((prev) => [...prev, confirmDialog.user!.id]);
+    try {
+      await userService.lockUser(confirmDialog.user.id, confirmDialog.nextStatus);
+      toast.success(
+        confirmDialog.nextStatus === "hoạt động"
+          ? "Đã cho phép người dùng hoạt động trở lại!"
+          : "Đã tạm ngưng người dùng!"
+      );
+      setConfirmDialog({ open: false });
+      router.refresh();
+    } catch (err) {
+      toast.error("Có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      setLockingUserIds((prev) => prev.filter((id) => id !== confirmDialog.user!.id));
     }
   };
 
@@ -264,10 +323,16 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
           <Button
             variant="outline"
             size="sm"
-            title="Khóa/Mở khóa người dùng"
+            title={user.status?.trim().toLowerCase() === 'bị tạm ngưng' ? 'Cho phép hoạt động' : 'Tạm ngưng người dùng'}
             className="h-8 w-8 p-0 hover:bg-gray-50"
+            onClick={() => handleOpenConfirm(user)}
+            disabled={lockingUserIds.includes(user.id)}
           >
-            {lockButton(user.status)}
+            {lockingUserIds.includes(user.id) ? (
+              <LucideIcon name="Loader2" iconSize={16} className="animate-spin text-blue-500" />
+            ) : (
+              lockButton(user.status)
+            )}
           </Button>
           <Button
             variant="outline"
@@ -348,8 +413,8 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${showFilters
-                  ? 'bg-blue-50 border-blue-200 text-blue-700'
-                  : 'border-gray-200 hover:bg-gray-50'
+                ? 'bg-blue-50 border-blue-200 text-blue-700'
+                : 'border-gray-200 hover:bg-gray-50'
                 }`}
             >
               <LucideIcon name="Filter" iconSize={16} />
@@ -488,6 +553,17 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             setOpenCreate(false);
             router.refresh();
           }}
+        />
+        {/* Popup xác nhận đổi trạng thái */}
+        <ConfirmDialog
+          isOpen={confirmDialog.open}
+          title={confirmDialog.nextStatus === 'hoạt động' ? 'Cho phép hoạt động' : 'Tạm ngưng người dùng'}
+          message={`Bạn có chắc chắn muốn ${confirmDialog.nextStatus === 'hoạt động' ? 'cho phép người dùng này hoạt động trở lại' : 'tạm ngưng người dùng này'}?`}
+          confirmText="Xác nhận"
+          cancelText="Hủy"
+          onConfirm={handleConfirmChangeStatus}
+          onCancel={() => setConfirmDialog({ open: false })}
+          type={confirmDialog.nextStatus === 'hoạt động' ? 'info' : 'danger'}
         />
       </div>
     </div>
