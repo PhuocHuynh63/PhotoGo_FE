@@ -65,8 +65,11 @@ const VoucherCard = ({ voucher, selectedVoucher, onSelect }: {
             </div>
             {/* Voucher Content */}
             <div className="mb-2 sm:mb-4 break-words w-full max-w-full">
-                <h4 className={`font-semibold text-sm sm:text-base mb-1 sm:mb-2 ${voucher?.is_valid ? "text-gray-900" : "text-gray-500"} break-words w-full max-w-full`}>{voucher?.voucher.description}</h4>
-                <p className={`text-xs sm:text-sm leading-relaxed ${voucher?.is_valid ? "text-gray-600" : "text-gray-400"} break-words w-full max-w-full`}>{voucher?.voucher.description}</p>
+                <h4 className={`font-semibold text-sm sm:text-base mb-1 sm:mb-2 ${voucher?.is_valid ? "text-gray-900" : "text-gray-500"} break-words w-full max-w-full`}>
+                    <div
+                        dangerouslySetInnerHTML={{ __html: voucher?.voucher.description || '' }}
+                    />
+                </h4>
             </div>
             {/* Voucher Meta */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs mb-2 sm:mb-3 gap-2 w-full max-w-full">
