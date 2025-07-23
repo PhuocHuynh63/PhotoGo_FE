@@ -11,7 +11,7 @@ import { Edit } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import Subscription from "./Components/Subscription"
+import Subscription from "@components/Atoms/Subscription"
 
 interface UpdateUserForm {
     fullName: string
