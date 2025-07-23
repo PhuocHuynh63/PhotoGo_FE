@@ -9,6 +9,7 @@ import { Button } from "@components/Atoms/ui/button"
 import { useAllCampaignAndVoucher } from "@utils/hooks/useCampaign"
 import { campaignService } from "@services/campaign"
 import { toast } from "react-hot-toast"
+import { IAddUserToCampaignModel } from "@models/campaign/reponse.model"
 
 
 const formatCurrency = (amount: number) => {
@@ -56,9 +57,13 @@ export default function CampaignVouchers({ userId }: { userId: string }) {
     const handleClaimVoucher = async (campaignId: string, userId: string) => {
         try {
             setClaimedVouchers((prev) => new Set([...prev, campaignId]))
-            const response = await campaignService.addUserToCampaign(campaignId, userId)
-            toast.success("Nhận voucher thành công!")
-            console.log(response)
+            const response = await campaignService.addUserToCampaign(campaignId, userId) as IAddUserToCampaignModel
+            if (response.statusCode === 200) {
+                toast.success("Nhận voucher thành công!")
+            } else {
+                toast.error(response.message)
+            }
+            refetch()
         } catch (error: unknown) {
             toast.error("Có lỗi xảy ra khi nhận voucher!")
             setClaimedVouchers((prev) => {

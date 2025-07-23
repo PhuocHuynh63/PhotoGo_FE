@@ -50,3 +50,13 @@ export const VoucherOfCampaignModel = z.object({
 });
 
 export type IVoucherOfCampaignModel = z.infer<typeof VoucherOfCampaignModel>;
+
+export const AddUserToCampaignModel = z.object({
+  statusCode: z.number(),
+  message: z.string(),
+  data: z.object({
+    data: z.array(VoucherModel),
+  }),
+});
+
+export type IAddUserToCampaignModel = z.infer<typeof AddUserToCampaignModel>;
