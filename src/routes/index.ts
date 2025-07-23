@@ -81,6 +81,7 @@ const VENDOR = {
         MY_TICKETS: '/vendor/support/history',
         FAQ: '/vendor/support/faq',
     },
+    SUBSCRIPTION: '/vendor/subscription',
 };
 
 const ADMIN = {
