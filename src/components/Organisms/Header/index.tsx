@@ -189,10 +189,10 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                     <DropdownMenuSeparator />
                     <Link href={
                         user?.role?.name === ROLE.CUSTOMER
-                            ? ROUTES.USER.PROFILE.INFO
+                            ? ROUTES.USER.PROFILE.ROOT
                             : user?.role?.name === ROLE.VENDOR_OWNER
                                 ? ROUTES.VENDOR.PROFILE
-                                : ROUTES.USER.PROFILE.INFO
+                                : ROUTES.USER.PROFILE.ROOT
                     }>
                         <DropdownMenuItem icon="UserCircle">
                             <span>Thông tin cá nhân</span>
@@ -295,11 +295,11 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                                 <div className="p-4 border-b">
                                     <div className="grid grid-cols-4 gap-4">
                                         <Link
-                                            href={ROUTES.USER.PROFILE.INFO}
+                                            href={ROUTES.USER.PROFILE.ROOT}
                                             onClick={() => setIsMobileMenuOpen(false)}
-                                            className={`flex flex-col items-center gap-1 ${pathname === ROUTES.USER.PROFILE.INFO ? "text-primary" : ""}`}
+                                            className={`flex flex-col items-center gap-1 ${pathname === ROUTES.USER.PROFILE.ROOT ? "text-primary" : ""}`}
                                         >
-                                            <div className={`w-12 h-12 rounded-full ${pathname === ROUTES.USER.PROFILE.INFO ? "bg-primary/10" : "bg-gray-100"} flex items-center justify-center`}>
+                                            <div className={`w-12 h-12 rounded-full ${pathname === ROUTES.USER.PROFILE.ROOT ? "bg-primary/10" : "bg-gray-100"} flex items-center justify-center`}>
                                                 <LucideIcon name="UserCircle" iconSize={24} />
                                             </div>
                                             <span className="text-xs">Tài khoản</span>

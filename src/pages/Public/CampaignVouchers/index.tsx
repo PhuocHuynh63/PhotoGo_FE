@@ -232,7 +232,7 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
 
                                         <CardContent className="p-4">
                                             {/* Description */}
-                                            <p className="text-gray-700 mb-4 min-h-[3rem] text-sm leading-relaxed">{voucher.description}</p>
+                                            <p className="text-gray-700 mb-4 min-h-[3rem] text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: voucher.description || '' }}></p>
 
                                             {/* Conditions */}
                                             <div className="space-y-2 mb-4 text-xs text-gray-600">

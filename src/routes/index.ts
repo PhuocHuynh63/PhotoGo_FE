@@ -32,7 +32,7 @@ const PUBLIC = {
 const USER = {
     DASHBOARD: '/user',
     PROFILE: {
-        INFO: '/profile',
+        ROOT: '/profile',
         PROMOTIONS: '/profile/promotions',
         CHANGE_PASSWORD: '/profile/change-password',
         REWARDS: '/profile/rewards',
@@ -49,7 +49,7 @@ const USER = {
 };
 
 const VENDOR = {
-    ROOT: '/vendor',
+    ROOT: '/vendor/profile',
     DASHBOARD: '/vendor/dashboard',
     PROFILE: '/vendor/profile',
     STATISTICS: {

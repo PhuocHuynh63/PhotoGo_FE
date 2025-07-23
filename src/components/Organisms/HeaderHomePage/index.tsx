@@ -200,10 +200,10 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                     <DropdownMenuSeparator />
                     <Link href={
                         user?.role?.name === ROLE.CUSTOMER
-                            ? ROUTES.USER.PROFILE.INFO
+                            ? ROUTES.USER.PROFILE.ROOT
                             : user?.role?.name === ROLE.VENDOR_OWNER
                                 ? ROUTES.VENDOR.PROFILE
-                                : ROUTES.USER.PROFILE.INFO
+                                : ROUTES.USER.PROFILE.ROOT
                     }>
                         <DropdownMenuItem icon="UserCircle">
                             <span>Thông tin cá nhân</span>
@@ -302,7 +302,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                             {user && (
                                 <div className="p-4 border-b">
                                     <div className="grid grid-cols-4 gap-4">
-                                        <Link href={ROUTES.USER.PROFILE.INFO} onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center gap-1">
+                                        <Link href={ROUTES.USER.PROFILE.ROOT} onClick={() => setIsMobileMenuOpen(false)} className="flex flex-col items-center gap-1">
                                             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
                                                 <LucideIcon name="UserCircle" iconSize={24} />
                                             </div>
