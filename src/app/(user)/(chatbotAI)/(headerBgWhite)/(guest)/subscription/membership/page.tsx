@@ -16,7 +16,7 @@ export default async function SubscriptionMembership() {
 
     return (
         <>
-            <SubscriptionPage session={session} isMembership={true} />
+            <SubscriptionPage isMembership={true} />
         </>
     )
 }

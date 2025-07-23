@@ -4,6 +4,8 @@ import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 import React from 'react'
 
 const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscriptionHistoryModel[] }) => {
+    console.log('subscriptionHistory', subscriptionHistory);
+
     return (
         <>
             {/* Summary Stats */}
@@ -20,7 +22,7 @@ const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscript
 
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-2xl font-bold text-purple-600">
-                                1
+                                {subscriptionHistory?.filter((sub) => sub?.subscription?.status === "hoạt động")?.length}
                             </div>
                             <div className="text-sm text-gray-500">Đang hoạt động</div>
                         </div>

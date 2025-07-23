@@ -70,7 +70,7 @@ declare namespace PAGES {
     interface IVendorDetailPageProps {
         children: React.ReactNode;
         vendor: IVendor;
-        session: METADATA.ISession | null;
+        user: IUser | null;
         concept: IServiceConceptImageModel;
         review: IReviewPaginationResponse;
     }

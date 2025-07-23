@@ -16,7 +16,7 @@ export default async function SubscriptionVendor() {
     if (isVendorOwner) {
         return (
             <>
-                <SubscriptionPage session={session} isMembership={false} />
+                <SubscriptionPage isMembership={false} />
             </>
         )
     }

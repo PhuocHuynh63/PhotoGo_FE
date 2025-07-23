@@ -9,6 +9,8 @@ import vendorService from "@services/vendors";
 import { METADATA } from "../../../../../../../types/IMetadata";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
+import userService from "@services/user";
+import { IUserResponse } from "@models/user/response.model";
 
 async function getVendorBySlug(slug: string) {
     return await vendorService.getVendorBySlug(slug);
@@ -20,6 +22,10 @@ async function getConceptImgsByVendorId(vendorId: string, current: string = '1',
 
 async function getReviewByVendorId(vendorId: string) {
     return await reviewService.getReviewByVendorId(vendorId)
+}
+
+async function getUserById(userId: string) {
+    return await userService.getAUser(userId);
 }
 
 async function getLocationAvailabilityByLocationId(locationId: string) {
@@ -45,6 +51,7 @@ export default async function VendorDetailLayout({
 
 
     const session = await getServerSession(authOptions) as METADATA.ISession;
+    const user = await getUserById(session?.user?.id || '') as IUserResponse;
     const concept = await getConceptImgsByVendorId(vendor.data.id, '1', '10') as IServiceConceptImageResponseModel;
     const review = await getReviewByVendorId(vendor.data?.id || '') as IReviewPaginationResponse;
 
@@ -52,9 +59,9 @@ export default async function VendorDetailLayout({
         <>
             <VendorDetailLayoutPage
                 vendor={vendor.data}
-                session={session}
                 concept={concept}
                 review={review}
+                user={user.data || null}
             >
                 {children}
             </VendorDetailLayoutPage>
