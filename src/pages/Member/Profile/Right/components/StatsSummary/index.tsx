@@ -14,7 +14,7 @@ const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscript
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-blue-600">{subscriptionHistory.length}</div>
+                            <div className="text-2xl font-bold text-blue-600">{subscriptionHistory?.length}</div>
                             <div className="text-sm text-gray-500">Tổng giao dịch</div>
                         </div>
 
@@ -27,7 +27,7 @@ const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscript
 
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-2xl font-bold text-green-600">
-                                {formatPrice(subscriptionHistory.reduce((sum, sub) => sum + sub.plan.priceForMonth, 0))}
+                                {formatPrice(subscriptionHistory?.reduce((sum, sub) => sum + sub?.plan?.priceForMonth, 0))}
                             </div>
                             <div className="text-sm text-gray-500">Tổng chi phí</div>
                         </div>

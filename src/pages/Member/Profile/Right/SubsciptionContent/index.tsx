@@ -20,7 +20,7 @@ import StatsSummary from '../components/StatsSummary'
 const SubscriptionContent = ({ user }: { user: IUser }) => {
   // const hasSubscription = Boolean(user?.subscription)
 
-  const { subscriptionHistory, pagination, fetchSubscriptionHistory } = useSubscriptionHistory({ userId: user.id })
+  const { subscriptionHistory, pagination, fetchSubscriptionHistory } = useSubscriptionHistory({ userId: user?.id })
   console.log(subscriptionHistory);
 
 
@@ -67,8 +67,8 @@ const SubscriptionContent = ({ user }: { user: IUser }) => {
         <StatsSummary subscriptionHistory={subscriptionHistory} />
 
         <div className="space-y-4">
-          {subscriptionHistory.map((subscription) => {
-            const amount = subscription.historyDetails[0]?.metadata?.amount ?? 0 as number
+          {subscriptionHistory?.map((subscription) => {
+            const amount = subscription?.historyDetails[0]?.metadata?.amount ?? 0 as number
 
             return (
               <React.Fragment key={subscription.plan.id}>

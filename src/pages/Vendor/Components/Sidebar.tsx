@@ -1,6 +1,6 @@
 "use client"
 
-import { X, User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Building2, Store, ChevronDown, File, ListOrdered } from "lucide-react"
+import { X, User, Calendar, Wallet, BarChart, MessageSquare, HelpCircle, Settings, LogOut, Building2, Store, ChevronDown, File, ListOrdered, CreditCard } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/Atoms/ui/collapsible"
@@ -58,6 +58,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         { icon: HelpCircle, label: "Hỗ trợ", href: ROUTES.VENDOR.SUPPORT.MY_TICKETS },
         { icon: Settings, label: "Lịch làm việc", href: ROUTES.VENDOR.SETTINGS },
         { icon: File, label: "Bằng chứng đơn hàng", href: ROUTES.VENDOR.PROOF_MANAGEMENTS },
+        { icon: CreditCard, label: "Gói dịch vụ", href: ROUTES.VENDOR.SUBSCRIPTION },
     ]
 
     // Overlay for mobile drawer
