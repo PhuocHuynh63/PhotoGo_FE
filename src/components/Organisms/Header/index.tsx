@@ -22,10 +22,10 @@ import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
 import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
-import MobileNotificationButton from "../MobileNotificationButton";
-import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
 import CampaignsMarquee from "../CampaignMarquee";
 import { useCampaigns } from "@utils/hooks/useCampaign";
+import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
+import MobileNotificationSheet from "../MobileNotificationButton/MobileNotificationSheet";
 
 export default function Header({ user, servicePackages }: PAGES.IHeader) {
     const cartState = useCart()
@@ -36,6 +36,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false);
     const pathname = usePathname();
+    const [isMobileNotificationOpen, setIsMobileNotificationOpen] = useState(false);
     //#endregion
 
     const {
@@ -76,7 +77,11 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
 
     //#region Event Handlers
     const handleOpenNotification = () => {
-        setIsNotificationOpen(!isNotificationOpen);
+        if (window.innerWidth < 768) {
+            setIsMobileNotificationOpen(true);
+        } else {
+            setIsNotificationOpen(!isNotificationOpen);
+        }
     };
 
     const handleOpenCart = () => {
@@ -323,10 +328,12 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                                             </div>
                                             <span className="text-xs">Giỏ hàng</span>
                                         </div>
-                                        <MobileNotificationButton
-                                            isNotificationOpen={isNotificationOpen}
-                                            handleOpenNotification={handleOpenNotification}
-                                        />
+                                        <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={handleOpenNotification}>
+                                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center relative">
+                                                <LucideIcon name="Bell" iconSize={24} />
+                                            </div>
+                                            <span className="text-xs">Thông báo</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -379,7 +386,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                                         </Link>
                                         <div
                                             onClick={() => handleLogout()}
-                                            className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500"
+                                            className="flex items-center gap-3 p-3 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer text-red-500 z-[1001]"
                                         >
                                             <LucideIcon name="LogOut" iconSize={20} />
                                             <span>Đăng xuất</span>
@@ -389,6 +396,8 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                             )}
                         </div>
                     </motion.div>
+                    {/* Mobile Notification Sheet */}
+                    <MobileNotificationSheet open={isMobileNotificationOpen} onOpenChange={setIsMobileNotificationOpen} />
                 </>
             )}
         </AnimatePresence>
@@ -485,7 +494,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
             </header>
 
             {/* PHẦN MARQUEE */}
-            <div className="fixed top-[80px] left-0 w-full z-40">
+            <div className="fixed top-[80px] left-0 w-full z-20">
                 <CampaignsMarquee campaigns={campaigns || []} />
             </div>
         </>
