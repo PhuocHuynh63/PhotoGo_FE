@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@components/Atoms/ui/card'
+import { ISubscriptionHistoryModel } from '@models/subscription/response.model'
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 import React from 'react'
 
-const StatsSummary = () => {
+const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscriptionHistoryModel[] }) => {
     return (
         <>
             {/* Summary Stats */}
@@ -11,32 +12,32 @@ const StatsSummary = () => {
                     <CardTitle className="text-lg">Thống kê tổng quan</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-blue-600">{history.length}</div>
+                            <div className="text-2xl font-bold text-blue-600">{subscriptionHistory.length}</div>
                             <div className="text-sm text-gray-500">Tổng giao dịch</div>
                         </div>
 
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <div className="text-2xl font-bold text-green-600">
-                                {formatPrice(history.reduce((sum, sub) => sum + sub.price, 0))}
-                            </div>
-                            <div className="text-sm text-gray-500">Tổng chi phí</div>
-                        </div>
-
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-2xl font-bold text-purple-600">
-                                {history.filter((sub) => sub.status === "active").length}
+                                1
                             </div>
                             <div className="text-sm text-gray-500">Đang hoạt động</div>
                         </div>
 
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
+                            <div className="text-2xl font-bold text-green-600">
+                                {formatPrice(subscriptionHistory.reduce((sum, sub) => sum + sub.plan.priceForMonth, 0))}
+                            </div>
+                            <div className="text-sm text-gray-500">Tổng chi phí</div>
+                        </div>
+
+                        {/* <div className="text-center p-4 bg-gray-50 rounded-lg">
                             <div className="text-2xl font-bold text-orange-600">
-                                {Math.round(history.reduce((sum, sub) => sum + sub.price, 0) / history.length)}
+                                {Math.round(subscriptionHistory.reduce((sum, sub) => sum + sub.plan.priceForMonth, 0) / subscriptionHistory.length)}
                             </div>
                             <div className="text-sm text-gray-500">Chi phí TB/tháng</div>
-                        </div>
+                        </div> */}
                     </div>
                 </CardContent>
             </Card>

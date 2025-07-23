@@ -6,7 +6,7 @@ import { SubscriptionPlanModel } from "./common.model";
 export const SubscriptionPlanResponseModel = z.object({
         statusCode: z.number(),
         message: z.string(),
-        data: z.array(SubscriptionPlanModel)
+        data: z.array(SubscriptionPlanModel),
 });
 
 export type ISubscriptionPlanResponseModel = z.infer<typeof SubscriptionPlanResponseModel>;
