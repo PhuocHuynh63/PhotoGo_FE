@@ -395,6 +395,7 @@ declare namespace ICOMPONENTS {
         serviceConceptId: string,
         created_at: string,
         updated_at: string,
+        finalPrice: string,
         serviceConcept: ServiceConcept
     }
     interface VendorGroup {

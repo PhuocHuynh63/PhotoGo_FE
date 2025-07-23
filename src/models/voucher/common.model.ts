@@ -35,6 +35,16 @@ export const VoucherFilterModel = z.object({
 });
 export type IVoucherFilter = z.TypeOf<typeof VoucherFilterModel>;
 
+export const ExchangeVoucherModel = z.object({
+    assigned_at: z.string(),
+    from: z.string(),
+    status: z.string(),
+    used_at: z.string().nullable(),
+    user_id: z.string(),
+    voucher_id: z.string(),
+});
+export type IExchangeVoucherModel = z.TypeOf<typeof ExchangeVoucherModel>;
+
 
 
 
