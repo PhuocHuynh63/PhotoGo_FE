@@ -14,6 +14,7 @@ import VoucherPopup from '../VoucherPopup'
 import { IVoucherFilter } from '@models/voucher/common.model'
 import { useBookingGetDiscountAmount } from '@utils/hooks/useBooking'
 import { VOUCHER } from '@constants/voucher'
+import { useUser } from '@stores/user/selectors'
 
 const SummaryInformation = () => {
     /**
@@ -22,11 +23,13 @@ const SummaryInformation = () => {
      *  - useServiceConcept: Get the service concept details
      *  - useFormBooking: Get the booking form details
      *  - useSelectedDeposit: Get the selected deposit percentage
+     *  - useUser: Get the user details 
      */
     const servicePackage = useServicePackage() as IServicePackage
     const serviceConcept = useServiceConcept() as IServiceConcept
     const formBooking = useFormBooking() as IBookingFormRequest;
     const selectedDeposit = useSelectedDeposit();
+    const user = useUser();
     //----------------------End----------------------//
 
     /**
@@ -125,8 +128,19 @@ const SummaryInformation = () => {
                     <div className="space-y-2 mb-6">
                         <div className="flex justify-between">
                             <span className="text-gray-500">Tổng tiền</span>
-                            <span className="font-medium">{price?.finalPrice.toLocaleString()}đ</span>
+                            {user?.subscription?.id ? (
+                                <span className="font-medium">{(price?.finalPrice || 0 + (price?.discountSubscription || 0))?.toLocaleString()}đ</span>
+                            ) : (
+                                <span className="font-medium">{price?.finalPrice?.toLocaleString()}đ</span>
+                            )}
                         </div>
+
+                        {user?.subscription?.id && (
+                            <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Giảm giá thành viên</span>
+                                <span className="font-medium text-gray-500">-{price?.discount.toLocaleString()}đ (VIP)</span>
+                            </div>
+                        )}
 
                         {selectedVoucher && (
                             <div className="flex justify-between text-sm">
@@ -201,12 +215,6 @@ const SummaryInformation = () => {
                                 <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                             </div>
                             <span>Số tiền còn lại sẽ được thanh toán vào ngày thực hiện dịch vụ</span>
-                        </li>
-                        <li className="flex gap-2 text-sm">
-                            <div className="h-5 w-5 rounded-full border border-green-500 flex items-center justify-center flex-shrink-0">
-                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                            </div>
-                            <span>Đặt cọc 100% sẽ được ưu tiên lịch hẹn và được giảm 5% tổng hóa đơn</span>
                         </li>
                     </ul>
 
