@@ -3,21 +3,23 @@ import { IAdjustPointRequest } from "@models/point/request.model";
 
 export const pointService = {
     getPoint: async () => {
-        const response = await http.get("/points/me");
-        return response;
+        return await http.get("/points/me", {
+            cache: 'no-store'
+        });
     },
     getPointTransaction: async () => {
-        const response = await http.get("/points/me/transactions");
-        return response;
+        return await http.get("/points/me/transactions", {
+            cache: 'no-store'
+        });
     },
     getPointAdmin: async (searchParams: URLSearchParams) => {
         return await http.get(`/points?${searchParams.toString()}`, {
-            next: { revalidate: 10 }
+            cache: 'no-store'
         })
     },
     getPointHistory: async (userId: string, searchParams: URLSearchParams) => {
         return await http.get(`/points/history/${userId}?${searchParams.toString()}`, {
-            next: { revalidate: 10 }
+            cache: 'no-store'
         })
     },
 
@@ -26,8 +28,6 @@ export const pointService = {
             cache: "no-store",
         })
     }
-
-
 }
 
 

@@ -6,12 +6,12 @@ import { IAdminGetUsersResponse } from "@models/user/response.model"
 const userService = {
     getAUser: async (id: string) => {
         return await http.get(`/users/${id}`, {
-            next: { tags: [`user${id}`] }
+            cache: 'no-store'
         })
     },
     getAUserByEmail: async (email: string) => {
         return await http.get(`/users/email/${email}`, {
-            next: { tags: [`user${email}`] }
+            cache: 'no-store'
         })
     },
 

@@ -28,7 +28,7 @@ const reviewService = {
 
     getReviewByUserId: async (userId: string, current: string, pageSize: string, sortBy: string, sortDirection: string) => {
         return await http.get(`/reviews/user/${userId}?current=${current}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDirection}`, {
-            next: { revalidate: 10 },
+            cache: 'no-store'
         })
     },
 

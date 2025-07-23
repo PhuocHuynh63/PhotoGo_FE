@@ -4,7 +4,7 @@ import { IServiceTypeRequest } from "@models/serviceTypes/request.model"
 export const serviceTypeService = {
     getServiceTypesWithFilter: async (searchParams: URLSearchParams) => {
         return await http.get(`/service-packages/service-type/filter?${searchParams.toString()}`, {
-            next: { revalidate: 10 }
+            cache: 'no-store'
         })
     },
 

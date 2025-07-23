@@ -11,6 +11,10 @@ import BookingCard from "./Components/OrderBookingCard";
 import { BOOKING } from "@constants/booking";
 import Input from "@components/Atoms/Input";
 import { useDebounce } from "@utils/hooks/useDebounce";
+import Button from "@components/Atoms/Button";
+import Image from "next/image";
+import { ROUTES } from "@routes";
+import Link from "next/link";
 
 
 interface OrdersContentProps {
@@ -83,43 +87,55 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                 </TabsList>
             </Tabs>
 
-            {/* {invoices?.length === 0 ? (
-                <div className="text-center py-12">
-                    <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                        <Calendar className="h-8 w-8 text-muted-foreground" />
+            {/* Empty state and content */}
+            {invoices?.length === 0 ? (
+                <div className="text-center py-12 flex flex-col items-center justify-center">
+                    <div className="mx-auto w-32 h-32 mb-4 relative">
+                        <Image src="/not-found.svg" alt="Không có đơn hàng" fill className="object-contain" />
                     </div>
                     <h3 className="text-lg font-medium mb-2">Không tìm thấy đơn hàng nào</h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground mb-6">
                         {searchQuery ? `Không có kết quả cho "${searchQuery}"` : "Bạn chưa có đơn hàng nào trong danh mục này"}
                     </p>
+                    <Link href={ROUTES.PUBLIC.SEARCH_VENDORS}>
+                        <Button
+                            icon="Search"
+                            iconPosition="left"
+                            className="bg-primary text-white hover:bg-orange-600"
+                        >
+                            Tìm studio chụp ảnh
+                        </Button>
+                    </Link>
                 </div>
-            ) : ( */}
-            <>
-                <div className="grid grid-cols-1 gap-6">
-                    {invoices?.map((invoice) => {
-                        const isNew = newBooking?.id === invoice?.booking?.id;
+            ) : (
+                <>
+                    <div className="grid grid-cols-1 gap-6">
+                        {invoices?.map((invoice) => {
+                            const isNew = newBooking?.id === invoice?.booking?.id;
 
-                        return (
-                            <BookingCard
-                                key={invoice.id}
-                                booking={invoice?.booking as unknown as IBooking}
-                                invoice={invoice}
-                                isNew={isNew}
-                                onReviewSuccess={handleReviewSuccess}
+                            return (
+                                <BookingCard
+                                    key={invoice.id}
+                                    booking={invoice?.booking as unknown as IBooking}
+                                    invoice={invoice}
+                                    isNew={isNew}
+                                    onReviewSuccess={handleReviewSuccess}
+                                />
+                            );
+                        })}
+                    </div>
+
+                    {pagination?.totalPage > 0 && (
+                        <div className="mt-6 flex justify-center">
+                            <Pagination
+                                total={pagination?.totalPage}
+                                current={currentPage}
+                                onChange={handlePageChange}
                             />
-                        );
-                    })}
-                </div>
-
-                <div className="mt-6 flex justify-center">
-                    <Pagination
-                        total={pagination?.totalPage}
-                        current={currentPage}
-                        onChange={handlePageChange}
-                    />
-                </div>
-            </>
-            {/* )} */}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     )
 }

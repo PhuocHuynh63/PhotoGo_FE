@@ -8,7 +8,7 @@ const PROTECTED_PREFIXES = [
     ROUTES.ADMIN.ROOT,
     ROUTES.STAFF.ROOT,
     ROUTES.VENDOR.ROOT,
-    ROUTES.USER.PROFILE.INFO,
+    ROUTES.USER.PROFILE.ROOT,
     ROUTES.USER.CHAT_ROOT,
     ROUTES.USER.CHECKOUT
 ];
@@ -26,13 +26,13 @@ export async function middleware(req: NextRequest) {
     }
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    
+
     if (!token) {
         const loginUrl = new URL(ROUTES.AUTH.LOGIN, req.url);
         return NextResponse.redirect(loginUrl);
     }
 
-    const userRole = (token as any).role?.name;
+    const userRole = (token as { role?: { name?: string } }).role?.name;
 
     if (pathname.startsWith(ROUTES.ADMIN.ROOT) && userRole !== ROLE.ADMIN) {
         return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
@@ -44,6 +44,11 @@ export async function middleware(req: NextRequest) {
 
     if (pathname.startsWith(ROUTES.VENDOR.ROOT) && userRole !== ROLE.VENDOR_OWNER) {
         return NextResponse.redirect(new URL(ROUTES.PUBLIC.HOME, req.url));
+    }
+
+    // Chặn vendor vào route profile của user
+    if (pathname.startsWith(ROUTES.USER.PROFILE.ROOT) && userRole === ROLE.VENDOR_OWNER) {
+        return NextResponse.redirect(new URL(ROUTES.VENDOR.PROFILE, req.url));
     }
 
     return NextResponse.next();

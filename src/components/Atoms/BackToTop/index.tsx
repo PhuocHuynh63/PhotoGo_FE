@@ -96,21 +96,21 @@ export default function BackToTop({ containerRef, size = 64 }: BackToTopProps) {
   }
 
   return (
-    <div className="fixed bottom-8 right-8 z-[99999]" style={{ pointerEvents: 'auto' }}>
-      <div className="relative">
+    <div className="fixed bottom-8 right-8 z-[99999] cursor-pointer" style={{ pointerEvents: 'auto' }}>
+      <div className="relative cursor-pointer">
         {/* Vòng tròn tiến trình */}
-        <svg 
-          className="rotate-[-90deg]" 
+        <svg
+          className="rotate-[-90deg]"
           style={{ width: size, height: size }}
           viewBox={`0 0 ${size} ${size}`}
         >
-          <circle 
-            cx={size / 2} 
-            cy={size / 2} 
-            r={radius} 
-            fill="none" 
-            stroke="#e5e7eb" 
-            strokeWidth={strokeWidth} 
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="#e5e7eb"
+            strokeWidth={strokeWidth}
           />
           <circle
             cx={size / 2}
@@ -128,14 +128,14 @@ export default function BackToTop({ containerRef, size = 64 }: BackToTopProps) {
         {/* Nút */}
         <button
           onClick={scrollToTop}
-          className="absolute inset-0 flex items-center justify-center rounded-full bg-white shadow-lg hover:bg-orange-50 hover:scale-110 active:scale-95 transition-all border-2 border-orange-500"
+          className="absolute inset-0 flex items-center justify-center rounded-full bg-white shadow-lg hover:bg-orange-50 hover:scale-110 active:scale-95 transition-all border-2 border-orange-500 cursor-pointer"
           aria-label="Back to top"
           type="button"
         >
           {progress >= 99 ? (
             <ArrowUp style={{ width: iconSize, height: iconSize }} className="text-orange-500" />
           ) : (
-            <div 
+            <div
               className="font-bold text-orange-500"
               style={{ fontSize: `${fontSize}px` }}
             >
