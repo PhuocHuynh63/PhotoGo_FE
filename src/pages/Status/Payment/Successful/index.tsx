@@ -57,7 +57,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     status,
                     code,
                     id: payosId,
-                    cancel: Boolean(cancel),
+                    cancel: cancel === 'true',
                     orderCode
                 };
                 await paymentService.paymentSuccess(currentPaymentId, data);
@@ -66,7 +66,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
             } else if (currentSubscriptionPaymentId) {
                 const data = {
                     subscriptionPaymentId: currentSubscriptionPaymentId,
-                    cancel: Boolean(cancel),
+                    cancel: cancel === 'true',
                     orderCode: orderCode || '',
                     status: status === 'PAID' ? 'đã thanh toán' : '',
                     code: code || '',
