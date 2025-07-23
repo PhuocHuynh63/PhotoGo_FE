@@ -355,7 +355,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
                         </div>
                         {/* Pagination */}
                         <Pagination
-                            currentPage={getCurrentPagination().currentPage}
+                            currentPage={getCurrentPagination().current}
                             totalPages={getCurrentPagination().totalPages}
                             onPageChange={handlePageChange}
                         />

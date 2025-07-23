@@ -9,6 +9,9 @@ import { Button } from "@components/Atoms/ui/button"
 import { useAllCampaignAndVoucher } from "@utils/hooks/useCampaign"
 import { campaignService } from "@services/campaign"
 import { toast } from "react-hot-toast"
+import { IAddUserToCampaignModel } from "@models/campaign/reponse.model"
+import { useRouter } from "next/navigation"
+import { ROUTES } from "@routes"
 
 
 const formatCurrency = (amount: number) => {
@@ -26,17 +29,24 @@ const calculateDaysLeft = (endDate: string) => {
     return diffDays > 0 ? diffDays : 0
 }
 
-export default function CampaignVouchers({ userId }: { userId: string }) {
+export default function CampaignVouchers({ userId }: { userId?: string }) {
     const [currentPage, setCurrentPage] = useState(1)
-    const [claimedVouchers, setClaimedVouchers] = useState<Set<string>>(new Set())
-
+    // const [claimedVouchers, setClaimedVouchers] = useState<Set<string>>(new Set()) // Đã bỏ, không còn dùng
+    const [joinedCampaignIds, setJoinedCampaignIds] = useState<Set<string>>(new Set());
+    const router = useRouter()
 
     const { campaigns, refetch, loading } = useAllCampaignAndVoucher();
 
     useEffect(() => {
-        refetch()
-    }, [])
-
+        refetch();
+        if (!userId) return;
+        campaignService.getUserJoinedCampaigns(userId).then((res) => {
+            const response = res as { statusCode: number; data?: { data: { id: string }[] } };
+            if (response.statusCode === 200 && response.data?.data) {
+                setJoinedCampaignIds(new Set(response.data.data.map((c) => c.id)));
+            }
+        });
+    }, [userId]);
     // Lấy cả voucher và campaignId
     const vouchers = campaigns.flatMap(campaign =>
         campaign.campaignVouchers.map(cv => ({
@@ -53,19 +63,27 @@ export default function CampaignVouchers({ userId }: { userId: string }) {
     const currentVouchers = vouchers.slice(startIndex, endIndex)
 
     // Sửa lại handleClaimVoucher để nhận campaignId và userId
-    const handleClaimVoucher = async (campaignId: string, userId: string) => {
+    const handleClaimVoucher = async (campaignId: string, userId?: string) => {
+        if (!userId) {
+            router.push(ROUTES.AUTH.LOGIN)
+            return;
+        }
         try {
-            setClaimedVouchers((prev) => new Set([...prev, campaignId]))
-            const response = await campaignService.addUserToCampaign(campaignId, userId)
-            toast.success("Nhận voucher thành công!")
-            console.log(response)
+            // setClaimedVouchers((prev) => new Set([...prev, campaignId])) // Đã bỏ, không còn dùng
+            const response = await campaignService.addUserToCampaign(campaignId, userId) as IAddUserToCampaignModel
+            if (response.statusCode === 200) {
+                toast.success("Nhận voucher thành công!")
+            } else {
+                toast.error(response.message)
+            }
+            refetch()
         } catch (error: unknown) {
             toast.error("Có lỗi xảy ra khi nhận voucher!")
-            setClaimedVouchers((prev) => {
-                const newSet = new Set(prev)
-                newSet.delete(campaignId)
-                return newSet
-            })
+            // setClaimedVouchers((prev) => { // Đã bỏ, không còn dùng
+            //     const newSet = new Set(prev)
+            //     newSet.delete(campaignId)
+            //     return newSet
+            // })
             if (error instanceof Error) {
                 console.error(error.message)
             } else {
@@ -150,7 +168,7 @@ export default function CampaignVouchers({ userId }: { userId: string }) {
                         {currentVouchers.map((voucher, index) => {
                             const daysLeft = calculateDaysLeft(voucher.end_date)
                             const isLowStock = (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) < 50
-                            const isClaimed = claimedVouchers.has(voucher.id)
+                            const isClaimed = userId ? joinedCampaignIds.has(voucher.campaignId) : false;
                             const isExpiringSoon = daysLeft <= 7 && daysLeft > 0
                             const isExpired = daysLeft <= 0
 
