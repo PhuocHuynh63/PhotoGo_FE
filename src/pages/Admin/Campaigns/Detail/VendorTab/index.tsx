@@ -43,8 +43,6 @@ export default function VendorTab({ campaignId }: { campaignId: string }) {
             });
 
             const res: any = await campaignService.getVendorOfCampaign(campaignId, params);
-            console.log('API Response:', res);
-            console.log('Vendors data:', res?.data?.data);
             const vendorsData = res?.data?.data || [];
             setVendors(vendorsData);
         } catch (error) {
@@ -84,23 +82,23 @@ export default function VendorTab({ campaignId }: { campaignId: string }) {
         }
     };
 
-    // Debug state changes
-    useEffect(() => {
-        console.log('Vendors state changed:', vendors);
-        console.log('Vendors state length:', vendors.length);
-    }, [vendors]);
+    // // Debug state changes
+    // useEffect(() => {
+    //     console.log('Vendors state changed:', vendors);
+    //     console.log('Vendors state length:', vendors.length);
+    // }, [vendors]);
 
-    // Phân loại vendor theo trạng thái
-    console.log('All vendors:', vendors);
-    console.log('Vendors length:', vendors.length);
+    // // Phân loại vendor theo trạng thái
+    // console.log('All vendors:', vendors);
+    // console.log('Vendors length:', vendors.length);
 
     const joinedVendors = vendors.filter(v => v.isAvailable === true);
     const invitedVendors = vendors.filter(v => v.invited === true && v.isAvailable === false);
     const availableVendors = vendors.filter(v => v.invited === false && v.isAvailable === false);
 
-    console.log('Joined vendors:', joinedVendors.length);
-    console.log('Invited vendors:', invitedVendors.length);
-    console.log('Available vendors:', availableVendors.length);
+    // console.log('Joined vendors:', joinedVendors.length);
+    // console.log('Invited vendors:', invitedVendors.length);
+    // console.log('Available vendors:', availableVendors.length);
 
     const getStatusBadge = (vendor: Vendor) => {
         if (vendor.isAvailable) {

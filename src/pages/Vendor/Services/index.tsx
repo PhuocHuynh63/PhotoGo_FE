@@ -59,7 +59,6 @@ export default function ServiceList({ serviceTypes, vendor, onGetVendorData }: S
     const [categoryFilter, setCategoryFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    console.log(vendor)
     const [vendorData, setVendorData] = useState<Vendor>({
         ...vendor,
         servicePackages: vendor?.servicePackages || [],

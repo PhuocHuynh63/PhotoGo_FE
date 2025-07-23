@@ -65,7 +65,7 @@ export default function AboutPage() {
     }, [isStatsInView, cusSatisfied, projectsCompleted, hoursWorked, employees]);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white mt-14">
             {/* Header */}
             <motion.header
                 className="bg-gray-100 py-16"
@@ -80,7 +80,7 @@ export default function AboutPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        VỀ CHÚNG TÔI
+                        VỀ PHOTOGO
                     </motion.h1>
                     <motion.p
                         className="text-lg text-gray-600 max-w-2xl mx-auto"
@@ -88,7 +88,7 @@ export default function AboutPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
                     >
-                        Khám phá câu chuyện, sứ mệnh và giá trị cốt lõi của chúng tôi
+                        Nền tảng duy nhất của bạn để đặt lịch với các nhiếp ảnh gia, studio và nghệ sĩ trang điểm chuyên nghiệp. Ghi lại khoảnh khắc hoàn hảo của bạn một cách dễ dàng, nhanh chóng và minh bạch.
                     </motion.p>
                 </div>
             </motion.header>
@@ -107,20 +107,15 @@ export default function AboutPage() {
                             animate={isStoryInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            <h2 className="text-3xl font-bold text-gray-800 mb-6">Câu Chuyện Của Chúng Tôi</h2>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-6">Câu Chuyện PhotoGo</h2>
                             <p className="text-gray-600 mb-4 leading-relaxed">
-                                Được thành lập vào năm 2020, chúng tôi bắt đầu với một tầm nhìn đơn giản: mang đến những giải pháp công
-                                nghệ tốt nhất cho doanh nghiệp Việt Nam. Từ một đội ngũ nhỏ gồm 5 người, chúng tôi đã phát triển thành
-                                một công ty với hơn 100 nhân viên tài năng.
+                                PhotoGo ra đời với mong muốn trở thành cầu nối giữa khách hàng và các nhiếp ảnh gia, studio, nghệ sĩ trang điểm hàng đầu. Chúng tôi nhận thấy nhu cầu ghi lại những khoảnh khắc đẹp ngày càng lớn, nhưng việc tìm kiếm, đặt lịch các dịch vụ liên quan lại rời rạc, thiếu minh bạch và mất thời gian.
                             </p>
                             <p className="text-gray-600 mb-4 leading-relaxed">
-                                Chúng tôi tin rằng công nghệ không chỉ là công cụ, mà là cầu nối giúp kết nối con người và tạo ra những
-                                giá trị thực sự cho xã hội. Với tinh thần đổi mới không ngừng, chúng tôi luôn nỗ lực để đem lại những
-                                trải nghiệm tuyệt vời nhất cho khách hàng.
+                                Với PhotoGo, mọi nhu cầu chụp ảnh, trang điểm, thuê studio đều được giải quyết chỉ trong một nền tảng duy nhất. Chúng tôi cam kết mang đến trải nghiệm đặt lịch nhanh chóng, đa dạng lựa chọn, giá cả rõ ràng và dịch vụ chuyên nghiệp.
                             </p>
                             <p className="text-gray-600 leading-relaxed">
-                                Hành trình của chúng tôi vẫn đang tiếp tục, và chúng tôi tự hào là đối tác tin cậy của hàng nghìn doanh
-                                nghiệp trên khắp Việt Nam.
+                                Hành trình của PhotoGo vẫn đang tiếp tục, với mục tiêu giúp hàng ngàn khách hàng lưu giữ những khoảnh khắc ý nghĩa nhất trong cuộc sống.
                             </p>
                         </motion.div>
                         <motion.div
@@ -130,8 +125,8 @@ export default function AboutPage() {
                             transition={{ duration: 0.5, delay: 0.3 }}
                         >
                             <Image
-                                src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744874818/tai-sao-can-biet-cach-tao-dang-khi-chup-anh-2-1024x683_u3odis.jpg"
-                                alt="Câu chuyện của chúng tôi"
+                                src="https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg"
+                                alt="Câu chuyện của PhotoGo"
                                 width={500}
                                 height={400}
                                 className="rounded-lg shadow-lg"
@@ -150,9 +145,9 @@ export default function AboutPage() {
                         animate={isMissionInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Sứ Mệnh & Giá Trị</h2>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Sứ Mệnh & Giá Trị Cốt Lõi</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Những nguyên tắc cốt lõi định hướng mọi hoạt động của chúng tôi
+                            PhotoGo hướng tới việc đơn giản hóa quá trình đặt lịch chụp ảnh, trang điểm, giúp khách hàng tiết kiệm thời gian, chi phí và nhận được dịch vụ tốt nhất.
                         </p>
                     </motion.div>
 
@@ -165,18 +160,18 @@ export default function AboutPage() {
                         {[
                             {
                                 icon: "🎯",
-                                title: "Cam Kết Chất Lượng",
-                                description: "Chúng tôi cam kết mang đến những sản phẩm và dịch vụ chất lượng cao nhất, đáp ứng và vượt qua mong đợi của khách hàng."
+                                title: "Tiện Lợi & Nhanh Chóng",
+                                description: "Đặt lịch mọi dịch vụ chỉ trong vài phút, thao tác đơn giản, tiết kiệm thời gian cho khách hàng."
                             },
                             {
                                 icon: "⭐",
-                                title: "Chất Lượng & Xuất Sắc",
-                                description: "Sự xuất sắc không phải là một hành động mà là một thói quen. Chúng tôi luôn phấn đấu để đạt được tiêu chuẩn cao nhất trong mọi việc."
+                                title: "Đa Dạng & Chuyên Nghiệp",
+                                description: "Hàng trăm nhiếp ảnh gia, studio, makeup artist với nhiều phong cách, kinh nghiệm, đáp ứng mọi nhu cầu."
                             },
                             {
                                 icon: "🔒",
-                                title: "Hiệu Quả & Minh Bạch",
-                                description: "Chúng tôi hoạt động với sự minh bạch tuyệt đối và tập trung vào việc mang lại hiệu quả tối đa cho mọi dự án."
+                                title: "Minh Bạch & Uy Tín",
+                                description: "Giá cả rõ ràng, đánh giá thực tế từ khách hàng, cam kết chất lượng dịch vụ."
                             }
                         ].map((item, index) => (
                             <motion.div
@@ -209,9 +204,9 @@ export default function AboutPage() {
                         animate={isServicesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Dịch Vụ Của Chúng Tôi</h2>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4">Dịch Vụ Nổi Bật</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Chúng tôi cung cấp đa dạng các dịch vụ để đáp ứng mọi nhu cầu của khách hàng
+                            PhotoGo cung cấp đầy đủ các dịch vụ chụp ảnh, trang điểm, thuê studio để đáp ứng mọi nhu cầu của bạn.
                         </p>
                     </motion.div>
 
@@ -224,18 +219,21 @@ export default function AboutPage() {
                         {[
                             {
                                 gradient: "from-blue-500 to-blue-700",
-                                title: "Phát Triển Ứng Dụng",
-                                description: "Xây dựng ứng dụng di động và web hiện đại với công nghệ tiên tiến nhất"
+                                title: "Nhiếp Ảnh Gia",
+                                img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1753273724/Nhiepanh-Gia-Large-01_ixkj80.jpg",
+                                description: "Tìm kiếm và đặt lịch với nhiếp ảnh gia phù hợp, đa dạng phong cách, linh hoạt về thời gian và địa điểm."
                             },
                             {
                                 gradient: "from-green-500 to-green-700",
-                                title: "Tư Vấn Số",
-                                description: "Hỗ trợ doanh nghiệp chuyển đổi số và tối ưu hóa quy trình kinh doanh"
+                                title: "Studio Chụp Ảnh",
+                                img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1753274116/studio-chup-anh-do-noi-that-tan-noi-vietnam_hsq8p7.jpg",
+                                description: "Đặt phòng studio hiện đại, trang bị đầy đủ, nhiều phông nền, ánh sáng chuyên nghiệp."
                             },
                             {
                                 gradient: "from-purple-500 to-purple-700",
-                                title: "Dịch Vụ Marketing",
-                                description: "Chiến lược marketing số toàn diện để tăng trưởng doanh nghiệp bền vững"
+                                title: "Makeup Artist",
+                                img: "https://res.cloudinary.com/dodtzdovx/image/upload/v1753273724/Makeup-Artist-noi-tieng-Viet-Nam-1_ebtfrg.jpg",
+                                description: "Trang điểm chuyên nghiệp cho mọi buổi chụp ảnh, đa dạng phong cách, sản phẩm chất lượng cao."
                             }
                         ].map((service, index) => (
                             <motion.div
@@ -247,13 +245,13 @@ export default function AboutPage() {
                                 <Card className="relative overflow-hidden group cursor-pointer">
                                     <div className={`aspect-video bg-gradient-to-br ${service.gradient} relative`}>
                                         <Image
-                                            src="/placeholder.svg?height=200&width=300"
+                                            src={service.img}
                                             alt={service.title}
                                             width={300}
                                             height={200}
                                             className="w-full h-full object-cover opacity-20"
                                         />
-                                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-6">
+                                        <div className="absolute inset-0 bg-opacity-40 flex items-end p-6">
                                             <div className="text-white">
                                                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                                                 <p className="text-sm opacity-90">{service.description}</p>
@@ -323,7 +321,7 @@ export default function AboutPage() {
                     >
                         <h2 className="text-3xl font-bold text-gray-800 mb-4">Khách Hàng Nói Gì</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Những phản hồi chân thực từ khách hàng về dịch vụ của chúng tôi
+                            Lắng nghe cảm nhận thực tế từ những khách hàng đã sử dụng PhotoGo
                         </p>
                     </motion.div>
 
@@ -335,19 +333,19 @@ export default function AboutPage() {
                     >
                         {[
                             {
-                                name: "Nguyễn Văn An",
-                                position: "Giám đốc ABC Company",
-                                quote: "Đội ngũ rất chuyên nghiệp và nhiệt tình. Sản phẩm được giao đúng thời gian và chất lượng vượt mong đợi. Chúng tôi rất hài lòng với dịch vụ."
+                                name: "Phạm Thị Hạnh",
+                                position: "Khách hàng chụp ảnh cưới",
+                                quote: "Tôi rất hài lòng khi đặt lịch chụp ảnh cưới qua PhotoGo. Nhiếp ảnh gia chuyên nghiệp, hỗ trợ tận tình và giá cả rõ ràng!"
                             },
                             {
-                                name: "Trần Thị Bình",
-                                position: "CEO XYZ Tech",
-                                quote: "Tôi đã làm việc với nhiều công ty khác nhưng chưa công ty nào mang lại sự hài lòng như thế này. Dịch vụ tuyệt vời, hỗ trợ 24/7."
+                                name: "Nguyễn Minh Quân",
+                                position: "Khách hàng thuê studio",
+                                quote: "Studio trên PhotoGo rất đa dạng, dễ dàng so sánh và đặt lịch. Mình đã có bộ ảnh kỷ yếu tuyệt đẹp cùng bạn bè."
                             },
                             {
-                                name: "Lê Minh Cường",
-                                position: "Founder DEF Solutions",
-                                quote: "Giải pháp họ đưa ra đã giúp công ty chúng tôi tăng hiệu quả làm việc lên 300%. Đây thực sự là đối tác đáng tin cậy cho doanh nghiệp."
+                                name: "Lê Thị Mai",
+                                position: "Khách hàng makeup",
+                                quote: "Mình book makeup artist qua PhotoGo cho buổi chụp ảnh gia đình, rất ưng ý vì được tư vấn kỹ và trang điểm hợp phong cách."
                             }
                         ].map((testimonial, index) => (
                             <motion.div
@@ -397,7 +395,7 @@ export default function AboutPage() {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         viewport={{ once: true }}
                     >
-                        Sẵn Sàng Bắt Đầu?
+                        Sẵn Sàng Ghi Lại Khoảnh Khắc Của Bạn?
                     </motion.h2>
                     <motion.p
                         className="text-xl mb-8 opacity-90 max-w-2xl mx-auto"
@@ -406,8 +404,7 @@ export default function AboutPage() {
                         transition={{ duration: 0.5, delay: 0.3 }}
                         viewport={{ once: true }}
                     >
-                        Hãy liên hệ với chúng tôi ngay hôm nay để được tư vấn miễn phí và khám phá cách chúng tôi có thể giúp doanh
-                        nghiệp của bạn phát triển.
+                        Đặt lịch ngay với nhiếp ảnh gia, studio hoặc makeup artist trên PhotoGo để trải nghiệm dịch vụ chuyên nghiệp, tiện lợi và minh bạch.
                     </motion.p>
                     <motion.div
                         className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -423,7 +420,7 @@ export default function AboutPage() {
                         </Link>
                         <Link href="/services">
                             <Button className="bg-[var(--bg-primary)] text-white hover:bg-[var(--bg-primary)]/80">
-                                Tìm Hiểu Thêm
+                                Khám Phá Dịch Vụ
                             </Button>
                         </Link>
                     </motion.div>

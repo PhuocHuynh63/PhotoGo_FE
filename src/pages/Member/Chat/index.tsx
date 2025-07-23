@@ -207,13 +207,13 @@ export default function ChatPage(session: PAGES.IChatProps) {
             const currentChat = listChatOfUser.find(c => c.id === activeConversationId);
 
             if (currentChat && currentChat.member) {
-                console.log(`FRONTEND LOG: Auto-joining chat room ${activeConversationId} with partner ${currentChat.member}`);
+                // console.log(`FRONTEND LOG: Auto-joining chat room ${activeConversationId} with partner ${currentChat.member}`);
                 socket.emit('joinChat', { memberId: currentChat.member, chatId: activeConversationId });
             } else {
                 console.warn(`FRONTEND WARN: Chat data for ${activeConversationId} not found in listChatOfUser for auto-join, or partner ID is missing.`);
             }
         } else if (socket && activeConversationId && listChatOfUser.length === 0) {
-            console.log("FRONTEND LOG: Waiting for listChatOfUser to load before auto-joining.");
+            // console.log("FRONTEND LOG: Waiting for listChatOfUser to load before auto-joining.");
         }
     }, [socket, activeConversationId, listChatOfUser]);
     //---------------------------------End---------------------------------//

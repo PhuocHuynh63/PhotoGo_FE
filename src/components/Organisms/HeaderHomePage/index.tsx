@@ -15,20 +15,18 @@ import "./index.scss";
 import { signOut } from "next-auth/react";
 import { PAGES } from "../../../types/IPages";
 import ShoppingCartModal from "../ShoppingCartModal/ShoppingCartModal";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useCart, useFetchCartByUserId } from "@stores/cart/selectors";
 import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
 import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
 import MobileNotificationButton from "../MobileNotificationButton";
-import { USER } from "@constants/user";
 import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
 import CampaignsMarquee from "../CampaignMarquee";
 import { useCampaigns } from "@utils/hooks/useCampaign";
 
 export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader) {
-    const router = useRouter();
     const cartState = useCart()
     const fetchCartByUserId = useFetchCartByUserId();
     //#region States
@@ -61,6 +59,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
         fetchCampaigns();
         setIsLoaded(true);
     }, [pathname]);
+
     useEffect(() => {
         const handleScroll = () => {
             requestAnimationFrame(() => {

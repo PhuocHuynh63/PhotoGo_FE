@@ -60,7 +60,7 @@ export default function VoucherKanbanBoard({ vouchers, onVoucherUpdate }: Vouche
     // Debug: log status thực tế từ API
     if (typeof window !== 'undefined') {
         // eslint-disable-next-line no-console
-        console.log('Voucher status list:', vouchers?.map(v => v.status));
+        // console.log('Voucher status list:', vouchers?.map(v => v.status));
     }
 
     // Phân loại voucher theo trạng thái đúng với backend
