@@ -62,7 +62,7 @@ export default function Header({ userData, setSidebarOpen }: { userData: IUser, 
                         <DropdownMenuLabel>Tài khoản của tôi</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem icon="User" onClick={() => {
-                            router.push(ROUTES.USER.PROFILE.INFO)
+                            router.push(ROUTES.VENDOR.PROFILE)
                         }}>
                             Hồ sơ
                         </DropdownMenuItem>
