@@ -21,8 +21,6 @@ const SubscriptionContent = ({ user }: { user: IUser }) => {
   // const hasSubscription = Boolean(user?.subscription)
 
   const { subscriptionHistory, pagination, fetchSubscriptionHistory } = useSubscriptionHistory({ userId: user?.id })
-  (subscriptionHistory);
-
 
   const getStatusBorderColor = (status: string) => {
     switch (status) {
