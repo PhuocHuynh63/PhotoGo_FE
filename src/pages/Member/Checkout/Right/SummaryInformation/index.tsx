@@ -129,16 +129,16 @@ const SummaryInformation = () => {
                         <div className="flex justify-between">
                             <span className="text-gray-500">Tổng tiền</span>
                             {user?.subscription?.id ? (
-                                <span className="font-medium">{(price?.finalPrice || 0 + (price?.discountSubscription || 0))?.toLocaleString()}đ</span>
+                                <span className="font-medium">{((price?.finalPrice || 0) + (price?.discountSubscription || 0))?.toLocaleString()}đ</span>
                             ) : (
-                                <span className="font-medium">{price?.finalPrice?.toLocaleString()}đ</span>
+                                <span className="font-medium text-red-500">{price?.finalPrice?.toLocaleString()}đ</span>
                             )}
                         </div>
 
                         {user?.subscription?.id && (
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-500">Giảm giá thành viên</span>
-                                <span className="font-medium text-gray-500">-{price?.discount.toLocaleString()}đ (VIP)</span>
+                                <span className="font-medium text-gray-500">-{price?.discountSubscription.toLocaleString()}đ (VIP)</span>
                             </div>
                         )}
 
