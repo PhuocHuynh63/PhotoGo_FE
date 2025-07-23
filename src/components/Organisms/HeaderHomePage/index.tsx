@@ -21,11 +21,10 @@ import { AvatarWithBorder } from "../AvatarBorder";
 import { Rank } from "../AvatarBorder/rankStyles";
 import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
-import MobileNotificationButton from "../MobileNotificationButton";
 import ButtonServiceOffer from "@components/Atoms/ServiceOffer";
 import CampaignsMarquee from "../CampaignMarquee";
 import { useCampaigns } from "@utils/hooks/useCampaign";
-
+import MobileNotificationSheet from "../MobileNotificationButton/MobileNotificationSheet";
 export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader) {
     const cartState = useCart()
     const fetchCartByUserId = useFetchCartByUserId();
@@ -36,6 +35,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
     const [isLoaded, setIsLoaded] = useState(false);
     const [isOpenCart, setIsOpenCart] = useState(false);
     const pathname = usePathname();
+    const [isMobileNotificationOpen, setIsMobileNotificationOpen] = useState(false);
     //#endregion
     const {
         campaigns,
@@ -89,10 +89,6 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
     //#endregion
 
     //#region Event Handlers
-    const handleOpenNotification = () => {
-        setIsNotificationOpen(!isNotificationOpen);
-    };
-
     const handleOpenCart = () => {
         setIsOpenCart(!isOpenCart);
     };
@@ -251,7 +247,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                        className="fixed inset-0 bg-black/50 z-50 md:hidden"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                     <motion.div
@@ -329,10 +325,12 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                                             </div>
                                             <span className="text-xs">Giỏ hàng</span>
                                         </div>
-                                        <MobileNotificationButton
-                                            isNotificationOpen={isNotificationOpen}
-                                            handleOpenNotification={handleOpenNotification}
-                                        />
+                                        <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => setIsMobileNotificationOpen(true)}>
+                                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center relative">
+                                                <LucideIcon name="Bell" iconSize={24} />
+                                            </div>
+                                            <span className="text-xs">Thông báo</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -492,10 +490,11 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
                 </motion.div>
                 {/* Mobile Menu */}
                 {renderMobileMenu()}
+                <MobileNotificationSheet open={isMobileNotificationOpen} onOpenChange={setIsMobileNotificationOpen} />
             </header>
 
             {/* PHẦN MARQUEE */}
-            <div className="fixed top-[80px] left-0 w-full z-40">
+            <div className="fixed top-[80px] left-0 w-full z-20">
                 <CampaignsMarquee campaigns={campaigns || []} />
             </div>
         </>
