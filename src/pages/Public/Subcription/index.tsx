@@ -8,7 +8,8 @@ import PricingPackage from '@components/Organisms/PricingPackages'
 import { subscriptionService } from '@services/subcription' // Assuming this path is correct
 import { SUBSCRIPTION } from '@constants/subscriptions' // Assuming this path is correct
 import { METADATA } from '../../../types/IMetadata'
-import { useSetSession } from '@stores/user/selectors'
+import { useSetSession, useSetUser, useUser } from '@stores/user/selectors'
+import { IUser } from '@models/user/common.model'
 
 // --- Helper Functions ---
 
@@ -36,14 +37,15 @@ const formatCurrency = (amount: string | number): string => {
 
 // --- Main Component ---
 
-const PricingPage = ({ session, isMembership }: { session: METADATA.ISession, isMembership: boolean }) => {
+const PricingPage = ({ isMembership }: { isMembership: boolean }) => {
+  const user = useUser() as IUser;
   // State to manage billing cycle selection ('month' or 'year')
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('month')
   // State to store subscription plans fetched from the API
   const [packages, setPackages] = useState<any[]>([])
-  const setSession = useSetSession()
+  const setUser = useSetUser()
   useEffect(() => {
-    setSession(session)
+    setUser(user)
     const fetchSubscriptions = async () => {
       try {
         const params = {

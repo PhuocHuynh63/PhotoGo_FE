@@ -6,7 +6,9 @@ import Input from '@components/Atoms/Input';
 import { ScrollArea } from '@components/Atoms/ui/scroll-area';
 import { cn } from '@utils/helpers/CN';
 import { Avatar } from '@components/Molecules/Avatar';
-
+import Image from 'next/image';
+import Link from 'next/link';
+import { ROUTES } from '@routes';
 
 interface SidebarChatProps {
     listChatOfUser: any[];
@@ -75,7 +77,12 @@ export default function SidebarChat({
             {(showSidebar || !isMobile) && (
                 <div className={`${isMobile ? 'absolute z-10 w-full md:w-80' : 'w-80'} h-full border-r bg-white flex flex-col`}>
                     <div className="p-4 border-b" style={{ backgroundColor: 'rgba(246, 172, 105, 0.21)' }}>
-                        <h2 className="font-bold text-xl mb-2">Trò chuyện</h2>
+                        <div className="flex items-center justify-between mb-3">
+                            <Link href={ROUTES.PUBLIC.HOME}>
+                                <Image src={'https://res.cloudinary.com/dodtzdovx/image/upload/v1744187841/photogo_orange_jslflw.svg'} alt="logo" width={65} height={65} />
+                            </Link>
+                            <h2 className="font-bold text-xl">Trò chuyện</h2>
+                        </div>
                         <div className="relative">
                             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                             <Input

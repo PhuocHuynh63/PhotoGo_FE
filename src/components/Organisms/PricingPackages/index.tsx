@@ -7,10 +7,10 @@ import Button from '@components/Atoms/Button'
 import PaymentModal from '@pages/Public/Subcription/components/ModalPayment'
 import { Check, Star, Zap, Crown, Camera } from 'lucide-react'
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
-import { useSession } from '@stores/user/selectors'
-import { METADATA } from '../../../types/IMetadata'
+import { useUser } from '@stores/user/selectors'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@routes'
+import { IUser } from '@models/user/common.model'
 
 interface SubscriptionData {
     id: string;
@@ -40,7 +40,7 @@ const PricingPackage = ({
     numberOfPackages = 3,
 }: PricingPackageProps) => {
     const router = useRouter();
-    const session = useSession() as METADATA.ISession;
+    const user = useUser() as IUser;
 
     const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionData | null>(null);
 
@@ -175,7 +175,7 @@ const PricingPackage = ({
                     </CardContent>
 
                     <CardFooter className="p-6 lg:p-8 pt-0">
-                        {session?.user?.subscriptionId ? (
+                        {user?.subscription?.id ? (
                             <Button
                                 className={cn(
                                     "w-full py-3 lg:py-4 text-sm lg:text-base font-semibold transition-all duration-300",

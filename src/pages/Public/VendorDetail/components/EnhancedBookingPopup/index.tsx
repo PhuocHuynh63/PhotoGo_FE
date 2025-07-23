@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Calendar, Clock, Package, MapPin, Info } from "lucide-react";
-import { useSession } from "@stores/user/selectors";
+import { useSession, useUser } from "@stores/user/selectors";
 import { useRouter } from "next/navigation";
 import { useAddressLocation, useVendor } from "@stores/vendor/selectors";
 import { useLocationAvailability, useLocationAvailabilityByLocationIdAndDate } from "@utils/hooks/useLocationAvailability";
@@ -22,6 +22,7 @@ import { Badge } from "@components/Atoms/ui/badge";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
 import { ICheckoutSessionRequest } from "@models/booking/request.model";
 import { METADATA } from "../../../../../types/IMetadata";
+import { IUser } from "@models/user/common.model";
 
 interface EnhancedBookingPopupProps {
     isOpen: boolean;
@@ -43,7 +44,7 @@ export default function EnhancedBookingPopup({
     onClose,
     serviceConcept,
 }: EnhancedBookingPopupProps) {
-    const session = useSession() as METADATA.ISession;
+    const user = useUser() as IUser;
     const router = useRouter();
     const addressLocation = useAddressLocation();
     const vendor = useVendor();
@@ -185,7 +186,7 @@ export default function EnhancedBookingPopup({
     };
 
     const onSubmit = async (data: ICheckoutSessionRequest) => {
-        const userId = session?.user?.id;
+        const userId = user?.id;
         if (!userId) {
             toast.error('Bạn cần đăng nhập để đặt lịch hẹn');
             router.replace(ROUTES.AUTH.LOGIN);
@@ -249,7 +250,7 @@ export default function EnhancedBookingPopup({
     let bookingPrice = Number(serviceConcept?.price) || 0;
     let isIncrease = false;
     let daysDiff = 0;
-    if (isBookingReady && !session?.user?.subscriptionId) {
+    if (isBookingReady && !user?.subscription?.id) {
         let compareDate;
         if (isMultiDay && watchedDates && watchedDates.length > 0) {
             compareDate = new Date(watchedDates[0]);
@@ -368,7 +369,7 @@ export default function EnhancedBookingPopup({
                                                 style: "currency",
                                                 currency: "VND",
                                             })}
-                                            {isIncrease && !session?.user?.subscriptionId && (
+                                            {isIncrease && !user?.subscription?.id && (
                                                 <span className="ml-2 text-xs text-yellow-600 font-semibold">(+5% do đặt trước {daysDiff} ngày)</span>
                                             )}
                                         </span>
