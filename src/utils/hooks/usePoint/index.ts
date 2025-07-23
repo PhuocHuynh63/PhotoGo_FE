@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import pointService from "@services/point";
+import { pointService } from "@services/point";
 import { IPoint } from "@models/point/common.model";
 import { IPointResponse } from "@models/point/response.model";
 
