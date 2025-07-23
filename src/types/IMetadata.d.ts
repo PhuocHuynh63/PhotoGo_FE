@@ -8,6 +8,7 @@ declare namespace METADATA {
             role: IRole
             cartId: string;
             wishlistId: string;
+            subscriptionId: string;
         },
         accessToken: string;
     }

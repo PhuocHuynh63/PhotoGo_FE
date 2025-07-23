@@ -243,11 +243,13 @@ export default function EnhancedBookingPopup({
         ? (watchedDates && watchedDates.length > 0)
         : (watchedDate && watchedTime);
 
-    // Tính toán tăng giá nếu ngày đặt là ngày 20, 21, 22 (so với hôm nay là 19)
+    /**
+     * Tăng giá nếu đặt sát ngày
+     */
     let bookingPrice = Number(serviceConcept?.price) || 0;
     let isIncrease = false;
     let daysDiff = 0;
-    if (isBookingReady) {
+    if (isBookingReady && !session?.user?.subscriptionId) {
         let compareDate;
         if (isMultiDay && watchedDates && watchedDates.length > 0) {
             compareDate = new Date(watchedDates[0]);
@@ -366,7 +368,7 @@ export default function EnhancedBookingPopup({
                                                 style: "currency",
                                                 currency: "VND",
                                             })}
-                                            {isIncrease && (
+                                            {isIncrease && !session?.user?.subscriptionId && (
                                                 <span className="ml-2 text-xs text-yellow-600 font-semibold">(+5% do đặt trước {daysDiff} ngày)</span>
                                             )}
                                         </span>

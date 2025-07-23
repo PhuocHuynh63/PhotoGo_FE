@@ -41,7 +41,6 @@ const voucherService = {
             cache: 'no-store'
         });
     }
-
 }
 
 export default voucherService;

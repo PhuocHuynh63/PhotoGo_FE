@@ -46,7 +46,6 @@ const vendorService = {
             cache: 'no-store'
         });
     },
-
 }
 
 export default vendorService
