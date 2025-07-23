@@ -76,4 +76,9 @@ export const campaignService = {
         });
     },
 
+    getUserJoinedCampaigns: async (userId: string) => {
+        return await http.get(`/campaigns/by-user/${userId}`, {
+            next: { revalidate: 10 },
+        });
+    },
 };
