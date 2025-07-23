@@ -53,7 +53,6 @@ export default function AddCampaignDialog({ open, onClose, onSuccess }: AddCampa
                 endDate: formatDateForApi(formData.endDate as string)
             };
 
-            console.log('Sending to API:', apiData);
             await campaignService.createCampaign(apiData as ICreateCampaignModel);
             toast.success('Tạo campaign thành công');
 

@@ -74,7 +74,7 @@ const SuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     userId: userId || ''
                 };
                 const res = await subscriptionService.subscriptionSuccess(data);
-                console.log(res)
+                // console.log(res)
 
                 setLoadingApi(true); // API call done, allow rendering the subscription success page
             } else {

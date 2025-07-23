@@ -175,7 +175,7 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
             slot.bookings.map((booking: Booking) => convertBookingToAppointment(booking, slot))
         )
         : []
-    console.log(appointments)
+    (appointments)
     const todayAppointments = locationOverview
         ? convertToTodayAppointments(locationOverview.todayBookings)
         : []
@@ -208,7 +208,6 @@ export default function CalendarManagement({ vendorId }: { vendorId: string | un
     // Handle appointment update from CalendarView
     const handleAppointmentUpdate = useCallback((updatedAppointment: PAGES.Appointment) => {
         // Refetch data to get the latest state from server
-        console.log('Appointment updated:', updatedAppointment.id)
         refetchLocation()
     }, [refetchLocation])
 

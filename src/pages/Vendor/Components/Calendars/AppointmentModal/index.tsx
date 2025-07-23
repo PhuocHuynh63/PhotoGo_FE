@@ -39,7 +39,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
     // const [isEditing, setIsEditing] = useState(false)
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
     const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
-    console.log(appointment)
     // Update local appointment when prop changes
     useEffect(() => {
         setLocalAppointment(appointment)
@@ -56,7 +55,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
 
     const handleConfirmAppointment = async (bookingId: string) => {
         try {
-            console.log("confirm appointment", bookingId)
             await updateBookingStatus(bookingId, BOOKING_STATUS.CONFIRMED)
 
             // Update local state immediately
@@ -130,7 +128,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
 
     const handleCompleteAppointment = async (bookingId: string) => {
         try {
-            console.log("complete appointment", bookingId)
             await updateBookingStatus(bookingId, BOOKING_STATUS.COMPLETED)
 
             // Update local state immediately
@@ -155,7 +152,6 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
 
     const handleProgressAppointment = async (bookingId: string) => {
         try {
-            console.log("progress appointment", bookingId)
             await updateBookingStatus(bookingId, BOOKING_STATUS.IN_PROGRESS)
 
             // Update local state immediately

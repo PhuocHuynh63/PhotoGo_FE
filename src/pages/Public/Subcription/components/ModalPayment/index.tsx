@@ -92,7 +92,7 @@ export default function PaymentModal({
     // Load PayOS script
     useEffect(() => {
         if (showPaymentDialog && paymentLink) {
-            console.log(paymentLink)
+            // console.log(paymentLink)
             const script = document.createElement('script');
             script.src = 'https://pay.payos.vn/v2/pay.js';
             script.async = true;
@@ -102,7 +102,7 @@ export default function PaymentModal({
                     window.PayOS.openPaymentDialog({
                         url: paymentLink,
                         onSuccess: (data: unknown) => {
-                            console.log('Payment success:', data);
+                            // console.log('Payment success:', data);
                             onClose();
                             // Có thể thêm toast notification hoặc redirect
                         },
@@ -134,7 +134,7 @@ export default function PaymentModal({
             setError('Vui lòng đăng nhập để tiếp tục');
             return;
         }
-        console.log(data)
+        // console.log(data)
         setIsLoading(true);
         setError(null);
 

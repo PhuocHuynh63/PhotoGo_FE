@@ -31,7 +31,6 @@ export default function CalendarView({
         }
         return new Date()
     }
-    console.log(appointments)
     const [currentDate, setCurrentDate] = useState(getInitialDate)
     const [viewMode, setViewMode] = useState<"week" | "day">("week")
     const [selectedAppointment, setSelectedAppointment] = useState<PAGES.Appointment | null>(null)
