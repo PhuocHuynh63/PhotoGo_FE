@@ -10,6 +10,8 @@ import { useAllCampaignAndVoucher } from "@utils/hooks/useCampaign"
 import { campaignService } from "@services/campaign"
 import { toast } from "react-hot-toast"
 import { IAddUserToCampaignModel } from "@models/campaign/reponse.model"
+import { useRouter } from "next/navigation"
+import { ROUTES } from "@routes"
 
 
 const formatCurrency = (amount: number) => {
@@ -27,11 +29,11 @@ const calculateDaysLeft = (endDate: string) => {
     return diffDays > 0 ? diffDays : 0
 }
 
-export default function CampaignVouchers({ userId }: { userId: string }) {
+export default function CampaignVouchers({ userId }: { userId?: string }) {
     const [currentPage, setCurrentPage] = useState(1)
     // const [claimedVouchers, setClaimedVouchers] = useState<Set<string>>(new Set()) // Đã bỏ, không còn dùng
     const [joinedCampaignIds, setJoinedCampaignIds] = useState<Set<string>>(new Set());
-
+    const router = useRouter()
 
     const { campaigns, refetch, loading } = useAllCampaignAndVoucher();
 
@@ -61,7 +63,11 @@ export default function CampaignVouchers({ userId }: { userId: string }) {
     const currentVouchers = vouchers.slice(startIndex, endIndex)
 
     // Sửa lại handleClaimVoucher để nhận campaignId và userId
-    const handleClaimVoucher = async (campaignId: string, userId: string) => {
+    const handleClaimVoucher = async (campaignId: string, userId?: string) => {
+        if (!userId) {
+            router.push(ROUTES.AUTH.LOGIN)
+            return;
+        }
         try {
             // setClaimedVouchers((prev) => new Set([...prev, campaignId])) // Đã bỏ, không còn dùng
             const response = await campaignService.addUserToCampaign(campaignId, userId) as IAddUserToCampaignModel
@@ -162,7 +168,7 @@ export default function CampaignVouchers({ userId }: { userId: string }) {
                         {currentVouchers.map((voucher, index) => {
                             const daysLeft = calculateDaysLeft(voucher.end_date)
                             const isLowStock = (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) < 50
-                            const isClaimed = joinedCampaignIds.has(voucher.campaignId)
+                            const isClaimed = userId ? joinedCampaignIds.has(voucher.campaignId) : false;
                             const isExpiringSoon = daysLeft <= 7 && daysLeft > 0
                             const isExpired = daysLeft <= 0
 

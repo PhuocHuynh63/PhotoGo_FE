@@ -1,6 +1,6 @@
 import { BackendResponseModel } from "@models/backend/backendResponse.model";
 import { z } from "zod";
-import { VoucherFilterModel, VoucherModel } from "./common.model";
+import { ExchangeVoucherModel, VoucherFilterModel, VoucherModel } from "./common.model";
 import { PaginationModel } from "@models/metadata";
 
 /**
@@ -82,7 +82,16 @@ export const VoucherListModelResponse = z.object({
     data: z.array(VoucherModel),
     message: z.string(),
     statusCode: z.number(),
-    pagination: PaginationModel.optional()
+    pagination: PaginationModel
 });
 export const VoucherListResponseModel = BackendResponseModel(VoucherListModelResponse);
 export type IVoucherListResponseModel = z.infer<typeof VoucherListResponseModel>;
+
+export const ExchangeVoucherModelResponse = z.object({
+    data: ExchangeVoucherModel,
+    message: z.string(),
+    statusCode: z.number()
+});
+
+export const ExchangeVoucherResponseModel = BackendResponseModel(ExchangeVoucherModelResponse);
+export type IExchangeVoucherResponseModel = z.infer<typeof ExchangeVoucherResponseModel>;

@@ -16,8 +16,8 @@ async function getPointTransaction() {
 
 export default async function Points() {
     const point = await getPoint() as IPointResponse;
-    const pointTransaction = await getPointTransaction() as IPointTransactionResponse;
     const pointData = point?.data as unknown as IPoint;
+    const pointTransaction = await getPointTransaction() as IPointTransactionResponse;
     const pointTransactionData = pointTransaction?.data?.data as unknown as IPointTransaction[];
     const paginationPointTransaction = pointTransaction?.data?.pagination as unknown as IPagination;
 

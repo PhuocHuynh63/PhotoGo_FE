@@ -31,6 +31,17 @@ const voucherService = {
             cache: 'no-store'
         });
     },
+
+    getAllVouchers: async (current: number = 1, pageSize: number = 10, type: string = "điểm", status: string = "hoạt động", sortBy: string = "maxPrice", sortDirection: string = "desc") => {
+        return await http.get(`/vouchers?current=${current}&pageSize=${pageSize}&type=${type}&status=${status}&sortBy=${sortBy}&sortDirection=${sortDirection}`, { next: { revalidate: 10 } });
+    },
+
+    attachVoucher: async (voucherId: string, userId: string) => {
+        return await http.post(`/vouchers/user/${userId}/exchange/${voucherId}`, {
+            cache: 'no-store'
+        });
+    }
+
 }
 
 export default voucherService;
