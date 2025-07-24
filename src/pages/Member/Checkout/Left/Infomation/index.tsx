@@ -1,7 +1,7 @@
 'use client'
 
-import Input from '@components/Atoms/Input'
 import TextArea from '@components/Atoms/TextArea'
+import { Input } from '@components/Atoms/ui/input'
 import { IBookingFormRequest } from '@models/booking/request.model'
 import { useFormBooking, useSetFormBooking, useSetIsValidStep } from '@stores/checkout/selectors'
 import { useUser } from '@stores/user/selectors'
