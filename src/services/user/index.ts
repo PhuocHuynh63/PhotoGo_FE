@@ -1,6 +1,6 @@
 import http from "@configs/fetch"
 import { IAdminGetUsersRequest, IUserChangePasswordRequest, IUserUpdateProfileRequest, IAdminCreateUserRequest } from "@models/user/request.model"
-import { IAdminGetUsersResponse } from "@models/user/response.model"
+import { IAdminGetUsersResponse, IUserStatisticsResponse } from "@models/user/response.model"
 
 
 const userService = {
@@ -35,6 +35,12 @@ const userService = {
 
     lockUser: async (userId: string, status: string) => {
         return await http.patch(`/users/${userId}/status`, { status }, {
+            cache: 'no-store'
+        })
+    },
+
+    statisticUser: async (userId: string): Promise<IUserStatisticsResponse> => {
+        return await http.get(`/users/statistics/${userId}`, {
             cache: 'no-store'
         })
     }
