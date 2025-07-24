@@ -4,7 +4,6 @@ import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 import React from 'react'
 
 const StatsSummary = ({ subscriptionHistory }: { subscriptionHistory: ISubscriptionHistoryModel[] }) => {
-    console.log('subscriptionHistory', subscriptionHistory);
 
     return (
         <>

@@ -24,7 +24,6 @@ const GoogleCompletePage = () => {
 
             const user = JSON.parse(decodeURIComponent(userRaw));
 
-            console.log('??????????????????', user);
             const res = await signIn("credentials", {
                 redirect: false,
                 email: user.email,

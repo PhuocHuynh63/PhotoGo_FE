@@ -30,10 +30,6 @@ import WriteReviewDialog from "../../../../../../../components/Molecules/WriteRe
 import paymentService from "@services/payment";
 
 export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }: { booking: IBooking, invoice: IInvoiceModel, isNew?: boolean, onReviewSuccess: () => void }) {
-    console.log('invoice', invoice);
-    console.log('booking', booking);
-
-
     const router = useRouter();
     const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false)
     const [showReviewDialog, setShowReviewDialog] = useState<boolean>(false)

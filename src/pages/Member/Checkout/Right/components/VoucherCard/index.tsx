@@ -1,10 +1,9 @@
 'use client';
 
 import React from "react"
-import { Star, Calendar, Gift, Sparkles, ChevronRight, Clock } from "lucide-react"
+import { Star, Calendar, Gift, Sparkles } from "lucide-react"
 import { Badge } from "@components/Atoms/ui/badge"
-import { Button } from "@components/Atoms/ui/button"
-import { IVoucherFilter, IVoucherModel } from "@models/voucher/common.model";
+import { IVoucherFilter } from "@models/voucher/common.model";
 import { VOUCHER } from "@constants/voucher";
 
 
@@ -15,6 +14,8 @@ const VoucherCard = ({ voucher, selectedVoucher, onSelect }: {
     onSelect: (voucher: IVoucherFilter) => void;
     // onViewDetail: (voucherId, e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
+    const formattedValue = Number(voucher?.voucher.discount_value).toLocaleString('vi-VN', { maximumFractionDigits: 0 });
+    const unit = voucher?.voucher.type === VOUCHER.TYPE.POINT ? 'đ' : ' %';
     return (
         <div
             className={`
@@ -58,9 +59,13 @@ const VoucherCard = ({ voucher, selectedVoucher, onSelect }: {
                 <Badge
                     variant={voucher?.is_valid ? "default" : "secondary"}
                     className={`text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 ${voucher?.is_valid ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white" : "bg-gray-200 text-gray-500"
-                        } max-w-full truncate break-words`}
+                        } max-w-full w-auto truncate break-words`}
                 >
-                    {voucher?.voucher.discount_value}
+                    {
+                        voucher?.voucher.type === VOUCHER.TYPE.POINT ?
+                            formattedValue + unit :
+                            formattedValue + unit
+                    }
                 </Badge>
             </div>
             {/* Voucher Content */}

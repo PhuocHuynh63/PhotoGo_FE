@@ -31,7 +31,6 @@ const SummaryInformation = () => {
     const selectedDeposit = useSelectedDeposit();
     const user = useUser();
     //----------------------End----------------------//
-    console.log(formBooking.schedules);
 
     /**
      * State to manage selected voucher

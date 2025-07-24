@@ -87,7 +87,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
      * This hook is used to fetch available vouchers for the user.
      * It uses the `useVoucher` hook to get vouchers, loading state, and pagination.
      */
-    const [voucherType, setVoucherType] = useState(VOUCHER.TYPE.POINT);
+    const [voucherType, setVoucherType] = useState(VOUCHER.TYPE.EXCHANGE_POINTS);
     const { vouchers, loading, fetchVouchers: fetchVouchersPoint, pagination: paginationVoucher } = useVoucher({
         userId: checkoutSessioin?.userId || "",
         current: 1,
@@ -271,7 +271,7 @@ export default function VoucherPopup({ onVoucherSelect }: VoucherPopupProps) {
                         </Button>
                         <Button
                             onClick={handleApplyVoucher}
-                            disabled={!selectedVoucher}
+                            // disabled={!selectedVoucher}
                             className="flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed max-w-full truncate break-words"
                         >
                             {selectedVoucher ? `Áp dụng ${selectedVoucher.voucher.code}` : "Chọn voucher"}
