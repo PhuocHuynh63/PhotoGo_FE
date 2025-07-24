@@ -158,201 +158,212 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
             <div className="container mx-auto px-4 py-8">
                 {/* Voucher Grid */}
                 {loading ? <div className="flex justify-center items-center h-screen"><Loader2 className="w-10 h-10 animate-spin" /></div> :
+                    vouchers.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center min-h-[40vh] py-16">
+                            <img src="https://res.cloudinary.com/dodtzdovx/image/upload/v1753345691/no-vouchers-available-yet-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector_kzuvvi.jpg" alt="No vouchers" className="w-64 h-64 mb-6 opacity-80" />
+                            <div className="text-xl font-semibold text-gray-700 mb-2">Không có voucher nào khả dụng</div>
+                            <div className="text-gray-500 text-base">Hãy quay lại sau hoặc thử làm mới trang.</div>
+                        </div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
+                        >
+                            {currentVouchers.map((voucher, index) => {
+                                const daysLeft = calculateDaysLeft(voucher.end_date)
+                                const isLowStock = (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) < 50
+                                const isClaimed = userId ? joinedCampaignIds.has(voucher.campaignId) : false;
+                                const isExpiringSoon = daysLeft <= 7 && daysLeft > 0
+                                const isExpired = daysLeft <= 0
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
-                    >
-                        {currentVouchers.map((voucher, index) => {
-                            const daysLeft = calculateDaysLeft(voucher.end_date)
-                            const isLowStock = (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) < 50
-                            const isClaimed = userId ? joinedCampaignIds.has(voucher.campaignId) : false;
-                            const isExpiringSoon = daysLeft <= 7 && daysLeft > 0
-                            const isExpired = daysLeft <= 0
+                                return (
+                                    <motion.div
+                                        key={voucher.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                                        whileHover={{ y: -5, scale: 1.02 }}
+                                        className="relative"
+                                    >
+                                        <Card className="overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300">
+                                            {/* Gradient Header */}
+                                            <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4 text-white relative overflow-hidden">
+                                                {/* Background Pattern */}
+                                                <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-white/10 -translate-y-10 translate-x-10"></div>
+                                                <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-white/10 translate-y-8 -translate-x-8"></div>
 
-                            return (
-                                <motion.div
-                                    key={voucher.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                                    whileHover={{ y: -5, scale: 1.02 }}
-                                    className="relative"
-                                >
-                                    <Card className="overflow-hidden h-full shadow-lg hover:shadow-xl transition-all duration-300">
-                                        {/* Gradient Header */}
-                                        <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-4 text-white relative overflow-hidden">
-                                            {/* Background Pattern */}
-                                            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-white/10 -translate-y-10 translate-x-10"></div>
-                                            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-white/10 translate-y-8 -translate-x-8"></div>
-
-                                            {/* Badges */}
-                                            <div className="absolute top-2 right-2 flex gap-2">
-                                                {isLowStock && (
-                                                    <Badge variant="destructive" className="text-xs">
-                                                        Sắp hết!
-                                                    </Badge>
-                                                )}
-                                                {isExpiringSoon && (
-                                                    <Badge variant="secondary" className="text-xs bg-yellow-500 text-white">
-                                                        Sắp hết hạn!
-                                                    </Badge>
-                                                )}
-                                                {/* {voucher.point && voucher.point > 0 && (
+                                                {/* Badges */}
+                                                <div className="absolute top-2 right-2 flex gap-2">
+                                                    {isLowStock && (
+                                                        <Badge variant="destructive" className="text-xs">
+                                                            Sắp hết!
+                                                        </Badge>
+                                                    )}
+                                                    {isExpiringSoon && (
+                                                        <Badge variant="secondary" className="text-xs bg-yellow-500 text-white">
+                                                            Sắp hết hạn!
+                                                        </Badge>
+                                                    )}
+                                                    {/* {voucher.point && voucher.point > 0 && (
                                                 <Badge variant="secondary" className="text-xs bg-purple-500 text-white">
                                                     {voucher.point} điểm
                                                 </Badge>
                                             )} */}
-                                            </div>
+                                                </div>
 
-                                            <div className="relative flex items-start justify-between">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <Gift className="w-5 h-5" />
-                                                        <Badge variant="secondary" className="text-xs bg-white/20 text-white border-0">
-                                                            Chiến dịch
-                                                        </Badge>
+                                                <div className="relative flex items-start justify-between">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <Gift className="w-5 h-5" />
+                                                            <Badge variant="secondary" className="text-xs bg-white/20 text-white border-0">
+                                                                Chiến dịch
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="text-2xl font-black mb-1">
+                                                            {voucher.discount_type === "phần trăm"
+                                                                ? `${voucher.discount_value}% OFF`
+                                                                : `${formatCurrency(Number.parseFloat(voucher.discount_value))}`}
+                                                        </div>
+                                                        <div className="text-sm font-bold bg-white/20 px-2 py-1 rounded inline-block">
+                                                            {voucher.code}
+                                                        </div>
                                                     </div>
-                                                    <div className="text-2xl font-black mb-1">
-                                                        {voucher.discount_type === "phần trăm"
-                                                            ? `${voucher.discount_value}% OFF`
-                                                            : `${formatCurrency(Number.parseFloat(voucher.discount_value))}`}
-                                                    </div>
-                                                    <div className="text-sm font-bold bg-white/20 px-2 py-1 rounded inline-block">
-                                                        {voucher.code}
+                                                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center ml-4">
+                                                        <Gift className="w-6 h-6" />
                                                     </div>
                                                 </div>
-                                                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center ml-4">
-                                                    <Gift className="w-6 h-6" />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <CardContent className="p-4">
-                                            {/* Description */}
-                                            <p className="text-gray-700 mb-4 min-h-[3rem] text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: voucher.description || '' }}></p>
-
-                                            {/* Conditions */}
-                                            <div className="space-y-2 mb-4 text-xs text-gray-600">
-                                                <div className="flex items-center gap-2">
-                                                    <Tag className="w-3 h-3" />
-                                                    <span>Đơn tối thiểu: {formatCurrency(voucher.minPrice)}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Users className="w-3 h-3" />
-                                                    <span>
-                                                        Còn lại: {(voucher.quantity ?? 0) - (voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Clock className="w-3 h-3" />
-                                                    <span>{isExpired ? "Đã hết hạn" : `Còn ${daysLeft} ngày`}</span>
-                                                </div>
                                             </div>
 
-                                            {/* Progress Bar */}
-                                            <div className="mb-4">
-                                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                                    <div
-                                                        className={`h-2 rounded-full transition-all duration-300 ${isLowStock ? "bg-red-500" : "bg-green-500"
-                                                            }`}
-                                                        style={{
-                                                            width: `${((voucher.usedCount ?? 0) / (voucher.quantity ?? 1)) * 100}%`,
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                    Đã sử dụng: {(voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
-                                                </div>
-                                            </div>
+                                            <CardContent className="p-4">
+                                                {/* Description */}
+                                                <p className="text-gray-700 mb-4 min-h-[3rem] text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: voucher.description || '' }}></p>
 
-                                            {/* Action Button */}
-                                            <Button
-                                                onClick={() => handleClaimVoucher(voucher.campaignId, userId)}
-                                                disabled={isClaimed || isExpired || (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0}
-                                                className={`w-full font-semibold transition-all duration-300 ${isClaimed
-                                                    ? "bg-green-500 hover:bg-green-600"
-                                                    : isExpired || (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0
-                                                        ? "bg-gray-400 cursor-not-allowed"
-                                                        : "bg-orange-500 hover:bg-orange-600 hover:scale-105"
-                                                    }`}
-                                            >
-                                                {isClaimed
-                                                    ? "✓ Đã nhận"
-                                                    : isExpired
-                                                        ? "Hết hạn"
-                                                        : (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0
-                                                            ? "Hết voucher"
-                                                            : "Nhận ngay"}
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            )
-                        })}
-                    </motion.div>
+                                                {/* Conditions */}
+                                                <div className="space-y-2 mb-4 text-xs text-gray-600">
+                                                    <div className="flex items-center gap-2">
+                                                        <Tag className="w-3 h-3" />
+                                                        <span>Đơn tối thiểu: {formatCurrency(voucher.minPrice)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Users className="w-3 h-3" />
+                                                        <span>
+                                                            Còn lại: {(voucher.quantity ?? 0) - (voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Clock className="w-3 h-3" />
+                                                        <span>{isExpired ? "Đã hết hạn" : `Còn ${daysLeft} ngày`}</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Progress Bar */}
+                                                <div className="mb-4">
+                                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                                        <div
+                                                            className={`h-2 rounded-full transition-all duration-300 ${isLowStock ? "bg-red-500" : "bg-green-500"
+                                                                }`}
+                                                            style={{
+                                                                width: `${((voucher.usedCount ?? 0) / (voucher.quantity ?? 1)) * 100}%`,
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 mt-1">
+                                                        Đã sử dụng: {(voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
+                                                    </div>
+                                                </div>
+
+                                                {/* Action Button */}
+                                                <Button
+                                                    onClick={() => handleClaimVoucher(voucher.campaignId, userId)}
+                                                    disabled={isClaimed || isExpired || (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0}
+                                                    className={`w-full font-semibold transition-all duration-300 ${isClaimed
+                                                        ? "bg-green-500 hover:bg-green-600"
+                                                        : isExpired || (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0
+                                                            ? "bg-gray-400 cursor-not-allowed"
+                                                            : "bg-orange-500 hover:bg-orange-600 hover:scale-105"
+                                                        }`}
+                                                >
+                                                    {isClaimed
+                                                        ? "✓ Đã nhận"
+                                                        : isExpired
+                                                            ? "Hết hạn"
+                                                            : (voucher.quantity ?? 0) - (voucher.usedCount ?? 0) <= 0
+                                                                ? "Hết voucher"
+                                                                : "Nhận ngay"}
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                )
+                            })}
+                        </motion.div>
+                    )
                 }
 
                 {/* Pagination */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="flex justify-center items-center gap-2 mt-8"
-                >
-                    {/* Previous Button */}
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="flex items-center gap-1"
+                {vouchers.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                        className="flex justify-center items-center gap-2 mt-8"
                     >
-                        <ChevronLeft className="w-4 h-4" />
-                        Trước
-                    </Button>
+                        {/* Previous Button */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="flex items-center gap-1"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                            Trước
+                        </Button>
 
-                    {/* Page Numbers */}
-                    <div className="flex gap-1">
-                        {getPageNumbers().map((page, index) => (
-                            <div key={index}>
-                                {page === "..." ? (
-                                    <span className="px-3 py-2 text-gray-500">...</span>
-                                ) : (
-                                    <Button
-                                        variant={currentPage === page ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => handlePageChange(page as number)}
-                                        className={`min-w-[40px] ${currentPage === page ? "bg-orange-500 hover:bg-orange-600 text-white" : "hover:bg-orange-50"
-                                            }`}
-                                    >
-                                        {page}
-                                    </Button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                        {/* Page Numbers */}
+                        <div className="flex gap-1">
+                            {getPageNumbers().map((page, index) => (
+                                <div key={index}>
+                                    {page === "..." ? (
+                                        <span className="px-3 py-2 text-gray-500">...</span>
+                                    ) : (
+                                        <Button
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            onClick={() => handlePageChange(page as number)}
+                                            className={`min-w-[40px] ${currentPage === page ? "bg-orange-500 hover:bg-orange-600 text-white" : "hover:bg-orange-50"
+                                                }`}
+                                        >
+                                            {page}
+                                        </Button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
 
-                    {/* Next Button */}
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="flex items-center gap-1"
-                    >
-                        Sau
-                        <ChevronRight className="w-4 h-4" />
-                    </Button>
-                </motion.div>
+                        {/* Next Button */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="flex items-center gap-1"
+                        >
+                            Sau
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </motion.div>
+                )}
 
                 {/* Pagination Info */}
-                <div className="text-center mt-4 text-sm text-gray-600">
-                    Hiển thị {startIndex + 1}-{Math.min(endIndex, vouchers.length)} trong tổng số {vouchers.length}{" "}
-                    voucher
-                </div>
+                {vouchers.length > 0 && (
+                    <div className="text-center mt-4 text-sm text-gray-600">
+                        Hiển thị {startIndex + 1}-{Math.min(endIndex, vouchers.length)} trong tổng số {vouchers.length}{" "}
+                        voucher
+                    </div>
+                )}
             </div>
         </div>
     )
