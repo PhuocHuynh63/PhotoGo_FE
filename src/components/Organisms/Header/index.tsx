@@ -19,7 +19,6 @@ import { usePathname } from "next/navigation";
 import { useCart, useFetchCartByUserId } from "@stores/cart/selectors";
 
 import { AvatarWithBorder } from "../AvatarBorder";
-import { Rank } from "../AvatarBorder/rankStyles";
 import { ROLE } from "@constants/common";
 import NotificationDropdown from "../NotificationDropdown";
 import CampaignsMarquee from "../CampaignMarquee";
@@ -173,7 +172,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
                         transition={{ duration: 0.3 }}
                     >
                         <AvatarWithBorder
-                            rank={user?.rank as Rank}
+                            subscription={user?.subscription || undefined}
                         >
                             <Avatar
                                 onClick={() => setIsNotificationOpen(!isNotificationOpen)}

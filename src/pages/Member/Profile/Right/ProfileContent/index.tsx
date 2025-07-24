@@ -112,13 +112,6 @@ export default function ProfileContent({ user }: { user: IUser }) {
                                 <Input id="email" value={user?.email} disabled />
                             </div>
                             <div className="space-y-2 opacity-60 cursor-default">
-                                <Label htmlFor="rank">Gói đăng ký</Label>
-                                <Input id="rank" value={user?.subscription ? 'Đã mua gói' : 'Chưa mua gói'} disabled />
-                            </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4 p-3">
-                            <div className="space-y-2 opacity-60 cursor-default">
                                 <Label htmlFor="status">Ngày tham gia</Label>
                                 <Input id="status" value={new Date(user?.createdAt).toLocaleDateString("vi-VN")} disabled />
                             </div>
