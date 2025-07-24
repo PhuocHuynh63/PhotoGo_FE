@@ -23,6 +23,7 @@ import { IServiceConcept } from "@models/serviceConcepts/common.model";
 import { ICheckoutSessionRequest } from "@models/booking/request.model";
 import { METADATA } from "../../../../../types/IMetadata";
 import { IUser } from "@models/user/common.model";
+import { USER } from "@constants/user";
 
 interface EnhancedBookingPopupProps {
     isOpen: boolean;
@@ -474,14 +475,25 @@ export default function EnhancedBookingPopup({
                     <Button variant="outline" onClick={onClose} size="lg" disabled={isLoading}>
                         Hủy bỏ
                     </Button>
-                    <Button
-                        onClick={handleSubmit(onSubmit)}
-                        disabled={!isBookingReady || isLoading}
-                        size="lg"
-                        className="min-w-[180px]"
-                    >
-                        {isLoading ? 'Đang xác nhận...' : 'Xác nhận đặt lịch'}
-                    </Button>
+
+                    {(user?.role?.id === USER.USER_ROLES_ID.CUSTOMER || !user?.role?.id) ? (
+                        <Button
+                            onClick={handleSubmit(onSubmit)}
+                            disabled={!isBookingReady || isLoading}
+                            size="lg"
+                            className="min-w-[180px]"
+                        >
+                            {isLoading ? 'Đang xác nhận...' : 'Xác nhận đặt lịch'}
+                        </Button>
+                    ) : (
+                        <Button
+                            disabled={true}
+                            size="lg"
+                            className="min-w-[180px]"
+                        >
+                            Bạn không có quyền đặt lịch
+                        </Button>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
