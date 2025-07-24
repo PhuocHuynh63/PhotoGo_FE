@@ -43,12 +43,12 @@ export default function Header({ userData, setSidebarOpen }: { userData: IUser, 
                     <ButtonServiceOffer roleName={userData?.role?.name} />
                 )}
 
-                <button className="cursor-pointer relative">
+                {/* <button className="cursor-pointer relative">
                     <Bell className="w-5 h-5 text-gray-600" />
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
                         3
                     </span>
-                </button>
+                </button> */}
 
                 <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center gap-2 cursor-pointer">

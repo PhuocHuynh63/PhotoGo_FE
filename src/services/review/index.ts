@@ -36,8 +36,8 @@ const reviewService = {
         return await http.post(`/reviews`, review)
     },
 
-    editReview: async (reviewId: string, review: IEditReviewModel) => {
-        return await http.put(`/reviews/${reviewId}`, review)
+    editReview: async (reviewId: string, review: IEditReviewModel | FormData) => {
+        return await http.put(`/reviews/${reviewId}`, review);
     },
 
     deleteReview: async (reviewId: string) => {

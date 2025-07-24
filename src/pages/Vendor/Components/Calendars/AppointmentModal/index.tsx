@@ -40,6 +40,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
     const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
     // Update local appointment when prop changes
+
     useEffect(() => {
         setLocalAppointment(appointment)
     }, [appointment])
