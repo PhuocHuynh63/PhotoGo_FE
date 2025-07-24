@@ -1,6 +1,7 @@
 export enum BOOKING_STATUS {
     NOT_PAID = 'chưa thanh toán',
     PAID = 'đã thanh toán',
+    PARTIALLY_PAID = 'đã thanh toán một phần',
     PENDING = 'chờ xác nhận',
     CONFIRMED = 'đã xác nhận',
     IN_PROGRESS = 'đang thực hiện',
