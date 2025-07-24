@@ -62,6 +62,7 @@ export default async function VendorDetailLayout({
                 concept={concept}
                 review={review}
                 user={user.data || null}
+                session={session}
             >
                 {children}
             </VendorDetailLayoutPage>

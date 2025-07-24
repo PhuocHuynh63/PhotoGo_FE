@@ -131,7 +131,7 @@ const SummaryInformation = () => {
                             {user?.subscription?.id ? (
                                 <span className="font-medium">{((price?.finalPrice || 0) + (price?.discountSubscription || 0))?.toLocaleString()}đ</span>
                             ) : (
-                                <span className="font-medium text-red-500">{price?.finalPrice?.toLocaleString()}đ</span>
+                                <span className="font-medium">{price?.finalPrice?.toLocaleString()}đ</span>
                             )}
                         </div>
 

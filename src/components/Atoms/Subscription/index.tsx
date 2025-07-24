@@ -10,7 +10,7 @@ export default function Subscription({ hasSubscription }: { hasSubscription: boo
             {/* Overlay ổ khóa nếu chưa mua */}
             {!hasSubscription && (
                 <div
-                    className="absolute inset-0 z-30 flex items-center justify-center bg-black/40 rounded-lg pointer-events-auto cursor-pointer"
+                    className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 rounded-lg pointer-events-auto cursor-pointer"
                     onClick={() => router.push(ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP)}
                 >
                     <div className="flex flex-col items-center">
@@ -27,7 +27,7 @@ export default function Subscription({ hasSubscription }: { hasSubscription: boo
                     ${hasSubscription
                     ? "bg-gradient-to-tl from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7] opacity-100"
                     : "bg-gradient-to-tl from-gray-400 via-gray-300 to-gray-200 opacity-70"} 
-                    p-6 text-white shadow-2xl border-4 border-white/30 relative z-20`}>
+                    p-6 text-white shadow-2xl border-4 border-white/30 relative z-10`}>
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2">

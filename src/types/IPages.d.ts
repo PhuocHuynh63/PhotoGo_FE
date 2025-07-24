@@ -73,6 +73,7 @@ declare namespace PAGES {
         user: IUser | null;
         concept: IServiceConceptImageModel;
         review: IReviewPaginationResponse;
+        session: METADATA.ISession;
     }
 
     interface IChatProps {

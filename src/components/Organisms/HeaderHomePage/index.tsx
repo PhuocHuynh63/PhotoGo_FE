@@ -408,7 +408,7 @@ export default function HeaderHomePage({ user, servicePackages }: PAGES.IHeader)
         <>
             {/* PHẦN HEADER */}
             <header
-                className={`header p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? "bg-[rgba(177,177,177,0.65)] shadow-xl" : "bg-transparent"}`}
+                className={`header h-20 p-4 px-4 md:px-8 w-full rounded-md fixed top-0 z-40 transition-all duration-300 ease-in-out ${isScrolled ? "bg-[rgba(177,177,177,0.65)] shadow-xl" : "bg-transparent"}`}
             >
 
                 <motion.div
