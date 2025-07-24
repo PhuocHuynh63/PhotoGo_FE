@@ -30,7 +30,7 @@ import { Input } from "@components/Atoms/ui/input"
 import { ImagePlus, Loader2, X } from "lucide-react"
 import reviewService from "@services/review"
 import { toast } from "react-hot-toast"
-import { IDeleteVoucherResponseModel, IEditVoucherResponseModel } from "@models/voucher/response.model"
+import { IDeleteVoucherResponseModel } from "@models/voucher/response.model"
 
 interface ReviewCardProps {
     reviewData: IReviewVendorDetailModel
@@ -39,7 +39,6 @@ interface ReviewCardProps {
 
 export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
     //#region define variables
-    const isPending = !reviewData?.comment || reviewData?.comment.trim() === ''
     const [lightboxOpen, setLightboxOpen] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [isEditing, setIsEditing] = useState(false)
@@ -68,50 +67,37 @@ export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
         setLightboxOpen(true)
     }
 
-    const uploadImages = async (files: File[]): Promise<string[]> => {
-        // TODO: Implement your image upload logic here
-        // This should upload the images to your storage service and return the URLs
-        // For now, we'll just return empty array
-        return []
-    }
-
     const handleEdit = async () => {
-        if (!reviewData?.id) return
+        if (!reviewData?.id) return;
         try {
-            setIsSubmitting(true)
+            setIsSubmitting(true);
 
-            // Upload new images if any
-            let uploadedImageUrls: string[] = []
-            if (newImages.length > 0) {
-                uploadedImageUrls = await uploadImages(newImages)
-            }
+            const formData = new FormData();
+            formData.append('rating', editData.rating.toString());
+            formData.append('comment', editData.comment);
+            formData.append('vendorId', reviewData.vendor.id);
+            formData.append('bookingId', reviewData.booking.id);
 
-            // Combine existing images that weren't removed with new image URLs
-            const finalImages = [...previewImages.filter(url => reviewData.images?.includes(url)), ...uploadedImageUrls]
+            // Chỉ gửi các ảnh mới (file) mà user vừa chọn
+            newImages.forEach(file => {
+                formData.append('images', file);
+            });
 
-            // Call the API to update the review
-            const response = await reviewService.editReview(reviewData.id, {
-                rating: editData.rating,
-                comment: editData.comment,
-                images: finalImages,
-                bookingId: reviewData.booking.id,
-                vendorId: reviewData.vendor.id
-            }) as IEditVoucherResponseModel
-
-            if (response.statusCode === 200) {
-                toast.success('Đánh giá đã được cập nhật thành công')
-                setIsEditing(false)
-                onSuccess?.()
+            const response: unknown = await reviewService.editReview(reviewData.id, formData);
+            if (typeof response === 'object' && response !== null && 'statusCode' in response && (response as any).statusCode === 200) {
+                toast.success('Đánh giá đã được cập nhật thành công');
+                setIsEditing(false);
+                onSuccess?.();
             } else {
-                toast.error(response.message || 'Có lỗi xảy ra khi cập nhật đánh giá')
+                toast.error((response as any)?.message || 'Có lỗi xảy ra khi cập nhật đánh giá');
             }
         } catch (error) {
-            console.error('Error editing review:', error)
-            toast.error('Có lỗi xảy ra khi cập nhật đánh giá')
+            console.error('Error editing review:', error);
+            toast.error('Có lỗi xảy ra khi cập nhật đánh giá');
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const handleDelete = async () => {
         if (!reviewData?.id) return
@@ -134,19 +120,18 @@ export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
     }
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files
-        if (!files) return
+        if (!event.target.files) return;
 
-        const newFilesArray = Array.from(files)
-        setNewImages(prev => [...prev, ...newFilesArray])
+        const newFilesArray = Array.from(event.target.files);
+        setNewImages(prev => [...prev, ...newFilesArray]);
 
         // Create preview URLs for the new images
-        const newPreviewUrls = newFilesArray.map(file => URL.createObjectURL(file))
-        setPreviewImages(prev => [...prev, ...newPreviewUrls])
+        const newPreviewUrls = newFilesArray.map(file => URL.createObjectURL(file));
+        setPreviewImages(prev => [...prev, ...newPreviewUrls]);
 
         // Reset the input
         if (fileInputRef.current) {
-            fileInputRef.current.value = ''
+            fileInputRef.current.value = '';
         }
     }
 
@@ -179,15 +164,9 @@ export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
                             <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                                 <h3 className="font-semibold text-lg leading-tight">{reviewData?.vendor?.name || 'Dịch vụ nhiếp ảnh'}</h3>
                                 <div className="flex-shrink-0">
-                                    {isPending ? (
-                                        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
-                                            Chưa đánh giá
-                                        </Badge>
-                                    ) : (
-                                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
-                                            Đã đánh giá
-                                        </Badge>
-                                    )}
+                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                                        Đã đánh giá
+                                    </Badge>
                                 </div>
                             </div>
                             <p className="text-sm text-muted-foreground mt-1">{reviewData?.user?.fullName || 'Người dùng'}</p>
@@ -222,64 +201,52 @@ export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
 
                         {/* Review Content */}
                         <div className={reviewData?.images && reviewData?.images?.length > 0 ? "md:w-3/4 lg:w-4/5" : "w-full"}>
-                            {isPending ? (
-                                /* Pending Review State */
-                                <div className="bg-muted p-4 rounded-md">
-                                    <p className="mb-2 font-medium">Bạn chưa đánh giá dịch vụ này</p>
-                                    <div className="flex gap-1 mb-4">
+                            <div className="bg-muted/30 p-4 rounded-md">
+                                {/* Rating and Date */}
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex gap-1">
                                         <StarRating stars={reviewData?.rating || 0} size={20} />
                                     </div>
-                                    <Button>Viết đánh giá</Button>
+                                    <p className="text-sm text-muted-foreground">
+                                        Đánh giá ngày: {formatDate(reviewData?.createdAt)}
+                                    </p>
                                 </div>
-                            ) : (
-                                /* Completed Review State */
-                                <div className="bg-muted/30 p-4 rounded-md">
-                                    {/* Rating and Date */}
-                                    <div className="flex justify-between items-center mb-2">
-                                        <div className="flex gap-1">
-                                            <StarRating stars={reviewData?.rating || 0} size={20} />
-                                        </div>
-                                        <p className="text-sm text-muted-foreground">
-                                            Đánh giá ngày: {formatDate(reviewData?.createdAt)}
+
+                                {/* Review Text */}
+                                <p className="text-sm">{reviewData?.comment}</p>
+
+                                {/* User Info */}
+                                {reviewData?.user && (
+                                    <div className="mt-2 pt-2 border-t border-muted">
+                                        <p className="text-xs text-muted-foreground">
+                                            Đánh giá bởi: {reviewData?.user?.fullName}
                                         </p>
                                     </div>
+                                )}
 
-                                    {/* Review Text */}
-                                    <p className="text-sm">{reviewData?.comment}</p>
-
-                                    {/* User Info */}
-                                    {reviewData?.user && (
-                                        <div className="mt-2 pt-2 border-t border-muted">
-                                            <p className="text-xs text-muted-foreground">
-                                                Đánh giá bởi: {reviewData?.user?.fullName}
-                                            </p>
+                                {/* Review Images Grid */}
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mt-2">
+                                    {reviewData?.images && reviewData?.images?.slice(0, 5).map((imageUrl, index) => (
+                                        <Image
+                                            key={index}
+                                            src={imageUrl}
+                                            alt={`Review image ${index + 1}`}
+                                            loading="lazy"
+                                            quality={100}
+                                            width={300}
+                                            height={150}
+                                            className="aspect-square rounded-md object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                                            onClick={() => handleImageClick(index)}
+                                        />
+                                    ))}
+                                    {reviewData?.images && reviewData?.images?.length > 5 && (
+                                        <div className="aspect-square bg-muted rounded-md cursor-pointer hover:bg-muted/80 flex items-center justify-center text-xs text-muted-foreground font-medium"
+                                            onClick={() => handleImageClick(5)}>
+                                            +{reviewData?.images?.length - 5}
                                         </div>
                                     )}
-
-                                    {/* Review Images Grid */}
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 mt-2">
-                                        {reviewData?.images && reviewData?.images?.slice(0, 5).map((imageUrl, index) => (
-                                            <Image
-                                                key={index}
-                                                src={imageUrl}
-                                                alt={`Review image ${index + 1}`}
-                                                loading="lazy"
-                                                quality={100}
-                                                width={300}
-                                                height={150}
-                                                className="aspect-square rounded-md object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                                                onClick={() => handleImageClick(index)}
-                                            />
-                                        ))}
-                                        {reviewData?.images && reviewData?.images?.length > 5 && (
-                                            <div className="aspect-square bg-muted rounded-md cursor-pointer hover:bg-muted/80 flex items-center justify-center text-xs text-muted-foreground font-medium"
-                                                onClick={() => handleImageClick(5)}>
-                                                +{reviewData?.images?.length - 5}
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </CardContent>
@@ -289,18 +256,14 @@ export default function ReviewCard({ reviewData, onSuccess }: ReviewCardProps) {
                     <Button variant="outline" size="sm" className="cursor-pointer">
                         Xem chi tiết đơn
                     </Button>
-                    {isPending ? (
-                        <Button size="sm" className="cursor-pointer">Đánh giá ngay</Button>
-                    ) : (
-                        <>
-                            <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => setIsEditing(true)}>
-                                Chỉnh sửa đánh giá
-                            </Button>
-                            <Button variant="destructive" size="sm" className="cursor-pointer text-white" onClick={() => setIsDeleting(true)}>
-                                Xóa đánh giá
-                            </Button>
-                        </>
-                    )}
+                    <>
+                        <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => setIsEditing(true)}>
+                            Chỉnh sửa đánh giá
+                        </Button>
+                        <Button variant="destructive" size="sm" className="cursor-pointer text-white" onClick={() => setIsDeleting(true)}>
+                            Xóa đánh giá
+                        </Button>
+                    </>
                 </CardFooter>
             </Card>
 
