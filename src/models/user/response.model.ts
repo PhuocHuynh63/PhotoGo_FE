@@ -65,3 +65,37 @@ export const AdminGetUsersResponse = z.object({
   
   export type IAdminGetUsersResponse = z.TypeOf<typeof AdminGetUsersResponse>;
 //----------------------End----------------------//
+
+/**
+ * UserModel is a Model for User Statistics response
+ */
+export const UserStatisticsModelResponse = z.object({
+    statusCode: z.number(),
+    message: z.string(),
+    data: z.object({
+      totalBookings: z.number(),
+      completedBookings: z.number(),
+      cancelledBookings: z.number(),
+      pendingBookings: z.number(),
+      totalPaidAmount: z.number(),
+      totalPaidCompletedBookings: z.number(),
+      totalSubscriptions: z.number(),
+      totalPaidSubscription: z.number(),
+      points: z.object({
+        currentBalance: z.number(),
+        totalEarned: z.number(),
+        totalRedeemed: z.number(),
+        totalExpired: z.number()
+      }),
+      vouchers: z.object({
+        totalVouchers: z.number(),
+        usedVouchers: z.number(),
+        availableVouchers: z.number()
+      }),
+    })
+});
+
+
+
+export type IUserStatisticsResponse = z.TypeOf<typeof UserStatisticsModelResponse>;
+//----------------------End----------------------//

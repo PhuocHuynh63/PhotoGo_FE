@@ -309,7 +309,7 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
                         )}
 
                         {(booking.status === BOOKING.BOOKING_STATUS.IN_PROGRESS || booking.status === BOOKING.BOOKING_STATUS.COMPLETED)
-                            && booking.depositAmount !== '100.00' && invoice?.status === BOOKING.BOOKING_STATUS.PAID && (
+                            && booking.depositAmount !== '100.00' && invoice?.status === BOOKING.BOOKING_STATUS.PARTIALLY_PAID && (
                                 <Button variant="outline" className="bg-orange-600 hover:bg-orange-700 text-white hover:text-white" onClick={() => handlePaymentRemaining()}>
                                     Thanh toán số tiền còn lại
                                 </Button>

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Sidebar from "@pages/Vendor/Components/Sidebar";
 import Header from "@pages/Vendor/Components/Header";
 import { createContext, useContext } from "react";
 import { IUser } from "@models/user/common.model";
 import { METADATA } from "../../../types/IMetadata";
+import { useSetSession } from "@stores/user/selectors";
 
 // Create Session Context
 export const SessionContext = createContext<METADATA.ISession | null>(null);
@@ -29,6 +30,16 @@ export default function VendorProfileLayoutClient({
     userData: IUser;
 }>) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    /**
+     * Set session to the store
+     */
+    const setSession = useSetSession();
+    useEffect(() => {
+        setSession(session);
+    }, [session, setSession]);
+    //-----------------------------End---------------------------------//
+
     return (
         <SessionContext.Provider value={session}>
             <main className="flex min-h-screen mx-auto">
