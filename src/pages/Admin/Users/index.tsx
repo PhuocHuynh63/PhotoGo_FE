@@ -15,6 +15,8 @@ import AddUserDialog from "./Components/AddUserDialog";
 import userService from "@services/user";
 import { toast } from "react-hot-toast";
 import ConfirmDialog from "@components/Atoms/ConfirmDialog";
+import { USER } from "@constants/user";
+import StatDialog from "./Components/StatDialog";
 
 const ROLE_OPTIONS = [
   { value: 'Tất cả', icon: 'User', name: 'Tất cả' },
@@ -76,6 +78,8 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
     user?: IUser;
     nextStatus?: string;
   }>({ open: false });
+  // State cho dialog thống kê
+  const [statDialog, setStatDialog] = useState<{ open: boolean; userId?: string }>({ open: false });
 
   // Đồng bộ state tạm với URL khi URL thay đổi
   useEffect(() => {
@@ -240,20 +244,20 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
         );
       }
     },
-    {
-      id: 'fullName',
-      header: 'Tên',
-      cell: (user) => (
-        <div className="font-medium text-gray-900">{user.fullName}</div>
-      )
-    },
-    {
-      id: 'email',
-      header: 'Email',
-      cell: (user) => (
-        <div className="text-sm text-gray-600 font-mono">{user.email}</div>
-      )
-    },
+    // {
+    //   id: 'fullName',
+    //   header: 'Tên',
+    //   cell: (user) => (
+    //     <div className="font-medium text-gray-900">{user.fullName}</div>
+    //   )
+    // },
+    // {
+    //   id: 'email',
+    //   header: 'Email',
+    //   cell: (user) => (
+    //     <div className="text-sm text-gray-600 font-mono">{user.email}</div>
+    //   )
+    // },
     {
       id: 'phoneNumber',
       header: 'Số điện thoại',
@@ -329,6 +333,8 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
             size="sm"
             title="Xem chi tiết"
             className="h-8 w-8 p-0 hover:bg-blue-50 hover:border-blue-200"
+            style={{ display: user.role?.id === USER.USER_ROLES_ID.CUSTOMER ? undefined : 'none' }}
+            onClick={() => setStatDialog({ open: true, userId: user.id })}
           >
             <LucideIcon name="Eye" iconSize={14} className="text-blue-600" />
           </Button>
@@ -554,6 +560,12 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
           onConfirm={handleConfirmChangeStatus}
           onCancel={() => setConfirmDialog({ open: false })}
           type={confirmDialog.nextStatus === 'hoạt động' ? 'info' : 'danger'}
+        />
+        {/* Stat Dialog */}
+        <StatDialog
+          open={statDialog.open}
+          onClose={() => setStatDialog({ open: false })}
+          userId={statDialog.userId || ''}
         />
       </div>
     </div>

@@ -17,7 +17,7 @@ export default async function VendorCalendar() {
     const vendorId = vendor?.data?.id
     return (
         <>
-            <CalendarManagement vendorId={vendorId} />
+            <CalendarManagement  vendorId={vendorId} />
         </>
     )
 }

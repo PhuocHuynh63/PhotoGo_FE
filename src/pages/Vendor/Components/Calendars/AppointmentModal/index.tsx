@@ -34,8 +34,42 @@ import { ROUTES } from "@routes"
 import { formatDate } from "@utils/helpers/Date"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import { PAGES } from "../../../../../types/IPages"
+import { Socket } from "socket.io-client"
+import { getSocket } from "@configs/socket"
+import { useRouter } from "next/navigation"
+import { useSession } from "@stores/user/selectors"
+import { METADATA } from "../../../../../types/IMetadata"
 
 export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: PAGES.AppointmentModalProps) {
+    const session = useSession() as METADATA.ISession;
+    const router = useRouter();
+
+    /**
+     * Socket connection to handle chat functionality
+     */
+    const [socket, setSocket] = useState<Socket | null>(null);
+    useEffect(() => {
+        const socketInstance = getSocket(session?.accessToken);
+        setSocket(socketInstance);
+        if (socketInstance) {
+            socketInstance.on('joinedRoom', (data) => {
+                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
+            });
+        }
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off('joinedRoom');
+            }
+        };
+    }, [session?.accessToken]);
+
+    const handleSelectConversation = () => {
+        if (socket && socket.connected) {
+            socket.emit('joinChat', { memberId: appointment?.userId });
+        }
+    };
+    //-----------------------------End---------------------------------//
     // const [isEditing, setIsEditing] = useState(false)
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
     const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
@@ -175,6 +209,8 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
         }
     }
 
+
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent showCloseIcon={false} className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -224,12 +260,10 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
                                     </div>
                                 </div>
                             </div>
-                            <Link href={`${ROUTES.VENDOR.CHAT}/${localAppointment.userId}`}>
-                                <Button variant="outline" size="sm" className="gap-1 cursor-pointer">
-                                    <MessageSquare className="h-4 w-4" />
-                                    Nhắn tin
-                                </Button>
-                            </Link>
+                            <Button variant="outline" size="sm" className="gap-1 cursor-pointer" onClick={handleSelectConversation}>
+                                <MessageSquare className="h-4 w-4" />
+                                Nhắn tin
+                            </Button>
                         </div>
                     </div>
 
