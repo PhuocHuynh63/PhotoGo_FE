@@ -12,6 +12,10 @@ const paymentService = {
 
     paymentRemaining: async (invoiceId: string) => {
         return await http.post(`/payments/${invoiceId}/payos/remaining-amount`, {})
+    }, 
+
+    paymentRemainingSuccess: async (paymentId: string, data: IPaymentRequest) => {
+        return await http.post(`/payments/remaining/successful?paymentId=${paymentId}`, data)
     }
 }
 
