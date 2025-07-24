@@ -34,7 +34,7 @@ const TYPE_BADGE: Record<string, { color: string; icon: ReactNode }> = {
     'trừ điểm thủ công': { color: 'bg-red-100 text-red-700', icon: <LucideIcon name="MinusCircle" iconSize={16} className="mr-1" /> },
 };
 
-function PointHistoryTable({ userId, filter }: { userId: string; filter: Record<string, any> }) {
+function PointHistoryTable({ userId, filter, onPageChange }: { userId: string; filter: Record<string, any>; onPageChange: (page: number) => void }) {
     const [transactions, setTransactions] = useState<IPointTransaction[]>([]);
     const [pagination, setPagination] = useState<IPagination>({ current: 1, pageSize: 10, totalItem: 0, totalPage: 1 });
     const [loading, setLoading] = useState(false);
@@ -103,13 +103,7 @@ function PointHistoryTable({ userId, filter }: { userId: string; filter: Record<
                     currentPage: pagination?.current || 1,
                     totalPages: pagination?.totalPage || 1,
                     totalItems: pagination?.totalItem || 0,
-                    onPageChange: (page) => {
-                        const params = new URLSearchParams(filter.toString());
-                        params.set('current', String(page));
-                        params.set('pageSize', String(pagination?.pageSize || 10));
-                        // This will trigger the useEffect in the parent component to refetch
-                        // The parent component will then update the filter and trigger the useEffect again
-                    },
+                    onPageChange: onPageChange, // Sử dụng hàm truyền từ cha
                     itemsPerPage: pagination?.pageSize || 10,
                 } : undefined}
                 emptyState={
@@ -268,7 +262,7 @@ export default function PointsHistoryPage({ userId, transactions, pagination }: 
                         </Button>
                     </div>
                 </form>
-                <PointHistoryTable key={tableKey} userId={userId} filter={{ type, startDate, endDate, minAmount, maxAmount, current, pageSize }} />
+                <PointHistoryTable key={tableKey} userId={userId} filter={{ type, startDate, endDate, minAmount, maxAmount, current, pageSize }} onPageChange={handlePageChange} />
             </div>
         </div>
     );
