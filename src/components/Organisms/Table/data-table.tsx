@@ -96,7 +96,8 @@ export function DataTable<T>({
         </Table>
       </div>
 
-      {pagination && (
+      {/* Phân trang chỉ hiển thị khi có data */}
+      {pagination && data?.length > 0 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
             Hiển thị{" "}
