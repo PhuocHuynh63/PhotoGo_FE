@@ -6,7 +6,7 @@ import { X, Lock, Check, Star, Calendar, Tag, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import Button from '@components/Atoms/Button'
 import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription_plan/request.model'
-import { useSession, useUser } from '@stores/user/selectors'
+import { useUser } from '@stores/user/selectors'
 import { subscriptionService } from '@services/subcription'
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
 import { IUser } from '@models/user/common.model'
@@ -80,7 +80,7 @@ export default function PaymentModal({
 
     const { handleSubmit, setValue } = useForm<ISubscriptionCreatePaymentLinkRequestModel>({
         defaultValues: {
-            userId: user.id || '',
+            userId: user?.id || '',
             planId: subscription?.id || '',
             type: 'thanh toán đầy đủ',
         }
@@ -88,7 +88,7 @@ export default function PaymentModal({
 
     // Reset form values khi subscription thay đổi
     React.useEffect(() => {
-        setValue('userId', user.id || '');
+        setValue('userId', user?.id || '');
         setValue('planId', subscription?.id || '');
         setValue('type', 'thanh toán đầy đủ');
         setError(null);
@@ -134,10 +134,10 @@ export default function PaymentModal({
                 }
             };
         }
-    }, [showPaymentDialog, paymentLink, onClose]);
+    }, [showPaymentDialog, paymentLink, onClose]);  
 
     const onSubmit = async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
-        if (!user.id) {
+        if (!user?.id) {
             setError('Vui lòng đăng nhập để tiếp tục');
             return;
         }
