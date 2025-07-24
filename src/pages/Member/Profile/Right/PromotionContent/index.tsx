@@ -284,7 +284,7 @@ export default function PromotionsPage({ session }: PAGES.IPromotionPageProps) {
                                                 {/* Left */}
                                                 <div className="p-5 w-2/3 flex flex-col justify-between">
                                                     <div>
-                                                        <h3 className="text-lg font-semibold text-orange-600 mt-8 h-16 overflow-hidden text-ellipsis line-clamp-2">{voucher.description}</h3>
+                                                        <h3 className="text-lg font-semibold text-orange-600 mt-8 h-14 overflow-hidden text-ellipsis line-clamp-2" dangerouslySetInnerHTML={{ __html: voucher.description }}></h3>
                                                         <div className="flex items-center gap-2 mt-2">
                                                             <span className="text-sm font-medium">
                                                                 {voucher.discount_type === "phần trăm"

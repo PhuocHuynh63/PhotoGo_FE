@@ -11,7 +11,7 @@ const CampaignsMarquee = ({ campaigns }: { campaigns: ICampaign[] }) => {
     <Link href={ROUTES.PUBLIC.CAMPAIGNS.VOUCHERS} passHref legacyBehavior>
       <a className="block w-full hide-scrollbar">
         <div
-          className="w-full backdrop-blur-md bg-white/70 shadow-xl border-b border-gray-200 py-2 px-0 flex items-center overflow-y-hidden min-h-[40px] hide-scrollbar"
+          className="w-full backdrop-blur-md bg-white/70 shadow-xl border-b border-gray-200 py-1 px-0 flex items-center overflow-y-hidden min-h-[30px] hide-scrollbar"
         >
           <Marquee
             gradient={false}

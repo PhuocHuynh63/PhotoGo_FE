@@ -25,7 +25,7 @@ export default function Right({ packages, pagination }: { packages: IServicePack
     const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
     const searchParams = useSearchParams();
     const router = useRouter();
-
+    console.log(packages)
     const [isOpen, setIsOpen] = useState(false)
     const [selectedPackage, setSelectedPackage] = useState<string | undefined>(undefined)
     const servicePackage = packages?.find((pkg) => pkg.id === selectedPackage) as IServicePackage
