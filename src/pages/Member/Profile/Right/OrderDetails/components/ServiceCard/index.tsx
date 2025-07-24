@@ -18,7 +18,10 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ isVisible, description, showF
         <h3 className="text-xl font-bold mb-4 text-gray-800">Gói dịch vụ</h3>
         <div className="text-gray-600 text-sm leading-relaxed">
             <p className={`whitespace-pre-line ${!showFullDescription ? 'line-clamp-3' : ''}`}>
-                {description}
+                <div
+                    className="text-muted-foreground prose prose-sm max-w-none text-sm line-clamp-2"
+                    dangerouslySetInnerHTML={{ __html: description || '' }}
+                />
             </p>
             {description?.length > 200 && (
                 <button

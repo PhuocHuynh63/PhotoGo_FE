@@ -10,7 +10,6 @@ import LucideIcon from "@components/Atoms/LucideIcon";
 import Select from "@components/Atoms/Select";
 import { useState, useEffect } from "react";
 import { AvatarWithBorder } from "@components/Organisms/AvatarBorder";
-import type { Rank } from "@components/Organisms/AvatarBorder/rankStyles";
 import { useRouter, useSearchParams } from "next/navigation";
 import AddUserDialog from "./Components/AddUserDialog";
 import userService from "@services/user";
@@ -32,13 +31,7 @@ const STATUS_OPTIONS = [
   { value: 'không hoạt động', icon: 'PauseCircle', name: 'Không hoạt động' },
   { value: 'bị tạm ngưng', icon: 'Pause', name: 'Bị tạm ngưng' },
 ];
-const RANK_OPTIONS = [
-  { value: 'Tất cả', icon: '', name: 'Tất cả' },
-  { value: 'Đồng', icon: '', name: 'Đồng' },
-  { value: 'Bạc', icon: 'Medal', name: 'Bạc' },
-  { value: 'Vàng', icon: 'Star', name: 'Vàng' },
-  { value: 'Kim Cương', icon: 'Gem', name: 'Kim cương' },
-];
+
 const SORT_FIELDS = [
   { value: 'fullName', name: 'Tên' },
   { value: 'email', name: 'Email' },
@@ -234,12 +227,9 @@ export default function AdminUsersPage({ users, pagination }: AdminUsersPageProp
       id: 'avatar',
       header: 'Avatar',
       cell: (user) => {
-        const validRanks: Rank[] = ['Đồng', 'Bạc', 'Vàng', 'Kim Cương'];
-        const userRank = typeof user.rank === 'string' ? user.rank.trim() : '';
-        const rank = validRanks.includes(userRank as Rank) ? (userRank as Rank) : undefined;
         return (
           <div className="flex items-center gap-3">
-            <AvatarWithBorder rank={rank}>
+            <AvatarWithBorder subscription={user.subscription || undefined}>
               <Avatar src={user.avatarUrl || ''} alt={user.fullName} size={40} />
             </AvatarWithBorder>
             <div className="flex flex-col">

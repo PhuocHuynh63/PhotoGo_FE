@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardFooter } from "@components/Atoms/Card"
 import {
     ChevronRight, Ticket, Wallet, Star, ShoppingBag,
     MessageSquare, Heart, KeyRound,
@@ -14,7 +13,6 @@ import { usePathname, useRouter } from "next/navigation"
 import { ROUTES } from "@routes"
 import { AvatarWithBorder } from "@components/Organisms/AvatarBorder"
 import { Avatar } from "@components/Molecules/Avatar"
-import { Rank } from "@components/Organisms/AvatarBorder/rankStyles"
 import Link from "next/link"
 
 const menuItems = [
@@ -29,36 +27,16 @@ const menuItems = [
     { tab: "change-password", label: "Thay đổi mật khẩu", icon: KeyRound },
 ];
 
-const getRankGradient = (rank: string) => {
-    switch (rank.toLowerCase()) {
-        default:
-            return 'from-[#1d9cd8] via-[#38c3ec] to-[#0f70b7]';
-    }
-};
-
-
-
-const getRankColor = (rank: string) => {
-    switch (rank.toLowerCase()) {
-        case 'đồng':
-            return '#B45309'; // amber-600
-        case 'bạc':
-            return '#6B7280'; // gray-500
-        case 'vàng':
-            return '#EAB308'; // yellow-500
-        case 'kim cương':
-            return '#3B82F6'; // blue-500
-        default:
-            return '#49C4D2'; // Default color
-    }
-};
 
 const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
     const router = useRouter();
     const pathname = usePathname();
     const currentTab = pathname?.split('/').pop() || 'profile';
-    const userRank = 'Kim Cương'; // Use empty string if no rank
-    const gradientClass = getRankGradient(userRank);
+    const hasPlan = !!user?.subscription?.plan?.name;
+    const gradientClass = hasPlan
+        ? 'bg-gradient-to-br from-[#3B82F6] via-[#38c3ec] to-[#0f70b7] light-sweep'
+        : 'bg-gradient-to-br from-[#f3f4f6] via-[#e0e7ef] to-[#f3f4f6]';
+    const borderColor = hasPlan ? '#3B82F6' : '#49C4D2';
     const profileRoutes: { [key: string]: string } = {
         'promotions': ROUTES.USER.PROFILE.PROMOTIONS,
         'change-password': ROUTES.USER.PROFILE.CHANGE_PASSWORD,
@@ -70,11 +48,11 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
         'attendance': ROUTES.USER.PROFILE.ATTENDANCE,
         'subscription': ROUTES.USER.PROFILE.SUBSCRIPTION,
     };
-
+    console.log(user)
     return (
         <div className="w-full mb-10 rounded-lg shadow-lg bg-white">
             {/* User Profile */}
-            <div className={`relative bg-gradient-to-br ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110 ${userRank.toLowerCase() === 'kim cương' ? 'light-sweep' : ''}`}>
+            <div className={`relative ${gradientClass} p-5 rounded-lg shadow-inner overflow-hidden backdrop-brightness-110`}>
                 <div className="absolute inset-0 bg-white/20 opacity-20 animate-[shine_2s_linear_infinite] bg-gradient-to-r from-transparent via-white to-transparent bg-[length:200%_100%]"></div>
 
                 <svg
@@ -89,9 +67,7 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                 </svg>
 
                 <div className="flex flex-col items-center justify-center relative z-10">
-                    <AvatarWithBorder
-                        rank={userRank as Rank}
-                    >
+                    <AvatarWithBorder subscription={user?.subscription}>
                         <Avatar
                             src={user?.avatarUrl || 'https://res.cloudinary.com/dodtzdovx/image/upload/v1745322627/c3-1683876188-612-width800height700_b7jtxt.jpg'}
                             alt={user?.fullName || 'User'}
@@ -108,18 +84,30 @@ const ProfileLeft: React.FC<PAGES.ProfileLeftProps> = ({ user }) => {
                         Cập nhật thông tin cá nhân <ChevronRight size={16} />
                     </Button>
 
-                    <Card className="w-full bg-white text-gray-800 rounded-lg">
-                        <CardContent className="flex items-center justify-center flex-col">
-                            <div className="w-28 h-7 my-2 inline-flex items-stretch border rounded-full overflow-hidden" style={{ borderColor: getRankColor(userRank) }}>
-                                <div className="relative text-white mx-auto my-auto text-sm font-bold border-r-0">
-                                    <div className="text-sm font-bold" style={{ color: getRankColor(userRank) }}>{user?.subscription ? 'Đã mua gói' : <Link href={ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP}>Đăng ký ngay</Link>}</div>
-                                </div>
+                    <div
+                        className={`w-28 h-7 my-2 inline-flex items-center justify-center border rounded-full overflow-hidden
+                            ${!user?.subscription ? 'bg-yellow-50 border-yellow-400 animate-pulse shadow-lg' : 'bg-white'}`}
+                        style={{ borderColor: !user?.subscription ? '#facc15' : borderColor }}
+                    >
+                        <div className="relative text-white mx-auto my-auto text-sm font-bold border-r-0 w-full text-center">
+                            <div
+                                className={`text-sm font-bold w-full text-center ${!user?.subscription ? 'text-yellow-700' : ''}`}
+                                style={{ color: !user?.subscription ? undefined : borderColor }}
+                            >
+                                {user?.subscription ? (
+                                    user?.subscription?.plan?.name
+                                ) : (
+                                    <Link
+                                        href={ROUTES.PUBLIC.SUBSCRIPTION.MEMBERSHIP}
+                                        className="font-bold underline"
+                                        style={{ textShadow: '0 0 8px #facc15, 0 0 2px #fff' }}
+                                    >
+                                        Đăng ký ngay
+                                    </Link>
+                                )}
                             </div>
-                        </CardContent>
-                        <CardFooter className="flex items-center justify-center">
-                            Gói đẳn cấp vjppro
-                        </CardFooter>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
             </div>
 
