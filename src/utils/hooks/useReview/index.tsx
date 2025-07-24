@@ -1,6 +1,8 @@
-import { IReviewPaginationResponse } from "@models/review/repsonse.model";
+import { IPagination } from "@models/metadata";
+import { IReviewAllModel } from "@models/review/common.model";
+import { IReviewAllResponse, IReviewPaginationResponse } from "@models/review/repsonse.model";
 import reviewService from "@services/review";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type ReviewByVendorIdParams = {
     vendorId: string;
@@ -56,3 +58,71 @@ export function useReviewsByVendorId({
         error,
     };
 }
+
+/**
+ * Hook to get all reviews
+ */
+type UseAllReviewsParams = {
+    current?: number;
+    pageSize?: number;
+    rating?: number;
+    sortBy?: 'rating' | 'created_at';
+    sortDirection?: 'asc' | 'desc';
+}
+
+export function useAllReviews({
+    current = 1,
+    pageSize,
+    rating,
+    sortBy,
+    sortDirection = 'desc',
+}: UseAllReviewsParams) {
+    const [data, setData] = useState<IReviewAllModel[]>();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [pagination, setPagination] = useState<IPagination>();
+
+    const fetchReviews = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await reviewService.getAllReviews(
+                current,
+                pageSize,
+                rating,
+                sortBy,
+                sortDirection
+            ) as IReviewAllResponse;
+
+            setData(response?.data?.data);
+            setPagination(response?.data?.pagination);
+
+        } catch (err: any) {
+            if (err.name !== 'AbortError') {
+                setError(err.message || 'Failed to fetch reviews');
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, [current, pageSize, rating, sortBy, sortDirection]);
+
+    useEffect(() => {
+        const controller = new AbortController();
+
+        fetchReviews();
+
+        return () => {
+            controller.abort();
+        };
+    }, [fetchReviews]);
+
+    return {
+        data,
+        loading,
+        error,
+        pagination,
+        fetchReviews,
+    };
+}
+//----------------------End----------------------//

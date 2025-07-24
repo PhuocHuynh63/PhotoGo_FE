@@ -426,7 +426,7 @@ declare namespace ICOMPONENTS {
         comment?: string;
     }
     type PropType = {
-        slides: AutoScrollItem[]
+        slides: any
         options?: EmblaOptionsType
         autoScroll?: boolean
         showControls?: boolean
