@@ -34,8 +34,15 @@ import { ROUTES } from "@routes"
 import { formatDate } from "@utils/helpers/Date"
 import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
 import { PAGES } from "../../../../../types/IPages"
+import { Socket } from "socket.io-client"
+import { getSocket } from "@configs/socket"
+import { useRouter } from "next/navigation"
+import { useSession } from "@stores/user/selectors"
+import { METADATA } from "../../../../../types/IMetadata"
 
 export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: PAGES.AppointmentModalProps) {
+    const session = useSession() as METADATA.ISession;
+
     // const [isEditing, setIsEditing] = useState(false)
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
     const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
@@ -173,6 +180,34 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
             toast.error("Có lỗi xảy ra khi tiến hành lịch hẹn")
         }
     }
+
+    /**
+     * Socket connection to handle chat functionality
+     */
+    const router = useRouter();
+    const [socket, setSocket] = useState<Socket | null>(null);
+    useEffect(() => {
+        const socketInstance = getSocket(session?.accessToken);
+        setSocket(socketInstance);
+        if (socketInstance) {
+            socketInstance.on('joinedRoom', (data) => {
+                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
+            });
+        }
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off('joinedRoom');
+            }
+        };
+    }, [session?.accessToken]);
+
+    const handleSelectConversation = () => {
+        if (socket && socket.connected) {
+            socket.emit('joinChat', { memberId: localAppointment.userId });
+        }
+    };
+    //-----------------------------End---------------------------------//
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
