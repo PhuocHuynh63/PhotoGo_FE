@@ -6,9 +6,10 @@ import { X, Lock, Check, Star, Calendar, Tag, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import Button from '@components/Atoms/Button'
 import { ISubscriptionCreatePaymentLinkRequestModel } from '@models/subcription_plan/request.model'
-import { useSession } from '@stores/user/selectors'
+import { useSession, useUser } from '@stores/user/selectors'
 import { subscriptionService } from '@services/subcription'
 import { formatPrice } from '@utils/helpers/CurrencyFormat/CurrencyFormat'
+import { IUser } from '@models/user/common.model'
 
 // PayOS type declaration
 declare global {
@@ -54,6 +55,13 @@ export default function PaymentModal({
     subscription,
 }: PaymentModalProps) {
 
+    /**
+     * Define variables
+     * @description User
+     */
+    const user = useUser() as IUser;
+    //-------------------------------End--------------------------------//
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [paymentLink, setPaymentLink] = useState<string | null>(null);
@@ -70,10 +78,9 @@ export default function PaymentModal({
         exit: { opacity: 0, scale: 0.95, y: 50, transition: { duration: 0.2 } },
     };
 
-    const session = useSession();
     const { handleSubmit, setValue } = useForm<ISubscriptionCreatePaymentLinkRequestModel>({
         defaultValues: {
-            userId: session?.user?.id || '',
+            userId: user.id || '',
             planId: subscription?.id || '',
             type: 'thanh toán đầy đủ',
         }
@@ -81,13 +88,13 @@ export default function PaymentModal({
 
     // Reset form values khi subscription thay đổi
     React.useEffect(() => {
-        setValue('userId', session?.user?.id || '');
+        setValue('userId', user.id || '');
         setValue('planId', subscription?.id || '');
         setValue('type', 'thanh toán đầy đủ');
         setError(null);
         setPaymentLink(null);
         setShowPaymentDialog(false);
-    }, [subscription, session, setValue]);
+    }, [subscription, user, setValue]);
 
     // Load PayOS script
     useEffect(() => {
@@ -130,7 +137,7 @@ export default function PaymentModal({
     }, [showPaymentDialog, paymentLink, onClose]);
 
     const onSubmit = async (data: ISubscriptionCreatePaymentLinkRequestModel) => {
-        if (!session?.user?.id) {
+        if (!user.id) {
             setError('Vui lòng đăng nhập để tiếp tục');
             return;
         }
