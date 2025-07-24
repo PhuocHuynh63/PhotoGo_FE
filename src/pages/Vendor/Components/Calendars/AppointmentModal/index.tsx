@@ -42,7 +42,34 @@ import { METADATA } from "../../../../../types/IMetadata"
 
 export default function AppointmentModal({ appointment, isOpen, onClose, onAppointmentUpdate }: PAGES.AppointmentModalProps) {
     const session = useSession() as METADATA.ISession;
+    const router = useRouter();
 
+    /**
+     * Socket connection to handle chat functionality
+     */
+    const [socket, setSocket] = useState<Socket | null>(null);
+    useEffect(() => {
+        const socketInstance = getSocket(session?.accessToken);
+        setSocket(socketInstance);
+        if (socketInstance) {
+            socketInstance.on('joinedRoom', (data) => {
+                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
+            });
+        }
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off('joinedRoom');
+            }
+        };
+    }, [session?.accessToken]);
+
+    const handleSelectConversation = () => {
+        if (socket && socket.connected) {
+            socket.emit('joinChat', { memberId: appointment?.userId });
+        }
+    };
+    //-----------------------------End---------------------------------//
     // const [isEditing, setIsEditing] = useState(false)
     const { updateBookingStatus, updatingStatus, error, clearError } = useBooking()
     const [localAppointment, setLocalAppointment] = useState<PAGES.Appointment | null>(appointment)
@@ -181,33 +208,7 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
         }
     }
 
-    /**
-     * Socket connection to handle chat functionality
-     */
-    const router = useRouter();
-    const [socket, setSocket] = useState<Socket | null>(null);
-    useEffect(() => {
-        const socketInstance = getSocket(session?.accessToken);
-        setSocket(socketInstance);
-        if (socketInstance) {
-            socketInstance.on('joinedRoom', (data) => {
-                router.push(`${ROUTES.USER.CHAT.replace(':id', data.chatId)}`);
-            });
-        }
 
-        return () => {
-            if (socketInstance) {
-                socketInstance.off('joinedRoom');
-            }
-        };
-    }, [session?.accessToken]);
-
-    const handleSelectConversation = () => {
-        if (socket && socket.connected) {
-            socket.emit('joinChat', { memberId: localAppointment.userId });
-        }
-    };
-    //-----------------------------End---------------------------------//
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -258,12 +259,10 @@ export default function AppointmentModal({ appointment, isOpen, onClose, onAppoi
                                     </div>
                                 </div>
                             </div>
-                            <Link href={`${ROUTES.VENDOR.CHAT}/${localAppointment.userId}`}>
-                                <Button variant="outline" size="sm" className="gap-1 cursor-pointer">
-                                    <MessageSquare className="h-4 w-4" />
-                                    Nhắn tin
-                                </Button>
-                            </Link>
+                            <Button variant="outline" size="sm" className="gap-1 cursor-pointer" onClick={handleSelectConversation}>
+                                <MessageSquare className="h-4 w-4" />
+                                Nhắn tin
+                            </Button>
                         </div>
                     </div>
 
