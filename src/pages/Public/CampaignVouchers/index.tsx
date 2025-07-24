@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast"
 import { IAddUserToCampaignModel } from "@models/campaign/reponse.model"
 import { useRouter } from "next/navigation"
 import { ROUTES } from "@routes"
+import { IVoucherModel } from "@models/voucher/common.model"
 
 
 const formatCurrency = (amount: number) => {
@@ -31,11 +32,22 @@ const calculateDaysLeft = (endDate: string) => {
 
 export default function CampaignVouchers({ userId }: { userId?: string }) {
     const [currentPage, setCurrentPage] = useState(1)
-    // const [claimedVouchers, setClaimedVouchers] = useState<Set<string>>(new Set()) // Đã bỏ, không còn dùng
     const [joinedCampaignIds, setJoinedCampaignIds] = useState<Set<string>>(new Set());
+    const [localVouchers, setLocalVouchers] = useState<(IVoucherModel & { campaignId: string })[]>([]); // Thêm state quản lý voucher hiển thị
     const router = useRouter()
 
     const { campaigns, refetch, loading } = useAllCampaignAndVoucher();
+
+    // Khi campaigns thay đổi, đồng bộ lại localVouchers
+    useEffect(() => {
+        const vouchers = campaigns.flatMap(campaign =>
+            campaign.campaignVouchers.map(cv => ({
+                ...cv.voucher,
+                campaignId: campaign.id
+            }))
+        )
+        setLocalVouchers(vouchers)
+    }, [campaigns])
 
     useEffect(() => {
         refetch();
@@ -47,13 +59,9 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
             }
         });
     }, [userId]);
-    // Lấy cả voucher và campaignId
-    const vouchers = campaigns.flatMap(campaign =>
-        campaign.campaignVouchers.map(cv => ({
-            ...cv.voucher,
-            campaignId: campaign.id
-        }))
-    )
+
+    // Sử dụng localVouchers thay cho vouchers gốc
+    const vouchers = localVouchers;
     const itemsPerPage = 9 // 3x3 grid
     const totalPages = Math.ceil(vouchers.length / itemsPerPage)
 
@@ -62,28 +70,29 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
     const endIndex = startIndex + itemsPerPage
     const currentVouchers = vouchers.slice(startIndex, endIndex)
 
-    // Sửa lại handleClaimVoucher để nhận campaignId và userId
     const handleClaimVoucher = async (campaignId: string, userId?: string) => {
         if (!userId) {
             router.push(ROUTES.AUTH.LOGIN)
             return;
         }
         try {
-            // setClaimedVouchers((prev) => new Set([...prev, campaignId])) // Đã bỏ, không còn dùng
             const response = await campaignService.addUserToCampaign(campaignId, userId) as IAddUserToCampaignModel
-            if (response.statusCode === 200) {
+            if (response.statusCode === 201) {
                 toast.success("Nhận voucher thành công!")
+                // Cập nhật state joinedCampaignIds ngay
+                setJoinedCampaignIds(prev => new Set(prev).add(campaignId));
+                // Cập nhật usedCount của voucher vừa nhận ngay trên UI
+                setLocalVouchers(prev => prev.map(v =>
+                    v.campaignId === campaignId
+                        ? { ...v, usedCount: (v.usedCount ?? 0) + 1 }
+                        : v
+                ));
             } else {
-                toast.error(response.message)
+                toast.error('Lỗi: ' + response.message)
             }
             refetch()
         } catch (error: unknown) {
             toast.error("Có lỗi xảy ra khi nhận voucher!")
-            // setClaimedVouchers((prev) => { // Đã bỏ, không còn dùng
-            //     const newSet = new Set(prev)
-            //     newSet.delete(campaignId)
-            //     return newSet
-            // })
             if (error instanceof Error) {
                 console.error(error.message)
             } else {
@@ -249,7 +258,7 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
                                                     <div className="flex items-center gap-2">
                                                         <Users className="w-3 h-3" />
                                                         <span>
-                                                            Còn lại: {(voucher.quantity ?? 0) - (voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
+                                                            Còn lại: {voucher.quantity ?? 0}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center gap-2">
@@ -259,7 +268,7 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
                                                 </div>
 
                                                 {/* Progress Bar */}
-                                                <div className="mb-4">
+                                                {/* <div className="mb-4">
                                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                                         <div
                                                             className={`h-2 rounded-full transition-all duration-300 ${isLowStock ? "bg-red-500" : "bg-green-500"
@@ -272,7 +281,7 @@ export default function CampaignVouchers({ userId }: { userId?: string }) {
                                                     <div className="text-xs text-gray-500 mt-1">
                                                         Đã sử dụng: {(voucher.usedCount ?? 0)}/{voucher.quantity ?? 0}
                                                     </div>
-                                                </div>
+                                                </div> */}
 
                                                 {/* Action Button */}
                                                 <Button

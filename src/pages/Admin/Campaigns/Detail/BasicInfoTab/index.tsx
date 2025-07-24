@@ -98,7 +98,7 @@ export default function BasicInfoTab({ campaignId }: { campaignId: string }) {
                             <LucideIcon name="FileText" className="mr-3 text-blue-500 mt-1" iconSize={18} />
                             <div>
                                 <h3 className="font-semibold text-gray-900 mb-2">Mô tả</h3>
-                                <p className="text-gray-700 whitespace-pre-line leading-relaxed">{campaign.description}</p>
+                                <div className="text-gray-700 whitespace-pre-line leading-relaxed" dangerouslySetInnerHTML={{ __html: campaign.description || "" }} />
                             </div>
                         </div>
                     </div>
