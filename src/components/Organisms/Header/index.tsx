@@ -413,7 +413,7 @@ export default function Header({ user, servicePackages }: PAGES.IHeader) {
         <>
 
             <header
-                className={`header p-4 px-4 md:px-8 w-full rounded-b-sm sticky top-0 z-40 transition-all duration-300 ease-in-out  bg-white shadow-xl`}
+                className={`header p-4 h-20 px-4 md:px-8 w-full rounded-b-sm sticky top-0 z-40 transition-all duration-300 ease-in-out  bg-white shadow-xl`}
             >
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}

@@ -9,7 +9,7 @@ import GoogleMapVendor from '@pages/Public/VendorDetail/Right/GoogleMapVendor';
 import SimilarVendor from '@pages/Public/VendorDetail/Right/SimilarVendors';
 import { PAGES } from '../../../types/IPages';
 import { useSetAddressLocation, useSetReviews, useSetServiceConceptImages, useSetVendor } from '@stores/vendor/selectors';
-import { useSetUser } from '@stores/user/selectors';
+import { useSetSession, useSetUser } from '@stores/user/selectors';
 import { useSearchParams } from 'next/navigation';
 
 const VendorDetailLayoutPage = ({
@@ -18,6 +18,7 @@ const VendorDetailLayoutPage = ({
     user,
     concept,
     review,
+    session
 }: PAGES.IVendorDetailPageProps) => {
 
     /**
@@ -27,7 +28,10 @@ const VendorDetailLayoutPage = ({
     const location = searchParams?.get('location') as string
     const setAddressLocation = useSetAddressLocation();
 
+    const setSession = useSetSession()
+
     useEffect(() => {
+        setSession(session)
         if (vendor?.locations && location) {
             const filterLocation = vendor.locations.find(locationFilter =>
                 location === locationFilter.district
@@ -41,7 +45,7 @@ const VendorDetailLayoutPage = ({
                 });
             }
         }
-    }, [location, vendor])
+    }, [location, vendor, session])
     //---------------------------End---------------------------//
 
     /**

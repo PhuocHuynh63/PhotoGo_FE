@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Molecules/Dialog";
-import { Calendar, Loader2, Heart, X, Info, ShoppingCart } from "lucide-react";
+import { Calendar, Loader2, Heart, X, Info, ShoppingCart, ArrowRight } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { IServicePackage } from "@models/servicePackages/common.model";
 import { IServiceConcept } from "@models/serviceConcepts/common.model";
@@ -14,6 +14,7 @@ import { useFavorites } from "@utils/hooks/useFavorites";
 import Button from "@components/Atoms/Button";
 import ButtonNoBackgroundVendorDetail from "../../Left/components/ButtonNoBackGroundVendorDetail";
 import { cn } from "@utils/helpers/CN";
+import { ROUTES } from "@routes";
 
 type ConceptProps = {
     isOpen: boolean;
@@ -345,8 +346,21 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                                 {isAddingToCart ? <Loader2 size={18} className="animate-spin mr-2" /> : <ShoppingCart size={18} className="mr-2" />}
                                 {isAddingToCart ? 'Đang thêm...' : isConceptInCart ? 'Đã có trong giỏ hàng' : 'Thêm vào giỏ hàng'}
                             </ButtonNoBackgroundVendorDetail>
-                            <Button onClick={() => setIsOpenBooking(true)} >
-                                <Calendar size={18} className="mr-2" />Đặt lịch với concept này
+                            <Button onClick={() => {
+                                // Nếu đang ở /search/packages thì chuyển route, ngược lại mở popup
+                                if (typeof window !== 'undefined' && window.location.pathname.includes(ROUTES.PUBLIC.SEARCH_PACKAGES)) {
+                                    const vendorSlug = servicePackage?.vendor?.slug;
+                                    const firstLocation = servicePackage?.vendor?.locations?.[0];
+                                    const locationName = firstLocation && firstLocation.district ? firstLocation.district : (firstLocation && firstLocation.city ? firstLocation.city : '');
+                                    const conceptId = selectedConceptObject?.id;
+                                    if (vendorSlug && conceptId) {
+                                        window.location.href = `/${vendorSlug}/packages?conceptId=${encodeURIComponent(conceptId)}&location=${encodeURIComponent(locationName)}`;
+                                        return;
+                                    }
+                                }
+                                setIsOpenBooking(true);
+                            }} >
+                                {typeof window !== 'undefined' && window.location.pathname.includes(ROUTES.PUBLIC.SEARCH_PACKAGES) ? <><ArrowRight size={18} className="mr-2" />Đến trang đặt lịch</> : <><Calendar size={18} className="mr-2" />Đặt lịch với concept này</>}
                             </Button>
                         </div>
                     </div>

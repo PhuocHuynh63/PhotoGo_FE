@@ -133,7 +133,7 @@ export default function PointsPage({ point, pointTransaction, pagination, onPage
                     >
                         <div className="flex justify-between items-center">
                             <div>
-                                <p className="font-medium">{transaction.description}</p>
+                                <p className="font-medium" dangerouslySetInnerHTML={{ __html: transaction.description }}></p>
                                 <p className="text-sm text-gray-500">{formatDate(transaction.created_at)}</p>
                                 <p className="text-xs text-gray-400">Loại: {transaction.type}</p>
                             </div>
