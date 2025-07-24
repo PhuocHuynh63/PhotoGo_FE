@@ -17,7 +17,7 @@ const PaymentErrorPage = () => {
         const orderCode = params.get("orderCode");
 
         if (cancel === 'true') {
-            router.push(`${ROUTES.USER.PROFILE.ORDERS}?status=đã hủy`);
+            router.push(`${ROUTES.USER.PROFILE.ORDERS}?message=Bạn đã huỷ thanh toán số tiền còn lại&cancel=true`);
         }
 
     }, [router]);

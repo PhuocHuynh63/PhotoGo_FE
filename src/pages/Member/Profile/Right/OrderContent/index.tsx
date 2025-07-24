@@ -63,6 +63,19 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
     };
     //-------------------------------End--------------------------------//
 
+    /**
+     * This will be used to display a message to the user
+     */
+    const [message, setMessage] = useState<string | null>(null);
+    const [cancel, setCancel] = useState<string | null>(null);
+    useEffect(() => {
+        const message = searchParams.get('message');
+        const cancel = searchParams.get('cancel');
+        setMessage(message);
+        setCancel(cancel);
+    }, [searchParams]);
+    //-------------------------------End--------------------------------//
+
     return (
         <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -109,6 +122,13 @@ const OrdersContent = ({ invoices, pagination, newBooking }: OrdersContentProps)
                 </div>
             ) : (
                 <>
+                    {message && (
+                        <div className="flex justify-center items-center">
+                            <div className={`${cancel === 'true' ? 'bg-red-100 border border-red-400 text-red-700' : 'bg-green-100 border border-green-400 text-green-700'} px-4 py-3 rounded relative mb-4`} role="alert">
+                                <span className="block sm:inline">{message}</span>
+                            </div>
+                        </div>
+                    )}
                     <div className="grid grid-cols-1 gap-6">
                         {invoices?.map((invoice) => {
                             const isNew = newBooking?.id === invoice?.booking?.id;

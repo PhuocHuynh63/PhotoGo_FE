@@ -49,8 +49,8 @@ const RemainingSuccessPage = ({ session }: { session: METADATA.ISession }) => {
                     cancel: cancel === 'true',
                     orderCode
                 };
-                await paymentService.paymentRemainingSuccess(currentPaymentId, data);
-                const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}`;
+                await paymentService.paymentSuccess(currentPaymentId, data);
+                const ordersUrl = `${ROUTES.USER.PROFILE.ORDERS}?message=Thanh toán số tiền còn lại thành công&cancel=false`;
                 router.push(ordersUrl);
             } else {
                 router.push(ROUTES.PUBLIC.HOME);
