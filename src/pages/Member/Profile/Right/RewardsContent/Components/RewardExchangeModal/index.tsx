@@ -50,7 +50,7 @@ const RewardExchangeModal: React.FC<RewardExchangeModalProps> = ({
                             {selectedVoucher.discount_value}% OFF
                         </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">{selectedVoucher.description}</p>
+                    <p className="text-sm text-gray-600 mb-3" dangerouslySetInnerHTML={{ __html: selectedVoucher.description }}></p>
                     <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600">Chi phí:</span>
                         <span className="font-bold text-orange-600">{selectedVoucher.point} điểm</span>
