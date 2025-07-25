@@ -173,7 +173,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
 
     const { data: reviews } = useAllReviews({
         current: 1,
-        pageSize: 3,
+        pageSize: 30,
         rating: 5,
         sortBy: 'created_at',
         sortDirection: 'desc',
