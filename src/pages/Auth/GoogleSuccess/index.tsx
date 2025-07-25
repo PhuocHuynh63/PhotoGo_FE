@@ -28,7 +28,7 @@ const GoogleCompletePage = () => {
                 redirect: false,
                 email: user.email,
                 password: "__google__",
-                userPayload: JSON.stringify(user),
+                // userPayload: JSON.stringify(user),
                 accessToken: token,
             });
 

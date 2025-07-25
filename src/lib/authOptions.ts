@@ -14,22 +14,19 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
                 accessToken: { label: "Access Token", type: "text" },
-                userPayload: { label: "User Payload", type: "text" },
+                // userPayload: { label: "User Payload", type: "text" },
             },
 
             async authorize(credentials) {
                 if (!credentials) return null;
 
                 if (credentials?.accessToken) {
-                    const user = JSON.parse(credentials.userPayload);
+                    const decoded: any = jwtDecode(credentials.accessToken);
 
                     return {
-                        id: user.id,
-                        role: user.role,
-                        email: user.email,
-                        cartId: user.cartId,
-                        wishlistId: user.wishlistId,
-                        subscriptionId: user.subscriptionId,
+                        id: decoded.id,
+                        role: decoded.role,
+                        email: decoded.email,
                         accessToken: credentials.accessToken,
                     };
                 }
