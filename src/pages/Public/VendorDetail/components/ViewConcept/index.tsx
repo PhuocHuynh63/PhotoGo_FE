@@ -321,11 +321,21 @@ export default function ConceptViewerPage({ isOpen, onOpenChange, servicePackage
                 {/* FOOTER ACTIONS */}
                 <div className="absolute bottom-0 left-0 right-0 lg:static bg-white/95 backdrop-blur-sm border-t p-3 lg:p-0 lg:bg-transparent lg:border-none">
                     <div className="flex flex-col sm:flex-row gap-3 lg:hidden">
-                        <Button
-                            className="w-full"
-                            onClick={() => setIsOpenBooking(true)}
-                        >
-                            <Calendar size={18} className="mr-2" />Đặt lịch ngay
+                        <Button onClick={() => {
+                            // Nếu đang ở /search/packages thì chuyển route, ngược lại mở popup
+                            if (typeof window !== 'undefined' && window.location.pathname.includes(ROUTES.PUBLIC.SEARCH_PACKAGES)) {
+                                const vendorSlug = servicePackage?.vendor?.slug;
+                                const firstLocation = servicePackage?.vendor?.locations?.[0];
+                                const locationName = firstLocation && firstLocation.district ? firstLocation.district : (firstLocation && firstLocation.city ? firstLocation.city : '');
+                                const conceptId = selectedConceptObject?.id;
+                                if (vendorSlug && conceptId) {
+                                    window.location.href = `/${vendorSlug}/packages?conceptId=${encodeURIComponent(conceptId)}&location=${encodeURIComponent(locationName)}`;
+                                    return;
+                                }
+                            }
+                            setIsOpenBooking(true);
+                        }} >
+                            {typeof window !== 'undefined' && window.location.pathname.includes(ROUTES.PUBLIC.SEARCH_PACKAGES) ? <><ArrowRight size={18} className="mr-2" />Đến trang đặt lịch</> : <><Calendar size={18} className="mr-2" />Đặt lịch với concept này</>}
                         </Button>
                         <ButtonNoBackgroundVendorDetail
                             className="w-full"

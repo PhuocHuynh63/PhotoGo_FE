@@ -43,3 +43,32 @@ export const ReviewVendorDetailModel = z.object({
 });
 export type IReviewVendorDetailModel = z.infer<typeof ReviewVendorDetailModel>;
 //----------------------End----------------------//
+
+/**
+ * Model of Review All
+ */
+export const ReviewAllModel = z.object({
+    id: z.string().uuid(),
+    comment: z.string(),
+    rating: z.number().min(1).max(5),
+    createdAt: z.string().datetime(),
+    updatedAt: z.string().datetime(),
+    user: z.object({
+        id: z.string().uuid(),
+        fullName: z.string(),
+        avatarUrl: z.string(),
+    }),
+    booking: z.object({
+        id: z.string().uuid(),
+    }),
+    images: z.array(z.any()),
+    vendor: z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        logoUrl: z.string().url(),
+        bannerUrl: z.string().url(),
+        description: z.string(),
+    }),
+});
+export type IReviewAllModel = z.infer<typeof ReviewAllModel>;
+//----------------------End----------------------//

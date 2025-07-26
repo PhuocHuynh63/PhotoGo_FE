@@ -14,6 +14,7 @@ import { PAGES } from '../../../types/IPages';
 import AttendanceBoard from "../AttendanceModal"
 import VendorCarousel from "./components/VendorCarousel"
 import { ROLE } from "@constants/common"
+import { useAllReviews } from "@utils/hooks/useReview"
 
 
 
@@ -43,80 +44,6 @@ const carouselItems: ICOMPONENTS.CarouselItem[] = [
         image: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744624539/themyxungtoiko_pslpth.png',
     },
 ];
-
-const autoScrollItems: ICOMPONENTS.AutoScrollItem[] = [
-    {
-        id: 1,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 2,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 3,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-    },
-    {
-        id: 3,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 1,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-    },
-    {
-        id: 4,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 2,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
-    },
-    {
-        id: 5,
-        name: 'Huỳnh Minh Phước',
-
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 4,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 6,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 7,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 8,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 9,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-    {
-        id: 10,
-        name: 'Huỳnh Minh Phước',
-        avatar: 'https://res.cloudinary.com/dodtzdovx/image/upload/v1744637748/uploads/z6502220667569_f0146061d17b6485362a8027a1d81976.jpg',
-        star: 5,
-        comment: 'Chụp ảnh cưới của tôi rất tuyệt vời!',
-    },
-]
 
 const vendorList: { id: string, src: string, alt: string }[] = [
     {
@@ -244,6 +171,14 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
         }
     }, [])
 
+    const { data: reviews } = useAllReviews({
+        current: 1,
+        pageSize: 30,
+        rating: 5,
+        sortBy: 'created_at',
+        sortDirection: 'desc',
+    })
+
     const zoomLevel = 1 + scrollY / 10000
     return (
         <div>
@@ -277,7 +212,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                     className="relative h-screen flex items-center justify-center overflow-hidden"
                 >
                     <div className="fixed bottom-14 -right-0.5 translate-y-0 z-50 cursor-pointer">
-                        <BackToTop size={40}  />
+                        <BackToTop size={40} />
                     </div>
 
                     <div className="absolute inset-0 z-0" style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}>
@@ -526,7 +461,7 @@ const HomePage = ({ user, attendance, checkAttendance }: PAGES.IHomePage) => {
                             {/* Testimonial cards */}
                             <div className="w-full h-full">
 
-                                <AutoScrollCarousel slides={autoScrollItems} autoScroll={true} />
+                                <AutoScrollCarousel slides={reviews} autoScroll={true} />
                             </div>
                         </motion.div>
                     </div>

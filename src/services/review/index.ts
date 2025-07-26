@@ -32,6 +32,23 @@ const reviewService = {
         })
     },
 
+    getAllReviews: async (current?: number, pageSize?: number, rating?: number, sortBy?: string, sortDirection?: string) => {
+        const queryParams = new URLSearchParams({
+            current: (current || 1).toString(),
+            pageSize: (pageSize || 5).toString(),
+            sortBy: sortBy || 'created_at',
+            sortDirection: sortDirection || 'desc',
+        })
+
+        if (rating !== undefined) {
+            queryParams.append("rating", rating.toString())
+        }
+
+        return await http.get(`/reviews?${queryParams.toString()}`, {
+            next: { revalidate: 10 },
+        })
+    },
+
     createReview: async (review: any) => {
         return await http.post(`/reviews`, review)
     },

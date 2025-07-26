@@ -66,17 +66,17 @@ const EmblaCarousel: React.FC<ICOMPONENTS.PropType> = (props) => {
             </div>
             <div className="overflow-hidden" ref={emblaRef}>
                 <div className="flex ">
-                    {slides.map((item) => (
+                    {slides?.map((item: any) => (
                         <div className="px-4 py-6" key={item.id}>
                             <div className="p-6 shadow-md rounded-xl w-[25rem] h-[12.5rem] bg-white">
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className="w-12 h-12 rounded-full bg-gray-200">
-                                        <Avatar size={50} src={item.avatar} fallback={item.avatar} />
+                                        <Avatar size={50} src={item.user.avatarUrl} fallback={item.user.fullName} />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-semibold">{item.name}</h4>
+                                        <h4 className="text-lg font-semibold">{item.user.fullName}</h4>
                                         <div className="flex text-yellow-400 ">
-                                            <StarRating stars={item?.star ?? 0} size={16} color={"var(--orange)"} />
+                                            <StarRating stars={item?.rating ?? 0} size={16} color={"var(--orange)"} />
                                         </div>
                                     </div>
                                 </div>
