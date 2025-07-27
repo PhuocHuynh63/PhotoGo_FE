@@ -29,7 +29,7 @@ export default function BookingPage({ locations = [] }: { locations: ILocation[]
         const d = date.getDate().toString().padStart(2, '0');
         const m = (date.getMonth() + 1).toString().padStart(2, '0');
         const y = date.getFullYear();
-        return `${d}-${m}-${y}`;
+        return `${d}/${m}/${y}`;
     }
 
     const { data, loading, error, refetch } = useFinanceOverview({
@@ -147,7 +147,7 @@ export default function BookingPage({ locations = [] }: { locations: ILocation[]
                     data={isBookingOverview(data) ? data.monthlyBookings.map(item => ({
                         month: item.month.toString(),
                         monthName: item.monthName,
-                        count: item.bookings
+                        count: item.count
                     })) : []}
                 />
             </div>

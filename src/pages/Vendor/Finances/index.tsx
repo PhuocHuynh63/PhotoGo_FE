@@ -336,7 +336,7 @@ export default function FinancePage({ locations = [] }: { locations: ILocation[]
         const d = date.getDate().toString().padStart(2, '0');
         const m = (date.getMonth() + 1).toString().padStart(2, '0');
         const y = date.getFullYear();
-        return `${d}-${m}-${y}`;
+        return `${d}/${m}/${y}`;
     }
 
     function isFinanceOverview(data: unknown): data is IFinanceOverview {

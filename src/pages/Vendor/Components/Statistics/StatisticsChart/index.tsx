@@ -12,7 +12,7 @@ interface StatisticsChartsProps {
 }
 
 export default function StatisticsCharts({ data }: StatisticsChartsProps) {
-
+console.log(data)
     return (
 
         <Card>
