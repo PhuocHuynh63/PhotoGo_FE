@@ -1,8 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@components/Atoms/ui/card"
-import { formatPrice } from "@utils/helpers/CurrencyFormat/CurrencyFormat"
-import { Calendar, DollarSign, Users, CheckCircle, XCircle, Clock } from "lucide-react"
+import { Calendar, CheckCircle, XCircle, Clock } from "lucide-react"
 
 interface StatisticsOverviewProps {
     data: {
@@ -18,7 +17,7 @@ interface StatisticsOverviewProps {
 export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-sm font-medium">Tổng số lịch hẹn</CardTitle>
@@ -27,28 +26,6 @@ export default function StatisticsOverview({ data }: StatisticsOverviewProps) {
                 <CardContent>
                     <div className="text-2xl font-bold">{data?.totalBookings}</div>
                     <p className="text-xs text-gray-500">Tổng số lịch hẹn đã đặt</p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Doanh thu</CardTitle>
-                    <DollarSign className="h-4 w-4 text-gray-500" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{formatPrice(data?.totalRevenue)}</div>
-                    <p className="text-xs text-gray-500">Tổng doanh thu</p>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Đánh giá trung bình</CardTitle>
-                    <Users className="h-4 w-4 text-gray-500" />
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{data?.averageRating}/5</div>
-                    <p className="text-xs text-gray-500">Dựa trên đánh giá của khách hàng</p>
                 </CardContent>
             </Card>
 
