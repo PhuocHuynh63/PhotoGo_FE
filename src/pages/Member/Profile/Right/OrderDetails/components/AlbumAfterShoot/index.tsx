@@ -46,11 +46,24 @@ const AblumAfterShoot = ({ id, title, subTitle, skeletonCount, vendorAlbums, isL
   };
   //-----------------------------End---------------------------------//
 
+  const getGoogleDriveLink = () => {
+    if (!vendorAlbums) return "";
+    if (id === albumComponent.ALBUM_AFTER_SHOOT_GOOGLE_DRIVE) return vendorAlbums.driveLink || "";
+    return "";
+  };
+
   return (
     <>
       <Card className="p-8">
         <h3 className="text-2xl font-bold mb-2 text-gray-800">{title}</h3>
         <p className="text-gray-500 mb-6">{subTitle}</p>
+        {id === albumComponent.ALBUM_AFTER_SHOOT_GOOGLE_DRIVE && (
+          <div className="text-gray-500 mb-6">
+            <a href={getGoogleDriveLink()} target="_blank" rel="noopener noreferrer" className='text-blue-500 underline'>
+              {getGoogleDriveLink()}
+            </a>
+          </div>
+        )}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4">
           {isLoading
             ? Array.from({ length: skeletonCount ?? 3 }).map((_, idx) => (
@@ -67,7 +80,7 @@ const AblumAfterShoot = ({ id, title, subTitle, skeletonCount, vendorAlbums, isL
               />
             ))
           }
-          {getImages().length === 0 && (
+          {getImages().length === 0 && id !== albumComponent.ALBUM_AFTER_SHOOT_GOOGLE_DRIVE && (
             <div className="col-span-full text-center">
               <p className="text-gray-500">Hiện tại chưa có ảnh</p>
             </div>
