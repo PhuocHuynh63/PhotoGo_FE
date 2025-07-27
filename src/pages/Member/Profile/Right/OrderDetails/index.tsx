@@ -189,6 +189,16 @@ export default function OrderDetails({ booking }: OrderDetailsProps) {
                     currentStatusIndex={currentStatusIndex}
                 />
 
+                {booking?.status === BOOKING.BOOKING_STATUS.COMPLETED &&
+                    <AblumAfterShoot
+                        id={albumComponent.ALBUM_AFTER_SHOOT_GOOGLE_DRIVE}
+                        title="Link Google Drive"
+                        subTitle={`Bạn có thể tải về album ảnh của bạn tại đây.`}
+                        isLoading={loading}
+                        vendorAlbums={vendorAlbums}
+                    />
+                }
+
                 {(booking?.status === BOOKING.BOOKING_STATUS.COMPLETED) &&
                     <AblumAfterShoot
                         id={albumComponent.ALBUM_AFTER_SHOOT}
