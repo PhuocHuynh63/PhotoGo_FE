@@ -64,7 +64,7 @@ export type IFinanceOverview = z.TypeOf<typeof FinanceOverviewModel>;
 export const MonthlyBookingModel = z.object({
     month: z.number(),
     monthName: z.string(),
-    bookings: z.number(),
+    count: z.number(),
 });
 
 export const StatusBreakdownModel = z.object({
