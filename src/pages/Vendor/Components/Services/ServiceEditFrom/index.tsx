@@ -932,11 +932,11 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     disabled={currentConceptIndex === 0}
                                     className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
                                 >
-                                    ⬅️ Gói trước
+                                    ⬅️ Concept trước
                                 </Button>
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium text-green-800 bg-green-100 px-3 py-1 rounded-full">
-                                        📍 Gói {currentConceptIndex + 1} / {concepts.length}
+                                        📍 Concept {currentConceptIndex + 1} / {concepts.length}
                                     </span>
                                 </div>
                                 <Button
@@ -945,7 +945,7 @@ export default function ServiceEditForm({ initialService, serviceTypes }: Servic
                                     disabled={currentConceptIndex === concepts.length - 1}
                                     className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
                                 >
-                                    Gói tiếp theo ➡️
+                                    Concept tiếp theo ➡️
                                 </Button>
                             </div>
 
