@@ -462,10 +462,10 @@ const ConceptForm = ({
             <div className="flex justify-between items-center p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                 <div className="flex items-center gap-3">
                     <h3 className="text-xl font-bold text-blue-900">
-                        📦 Gói dịch vụ {currentConceptIndex + 1}/{concepts.length}
+                        📦 Gói concept {currentConceptIndex + 1}/{concepts.length}
                     </h3>
                     <span className="text-sm text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-                        {concepts.length} gói
+                        {concepts.length} gói concept
                     </span>
                 </div>
                 <div className="flex gap-2">
@@ -474,7 +474,7 @@ const ConceptForm = ({
                         onClick={handleAddConcept}
                         className="gap-2 border-blue-300 text-blue-700 hover:bg-blue-50"
                     >
-                        ➕ Thêm gói dịch vụ
+                        ➕ Thêm gói concept
                     </Button>
                     {concepts.length > 1 && (
                         <Button
@@ -482,7 +482,7 @@ const ConceptForm = ({
                             onClick={() => handleRemoveConcept(currentConceptIndex)}
                             className="gap-2 text-red-600 border-red-300 hover:bg-red-50"
                         >
-                            🗑️ Xóa gói này
+                            🗑️ Xóa gói concept này
                         </Button>
                     )}
                 </div>
@@ -491,7 +491,7 @@ const ConceptForm = ({
             <div className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="concept-name" className="text-xl font-semibold text-gray-900">
-                        🏷️ Tên gói dịch vụ <span className="text-red-500">*</span>
+                        🏷️ Tên gói concept <span className="text-red-500">*</span>
                     </Label>
                     <Input
                         id="concept-name"
@@ -513,7 +513,7 @@ const ConceptForm = ({
 
                 <div className="space-y-2">
                     <Label htmlFor="concept-description" className="text-xl font-semibold text-gray-900">
-                        📋 Mô tả gói dịch vụ <span className="text-red-500">*</span>
+                        📋 Mô tả gói concept<span className="text-red-500">*</span>
                     </Label>
                     <TipTapEditor
                         value={concepts[currentConceptIndex]?.description}
@@ -636,7 +636,7 @@ const ConceptForm = ({
                                         min={0}
                                         max={23}
                                         value={getDisplayHours(concepts[currentConceptIndex]?.duration || 0)}
-                                                                                onChange={(e) => handleHoursInputChange(Number(e.target.value))}
+                                        onChange={(e) => handleHoursInputChange(Number(e.target.value))}
                                         onBlur={(e) => handleHoursBlur(Number(e.target.value))}
                                         placeholder="0"
                                         className="text-center"
@@ -654,7 +654,7 @@ const ConceptForm = ({
                                         step={10}
                                         disabled={shouldDisableMinutes(concepts[currentConceptIndex]?.duration || 0)}
                                         value={getDisplayMinutes(concepts[currentConceptIndex]?.duration || 0)}
-                                                                                onChange={(e) => handleMinutesInputChange(Number(e.target.value))}
+                                        onChange={(e) => handleMinutesInputChange(Number(e.target.value))}
                                         onBlur={(e) => handleMinutesBlur(Number(e.target.value))}
                                         placeholder="0"
                                         className="text-center"
@@ -724,7 +724,7 @@ const ConceptForm = ({
                             <AccordionTrigger className="px-4 py-3 hover:no-underline cursor-pointer">
                                 <div className="flex items-center justify-between w-full">
                                     <span className="text-lg font-semibold text-gray-900">
-                                        📋 Chọn loại dịch vụ ({concepts[currentConceptIndex]?.serviceTypeIds.length}/{serviceTypes?.length})
+                                        📋 Chọn loại concept ({concepts[currentConceptIndex]?.serviceTypeIds.length}/{serviceTypes?.length})
                                     </span>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
@@ -795,7 +795,7 @@ const ConceptForm = ({
 
                 <div className="space-y-2">
                     <Label className="text-xl font-semibold text-gray-900">
-                        🖼️ Ảnh gói dịch vụ <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
+                        🖼️ Ảnh gói concept <span className="text-sm text-gray-600">(tối đa 10 ảnh)</span>
                     </Label>
 
                     {conceptImagePreviews[currentConceptIndex]?.length > 0 && (
@@ -851,10 +851,10 @@ const ConceptForm = ({
                             disabled={currentConceptIndex === 0}
                             className="border-green-300 text-green-700 hover:bg-green-50"
                         >
-                            ⬅️ Gói trước
+                            ⬅️ Concept trước
                         </Button>
                         <span className="text-sm font-medium text-green-800 bg-green-100 px-3 py-1 rounded-full">
-                            📍 Gói {currentConceptIndex + 1} / {concepts.length}
+                            📍Concept {currentConceptIndex + 1} / {concepts.length}
                         </span>
                         <Button
                             variant="outline"
@@ -862,7 +862,7 @@ const ConceptForm = ({
                             disabled={currentConceptIndex === concepts.length - 1}
                             className="border-green-300 text-green-700 hover:bg-green-50"
                         >
-                            Gói tiếp theo ➡️
+                            Concept tiếp theo ➡️
                         </Button>
                     </div>
                 </div>

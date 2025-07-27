@@ -13,8 +13,8 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     const resolvedParams = await searchParams;
 
     const queryParams = new URLSearchParams();
-    const sortBy = resolvedParams.sortBy ?? 'distance';
-    const sortDirection = resolvedParams.sortDirection ?? 'asc';
+    // const sortBy = resolvedParams.sortBy ?? 'distance';
+    // const sortDirection = resolvedParams.sortDirection ?? 'desc';
 
     if (resolvedParams.name) queryParams.append('name', resolvedParams.name as string);
     if (resolvedParams.address) queryParams.append('location', resolvedParams.address as string);
@@ -24,8 +24,10 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
     // if (resolvedParams.date) queryParams.append('date', resolvedParams.date as string);
     if (resolvedParams.current) queryParams.append('current', resolvedParams.current as string);
     if (resolvedParams.category) queryParams.append('category', resolvedParams.category as string);
-    queryParams.append('sortBy', sortBy as string);
-    queryParams.append('sortDirection', sortDirection as string);
+    if (resolvedParams.sortBy) queryParams.append('sortBy', resolvedParams.sortBy as string);
+    if (resolvedParams.sortDirection) queryParams.append('sortDirection', resolvedParams.sortDirection as string);
+    // queryParams.append('sortBy', sortBy as string);
+    // queryParams.append('sortDirection', sortDirection as string);
     const userLocationCookie = (await cookies()).get("user_location")?.value;
     if (userLocationCookie) {
         try {
@@ -36,7 +38,6 @@ async function getVendors({ searchParams }: SERVERS.SearchVendorPageProps) {
             console.error("Invalid user_location cookie", err);
         }
     }
-
     const response = await vendorService.getVendorsWithFilter(queryParams) as any;
     return response;
 }
