@@ -111,7 +111,12 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
 
     const handlePaymentRemaining = async () => {
         try {
-            const response = await paymentService.paymentRemaining(invoice.id) as any;
+            const response = await paymentService.paymentRemaining(invoice.id) as {
+                statusCode: number;
+                data: {
+                    checkoutUrl: string;
+                };
+            };
 
             if (response.statusCode === 201 || response.statusCode === 200) {
                 window.open(response.data.checkoutUrl, '_blank');
@@ -229,13 +234,13 @@ export default function BookingCard({ booking, invoice, isNew, onReviewSuccess }
                                 {/* Nếu đã thanh toán đủ */}
                                 {invoice?.paidAmount === invoice?.payablePrice ? (
                                     <div className="text-base font-bold text-green-600">
-                                        Đã thanh toán đủ: {formatPrice(invoice?.payablePrice)}
+                                        Đã thanh toán đủ: {formatPrice(invoice?.payablePrice)} <span className="ml-1">(100%)</span>
                                     </div>
                                 ) : (
                                     <>
                                         <div className="text-base font-bold text-green-600">
                                             Đã thanh toán: <span>{formatPrice(invoice?.paidAmount)}</span>
-                                            <span className="ml-1">({((invoice?.paidAmount / invoice?.payablePrice) * 100).toFixed(0)}%)</span>
+                                            <span className="ml-1">({invoice?.payablePrice && invoice?.payablePrice > 0 ? Math.min(((invoice?.paidAmount / invoice?.payablePrice) * 100), 100).toFixed(0) : 0}%)</span>
                                         </div>
                                         <div className="text-base font-bold text-orange-600">
                                             Còn lại: <span>{formatPrice(invoice?.remainingAmount)}</span>
