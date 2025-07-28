@@ -108,7 +108,7 @@ const PricingPage = ({ isMembership }: { isMembership: boolean }) => {
 
       <div className="container mx-auto px-4 py-16 sm:py-24 relative z-10">
         <TitlePricing />
-        <SelectionPricing selected={billingCycle} setSelected={setBillingCycle} />
+        {/* <SelectionPricing selected={billingCycle} setSelected={setBillingCycle} /> */}
         {/* Pass the dynamically generated packages to the display component */}
         <PricingPackage subscriptions={displayPackages} />
       </div>
