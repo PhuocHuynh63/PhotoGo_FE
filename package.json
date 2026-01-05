@@ -31,7 +31,7 @@
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.487.0",
-    "next": "15.2.4",
+    "next": "15.2.8",
     "next-auth": "^4.24.11",
     "photogofe": "file:",
     "qrcode.react": "^4.2.0",
